@@ -44,7 +44,7 @@
     clear: both;
     float: left;
     width: 100%;
-    /* this chops off any overhanging <div>s */
+    /* this chops off any overhanging `div's */
     overflow: hidden; }
   /* two-column left menu settings (col1 is right, col2 is left) */
   .leftmenu {
