@@ -53,7 +53,7 @@ EXTRA_DIST = c2pandoc.sed \
              ttfautohint-3.pandoc \
              template.html \
              template.tex \
-             ttfautohint.css
+             ttfautohint-css.html
 
 if WITH_DOC
   nobase_dist_doc_DATA = $(DOC)
@@ -88,7 +88,7 @@ if WITH_DOC
 	             $(top_builddir)/frontend/ttfautohintGUI$(EXEEXT) $@
 
   ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) handle-images \
-                    ttfautohint.css template.html $(top_srcdir)/.version
+                    ttfautohint-css.html template.html $(top_srcdir)/.version
 	  $(PANDOC) --to=json \
 	            --smart \
 	            $< \
@@ -97,7 +97,7 @@ if WITH_DOC
 	              --template=$(srcdir)/template.html \
 	              --variable="version:$(VERSION)" \
 	              --toc \
-	              --include-in-header=$(srcdir)/ttfautohint.css \
+	              --include-in-header=$(srcdir)/ttfautohint-css.html \
 	              --standalone \
 	              --output=$@
 
@@ -128,7 +128,7 @@ else
 	  @echo 1>&2 "         please install ImageMagick's \`import' tool and reconfigure"
 
   ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) \
-                    ttfautohint.css template.html $(top_srcdir)/.version
+                    ttfautohint-css.html template.html $(top_srcdir)/.version
 	  @echo 1>&2 "warning: can't generate \`$@'"
 	  @echo 1>&2 "         pleasae install pandoc and reconfigure"
 
