@@ -65,7 +65,6 @@ unsigned char PREP(store_0x10000) [] =
   SWAP,
   WCVTP,
 
-  DUP,
   PUSHB_1,
     cvtl_funits_to_pixels,
   SWAP,
