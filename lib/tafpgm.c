@@ -330,10 +330,10 @@ unsigned char FPGM(bci_smooth_stem_width_c) [] =
  * out: n+1
  *      dist
  *
- * CVT: widths[]
- *
  * sal: sal_best
  *      sal_ref
+ *
+ * CVT: widths[]
  */
 
 unsigned char FPGM(bci_get_best_width) [] =
@@ -420,6 +420,9 @@ unsigned char FPGM(bci_get_best_width) [] =
  *     base_is_round (unused)
  *
  * out: new_width
+ *
+ * sal: sal_best
+ *      sal_ref
  *
  * CVT: widths[]
  *
@@ -1454,6 +1457,9 @@ unsigned char FPGM(bci_create_segments_9) [] =
  *   The same as `bci_create_segments'.
  *   It also decrements the composite component counter.
  *
+ * sal: sal_num_packed_segments
+ *      sal_segment_offset
+ *
  * CVT: cvtl_is_subglyph
  *
  * uses: bci_decrement_component_counter
@@ -1702,6 +1708,8 @@ unsigned char FPGM(bci_create_segments_composite_9) [] =
  *   zp0 and zp1 must be set to 0 (twilight) and 1 (normal), respectively.
  *
  * in: segment_index
+ *
+ * sal: sal_segment_offset
  */
 
 unsigned char FPGM(bci_align_segment) [] =
@@ -1921,9 +1929,9 @@ unsigned char FPGM(bci_scale_glyph) [] =
  *   It also decrements the composite component counter.
  *
  * CVT: cvtl_is_subglyph
- *      bci_scale_contour
  *
  * uses: bci_decrement_component_counter
+ *       bci_scale_contour
  */
 
 unsigned char FPGM(bci_scale_composite_glyph) [] =
@@ -2801,6 +2809,11 @@ unsigned char FPGM(bci_action_adjust_round_serif) [] =
  * bci_stem_common
  *
  *   Common code for bci_action_stem routines.
+ *
+ * sal: sal_anchor
+ *      sal_temp1
+ *      sal_temp2
+ *      sal_temp3
  *
  * uses: func[cvtl_stem_width_function]
  *       bci_round
@@ -4243,6 +4256,8 @@ unsigned char FPGM(bci_action_serif_upper_lower_bound) [] =
  *
  *   Common code for bci_action_serif_anchor routines.
  *
+ * sal: sal_anchor
+ *
  * uses: bci_round
  */
 
@@ -4428,6 +4443,8 @@ unsigned char FPGM(bci_action_serif_anchor_upper_lower_bound) [] =
  * bci_serif_link1_common
  *
  *   Common code for bci_action_serif_link1 routines.
+ *
+ * CVT: cvtl_0x10000
  */
 
 unsigned char FPGM(bci_serif_link1_common) [] =
@@ -4686,6 +4703,8 @@ unsigned char FPGM(bci_action_serif_link1_upper_lower_bound) [] =
  * bci_serif_link2_common
  *
  *   Common code for bci_action_serif_link2 routines.
+ *
+ * sal: sal_anchor
  */
 
 unsigned char FPGM(bci_serif_link2_common) [] =
