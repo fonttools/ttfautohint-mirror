@@ -167,6 +167,7 @@ typedef int
  * Function: `TTF_autohint`
  * ------------------------
  *
+ *
  * Read a TrueType font, remove existing bytecode (in the SFNT tables
  * `prep`, `fpgm`, `cvt `, and `glyf`), and write a new TrueType font with
  * new bytecode based on the autohinting of the FreeType library.
@@ -180,6 +181,9 @@ typedef int
  * argument is expected.
  *
  * Note that fields marked as 'not implemented yet' are subject to change.
+ *
+ *
+ * ### I/O
  *
  * `in-file`
  * :   A pointer of type `FILE*` to the data stream of the input font,
@@ -206,6 +210,9 @@ typedef int
  * :   A pointer of type `size_t*` to a value giving the length of the
  *     output buffer.  Needs `out-buffer`.
  *
+ *
+ * ### Messages and Callbacks
+ *
  * `progress-callback`
  * :   A pointer of type [`TA_Progress_Func`](#callback-ta_progress_func),
  *     specifying a callback function for progress reports.  This function
@@ -220,6 +227,23 @@ typedef int
  * :   A pointer of type `unsigned char**` to a string (in UTF-8 encoding)
  *     which verbally describes the error code.  You must not change the
  *     returned value.
+ *
+ * `info-callback`
+ * :   A pointer of type [`TA_Info_Func`](#callback-ta_info_func),
+ *     specifying a callback function for manipulating the `name` table.
+ *     This function gets called for each `name` table entry.  If not set or
+ *     set to NULL, the table data stays unmodified.
+ *
+ * `info-callback-data`
+ * :   A pointer of type `void*` to user data which is passed to the info
+ *     callback function.
+ *
+ * `debug`
+ * :   If this integer is set to\ 1, lots of debugging information is print
+ *     to stderr.  The default value is\ 0.
+ *
+ *
+ * ### General Hinting Options
  *
  * `hinting-range-min`
  * :   An integer (which must be larger than or equal to\ 2) giving the
@@ -238,6 +262,26 @@ typedef int
  *     hinting is applied.  For larger values, hinting is switched off.  If
  *     this field is not set, it defaults to `TA_HINTING_LIMIT`.  If it is
  *     set to\ 0, no hinting limit is added to the bytecode.
+ *
+ * `hint-with-components`
+ * :   If this integer is set to\ 1 (which is the default), ttfautohint
+ *     handles composite glyphs as a whole.  This implies adding a special
+ *     glyph to the font, as documented [here](#the-.ttfautohint-glyph).
+ *     Setting it to\ 0, the components of composite glyphs are hinted
+ *     separately.  While separate hinting of subglyphs makes the resulting
+ *     bytecode much smaller, it might deliver worse results.  However, this
+ *     depends on the processed font and must be checked by inspection.
+ *
+ * `pre-hinting`
+ * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) to
+ *     specify whether native TrueType hinting shall be applied to all
+ *     glyphs before passing them to the (internal) autohinter.  The used
+ *     resolution is the em-size in font units; for most fonts this is
+ *     2048ppem.  Use this if the hints move or scale subglyphs
+ *     independently of the output resolution.
+ *
+ *
+ * ### Hinting Algorithms
  *
  * `gray-strong-stem-width`
  * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) which
@@ -266,33 +310,6 @@ typedef int
  *     this field is not set, it defaults to `TA_INCREASE_X_HEIGHT`.  Use
  *     this flag to improve the legibility of small font sizes if necessary.
  *
- * `hint-with-components`
- * :   If this integer is set to\ 1 (which is the default), ttfautohint
- *     handles composite glyphs as a whole.  This implies adding a special
- *     glyph to the font, as documented [here](#the-.ttfautohint-glyph).
- *     Setting it to\ 0, the components of composite glyphs are hinted
- *     separately.  While separate hinting of subglyphs makes the resulting
- *     bytecode much smaller, it might deliver worse results.  However, this
- *     depends on the processed font and must be checked by inspection.
- *
- * `pre-hinting`
- * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) to
- *     specify whether native TrueType hinting shall be applied to all
- *     glyphs before passing them to the (internal) autohinter.  The used
- *     resolution is the em-size in font units; for most fonts this is
- *     2048ppem.  Use this if the hints move or scale subglyphs
- *     independently of the output resolution.
- *
- * `info-callback`
- * :   A pointer of type [`TA_Info_Func`](#callback-ta_info_func),
- *     specifying a callback function for manipulating the `name` table.
- *     This function gets called for each `name` table entry.  If not set or
- *     set to NULL, the table data stays unmodified.
- *
- * `info-callback-data`
- * :   A pointer of type `void*` to user data which is passed to the info
- *     callback function.
- *
  * `x-height-snapping-exceptions`
  * :   A pointer of type `const char*` to a null-terminated string which
  *     gives a list of comma separated PPEM values or value ranges at which
@@ -314,13 +331,8 @@ typedef int
  *     hinted glyphs stay within this horizontal stripe since Windows clips
  *     everything falling outside.  The default is\ 0.
  *
- * `ignore-restrictions`
- * :   If the font has set bit\ 1 in the 'fsType' field of the `OS/2` table,
- *     the ttfautohint library refuses to process the font since a
- *     permission to do that is required from the font's legal owner.  In
- *     case you have such a permission you might set the integer argument to
- *     value\ 1 to make ttfautohint handle the font.  The default value
- *     is\ 0.
+ *
+ * ### Scripts
  *
  * `fallback-script`
  * :   An integer which specifies the default script for glyphs not in the
@@ -336,11 +348,19 @@ typedef int
  *     (for the latin script, it is character 'o').  The default value
  *     is\ 0.
  *
- * `debug`
- * :   If this integer is set to\ 1, lots of debugging information is print
- *     to stderr.  The default value is\ 0.
  *
- * Remarks:
+ * ### Miscellaneous
+ *
+ * `ignore-restrictions`
+ * :   If the font has set bit\ 1 in the 'fsType' field of the `OS/2` table,
+ *     the ttfautohint library refuses to process the font since a
+ *     permission to do that is required from the font's legal owner.  In
+ *     case you have such a permission you might set the integer argument to
+ *     value\ 1 to make ttfautohint handle the font.  The default value
+ *     is\ 0.
+ *
+ *
+ * ### Remarks
  *
  *   * Obviously, it is necessary to have an input and an output data
  *     stream.  All other options are optional.
