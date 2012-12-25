@@ -604,7 +604,9 @@ unsigned char FPGM(bci_loop) [] =
  *   consequently, the calculation `a * b/c' is done as `a + delta' with
  *   `delta = a * (b-c)/c'.  This avoids overflow.
  *
- * sal: sal_i (CVT index)
+ * in: cvt_idx
+ *
+ * out: cvt_idx+1
  *
  * CVT: cvtl_scale
  *      cvtl_0x10000
@@ -617,13 +619,15 @@ unsigned char FPGM(bci_cvt_rescale) [] =
     bci_cvt_rescale,
   FDEF,
 
-  PUSHB_1,
-    sal_i,
-  RS,
+  DUP,
   DUP,
   RCVT,
   DO_SCALE,
   WCVTP,
+
+  PUSHB_1,
+    1,
+  ADD,
 
   ENDF,
 
@@ -635,7 +639,9 @@ unsigned char FPGM(bci_cvt_rescale) [] =
  *
  *   Round a blue ref value and adjust its corresponding shoot value.
  *
- * sal: sal_i (CVT index)
+ * in: ref_idx
+ *
+ * out: ref_idx+1
  *
  * uses: bci_round
  */
@@ -647,17 +653,15 @@ unsigned char FPGM(bci_blue_round_a) [] =
     bci_blue_round,
   FDEF,
 
-  PUSHB_1,
-    sal_i,
-  RS,
   DUP,
-  RCVT, /* s: ref_idx ref */
+  DUP,
+  RCVT, /* s: ref_idx ref_idx ref */
 
   DUP,
   PUSHB_1,
     bci_round,
   CALL,
-  SWAP, /* s: ref_idx round(ref) ref */
+  SWAP, /* s: ref_idx ref_idx round(ref) ref */
 
   PUSHB_2,
 
@@ -670,15 +674,15 @@ unsigned char FPGM(bci_blue_round_b) [] =
 
     4,
   CINDEX,
-  ADD, /* s: ref_idx round(ref) ref shoot_idx */
+  ADD, /* s: ref_idx ref_idx round(ref) ref shoot_idx */
   DUP,
-  RCVT, /* s: ref_idx round(ref) ref shoot_idx shoot */
+  RCVT, /* s: ref_idx ref_idx round(ref) ref shoot_idx shoot */
 
-  ROLL, /* s: ref_idx round(ref) shoot_idx shoot ref */
+  ROLL, /* s: ref_idx ref_idx round(ref) shoot_idx shoot ref */
   SWAP,
-  SUB, /* s: ref_idx round(ref) shoot_idx dist */
+  SUB, /* s: ref_idx ref_idx round(ref) shoot_idx dist */
   DUP,
-  ABS, /* s: ref_idx round(ref) shoot_idx dist delta */
+  ABS, /* s: ref_idx ref_idx round(ref) shoot_idx dist delta */
 
   DUP,
   PUSHB_1,
@@ -703,7 +707,7 @@ unsigned char FPGM(bci_blue_round_b) [] =
     EIF,
   EIF,
 
-  SWAP, /* s: ref_idx round(ref) shoot_idx delta dist */
+  SWAP, /* s: ref_idx ref_idx round(ref) shoot_idx delta dist */
   PUSHB_1,
     0,
   LT, /* dist < 0 */
@@ -715,10 +719,14 @@ unsigned char FPGM(bci_blue_round_b) [] =
     3,
   CINDEX,
   SWAP,
-  SUB, /* s: ref_idx round(ref) shoot_idx (round(ref) - delta) */
+  SUB, /* s: ref_idx ref_idx round(ref) shoot_idx (round(ref) - delta) */
 
   WCVTP,
   WCVTP,
+
+  PUSHB_1,
+    1,
+  ADD, /* s: (ref_idx + 1) */
 
   ENDF,
 

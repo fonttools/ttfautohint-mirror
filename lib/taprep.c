@@ -178,49 +178,46 @@ unsigned char PREP(loop_cvt_a) [] =
 {
 
     /* loop over vertical CVT entries */
-    PUSHB_4,
+    PUSHB_3,
 
 };
 
 /*    %c, first vertical index */
-/*    %c, last vertical index */
+/*    %c, number of vertical indices */
 
 unsigned char PREP(loop_cvt_b) [] =
 {
 
       bci_cvt_rescale,
-      bci_loop,
-    CALL,
+    LOOPCALL,
 
     /* loop over blue refs */
-    PUSHB_4,
+    PUSHB_3,
 
 };
 
 /*    %c, first blue ref index */
-/*    %c, last blue ref index */
+/*    %c, number of blue ref indices */
 
 unsigned char PREP(loop_cvt_c) [] =
 {
 
       bci_cvt_rescale,
-      bci_loop,
-    CALL,
+    LOOPCALL,
 
     /* loop over blue shoots */
-    PUSHB_4,
+    PUSHB_3,
 
 };
 
 /*    %c, first blue shoot index */
-/*    %c, last blue shoot index */
+/*    %c, number of blue shoot indices */
 
 unsigned char PREP(loop_cvt_d) [] =
 {
 
       bci_cvt_rescale,
-      bci_loop,
-    CALL,
+    LOOPCALL,
   EIF,
 
 };
@@ -257,19 +254,18 @@ unsigned char PREP(round_blues_a) [] =
 {
 
   /* use discrete values for blue zone widths */
-  PUSHB_4,
+  PUSHB_3,
 
 };
 
 /*  %c, first blue ref index */
-/*  %c, last blue ref index */
+/*  %c, number of blue ref indices */
 
 unsigned char PREP(round_blues_b) [] =
 {
 
     bci_blue_round,
-    bci_loop,
-  CALL
+  LOOPCALL,
 
 };
 
@@ -707,17 +703,14 @@ TA_table_build_prep(FT_Byte** prep,
 
     COPY_PREP(loop_cvt_a);
     *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET(font);
-    *(buf_p++) = (unsigned char)(CVT_VERT_WIDTHS_OFFSET(font)
-                                 + CVT_VERT_WIDTHS_SIZE(font) - 1);
+    *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_SIZE(font);
     /* don't loop over the artificial blue zones */
     COPY_PREP(loop_cvt_b);
     *(buf_p++) = (unsigned char)CVT_BLUE_REFS_OFFSET(font);
-    *(buf_p++) = (unsigned char)(CVT_BLUE_REFS_OFFSET(font)
-                                 + CVT_BLUES_SIZE(font) - 1 - 2);
+    *(buf_p++) = (unsigned char)(CVT_BLUES_SIZE(font) - 2);
     COPY_PREP(loop_cvt_c);
     *(buf_p++) = (unsigned char)CVT_BLUE_SHOOTS_OFFSET(font);
-    *(buf_p++) = (unsigned char)(CVT_BLUE_SHOOTS_OFFSET(font)
-                                 + CVT_BLUES_SIZE(font) - 1 - 2);
+    *(buf_p++) = (unsigned char)(CVT_BLUES_SIZE(font) - 2);
     COPY_PREP(loop_cvt_d);
 
     if (font->x_height_snapping_exceptions)
@@ -732,8 +725,7 @@ TA_table_build_prep(FT_Byte** prep,
   {
     COPY_PREP(round_blues_a);
     *(buf_p++) = (unsigned char)CVT_BLUE_REFS_OFFSET(font);
-    *(buf_p++) = (unsigned char)(CVT_BLUE_REFS_OFFSET(font)
-                                 + CVT_BLUES_SIZE(font) - 1);
+    *(buf_p++) = (unsigned char)CVT_BLUES_SIZE(font);
     COPY_PREP(round_blues_b);
   }
 
