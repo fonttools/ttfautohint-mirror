@@ -150,6 +150,8 @@ unsigned char FPGM(bci_round) [] =
  *
  * CVT: cvtl_is_extra_light
  *      std_width
+ *
+ * uses: bci_round
  */
 
 unsigned char FPGM(bci_smooth_stem_width_a) [] =
@@ -420,6 +422,9 @@ unsigned char FPGM(bci_get_best_width) [] =
  * out: new_width
  *
  * CVT: widths[]
+ *
+ * uses: bci_get_best_width
+ *       bci_round
  */
 
 unsigned char FPGM(bci_strong_stem_width_a) [] =
@@ -629,6 +634,7 @@ unsigned char FPGM(bci_cvt_rescale) [] =
  *
  * sal: sal_i (CVT index)
  *
+ * uses: bci_round
  */
 
 unsigned char FPGM(bci_blue_round_a) [] =
@@ -973,9 +979,6 @@ unsigned char FPGM(bci_number_set_is_element2) [] =
  *       [last (if wrap-around segment)]
  *       [first (if wrap-around segment)]
  *
- * uses: bci_get_point_extrema
- *       bci_nibbles
- *
  * sal: sal_i (start of current segment)
  *      sal_j (current twilight point)
  *      sal_point_min
@@ -986,6 +989,9 @@ unsigned char FPGM(bci_number_set_is_element2) [] =
  * CVT: cvtl_scale
  *      cvtl_0x10000
  *      cvtl_temp
+ *
+ * uses: bci_get_point_extrema
+ *       bci_nibbles
  *
  * If `sal_num_packed_segments' is > 0, the start/end pair is stored as
  * delta values in nibbles (without a wrap-around segment).
@@ -1194,14 +1200,16 @@ unsigned char FPGM(bci_create_segment) [] =
  *       [contour_first (N-1) (if wrap-around segment)]
  *     ... stuff for bci_hint_glyph ...
  *
- * uses: bci_create_segment
- *
  * sal: sal_i (start of current segment)
  *      sal_j (current twilight point)
  *      sal_num_packed_segments
  *      sal_base (the base for delta values in nibbles)
  *
  * CVT: cvtl_is_subglyph
+ *
+ * uses: bci_create_segment
+ *       bci_loop
+ *       bci_hint_glyph
  *
  * If `num_packed_segments' is set to p, the first p start/end pairs are
  * stored as delta values in nibbles, with the `start' delta in the lower
@@ -1446,9 +1454,12 @@ unsigned char FPGM(bci_create_segments_9) [] =
  *   The same as `bci_create_segments'.
  *   It also decrements the composite component counter.
  *
- * uses: bci_decrement_composite_counter
- *
  * CVT: cvtl_is_subglyph
+ *
+ * uses: bci_decrement_component_counter
+ *       bci_create_segment
+ *       bci_loop
+ *       bci_hint_glyph
  */
 
 unsigned char FPGM(bci_create_segments_composite) [] =
@@ -1761,8 +1772,7 @@ unsigned char FPGM(bci_align_segment) [] =
  *       ...
  *       segment_N
  *
- * uses: handle_segment
- *
+ * uses: bci_align_segment
  */
 
 unsigned char FPGM(bci_align_segments) [] =
@@ -1860,9 +1870,9 @@ unsigned char FPGM(bci_scale_contour) [] =
  *       min_point_N
  *       max_point_N
  *
- * uses: bci_scale_contour
- *
  * CVT: cvtl_is_subglyph
+ *
+ * uses: bci_scale_contour
  */
 
 unsigned char FPGM(bci_scale_glyph) [] =
@@ -1910,9 +1920,10 @@ unsigned char FPGM(bci_scale_glyph) [] =
  *   The same as `bci_scale_composite_glyph'.
  *   It also decrements the composite component counter.
  *
- * uses: bci_decrement_component_counter
- *
  * CVT: cvtl_is_subglyph
+ *      bci_scale_contour
+ *
+ * uses: bci_decrement_component_counter
  */
 
 unsigned char FPGM(bci_scale_composite_glyph) [] =
@@ -2020,6 +2031,9 @@ unsigned char FPGM(bci_shift_contour) [] =
  * CVT: cvtl_funits_to_pixels
  *      cvtl_0x10000
  *      cvtl_scale
+ *
+ * uses: bci_round
+ *       bci_shift_contour
  */
 
 unsigned char FPGM(bci_shift_subglyph) [] =
@@ -2488,6 +2502,8 @@ unsigned char FPGM(bci_action_ip_between) [] =
  * bci_adjust_common
  *
  *   Common code for bci_action_adjust routines.
+ *
+ * uses: func[cvtl_stem_width_function]
  */
 
 unsigned char FPGM(bci_adjust_common) [] =
@@ -2544,6 +2560,7 @@ unsigned char FPGM(bci_adjust_common) [] =
  *     ... stuff for bci_align_segments (edge) ...
  *
  * uses: bci_adjust_common
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_adjust_bound) [] =
@@ -2675,6 +2692,7 @@ unsigned char FPGM(bci_action_adjust_bound_round_serif) [] =
  *     ... stuff for bci_align_segments (edge) ...
  *
  * uses: bci_adjust_common
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_adjust) [] =
@@ -2783,6 +2801,9 @@ unsigned char FPGM(bci_action_adjust_round_serif) [] =
  * bci_stem_common
  *
  *   Common code for bci_action_stem routines.
+ *
+ * uses: func[cvtl_stem_width_function]
+ *       bci_round
  */
 
 #undef sal_u_off
@@ -3079,6 +3100,7 @@ unsigned char FPGM(bci_stem_common) [] =
  *      sal_temp3
  *
  * uses: bci_stem_common
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_stem_bound) [] =
@@ -3237,6 +3259,7 @@ unsigned char FPGM(bci_action_stem_bound_round_serif) [] =
  *      sal_temp3
  *
  * uses: bci_stem_common
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_stem) [] =
@@ -3369,6 +3392,9 @@ unsigned char FPGM(bci_action_stem_round_serif) [] =
  *     base_point (in twilight zone)
  *     stem_point (in twilight zone)
  *     ... stuff for bci_align_segments (base) ...
+ *
+ * uses: func[cvtl_stem_width_function]
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_link) [] =
@@ -3538,6 +3564,10 @@ unsigned char FPGM(bci_action_link_round_serif) [] =
  *      sal_temp1
  *      sal_temp2
  *      sal_temp3
+ *
+ * uses: func[cvtl_stem_width_function]
+ *       bci_round
+ *       bci_align_segments
  */
 
 #undef sal_u_off
@@ -3836,6 +3866,8 @@ unsigned char FPGM(bci_action_blue_anchor) [] =
  * in: blue_cvt_idx
  *     edge_point (in twilight zone)
  *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_align_segments
  */
 
 unsigned char FPGM(bci_action_blue) [] =
@@ -3916,6 +3948,8 @@ unsigned char FPGM(bci_serif_common) [] =
  *
  * in: edge
  *     bound
+ *
+ * uses: bci_align_segments
  */
 
 unsigned char FPGM(bci_lower_bound) [] =
@@ -3959,6 +3993,8 @@ unsigned char FPGM(bci_lower_bound) [] =
  *
  * in: edge
  *     bound
+ *
+ * uses: bci_align_segments
  */
 
 unsigned char FPGM(bci_upper_bound) [] =
@@ -4003,6 +4039,8 @@ unsigned char FPGM(bci_upper_bound) [] =
  * in: edge
  *     lower
  *     upper
+ *
+ * uses: bci_align_segments
  */
 
 unsigned char FPGM(bci_upper_lower_bound) [] =
@@ -4063,6 +4101,7 @@ unsigned char FPGM(bci_upper_lower_bound) [] =
  *     ... stuff for bci_align_segments (serif) ...
  *
  * uses: bci_serif_common
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_action_serif) [] =
@@ -4203,6 +4242,8 @@ unsigned char FPGM(bci_action_serif_upper_lower_bound) [] =
  * bci_serif_anchor_common
  *
  *   Common code for bci_action_serif_anchor routines.
+ *
+ * uses: bci_round
  */
 
 unsigned char FPGM(bci_serif_anchor_common) [] =
@@ -4250,6 +4291,7 @@ unsigned char FPGM(bci_serif_anchor_common) [] =
  *     ... stuff for bci_align_segments (edge) ...
  *
  * uses: bci_serif_anchor_common
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_action_serif_anchor) [] =
@@ -4501,6 +4543,7 @@ unsigned char FPGM(bci_serif_link1_common) [] =
  *     ... stuff for bci_align_segments (edge) ...
  *
  * uses: bci_serif_link1_common
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_action_serif_link1) [] =
@@ -4695,6 +4738,7 @@ unsigned char FPGM(bci_serif_link2_common) [] =
  *     ... stuff for bci_align_segments (edge) ...
  *
  * uses: bci_serif_link2_common
+ *       bci_align_segments
  */
 
 unsigned char FPGM(bci_action_serif_link2) [] =
@@ -4839,6 +4883,8 @@ unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
  *       ... data ...
  *     ...
  *
+ * CVT: cvtl_is_subglyph
+ *
  * uses: bci_action_ip_before
  *       bci_action_ip_after
  *       bci_action_ip_on
@@ -4897,8 +4943,6 @@ unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
  *       bci_action_serif_link2_lower_bound
  *       bci_action_serif_link2_upper_bound
  *       bci_action_serif_link2_upper_lower_bound
- *
- * CVT: cvtl_is_subglyph
  */
 
 unsigned char FPGM(bci_hint_glyph) [] =
