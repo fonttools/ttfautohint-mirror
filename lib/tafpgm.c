@@ -74,6 +74,7 @@
  *   engine specific corrections are applied.
  *
  * in: val
+ *
  * out: ROUND(val)
  */
 
@@ -529,18 +530,56 @@ unsigned char FPGM(bci_strong_stem_width_b) [] =
 
 
 /*
+ * bci_do_loop
+ *
+ *   An auxiliary function for `bci_loop'.
+ *
+ * sal: sal_i (gets incremented by 2 after execution)
+ *      sal_func
+ *
+ * uses: func[sal_func]
+ */
+
+unsigned char FPGM(bci_loop_do) [] =
+{
+
+  PUSHB_1,
+    bci_loop_do,
+  FDEF,
+
+  PUSHB_1,
+    sal_func,
+  RS,
+  CALL,
+
+  PUSHB_3,
+    sal_i,
+    2,
+    sal_i,
+  RS,
+  ADD, /* sal_i = sal_i + 2 */
+  WS,
+
+  ENDF,
+
+};
+
+
+/*
  * bci_loop
  *
- *   Take a range and a function number and apply the function to all
- *   elements of the range.
+ *   Take a range `start'..`end' and a function number and apply the
+ *   associated function to the range elements `start', `start+2',
+ *   `start+4', ...
  *
  * in: func_num
  *     end
  *     start
  *
  * sal: sal_i (counter initialized with `start')
- *      sal_limit (`end')
  *      sal_func (`func_num')
+ *
+ * uses: bci_loop_do
  */
 
 unsigned char FPGM(bci_loop) [] =
@@ -554,41 +593,25 @@ unsigned char FPGM(bci_loop) [] =
     sal_func,
   SWAP,
   WS, /* sal_func = func_num */
-  PUSHB_1,
-    sal_limit,
+
   SWAP,
-  WS, /* sal_limit = end */
+  DUP,
   PUSHB_1,
     sal_i,
   SWAP,
   WS, /* sal_i = start */
 
-/* start_loop: */
+  SUB,
   PUSHB_1,
-    sal_i,
-  RS,
+    2*64,
+  DIV,
   PUSHB_1,
-    sal_limit,
-  RS,
-  LTEQ, /* start <= end */
-  IF,
-    PUSHB_1,
-      sal_func,
-    RS,
-    CALL,
-    PUSHB_3,
-      sal_i,
-      1,
-      sal_i,
-    RS,
-    ADD, /* start = start + 1 */
-    WS,
+    1,
+  ADD, /* number of loops ((end - start) / 2 + 1) */
 
-    PUSHB_1,
-      22,
-    NEG,
-    JMPR, /* goto start_loop */
-  EIF,
+  PUSHB_1,
+    bci_loop_do,
+  LOOPCALL,
 
   ENDF,
 
@@ -769,6 +792,7 @@ unsigned char FPGM(bci_decrement_component_counter) [] =
  *   An auxiliary function for `bci_create_segment'.
  *
  * in: point-1
+ *
  * out: point
  *
  * sal: sal_point_min
@@ -983,7 +1007,7 @@ unsigned char FPGM(bci_number_set_is_element2) [] =
  *   Store start and end point of a segment in the storage area,
  *   then construct a point in the twilight zone to represent it.
  *
- *   This function is used by `bci_create_segment_points'.
+ *   This function is used by `bci_create_segments'.
  *
  * in: start
  *     end
@@ -1043,15 +1067,6 @@ unsigned char FPGM(bci_create_segment) [] =
   CINDEX,
   WS, /* sal[sal_i] = start */
 
-  /* increase `sal_i'; together with the outer loop, this makes sal_i += 2 */
-  PUSHB_3,
-    sal_i,
-    1,
-    sal_i,
-  RS,
-  ADD, /* sal_i = sal_i + 1 */
-  WS,
-
   /* initialize inner loop(s) */
   PUSHB_2,
     sal_point_min,
@@ -1082,13 +1097,15 @@ unsigned char FPGM(bci_create_segment) [] =
     /* `start'-`last' and `first'-`end' */
 
     /* s: first last start end */
-    PUSHB_1,
+    PUSHB_2,
+      1,
       sal_i,
     RS,
+    ADD,
     PUSHB_1,
       4,
     CINDEX,
-    WS, /* sal[sal_i] = last */
+    WS, /* sal[sal_i + 1] = last */
 
     ROLL,
     ROLL, /* s: first end last start */
@@ -1119,13 +1136,15 @@ unsigned char FPGM(bci_create_segment) [] =
     POP,
 
   ELSE, /* s: start end */
-    PUSHB_1,
+    PUSHB_2,
+      1,
       sal_i,
     RS,
+    ADD,
     PUSHB_1,
       2,
     CINDEX,
-    WS, /* sal[sal_i] = end */
+    WS, /* sal[sal_i + 1] = end */
 
     PUSHB_1,
       2,
@@ -1272,8 +1291,6 @@ unsigned char FPGM(bci_create_segments) [] =
     ROLL,
     ADD, /* s: ... sal_segment_offset (sal_segment_offset + delta) */
 
-    /* `bci_create_segment_point' also increases the loop counter by 1; */
-    /* this effectively means we have a loop step of 2 */
     PUSHB_2,
       bci_create_segment,
       bci_loop,
@@ -1522,8 +1539,6 @@ unsigned char FPGM(bci_create_segments_composite) [] =
     ROLL,
     ADD, /* s: ... sal_segment_offset (sal_segment_offset + delta) */
 
-    /* `bci_create_segment_point' also increases the loop counter by 1; */
-    /* this effectively means we have a loop step of 2 */
     PUSHB_2,
       bci_create_segment,
       bci_loop,
@@ -1710,6 +1725,35 @@ unsigned char FPGM(bci_create_segments_composite_9) [] =
 
 
 /*
+ * bci_align_point
+ *
+ *   An auxiliary function for `bci_align_segment'.
+ *
+ * in: point
+ *
+ * out: point+1
+ */
+
+unsigned char FPGM(bci_align_point) [] =
+{
+
+  PUSHB_1,
+    bci_align_point,
+  FDEF,
+
+  DUP,
+  ALIGNRP, /* align point with rp0 */
+
+  PUSHB_1,
+    1,
+  ADD,
+
+  ENDF,
+
+};
+
+
+/*
  * bci_align_segment
  *
  *   Align all points in a segment to the twilight point in rp0.
@@ -1718,6 +1762,8 @@ unsigned char FPGM(bci_create_segments_composite_9) [] =
  * in: segment_index
  *
  * sal: sal_segment_offset
+ *
+ * uses: bci_align_point
  */
 
 unsigned char FPGM(bci_align_segment) [] =
@@ -1742,33 +1788,19 @@ unsigned char FPGM(bci_align_segment) [] =
   ADD,
   RS, /* s: first last */
 
-/* start_loop: */
   PUSHB_1,
     2,
   CINDEX, /* s: first last first */
+  SUB,
   PUSHB_1,
-    2,
-  CINDEX, /* s: first last first last */
-  LTEQ, /* first <= end */
-  IF, /* s: first last */
-    SWAP,
-    DUP, /* s: last first first */
-    ALIGNRP, /* align point with index `first' with rp0 */
+    1,
+  ADD, /* s: first loop_count */
 
-    PUSHB_1,
-      1,
-    ADD, /* first = first + 1 */
-    SWAP, /* s: first last */
-
-    PUSHB_1,
-      18,
-    NEG,
-    JMPR, /* goto start_loop */
-
-  ELSE,
-    POP,
-    POP,
-  EIF,
+  PUSHB_1,
+    bci_align_point,
+  LOOPCALL,
+  /* clean up stack */
+  POP,
 
   ENDF,
 
@@ -1933,7 +1965,7 @@ unsigned char FPGM(bci_scale_glyph) [] =
 /*
  * bci_scale_composite_glyph
  *
- *   The same as `bci_scale_composite_glyph'.
+ *   The same as `bci_scale_glyph'.
  *   It also decrements the composite component counter.
  *
  * CVT: cvtl_is_subglyph
@@ -1993,8 +2025,9 @@ unsigned char FPGM(bci_scale_composite_glyph) [] =
  *   It expects that rp1 (pointed to by zp0) is set up properly; zp2 must
  *   point to the normal zone 1.
  *
- * in:  contour
- * out: contour + 1
+ * in: contour
+ *
+ * out: contour+1
  */
 
 unsigned char FPGM(bci_shift_contour) [] =
@@ -5033,6 +5066,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_strong_stem_width_a))
             + 2
             + sizeof (FPGM(bci_strong_stem_width_b))
+            + sizeof (FPGM(bci_loop_do))
             + sizeof (FPGM(bci_loop))
             + sizeof (FPGM(bci_cvt_rescale))
             + sizeof (FPGM(bci_blue_round_a))
@@ -5071,6 +5105,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_create_segments_composite_8))
             + sizeof (FPGM(bci_create_segments_composite_9))
 
+            + sizeof (FPGM(bci_align_point))
             + sizeof (FPGM(bci_align_segment))
             + sizeof (FPGM(bci_align_segments))
 
@@ -5186,6 +5221,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET(font);
   *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_SIZE(font);
   COPY_FPGM(bci_strong_stem_width_b);
+  COPY_FPGM(bci_loop_do);
   COPY_FPGM(bci_loop);
   COPY_FPGM(bci_cvt_rescale);
   COPY_FPGM(bci_blue_round_a);
@@ -5224,6 +5260,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_create_segments_composite_8);
   COPY_FPGM(bci_create_segments_composite_9);
 
+  COPY_FPGM(bci_align_point);
   COPY_FPGM(bci_align_segment);
   COPY_FPGM(bci_align_segments);
 
