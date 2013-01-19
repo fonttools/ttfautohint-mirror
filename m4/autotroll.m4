@@ -4,7 +4,7 @@
 # This file is part of AutoTroll.
 #
 # Copyright (C) 2006  Benoit Sigoure <benoit.sigoure@lrde.epita.fr>
-#   modified 2012 by Werner Lemberg <wl@gnu.org>
+#   modified 2012-2013 by Werner Lemberg <wl@gnu.org>
 #
 # AutoTroll is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@
 
 m4_define([_AUTOTROLL_SERIAL],
   [m4_translit([
-# serial 7
+# serial 8
 ], [#
 ], [])])
 
@@ -112,6 +112,17 @@ m4_ifdef([AX_INSTEAD_IF],
       [AC_MSG_WARN([$2])
        [$1]],
       [AC_MSG_ERROR([$2])])])])
+
+
+# AX_PATH_TOOLS(VARIABLE, PROGS-TO-CHECK-FOR, [VALUE-IF-NOT-FOUND], [PATH])
+# -------------------------------------------------------------------------
+AC_DEFUN([AX_PATH_TOOLS],
+  [for ax_tool in $2; do
+     AC_PATH_TOOL([$1], [$ax_tool], , [$4])
+     test -n "$$1" && break
+   done
+   m4_ifval([$3], [test -n "$$1" || $1="$3"])
+  ])
 
 
 m4_pattern_forbid([^AT_])
@@ -200,7 +211,7 @@ AC_DEFUN([AT_WITH_QT],
      # Find qmake.
      AC_ARG_VAR([QMAKE],
        [Qt Makefile generator command])
-     AC_PATH_TOOL([QMAKE],
+     AX_PATH_TOOLS([QMAKE],
        [qmake qmake-qt4 qmake-qt3],
        [missing],
        [$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths])
@@ -213,7 +224,7 @@ AC_DEFUN([AT_WITH_QT],
      # Find moc (Meta Object Compiler).
      AC_ARG_VAR([MOC],
        [Qt Meta Object Compiler command])
-     AC_PATH_TOOL([MOC],
+     AX_PATH_TOOLS([MOC],
        [moc moc-qt4 moc-qt3],
        [missing],
        [$QT_PATH:$PATH:$tmp_qt_paths])
@@ -226,7 +237,7 @@ AC_DEFUN([AT_WITH_QT],
      # Find uic (User Interface Compiler).
      AC_ARG_VAR([UIC],
        [Qt User Interface Compiler command])
-     AC_PATH_TOOL([UIC],
+     AX_PATH_TOOLS([UIC],
        [uic uic-qt4 uic-qt3 uic3],
        [missing],
        [$QT_PATH:$PATH:$tmp_qt_paths])
@@ -239,7 +250,7 @@ AC_DEFUN([AT_WITH_QT],
      # Find rcc (Qt Resource Compiler).
      AC_ARG_VAR([RCC],
        [Qt Resource Compiler command])
-     AC_PATH_TOOL([RCC],
+     AX_PATH_TOOLS([RCC],
        [rcc],
        [missing],
        [$QT_PATH:$PATH:$tmp_qt_paths])
