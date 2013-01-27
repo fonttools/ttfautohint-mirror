@@ -46,6 +46,9 @@ add control over character ranges which define a script; in particular, add
 handle normal and bold fonts differently; cf. Infinality patches;
   this should help avoid filling of bowls (like in `e') for bold shapes.
 
+help font families harmonize well so that e.g. x height and stem width
+  change synchronously
+
 control the minimum stem width
 
 try to `embolden' fonts at small sizes to avoid drop-outs; cf. Infinality
