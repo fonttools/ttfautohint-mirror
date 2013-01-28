@@ -42,6 +42,7 @@ typedef struct Info_Data_
   bool hint_with_components;
   int latin_fallback;
   bool symbol;
+  bool dehint;
 } Info_Data;
 
 

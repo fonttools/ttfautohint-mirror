@@ -51,7 +51,8 @@ Main_GUI::Main_GUI(int range_min,
                    bool components,
                    bool no,
                    int fallback,
-                   bool symb)
+                   bool symb,
+                   bool dh)
 : hinting_range_min(range_min),
   hinting_range_max(range_max),
   hinting_limit(limit),
@@ -66,7 +67,8 @@ Main_GUI::Main_GUI(int range_min,
   hint_with_components(components),
   no_info(no),
   latin_fallback(fallback),
-  symbol(symb)
+  symbol(symb),
+  dehint(dh)
 {
   x_height_snapping_exceptions = NULL;
 
@@ -192,6 +194,74 @@ Main_GUI::check_limit()
     max_box->setValue(limit);
   if (limit < min)
     min_box->setValue(limit);
+}
+
+
+void
+Main_GUI::check_dehint()
+{
+  if (dehint_box->isChecked())
+  {
+    min_label->setEnabled(false);
+    min_box->setEnabled(false);
+
+    max_label->setEnabled(false);
+    max_box->setEnabled(false);
+
+    fallback_label->setEnabled(false);
+    fallback_box->setEnabled(false);
+
+    no_limit_box->setEnabled(false);
+    limit_label->setEnabled(false);
+    limit_box->setEnabled(false);
+
+    no_increase_box->setEnabled(false);
+    increase_label->setEnabled(false);
+    increase_box->setEnabled(false);
+
+    snapping_label->setEnabled(false);
+    snapping_line->setEnabled(false);
+
+    wincomp_box->setEnabled(false);
+    pre_box->setEnabled(false);
+    hint_box->setEnabled(false);
+    symbol_box->setEnabled(false);
+
+    stem_label->setEnabled(false);
+    gray_box->setEnabled(false);
+    gdi_box->setEnabled(false);
+    dw_box->setEnabled(false);
+  }
+  else
+  {
+    min_label->setEnabled(true);
+    min_box->setEnabled(true);
+
+    max_label->setEnabled(true);
+    max_box->setEnabled(true);
+
+    fallback_label->setEnabled(true);
+    fallback_box->setEnabled(true);
+
+    no_limit_box->setEnabled(true);
+    check_no_limit();
+
+    no_increase_box->setEnabled(true);
+    check_no_increase();
+
+    snapping_label->setEnabled(true);
+    snapping_line->setEnabled(true);
+
+    wincomp_box->setEnabled(true);
+    pre_box->setEnabled(true);
+    hint_box->setEnabled(true);
+    symbol_box->setEnabled(true);
+
+    stem_label->setEnabled(true);
+    gray_box->setEnabled(true);
+    gdi_box->setEnabled(true);
+    dw_box->setEnabled(true);
+  }
 }
 
 
@@ -682,6 +752,7 @@ again:
   info_data.hint_with_components = hint_box->isChecked();
   info_data.latin_fallback = fallback_box->currentIndex();
   info_data.symbol = symbol_box->isChecked();
+  info_data.dehint = dehint_box->isChecked();
 
   if (info_box->isChecked())
   {
@@ -724,7 +795,8 @@ again:
                  "hint-with-components,"
                  "increase-x-height,"
                  "x-height-snapping-exceptions,"
-                 "fallback-script, symbol",
+                 "fallback-script, symbol,"
+                 "dehint",
                  input, output,
                  info_data.hinting_range_min, info_data.hinting_range_max,
                  info_data.hinting_limit,
@@ -740,7 +812,8 @@ again:
                  info_data.hint_with_components,
                  info_data.increase_x_height,
                  snapping_string.constData(),
-                 info_data.latin_fallback, info_data.symbol);
+                 info_data.latin_fallback, info_data.symbol,
+                 info_data.dehint);
 
   if (info_box->isChecked())
   {
@@ -809,7 +882,7 @@ Main_GUI::create_layout()
   //
   // minmax controls
   //
-  QLabel* min_label = new QLabel(tr("Hint Set Range Mi&nimum:"));
+  min_label = new QLabel(tr("Hint Set Range Mi&nimum:"));
   min_box = new QSpinBox;
   min_label->setBuddy(min_box);
   min_label->setToolTip(
@@ -824,7 +897,7 @@ Main_GUI::create_layout()
   min_box->setKeyboardTracking(false);
   min_box->setRange(2, 10000);
 
-  QLabel* max_label = new QLabel(tr("Hint Set Range Ma&ximum:"));
+  max_label = new QLabel(tr("Hint Set Range Ma&ximum:"));
   max_box = new QSpinBox;
   max_label->setBuddy(max_box);
   max_label->setToolTip(
@@ -842,7 +915,7 @@ Main_GUI::create_layout()
   //
   // hinting and fallback controls
   //
-  QLabel* fallback_label = new QLabel(tr("Fallback &Script:"));
+  fallback_label = new QLabel(tr("Fallback &Script:"));
   fallback_box = new QComboBox;
   fallback_label->setBuddy(fallback_box);
   fallback_label->setToolTip(
@@ -892,7 +965,7 @@ Main_GUI::create_layout()
   //
   // x height snapping exceptions
   //
-  QLabel* snapping_label = new QLabel(tr("x Height Snapping Excep&tions:"));
+  snapping_label = new QLabel(tr("x Height Snapping Excep&tions:"));
   snapping_line = new Tooltip_Line_Edit;
   snapping_label->setBuddy(snapping_line);
   snapping_label->setToolTip(
@@ -944,6 +1017,10 @@ Main_GUI::create_layout()
        "Use this for fonts which don't contain glyphs"
        " of a (supported) script."));
 
+  dehint_box = new QCheckBox(tr("&Dehint"), this);
+  dehint_box->setToolTip(
+    tr("<b></b>If set, remove all hints from the font."));
+
   info_box = new QCheckBox(tr("Add ttf&autohint Info"), this);
   info_box->setToolTip(
     tr("If switched on, information about <b>TTFautohint</b>"
@@ -953,7 +1030,7 @@ Main_GUI::create_layout()
   //
   // stem width and positioning
   //
-  QLabel* stem_label = new QLabel(tr("Strong Stem &Width and Positioning:"));
+  stem_label = new QLabel(tr("Strong Stem &Width and Positioning:"));
   stem_label->setToolTip(
     tr("<b>TTFautohint</b> provides two different hinting algorithms"
        " which can be selected for various hinting modes."
@@ -1048,6 +1125,7 @@ Main_GUI::create_layout()
   gui_layout->addWidget(pre_box, row++, 1);
   gui_layout->addWidget(hint_box, row++, 1);
   gui_layout->addWidget(symbol_box, row++, 1);
+  gui_layout->addWidget(dehint_box, row++, 1);
   gui_layout->addWidget(info_box, row++, 1);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
@@ -1106,6 +1184,9 @@ Main_GUI::create_connections()
           SLOT(check_number_set()));
   connect(snapping_line, SIGNAL(textEdited(QString)), this,
           SLOT(clear_status_bar()));
+
+  connect(dehint_box, SIGNAL(clicked()), this,
+          SLOT(check_dehint()));
 
   connect(run_button, SIGNAL(clicked()), this,
           SLOT(run()));
@@ -1181,6 +1262,8 @@ Main_GUI::set_defaults()
     hint_box->setChecked(true);
   if (symbol)
     symbol_box->setChecked(true);
+  if (dehint)
+    dehint_box->setChecked(true);
   if (!no_info)
     info_box->setChecked(true);
 
@@ -1200,6 +1283,9 @@ Main_GUI::set_defaults()
   check_no_limit();
   check_no_increase();
   check_number_set();
+
+  // do this last since it disables almost everything
+  check_dehint();
 }
 
 

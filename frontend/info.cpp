@@ -53,6 +53,12 @@ build_version_string(Info_Data* idata)
   d = (char*)idata->data;
   d += sprintf(d, TTFAUTOHINT_STRING " (v%s)", VERSION);
 
+  if (idata->dehint)
+  {
+    d += sprintf(d, " -d");
+    goto Dehint_only;
+  }
+
   d += sprintf(d, " -l %d", idata->hinting_range_min);
   d += sprintf(d, " -r %d", idata->hinting_range_max);
   d += sprintf(d, " -G %d", idata->hinting_limit);
@@ -84,6 +90,7 @@ build_version_string(Info_Data* idata)
   if (idata->x_height_snapping_exceptions)
     d += sprintf(d, " -X \"\""); // fill in data later
 
+Dehint_only:
   idata->data_len = d - (char*)idata->data;
 
   if (idata->x_height_snapping_exceptions)

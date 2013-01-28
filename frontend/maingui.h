@@ -48,7 +48,8 @@ public:
            bool, bool, bool,
            int, const char*,
            bool, bool, bool,
-           bool, bool, int, bool);
+           bool, bool, int, bool,
+           bool);
   ~Main_GUI();
 
 protected:
@@ -61,6 +62,7 @@ private slots:
   void check_min();
   void check_max();
   void check_limit();
+  void check_dehint();
   void check_no_limit();
   void check_no_increase();
   void absolute_input();
@@ -87,6 +89,7 @@ private:
   int no_info;
   int latin_fallback;
   int symbol;
+  int dehint;
 
   void create_layout();
 
@@ -111,13 +114,17 @@ private:
   Drag_Drop_Line_Edit* output_line;
   QPushButton* output_button;
 
+  QLabel* min_label;
   QSpinBox* min_box;
+  QLabel* max_label;
   QSpinBox* max_box;
 
+  QLabel* stem_label;
   QCheckBox* gray_box;
   QCheckBox* gdi_box;
   QCheckBox* dw_box;
 
+  QLabel* fallback_label;
   QComboBox* fallback_box;
 
   QLabel* limit_label;
@@ -128,12 +135,14 @@ private:
   QSpinBox* increase_box;
   QCheckBox* no_increase_box;
 
+  QLabel* snapping_label;
   Tooltip_Line_Edit* snapping_line;
 
   QCheckBox* wincomp_box;
   QCheckBox* pre_box;
   QCheckBox* hint_box;
   QCheckBox* symbol_box;
+  QCheckBox* dehint_box;
   QCheckBox* info_box;
 
   QPushButton* run_button;

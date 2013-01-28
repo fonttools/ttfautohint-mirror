@@ -373,6 +373,13 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     or dingbat fonts or math glyphs, for example, which lack character 'o',
     at the expense of possibly poor hinting results at small sizes.
 
+### Dehint
+
+`--dehint`, `-d`
+:   Strip off all hints without generating new hints.  Consequently, all
+    other hinting options are ignored.  This option is intended for testing
+    purposes.
+
 ### Add ttfautohint Info
 
 `--no-info`, `-n`

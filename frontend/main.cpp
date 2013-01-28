@@ -162,6 +162,7 @@ show_help(bool
 "      --debug                print debugging information\n"
 #endif
 "  -c, --components           hint glyph components separately\n"
+"  -d, --dehint               remove all hints\n"
 "  -f, --latin-fallback       set fallback script to latin\n"
 "  -G, --hinting-limit=N      switch off hinting above this PPEM value\n"
 "                             (default: %d); value 0 means no limit\n"
@@ -331,6 +332,8 @@ main(int argc,
   const char* x_height_snapping_exceptions_string = NULL;
   bool have_x_height_snapping_exceptions_string = false;
 
+  bool dehint = false;
+
 #ifndef BUILD_GUI
   bool debug = false;
 
@@ -368,6 +371,7 @@ main(int argc,
 #ifndef BUILD_GUI
       {"debug", no_argument, NULL, DEBUG_OPTION},
 #endif
+      {"dehint", no_argument, NULL, 'd'},
       {"hinting-limit", required_argument, NULL, 'G'},
       {"hinting-range-max", required_argument, NULL, 'r'},
       {"hinting-range-min", required_argument, NULL, 'l'},
@@ -413,7 +417,7 @@ main(int argc,
     };
 
     int option_index;
-    int c = getopt_long_only(argc, argv, "cfG:hil:npr:stVvw:Wx:X:",
+    int c = getopt_long_only(argc, argv, "cdfG:hil:npr:stVvw:Wx:X:",
                              long_options, &option_index);
     if (c == -1)
       break;
@@ -422,6 +426,10 @@ main(int argc,
     {
     case 'c':
       hint_with_components = false;
+      break;
+
+    case 'd':
+      dehint = true;
       break;
 
     case 'f':
@@ -527,6 +535,16 @@ main(int argc,
     default:
       exit(EXIT_FAILURE);
     }
+  }
+
+  if (dehint)
+  {
+    // -d makes ttfautohint ignore all other hinting options
+    have_hinting_range_min = false;
+    have_hinting_range_max = false;
+    have_hinting_limit = false;
+    have_increase_x_height = false;
+    have_x_height_snapping_exceptions_string = false;
   }
 
   if (!have_hinting_range_min)
@@ -687,6 +705,8 @@ main(int argc,
     info_data.latin_fallback = latin_fallback;
     info_data.symbol = symbol;
 
+    info_data.dehint = dehint;
+
     int ret = build_version_string(&info_data);
     if (ret == 1)
       fprintf(stderr, "Warning: Can't allocate memory"
@@ -713,7 +733,7 @@ main(int argc,
                  "pre-hinting, hint-with-components,"
                  "increase-x-height, x-height-snapping-exceptions,"
                  "fallback-script, symbol,"
-                 "debug",
+                 "dehint, debug",
                  in, out,
                  hinting_range_min, hinting_range_max, hinting_limit,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
@@ -725,7 +745,7 @@ main(int argc,
                  pre_hinting, hint_with_components,
                  increase_x_height, x_height_snapping_exceptions_string,
                  latin_fallback, symbol,
-                 debug);
+                 dehint, debug);
 
   if (!no_info)
   {
@@ -803,7 +823,8 @@ main(int argc,
                dw_cleartype_strong_stem_width, increase_x_height,
                x_height_snapping_exceptions_string,
                ignore_restrictions, windows_compatibility, pre_hinting,
-               hint_with_components, no_info, latin_fallback, symbol);
+               hint_with_components, no_info, latin_fallback, symbol,
+               dehint);
   gui.show();
 
   return app.exec();
