@@ -91,6 +91,8 @@ TTF_autohint(const char* options,
   FT_UInt fallback_script = TA_SCRIPT_FALLBACK;
   FT_Bool symbol = 0;
 
+  FT_Bool dehint = 0;
+
   FT_Bool debug = 0;
 
   const char* op;
@@ -134,6 +136,8 @@ TTF_autohint(const char* options,
     /* handle options -- don't forget to update parameter dump below! */
     if (COMPARE("debug"))
       debug = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("dehint"))
+      dehint = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("dw-cleartype-strong-stem-width"))
       dw_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("error-string"))
@@ -241,6 +245,9 @@ TTF_autohint(const char* options,
     goto Err1;
   }
 
+  if (dehint)
+    goto No_check;
+
   if (hinting_range_min >= 0 && hinting_range_min < 2)
   {
     error = FT_Err_Invalid_Argument;
@@ -298,11 +305,6 @@ TTF_autohint(const char* options,
   font->gdi_cleartype_strong_stem_width = gdi_cleartype_strong_stem_width;
   font->dw_cleartype_strong_stem_width = dw_cleartype_strong_stem_width;
 
-  font->progress = progress;
-  font->progress_data = progress_data;
-  font->info = info;
-  font->info_data = info_data;
-
   font->windows_compatibility = windows_compatibility;
   font->ignore_restrictions = ignore_restrictions;
   font->pre_hinting = pre_hinting;
@@ -310,9 +312,16 @@ TTF_autohint(const char* options,
   font->fallback_script = fallback_script;
   font->symbol = symbol;
 
-  font->gasp_idx = MISSING;
+No_check:
+  font->progress = progress;
+  font->progress_data = progress_data;
+  font->info = info;
+  font->info_data = info_data;
 
   font->debug = debug;
+  font->dehint = dehint;
+
+  font->gasp_idx = MISSING;
 
   /* dump parameters */
   if (debug)
@@ -321,39 +330,46 @@ TTF_autohint(const char* options,
 
 
     fprintf(stderr, "TTF_autohint parameters\n"
-                    "=======================\n\n");
+                    "=======================\n"
+                    "\n");
 
-    DUMPVAL("dw-cleartype-strong-stem-width",
-            font->dw_cleartype_strong_stem_width);
-    DUMPVAL("fallback-script",
-            font->fallback_script);
-    DUMPVAL("gdi-cleartype-strong-stem-width",
-            font->gdi_cleartype_strong_stem_width);
-    DUMPVAL("gray-strong-stem-width",
-            font->gray_strong_stem_width);
-    DUMPVAL("hinting-limit",
-            font->hinting_limit);
-    DUMPVAL("hinting-range-max",
-            font->hinting_range_max);
-    DUMPVAL("hinting-range-min",
-            font->hinting_range_min);
-    DUMPVAL("hint-with-components",
-            font->hint_with_components);
-    DUMPVAL("ignore-restrictions",
-            font->ignore_restrictions);
-    DUMPVAL("increase-x-height",
-            font->increase_x_height);
-    DUMPVAL("pre-hinting",
-            font->pre_hinting);
-    DUMPVAL("symbol",
-            font->symbol);
-    DUMPVAL("windows-compatibility",
-            font->windows_compatibility);
+    if (dehint)
+      DUMPVAL("dehint",
+              font->dehint);
+    else
+    {
+      DUMPVAL("dw-cleartype-strong-stem-width",
+              font->dw_cleartype_strong_stem_width);
+      DUMPVAL("fallback-script",
+              font->fallback_script);
+      DUMPVAL("gdi-cleartype-strong-stem-width",
+              font->gdi_cleartype_strong_stem_width);
+      DUMPVAL("gray-strong-stem-width",
+              font->gray_strong_stem_width);
+      DUMPVAL("hinting-limit",
+              font->hinting_limit);
+      DUMPVAL("hinting-range-max",
+              font->hinting_range_max);
+      DUMPVAL("hinting-range-min",
+              font->hinting_range_min);
+      DUMPVAL("hint-with-components",
+              font->hint_with_components);
+      DUMPVAL("ignore-restrictions",
+              font->ignore_restrictions);
+      DUMPVAL("increase-x-height",
+              font->increase_x_height);
+      DUMPVAL("pre-hinting",
+              font->pre_hinting);
+      DUMPVAL("symbol",
+              font->symbol);
+      DUMPVAL("windows-compatibility",
+              font->windows_compatibility);
 
-    s = number_set_show(font->x_height_snapping_exceptions,
-                        TA_PROP_INCREASE_X_HEIGHT_MIN, 0x7FFF);
-    DUMPSTR("x-height-snapping-exceptions", s);
-    free(s);
+      s = number_set_show(font->x_height_snapping_exceptions,
+                          TA_PROP_INCREASE_X_HEIGHT_MIN, 0x7FFF);
+      DUMPSTR("x-height-snapping-exceptions", s);
+      free(s);
+    }
 
     fprintf(stderr, "\n");
   }
@@ -411,21 +427,6 @@ TTF_autohint(const char* options,
     if (error)
       goto Err;
 
-    if (font->pre_hinting)
-      error = TA_sfnt_create_glyf_data(sfnt, font);
-    else
-      error = TA_sfnt_split_glyf_table(sfnt, font);
-    if (error)
-      goto Err;
-
-    /* this call creates a `globals' object... */
-    error = TA_sfnt_handle_coverage(sfnt, font);
-    if (error)
-      goto Err;
-
-    /* ... so that we now can initialize its properties */
-    TA_sfnt_set_properties(sfnt, font);
-
     /* check permission */
     if (sfnt->OS2_idx != MISSING)
     {
@@ -440,14 +441,41 @@ TTF_autohint(const char* options,
         goto Err;
       }
     }
+
+    if (font->dehint)
+    {
+      error = TA_sfnt_split_glyf_table(sfnt, font);
+      if (error)
+        goto Err;
+    }
+    else
+    {
+      if (font->pre_hinting)
+        error = TA_sfnt_create_glyf_data(sfnt, font);
+      else
+        error = TA_sfnt_split_glyf_table(sfnt, font);
+      if (error)
+        goto Err;
+
+      /* this call creates a `globals' object... */
+      error = TA_sfnt_handle_coverage(sfnt, font);
+      if (error)
+        goto Err;
+
+      /* ... so that we now can initialize its properties */
+      TA_sfnt_set_properties(sfnt, font);
+    }
   }
 
-  for (i = 0; i < font->num_sfnts; i++)
+  if (!font->dehint)
   {
-    SFNT* sfnt = &font->sfnts[i];
+    for (i = 0; i < font->num_sfnts; i++)
+    {
+      SFNT* sfnt = &font->sfnts[i];
 
 
-    TA_sfnt_adjust_master_coverage(sfnt, font);
+      TA_sfnt_adjust_master_coverage(sfnt, font);
+    }
   }
 
 #if 0
@@ -456,12 +484,15 @@ TTF_autohint(const char* options,
   /* and referring subfonts simply reuse it, */
   /* but this might change in the future */
 
-  for (i = 0; i < font->num_sfnts; i++)
+  if (!font->dehint)
   {
-    SFNT* sfnt = &font->sfnts[i];
+    for (i = 0; i < font->num_sfnts; i++)
+    {
+      SFNT* sfnt = &font->sfnts[i];
 
 
-    TA_sfnt_copy_master_coverage(sfnt, font);
+      TA_sfnt_copy_master_coverage(sfnt, font);
+    }
   }
 #endif
 
@@ -478,15 +509,18 @@ TTF_autohint(const char* options,
     error = TA_sfnt_build_gasp_table(sfnt, font);
     if (error)
       goto Err;
-    error = TA_sfnt_build_cvt_table(sfnt, font);
-    if (error)
-      goto Err;
-    error = TA_sfnt_build_fpgm_table(sfnt, font);
-    if (error)
-      goto Err;
-    error = TA_sfnt_build_prep_table(sfnt, font);
-    if (error)
-      goto Err;
+    if (!font->dehint)
+    {
+      error = TA_sfnt_build_cvt_table(sfnt, font);
+      if (error)
+        goto Err;
+      error = TA_sfnt_build_fpgm_table(sfnt, font);
+      if (error)
+        goto Err;
+      error = TA_sfnt_build_prep_table(sfnt, font);
+      if (error)
+        goto Err;
+    }
     error = TA_sfnt_build_glyf_table(sfnt, font);
     if (error)
       goto Err;
@@ -507,20 +541,23 @@ TTF_autohint(const char* options,
     if (error)
       goto Err;
 
-    /* we add one glyph for composites */
-    if (sfnt->max_components
-        && !font->pre_hinting
-        && font->hint_with_components)
+    if (!font->dehint)
     {
-      error = TA_sfnt_update_hmtx_table(sfnt, font);
-      if (error)
-        goto Err;
-      error = TA_sfnt_update_post_table(sfnt, font);
-      if (error)
-        goto Err;
-      error = TA_sfnt_update_GPOS_table(sfnt, font);
-      if (error)
-        goto Err;
+      /* we add one glyph for composites */
+      if (sfnt->max_components
+          && !font->pre_hinting
+          && font->hint_with_components)
+      {
+        error = TA_sfnt_update_hmtx_table(sfnt, font);
+        if (error)
+          goto Err;
+        error = TA_sfnt_update_post_table(sfnt, font);
+        if (error)
+          goto Err;
+        error = TA_sfnt_update_GPOS_table(sfnt, font);
+        if (error)
+          goto Err;
+      }
     }
 
     if (font->info)

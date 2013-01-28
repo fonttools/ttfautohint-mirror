@@ -359,6 +359,10 @@ typedef int
  *     value\ 1 to make ttfautohint handle the font.  The default value
  *     is\ 0.
  *
+ * `dehint`
+ * :   If set to\ 1, remove all hints from the font.  All other hinting
+ *     options are ignored.
+ *
  *
  * ### Remarks
  *

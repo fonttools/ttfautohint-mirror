@@ -228,6 +228,7 @@ struct FONT_
   FT_Bool ignore_restrictions;
   FT_UInt fallback_script;
   FT_Bool symbol;
+  FT_Bool dehint;
   FT_Bool debug;
 };
 

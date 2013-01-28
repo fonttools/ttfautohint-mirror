@@ -830,9 +830,12 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
   if (glyf_table->processed)
     return TA_Err_Ok;
 
-  error = TA_sfnt_build_glyf_hints(sfnt, font);
-  if (error)
-    return error;
+  if (!font->dehint)
+  {
+    error = TA_sfnt_build_glyf_hints(sfnt, font);
+    if (error)
+      return error;
+  }
 
   /* get table size */
   len = 0;
