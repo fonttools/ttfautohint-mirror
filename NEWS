@@ -1,3 +1,13 @@
+New in 0.95:
+
+* New option `--dehint' to strip off all hints without generating new hints.
+  This option is intended for testing purposes.
+
+* Minor fixes to the created bytecode for compatibility.
+
+* Minor GUI improvements.
+
+
 New in 0.94:
 
 * New option `--windows-compatibility' which adds two artificial blue zones
