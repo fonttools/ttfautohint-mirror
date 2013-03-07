@@ -794,7 +794,7 @@ work.
 
   * `name`: The 'version' entries are modified to add information about the
     parameters which have been used for calling ttfautohint.  This can be
-    controlled with the [`--no-info`](#ttfautohint-info) option.
+    controlled with the [`--no-info`](#add-ttfautohint-info) option.
 
   * `GPOS`, `hmtx`, `loca`, `head`, `maxp`, `post`: Updated to fit the
     additional '\.ttfautohint' glyph, the additional subglyphs in
