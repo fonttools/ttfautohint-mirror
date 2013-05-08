@@ -662,6 +662,23 @@ unsigned char FPGM(bci_cvt_rescale) [] =
  *
  *   Round a blue ref value and adjust its corresponding shoot value.
  *
+ *   This is the equivalent to the following code (function
+ *   `ta_latin_metrics_scale_dim':
+ *
+ *     delta = dist;
+ *     if (dist < 0)
+ *       delta = -delta;
+ *
+ *     if (delta < 32)
+ *       delta = 0;
+ *     else if (delta < 48)
+ *       delta = 32;
+ *     else
+ *       delta = 64;
+ *
+ *     if (dist < 0)
+ *       delta = -delta;
+ *
  * in: ref_idx
  *
  * out: ref_idx+1
