@@ -48,6 +48,92 @@
   SZP2
 
 
+/*
+ * Older versions of Monotype's `iType' bytecode interpreter have a serious
+ * bug: The DIV instruction rounds the result, while the correct operation
+ * is truncation.  (Note, however, that MUL always rounds the result.)
+ * Since many printers contain this rasterizer without any possibility to
+ * update to a non-buggy version, we have to work around the problem.
+ *
+ * DIV and MUL work on 26.6 numbers which means that the numerator gets
+ * multiplied by 64 before the division, and the product gets divided by 64
+ * after the multiplication, respectively.  For example, to divide 2 by 3,
+ * you have to write
+ *
+ *   PUSHB_1,
+ *     2,
+ *     3*64,
+ *   DIV
+ *
+ * The correct formula to divide two values in 26.6 format with truncation
+ * is
+ *
+ *   a*64 / b    ,
+ *
+ * while older `iType' versions incorrectly apply rounding by using
+ *
+ *  (a*64 + b/2) / b    .
+ *
+ * Doing our 2/3 division, we have a=2 and b=3*64, so we get
+ *
+ *   (2*64 + (3*64)/2) / (3*64) = 1
+ *
+ * instead of the correct result 0.
+ *
+ * The solution to the rounding issue is to use a 26.6 value as an
+ * intermediate result so that we can truncate to the nearest integer (in
+ * 26.6 format) with the FLOOR operator before converting back to a plain
+ * integer (in 32.0 format).
+ *
+ * For the common divisions by 2 and 2^10 we define macros.
+ */
+#define DIV_POS_BY_2 \
+  PUSHB_1, \
+    2, \
+  DIV, /* multiply by 64, then divide by 2 */ \
+  FLOOR, \
+  PUSHB_1, \
+    1, \
+  MUL /* multiply by 1, then divide by 64 */
+
+#define DIV_BY_2 \
+  PUSHB_1, \
+    2, \
+  DIV, \
+  DUP, \
+  PUSHB_1, \
+    0, \
+  LT, \
+  IF, \
+    PUSHB_1, \
+      64, \
+    ADD, /* add 1 if value is negative */ \
+  EIF, \
+  FLOOR, \
+  PUSHB_1, \
+    1, \
+  MUL
+
+#define DIV_BY_1024 \
+  PUSHW_1, \
+    0x04, /* 2^10 */ \
+    0x00, \
+  DIV, \
+  DUP, \
+  PUSHB_1, \
+    0, \
+  LT, \
+  IF, \
+    PUSHB_1, \
+      64, \
+    ADD, \
+  EIF, \
+  FLOOR, \
+  PUSHB_1, \
+    1, \
+  MUL
+
+
 /* a convenience shorthand for scaling; see `bci_cvt_rescale' for details */
 #define DO_SCALE \
   DUP, /* s: a a */ \
@@ -55,10 +141,7 @@
     cvtl_scale, \
   RCVT, \
   MUL, /* delta * 2^10 */ \
-  PUSHB_1, \
-    cvtl_0x10000, \
-  RCVT, \
-  DIV, /* delta */ \
+  DIV_BY_1024, /* delta */ \
   ADD /* a + delta */
 
 
@@ -602,9 +685,7 @@ unsigned char FPGM(bci_loop) [] =
   WS, /* sal_i = start */
 
   SUB,
-  PUSHB_1,
-    2*64,
-  DIV,
+  DIV_POS_BY_2,
   PUSHB_1,
     1,
   ADD, /* number of loops ((end - start) / 2 + 1) */
@@ -632,7 +713,6 @@ unsigned char FPGM(bci_loop) [] =
  * out: cvt_idx+1
  *
  * CVT: cvtl_scale
- *      cvtl_0x10000
  */
 
 unsigned char FPGM(bci_cvt_rescale) [] =
@@ -890,10 +970,13 @@ unsigned char FPGM(bci_nibbles) [] =
   FDEF,
 
   DUP,
-  PUSHW_1,
-    0x04, /* 16*64 */
-    0x00,
-  DIV, /* s: in hnibble */
+  PUSHB_1, /* cf. DIV_POS_BY_2 macro */
+    16,
+  DIV,
+  FLOOR,
+  PUSHB_1,
+    1,
+  MUL, /* s: in hnibble */
   DUP,
   PUSHW_1,
     0x04, /* 16*64 */
@@ -1039,7 +1122,6 @@ unsigned char FPGM(bci_number_set_is_element2) [] =
  *      sal_num_packed_segments
  *
  * CVT: cvtl_scale
- *      cvtl_0x10000
  *      cvtl_temp
  *
  * uses: bci_get_point_extrema
@@ -1186,9 +1268,7 @@ unsigned char FPGM(bci_create_segment) [] =
   RS,
   GC_orig,
   ADD,
-  PUSHB_1,
-    2*64,
-  DIV, /* s: middle_pos */
+  DIV_BY_2, /* s: middle_pos */
 
   DO_SCALE, /* middle_pos = middle_pos * scale */
 
@@ -1872,7 +1952,6 @@ unsigned char FPGM(bci_align_segments) [] =
  *     max_point
  *
  * CVT: cvtl_scale
- *      cvtl_0x10000
  */
 
 unsigned char FPGM(bci_scale_contour) [] =
@@ -2095,7 +2174,6 @@ unsigned char FPGM(bci_shift_contour) [] =
  *     first_contour
  *
  * CVT: cvtl_funits_to_pixels
- *      cvtl_0x10000
  *      cvtl_scale
  *
  * uses: bci_round
@@ -2115,10 +2193,7 @@ unsigned char FPGM(bci_shift_subglyph) [] =
     cvtl_funits_to_pixels,
   RCVT, /* scaling factor FUnits -> pixels */
   MUL,
-  PUSHB_1,
-    cvtl_0x10000,
-  RCVT,
-  DIV,
+  DIV_BY_1024,
 
   /* the autohinter always rounds offsets */
   PUSHB_1,
@@ -2129,10 +2204,7 @@ unsigned char FPGM(bci_shift_subglyph) [] =
     cvtl_scale,
   RCVT,
   MUL,
-  PUSHB_1,
-    cvtl_0x10000,
-  RCVT,
-  DIV, /* delta = offset * (scale - 1) */
+  DIV_BY_1024, /* delta = offset * (scale - 1) */
 
   /* and round again */
   PUSHB_1,
@@ -2182,7 +2254,6 @@ unsigned char FPGM(bci_shift_subglyph) [] =
  * sal: sal_i (edge_orig_pos)
  *
  * CVT: cvtl_scale
- *      cvtl_0x10000
  */
 
 unsigned char FPGM(bci_ip_outer_align_point) [] =
@@ -2253,7 +2324,6 @@ unsigned char FPGM(bci_ip_on_align_points) [] =
  *      sal_j (stretch_factor)
  *
  * CVT: cvtl_scale
- *      cvtl_0x10000
  */
 
 unsigned char FPGM(bci_ip_between_align_point) [] =
@@ -2959,9 +3029,7 @@ unsigned char FPGM(bci_stem_common) [] =
     PUSHB_1,
       sal_org_len,
     RS,
-    PUSHB_1,
-      2*64,
-    DIV,
+    DIV_BY_2,
     ADD, /* s: [...] edge2 cur_len edge org_center */
 
     DUP,
@@ -3005,9 +3073,7 @@ unsigned char FPGM(bci_stem_common) [] =
     PUSHB_1,
       3,
     CINDEX,
-    PUSHB_1,
-      2*64,
-    DIV,
+    DIV_BY_2,
     SUB, /* arg = cur_pos1 - cur_len/2 */
 
     SWAP, /* s: [...] edge2 cur_len arg edge */
@@ -3040,9 +3106,7 @@ unsigned char FPGM(bci_stem_common) [] =
     PUSHB_1,
       sal_org_len,
     RS,
-    PUSHB_1,
-      2*64,
-    DIV,
+    DIV_BY_2,
     ADD, /* s: [...] edge2 cur_len edge org_pos org_center */
 
     SWAP,
@@ -3066,9 +3130,7 @@ unsigned char FPGM(bci_stem_common) [] =
     PUSHB_1,
       5,
     CINDEX,
-    PUSHB_1,
-      2*64,
-    DIV,
+    DIV_BY_2,
     PUSHB_1,
       4,
     MINDEX,
@@ -3720,9 +3782,7 @@ unsigned char FPGM(bci_anchor) [] =
     PUSHB_1,
       sal_org_len,
     RS,
-    PUSHB_1,
-      2*64,
-    DIV,
+    DIV_BY_2,
     ADD, /* s: edge2 cur_len edge org_center */
 
     DUP,
@@ -3766,9 +3826,7 @@ unsigned char FPGM(bci_anchor) [] =
     PUSHB_1,
       3,
     CINDEX,
-    PUSHB_1,
-      2*64,
-    DIV,
+    DIV_BY_2,
     SUB, /* s: edge2 cur_len edge (cur_pos1 - cur_len/2) */
 
     PUSHB_1,
@@ -4582,10 +4640,7 @@ unsigned char FPGM(bci_serif_link1_common) [] =
     EIF,
 
     MUL, /* a * (b-c)/c * 2^10 */
-    PUSHB_1,
-      cvtl_0x10000,
-    RCVT,
-    DIV, /* a * (b-c)/c */
+    DIV_BY_1024, /* a * (b-c)/c */
     ADD, /* a*b/c */
 
     SWAP,
@@ -4790,9 +4845,7 @@ unsigned char FPGM(bci_serif_link2_common) [] =
     32,
   ADD,
   FLOOR,
-  PUSHB_1,
-    2*64,
-  DIV, /* delta = (edge_orig_pos - anchor_orig_pos + 16) & ~31 */
+  DIV_BY_2, /* delta = (edge_orig_pos - anchor_orig_pos + 16) & ~31 */
 
   SWAP,
   DUP,
