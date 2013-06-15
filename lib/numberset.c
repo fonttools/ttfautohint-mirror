@@ -230,11 +230,13 @@ void
 number_set_free(number_range* number_set)
 {
   number_range* nr = number_set;
-  number_range* tmp;
 
 
   while (nr)
   {
+    number_range* tmp;
+
+
     tmp = nr;
     nr = nr->next;
     free(tmp);

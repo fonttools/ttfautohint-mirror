@@ -326,9 +326,6 @@ No_check:
   /* dump parameters */
   if (debug)
   {
-    char *s;
-
-
     fprintf(stderr, "TTF_autohint parameters\n"
                     "=======================\n"
                     "\n");
@@ -338,6 +335,9 @@ No_check:
               font->dehint);
     else
     {
+      char *s;
+
+
       DUMPVAL("dw-cleartype-strong-stem-width",
               font->dw_cleartype_strong_stem_width);
       DUMPVAL("fallback-script",

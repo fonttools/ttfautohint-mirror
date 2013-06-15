@@ -198,7 +198,7 @@ FT_Error
 TA_sfnt_build_cvt_table(SFNT* sfnt,
                         FONT* font)
 {
-  FT_Error error = FT_Err_Ok;
+  FT_Error error;
 
   SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
   glyf_Data* data = (glyf_Data*)glyf_table->data;

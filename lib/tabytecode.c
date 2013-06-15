@@ -585,8 +585,6 @@ TA_build_point_hints(Recorder* recorder,
   TA_Edge edges = axis->edges;
 
   TA_Edge edge;
-  TA_Edge before;
-  TA_Edge after;
 
   FT_Byte* p = recorder->hints_record.buf;
   FT_UShort num_edges = axis->num_edges;
@@ -767,6 +765,10 @@ TA_build_point_hints(Recorder* recorder,
          ip < ip_limit;
          ip += num_edges * num_strong_points, i++)
     {
+      TA_Edge before;
+      TA_Edge after;
+
+
       before = edges + i;
 
       j = 0;

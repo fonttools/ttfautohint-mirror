@@ -51,7 +51,7 @@ FT_Error
 TA_sfnt_build_gasp_table(SFNT* sfnt,
                          FONT* font)
 {
-  FT_Error error = FT_Err_Ok;
+  FT_Error error;
 
   FT_Byte* gasp_buf;
 

@@ -54,7 +54,7 @@ static TA_ScriptClass const ta_script_classes[] =
 static FT_Error
 ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
 {
-  FT_Error error = FT_Err_Ok;
+  FT_Error error;
   FT_Face face = globals->face;
   FT_CharMap old_charmap = face->charmap;
   FT_Byte* gscripts = globals->glyph_scripts;

@@ -538,7 +538,7 @@ gui_progress(long curr_idx,
              long num_sfnts,
              void* user)
 {
-  GUI_Progress_Data* data = (GUI_Progress_Data*)user;
+  GUI_Progress_Data* data = static_cast<GUI_Progress_Data*>(user);
 
   if (num_sfnts > 1 && curr_sfnt != data->last_sfnt)
   {
