@@ -17,8 +17,12 @@ AC_CONFIG_AUX_DIR([gnulib])
 AM_INIT_AUTOMAKE([-Wall -Werror]
                  m4_bmatch(m4_defn([AC_PACKAGE_VERSION]), [-],
                            [gnu], [gnits]))
-AC_CONFIG_MACRO_DIR([gnulib/m4
-                     m4])
+
+# The next command doesn't work correctly with aclocal from automake 1.14.
+#
+# AC_CONFIG_MACRO_DIR([gnulib/m4
+#                      m4])
+
 AM_SILENT_RULES([yes])
 
 AC_USE_SYSTEM_EXTENSIONS
