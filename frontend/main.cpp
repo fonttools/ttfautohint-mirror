@@ -161,7 +161,8 @@ show_help(bool
 #ifndef BUILD_GUI
 "      --debug                print debugging information\n"
 #endif
-"  -c, --components           hint glyph components separately\n"
+"  -c, --components=no|yes    hint glyph components separately\n"
+"                             (default: yes)\n"
 "  -d, --dehint               remove all hints\n"
 "  -f, --latin-fallback       set fallback script to latin\n"
 "  -G, --hinting-limit=N      switch off hinting above this PPEM value\n"
@@ -324,7 +325,7 @@ main(int argc,
   bool ignore_restrictions = false;
   bool windows_compatibility = false;
   bool pre_hinting = false;
-  bool hint_with_components = true;
+  bool hint_with_components = false;
   bool no_info = false;
   int latin_fallback = 0; // leave it as int; this probably gets extended
   bool symbol = false;
@@ -367,7 +368,7 @@ main(int argc,
 #endif
 
       // ttfautohint options
-      {"components", no_argument, NULL, 'c'},
+      {"components", required_argument, NULL, 'c'},
 #ifndef BUILD_GUI
       {"debug", no_argument, NULL, DEBUG_OPTION},
 #endif
@@ -417,7 +418,7 @@ main(int argc,
     };
 
     int option_index;
-    int c = getopt_long_only(argc, argv, "cdfG:hil:npr:stVvw:Wx:X:",
+    int c = getopt_long_only(argc, argv, "c:dfG:hil:npr:stVvw:Wx:X:",
                              long_options, &option_index);
     if (c == -1)
       break;
@@ -425,7 +426,7 @@ main(int argc,
     switch (c)
     {
     case 'c':
-      hint_with_components = false;
+      hint_with_components = strcmp(optarg, "no") == 0;
       break;
 
     case 'd':
