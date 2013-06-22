@@ -263,14 +263,15 @@ typedef int
  *     this field is not set, it defaults to `TA_HINTING_LIMIT`.  If it is
  *     set to\ 0, no hinting limit is added to the bytecode.
  *
- * `hint-with-components`
- * :   If this integer is set to\ 1 (which is the default), ttfautohint
- *     handles composite glyphs as a whole.  This implies adding a special
- *     glyph to the font, as documented [here](#the-.ttfautohint-glyph).
- *     Setting it to\ 0, the components of composite glyphs are hinted
- *     separately.  While separate hinting of subglyphs makes the resulting
- *     bytecode much smaller, it might deliver worse results.  However, this
- *     depends on the processed font and must be checked by inspection.
+ * `hint-composites`
+ * :   If this integer is set to\ 1, composite glyphs get separate hints.
+ *     This implies adding a special glyph to the font, as documented
+ *     [here](#the-.ttfautohint-glyph).  Setting it to\ 0 (which is the
+ *     default), the hints of the composite glyphs' components are used.
+ *     Adding hints for composite glyphs increases the size of the resulting
+ *     bytecode a lot, but it might deliver better hinting results.
+ *     However, this depends on the processed font and must be checked by
+ *     inspection.
  *
  * `pre-hinting`
  * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) to

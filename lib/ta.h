@@ -224,7 +224,7 @@ struct FONT_
   FT_Bool dw_cleartype_strong_stem_width;
   FT_Bool windows_compatibility;
   FT_Bool pre_hinting;
-  FT_Bool hint_with_components;
+  FT_Bool hint_composites;
   FT_Bool ignore_restrictions;
   FT_UInt fallback_script;
   FT_Bool symbol;

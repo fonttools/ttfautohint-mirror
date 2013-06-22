@@ -161,8 +161,7 @@ show_help(bool
 #ifndef BUILD_GUI
 "      --debug                print debugging information\n"
 #endif
-"  -c, --components=no|yes    hint glyph components separately\n"
-"                             (default: yes)\n"
+"  -c, --composites           hint glyph composites also\n"
 "  -d, --dehint               remove all hints\n"
 "  -f, --latin-fallback       set fallback script to latin\n"
 "  -G, --hinting-limit=N      switch off hinting above this PPEM value\n"
@@ -325,7 +324,7 @@ main(int argc,
   bool ignore_restrictions = false;
   bool windows_compatibility = false;
   bool pre_hinting = false;
-  bool hint_with_components = false;
+  bool hint_composites = false;
   bool no_info = false;
   int latin_fallback = 0; // leave it as int; this probably gets extended
   bool symbol = false;
@@ -368,7 +367,7 @@ main(int argc,
 #endif
 
       // ttfautohint options
-      {"components", required_argument, NULL, 'c'},
+      {"composites", no_argument, NULL, 'c'},
 #ifndef BUILD_GUI
       {"debug", no_argument, NULL, DEBUG_OPTION},
 #endif
@@ -418,7 +417,7 @@ main(int argc,
     };
 
     int option_index;
-    int c = getopt_long_only(argc, argv, "c:dfG:hil:npr:stVvw:Wx:X:",
+    int c = getopt_long_only(argc, argv, "cdfG:hil:npr:stVvw:Wx:X:",
                              long_options, &option_index);
     if (c == -1)
       break;
@@ -426,7 +425,7 @@ main(int argc,
     switch (c)
     {
     case 'c':
-      hint_with_components = strcmp(optarg, "no") == 0;
+      hint_composites = true;
       break;
 
     case 'd':
@@ -700,7 +699,7 @@ main(int argc,
 
     info_data.windows_compatibility = windows_compatibility;
     info_data.pre_hinting = pre_hinting;
-    info_data.hint_with_components = hint_with_components;
+    info_data.hint_composites = hint_composites;
     info_data.increase_x_height = increase_x_height;
     info_data.x_height_snapping_exceptions = x_height_snapping_exceptions;
     info_data.latin_fallback = latin_fallback;
@@ -731,7 +730,7 @@ main(int argc,
                  "progress-callback, progress-callback-data,"
                  "info-callback, info-callback-data,"
                  "ignore-restrictions, windows-compatibility,"
-                 "pre-hinting, hint-with-components,"
+                 "pre-hinting, hint-composites,"
                  "increase-x-height, x-height-snapping-exceptions,"
                  "fallback-script, symbol,"
                  "dehint, debug",
@@ -743,7 +742,7 @@ main(int argc,
                  progress_func, &progress_data,
                  info_func, &info_data,
                  ignore_restrictions, windows_compatibility,
-                 pre_hinting, hint_with_components,
+                 pre_hinting, hint_composites,
                  increase_x_height, x_height_snapping_exceptions_string,
                  latin_fallback, symbol,
                  dehint, debug);
@@ -824,7 +823,7 @@ main(int argc,
                dw_cleartype_strong_stem_width, increase_x_height,
                x_height_snapping_exceptions_string,
                ignore_restrictions, windows_compatibility, pre_hinting,
-               hint_with_components, no_info, latin_fallback, symbol,
+               hint_composites, no_info, latin_fallback, symbol,
                dehint);
   gui.show();
 

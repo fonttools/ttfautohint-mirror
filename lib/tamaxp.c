@@ -51,7 +51,7 @@ TA_sfnt_update_maxp_table(SFNT* sfnt,
   }
   else
   {
-    if (sfnt->max_components && font->hint_with_components)
+    if (sfnt->max_components && font->hint_composites)
     {
       buf[MAXP_NUM_GLYPHS] = HIGH(data->num_glyphs);
       buf[MAXP_NUM_GLYPHS + 1] = LOW(data->num_glyphs);

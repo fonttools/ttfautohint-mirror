@@ -39,7 +39,7 @@ typedef struct Info_Data_
 
   bool windows_compatibility;
   bool pre_hinting;
-  bool hint_with_components;
+  bool hint_composites;
   int latin_fallback;
   bool symbol;
   bool dehint;

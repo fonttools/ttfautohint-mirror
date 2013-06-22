@@ -48,7 +48,7 @@ Main_GUI::Main_GUI(int range_min,
                    bool ignore,
                    bool wincomp,
                    bool pre,
-                   bool components,
+                   bool composites,
                    bool no,
                    int fallback,
                    bool symb,
@@ -64,7 +64,7 @@ Main_GUI::Main_GUI(int range_min,
   ignore_restrictions(ignore),
   windows_compatibility(wincomp),
   pre_hinting(pre),
-  hint_with_components(components),
+  hint_composites(composites),
   no_info(no),
   latin_fallback(fallback),
   symbol(symb),
@@ -749,7 +749,7 @@ again:
 
   info_data.windows_compatibility = wincomp_box->isChecked();
   info_data.pre_hinting = pre_box->isChecked();
-  info_data.hint_with_components = hint_box->isChecked();
+  info_data.hint_composites = hint_box->isChecked();
   info_data.latin_fallback = fallback_box->currentIndex();
   info_data.symbol = symbol_box->isChecked();
   info_data.dehint = dehint_box->isChecked();
@@ -792,7 +792,7 @@ again:
                  "ignore-restrictions,"
                  "windows-compatibility,"
                  "pre-hinting,"
-                 "hint-with-components,"
+                 "hint-composites,"
                  "increase-x-height,"
                  "x-height-snapping-exceptions,"
                  "fallback-script, symbol,"
@@ -809,7 +809,7 @@ again:
                  ignore_restrictions,
                  info_data.windows_compatibility,
                  info_data.pre_hinting,
-                 info_data.hint_with_components,
+                 info_data.hint_composites,
                  info_data.increase_x_height,
                  snapping_string.constData(),
                  info_data.latin_fallback, info_data.symbol,
@@ -1000,7 +1000,7 @@ Main_GUI::create_layout()
        " gets applied before <b>TTFautohint</b> starts processing"
        " the outlines of the glyphs."));
 
-  hint_box = new QCheckBox(tr("Hint With Co&mponents")
+  hint_box = new QCheckBox(tr("Hint Co&mposites")
                            + "                ", this); // make label wider
   hint_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> hints composite glyphs"
@@ -1258,7 +1258,7 @@ Main_GUI::set_defaults()
     wincomp_box->setChecked(true);
   if (pre_hinting)
     pre_box->setChecked(true);
-  if (hint_with_components)
+  if (hint_composites)
     hint_box->setChecked(true);
   if (symbol)
     symbol_box->setChecked(true);

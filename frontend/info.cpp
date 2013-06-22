@@ -81,7 +81,7 @@ build_version_string(Info_Data* idata)
     d += sprintf(d, " -W");
   if (idata->pre_hinting)
     d += sprintf(d, " -p");
-  if (!idata->hint_with_components)
+  if (!idata->hint_composites)
     d += sprintf(d, " -c");
   if (idata->latin_fallback)
     d += sprintf(d, " -f");

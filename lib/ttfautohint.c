@@ -87,7 +87,7 @@ TTF_autohint(const char* options,
   FT_Bool windows_compatibility = 0;
   FT_Bool ignore_restrictions = 0;
   FT_Bool pre_hinting = 0;
-  FT_Bool hint_with_components = 0;
+  FT_Bool hint_composites = 0;
   FT_UInt fallback_script = TA_SCRIPT_FALLBACK;
   FT_Bool symbol = 0;
 
@@ -154,8 +154,8 @@ TTF_autohint(const char* options,
       hinting_range_max = (FT_Long)va_arg(ap, FT_UInt);
     else if (COMPARE("hinting-range-min"))
       hinting_range_min = (FT_Long)va_arg(ap, FT_UInt);
-    else if (COMPARE("hint-with-components"))
-      hint_with_components = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("hint-composites"))
+      hint_composites = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("ignore-restrictions"))
       ignore_restrictions = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("in-buffer"))
@@ -308,7 +308,7 @@ TTF_autohint(const char* options,
   font->windows_compatibility = windows_compatibility;
   font->ignore_restrictions = ignore_restrictions;
   font->pre_hinting = pre_hinting;
-  font->hint_with_components = hint_with_components;
+  font->hint_composites = hint_composites;
   font->fallback_script = fallback_script;
   font->symbol = symbol;
 
@@ -352,8 +352,8 @@ No_check:
               font->hinting_range_max);
       DUMPVAL("hinting-range-min",
               font->hinting_range_min);
-      DUMPVAL("hint-with-components",
-              font->hint_with_components);
+      DUMPVAL("hint-composites",
+              font->hint_composites);
       DUMPVAL("ignore-restrictions",
               font->ignore_restrictions);
       DUMPVAL("increase-x-height",
@@ -546,7 +546,7 @@ No_check:
       /* we add one glyph for composites */
       if (sfnt->max_components
           && !font->pre_hinting
-          && font->hint_with_components)
+          && font->hint_composites)
       {
         error = TA_sfnt_update_hmtx_table(sfnt, font);
         if (error)

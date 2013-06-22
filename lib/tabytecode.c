@@ -167,7 +167,7 @@ TA_adjust_point_index(Recorder* recorder,
   FT_UShort i;
 
 
-  if (!glyph->num_components || !font->hint_with_components)
+  if (!glyph->num_components || !font->hint_composites)
     return idx; /* not a composite glyph */
 
   for (i = 0; i < glyph->num_pointsums; i++)
@@ -262,7 +262,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
     need_words = 1;
 
   /* the number of packed segments is indicated by the function number */
-  if (recorder->glyph->num_components && font->hint_with_components)
+  if (recorder->glyph->num_components && font->hint_composites)
     *(arg--) = bci_create_segments_composite_0 + num_packed_segments;
   else
     *(arg--) = bci_create_segments_0 + num_packed_segments;
@@ -415,7 +415,7 @@ TA_sfnt_build_glyph_scaler(SFNT* sfnt,
   if (num_args > 0xFF)
     need_words = 1;
 
-  if (recorder->glyph->num_components && font->hint_with_components)
+  if (recorder->glyph->num_components && font->hint_composites)
     *(arg--) = bci_scale_composite_glyph;
   else
     *(arg--) = bci_scale_glyph;
@@ -1672,7 +1672,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   load_flags = 1 << 29; /* vertical hinting only */
   if (!font->pre_hinting)
   {
-    if (font->hint_with_components)
+    if (font->hint_composites)
       load_flags |= FT_LOAD_NO_SCALE;
     else
       load_flags |= FT_LOAD_NO_RECURSE;

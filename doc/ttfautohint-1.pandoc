@@ -352,17 +352,17 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     CJK fonts need this because the bytecode is used to scale and shift
     subglyphs.  For most fonts, however, this is not the case.
 
-### Hint With Components
+### Hint Composites
 
-`--components`, `-c`
-:   Hint glyph components separately instead of hinting composite glyphs as
-    a whole.  Using this flag reduces the bytecode size enormously, however,
-    it might yield worse results.  In the GUI it is similar: If you uncheck
-    the 'Process With Components' box, glyph components are hinted
-    separately.
+`--composites`, `-c`
+:   By default, the components of a composite glyph get hinted separately.
+    If this flag is set, the composite glyph itself gets hinted (and the
+    hints of the components are ignored).  Using this flag increases the
+    bytecode size a lot, however, it might yield better hinting results.
 
-    If a font contains composite glyphs and those glyphs are hinted as a
-    whole, ttfautohint cannot reprocess its own output.
+    If this option is used (and a font actually contains composite glyphs),
+    ttfautohint cannot reprocess its own output for technical reasons, see
+    [below](#the-.ttfautohint-glyph).
 
 ### Symbol Font
 
@@ -673,13 +673,11 @@ hinting gets applied.
 The '\.ttfautohint' Glyph
 -------------------------
 
-[The behaviour described in this section does not apply if [option
-`--components`](#hint-with-components) is used.]
-
-By default, ttfautohint doesn't hint subglyphs of composite glyphs
-separately.  Instead, it hints the whole glyph, this is, composites get
-recursively expanded internally so that they form simple glyphs, then hints
-are applied -- this is the normal working mode of FreeType's auto-hinter.
+If [option `--composites`](#hint-composites) is used, ttfautohint doesn't
+hint subglyphs of composite glyphs separately.  Instead, it hints the whole
+glyph, this is, composites get recursively expanded internally so that they
+form simple glyphs, then hints are applied -- this is the normal working
+mode of FreeType's auto-hinter.
 
 One problem, however, must be solved: Hinting for subglyphs (which usually
 are used as normal glyphs also) must be deactivated so that nothing but the
@@ -694,7 +692,7 @@ eventually decrements this variable again.
 
 As an example, let's consider composite glyph 'Agrave' ('À') which has the
 subglyph 'A' as the base and 'grave' as its accent.  After processing with
-ttfautohint it consists of three subglyphs: '\.ttfautohint', 'A', and
+ttfautohint it consists of three components: '\.ttfautohint', 'A', and
 'grave' (in this order).
 
   Bytecode of    Action
@@ -717,6 +715,7 @@ the font!  Under normal circumstances this never happens because
 '\.ttfautohint' doesn't have an entry in the font's `cmap` table.  (However,
 some test and demo programs like FreeType's `ftview` application or other
 glyph viewers which are able to bypass the `cmap` table might be affected.)
+
 
 Scripts
 -------
@@ -778,9 +777,10 @@ font.  Note that only OpenType fonts with TrueType outlines are supported.
 OpenType fonts with a `CFF` table (this is, with PostScript outlines) won't
 work.
 
-  * `glyf`: One glyph gets added (namely the '\.ttfautohint' glyph); all
-    composites get an additional component; all hints in the table are
-    replaced with new ones.
+  * `glyf`: All hints in the table are replaced with new ones.  If option
+    [`--composites`](#hint-composites) is used, one glyph gets added (namely
+    the '\.ttfautohint' glyph) and all composites get an additional
+    component.
 
   * `cvt`, `prep`, and `fpgm`: These tables get replaced with data
     necessary for the new hinting bytecode.

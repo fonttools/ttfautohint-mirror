@@ -85,7 +85,7 @@ private:
   int ignore_restrictions;
   int windows_compatibility;
   int pre_hinting;
-  int hint_with_components;
+  int hint_composites;
   int no_info;
   int latin_fallback;
   int symbol;
