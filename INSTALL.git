@@ -5,10 +5,10 @@ building and installing ttfautohint from git
 Building ttfautohint from the git repository needs some tools which are not
 required when building from a release:
 
-  autoconf (2.68)
-  automake (1.11.1)
+  autoconf (2.65)
+  automake (1.13)
   git (1.5.5)
-  libtool (2.4.2)
+  libtool (2.2.2)
 
 If you configure to build the documentation files also (which are normally
 distributed with the release package), the following is necessary:
