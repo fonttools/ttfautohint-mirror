@@ -189,7 +189,7 @@ if test x"$with_doc" != x"no"; then
 
   # conversion of SVG to PDF
   AC_CHECK_PROG([INKSCAPE], [inkscape], [inkscape], [no])
-  if test x"$PANDOC" == x"no"; then
+  if test x"$INKSCAPE" == x"no"; then
     TA_DOC([$pdf_file],
            [Need inkscape to convert SVG image files to PDF])
   fi
