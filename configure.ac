@@ -200,11 +200,6 @@ if test x"$with_doc" != x"no"; then
     TA_DOC([$html_file],
            [Need pandoc to create PDF and HTML documentation files])
   fi
-  AC_CHECK_PROG([GHC], [ghc], [ghc], [no])
-  if test x"$GHC" == x"no"; then
-    TA_DOC([$html_file],
-           [Need Glasgow Haskell Compiler (ghc) to create pandoc filter])
-  fi
 
   # PDF documentation
   AC_CHECK_PROG([PDFLATEX], [pdflatex], [pdflatex], [no])

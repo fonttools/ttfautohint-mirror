@@ -45,7 +45,6 @@ DOC = ttfautohint.html \
       $(DOCIMGPDF)
 
 EXTRA_DIST = c2pandoc.sed \
-             handle-images.hs \
              make-snapshot.sh \
              strip-comments.sh \
              ttfautohint-1.pandoc \
@@ -68,10 +67,6 @@ ttfautohint.txt: $(DOCSRC)
 
 if WITH_DOC
 
-  # the pandoc image filter
-  handle-images: handle-images.hs
-	  $(GHC) -dynamic --make $@
-
   # suffix rules must always start in column 0
 .svg.pdf:
 	  $(INKSCAPE) --export-pdf=$@ $<
@@ -87,36 +82,30 @@ if WITH_DOC
 	  $(SHELL) $(srcdir)/make-snapshot.sh \
 	             $(top_builddir)/frontend/ttfautohintGUI$(EXEEXT) $@
 
-  ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) handle-images \
+  ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) \
                     ttfautohint-css.html template.html $(top_srcdir)/.version
-	  $(PANDOC) --to=json \
-	            --smart \
-	            $< \
-	  | ./handle-images ".svg" \
-	  | $(PANDOC) --from=json \
-	              --template=$(srcdir)/template.html \
-	              --variable="version:$(VERSION)" \
-	              --toc \
-	              --include-in-header=$(srcdir)/ttfautohint-css.html \
-	              --standalone \
-	              --output=$@
+	  $(PANDOC) --smart \
+	            --template=$(srcdir)/template.html \
+	            --default-image-extension=".svg" \
+	            --variable="version:$(VERSION)" \
+	            --toc \
+	            --include-in-header=$(srcdir)/ttfautohint-css.html \
+	            --standalone \
+	            --output=$@ $<
 
-  ttfautohint.pdf: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGPDF) handle-images \
+  ttfautohint.pdf: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGPDF) \
                    template.tex $(top_srcdir)/.version
-	  $(PANDOC) --to=json \
-	            --smart \
-	            $< \
-	  | ./handle-images ".pdf" \
-	  | TEXINPUTS="$(srcdir);" \
-	    $(PANDOC) --from=json \
-	              --latex-engine=$(PDFLATEX) \
-	              --template=$(srcdir)/template.tex \
-	              --variable="version:$(VERSION)" \
-	              --number-sections \
-	              --toc \
-	              --chapters \
-	              --standalone \
-	              --output=$@
+	  TEXINPUTS="$(srcdir);" \
+	  $(PANDOC) --smart \
+	            --latex-engine=$(PDFLATEX) \
+	            --template=$(srcdir)/template.tex \
+	            --default-image-extension=".pdf" \
+	            --variable="version:$(VERSION)" \
+	            --number-sections \
+	            --toc \
+	            --chapters \
+	            --standalone \
+	            --output=$@ $<
 else
 .svg.pdf:
 	  @echo 1>&2 "warning: can't generate \`$@'"
