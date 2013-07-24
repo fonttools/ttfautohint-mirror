@@ -8,8 +8,8 @@
 \usepackage{fixltx2e}
 \usepackage{libertine}
 
-% Libertine Mono is too ugly...
-\renewcommand{\ttfamily}{\fontfamily{cmtt}\selectfont}
+% Libertine Mono is too ugly; we use lmodern instead
+\renewcommand{\ttfamily}{\fontfamily{lmtt}\selectfont}
 
 \setkomafont{sectioning}{\normalfont\bfseries}
 \setkomafont{descriptionlabel}{\normalfont}
@@ -39,12 +39,64 @@ $if(fancy-enums)$
 $endif$
 
 $if(tables)$
-\usepackage{ctable}
-\usepackage{float} % provides the H option for float placement
+\usepackage{longtable}
 
-% pandoc uses \medskip between table rows which looks ugly
-\setupctable{%
-  doinside={\let\medskip\relax}}
+% We redefine the main `longtable' macro to suppress the ugly \medskip which
+% pandoc inserts between rows.
+%
+% We also don't want line breaks after horizontal lines.  This is quite
+% tricky, since `longtable' doesn't provide a proper command.  The solution
+% below is taken from
+%
+%   http://tex.stackexchange.com/questions/6350/how-to-disable-pagebreak-on-hline-in-longtable
+%
+% (with slight modifications) and we use it to simply redefine \hline
+% locally.  Note that this macro also adds some slight vertical space before
+% and after the line to get better results (similar to `ctable').
+
+\makeatletter
+
+\def\LT@nobreakhline{%
+  \noalign{\ifnum0=`}\fi
+  \penalty\@M
+  \futurelet\@let@token\LT@@nobreakhline}
+
+\def\LT@@nobreakhline{%
+  \ifx\@let@token\hline
+    \global\let\@gtempa\@gobble
+    \gdef\LT@sep{%
+      \penalty\@M
+      \vskip\doublerulesep}%
+  \else
+    \global\let\@gtempa\@empty
+    \gdef\LT@sep{%
+      \penalty\@M
+      \vskip-\arrayrulewidth}%
+  \fi
+  \ifnum0=`{\fi}%
+%
+  \noalign{\vskip 0.4ex%
+           \penalty\@M}%
+%
+  \multispan\LT@cols
+    \unskip\leaders\hrule\@height\arrayrulewidth\hfill\cr
+  \noalign{\LT@sep}%
+  \multispan\LT@cols
+    \unskip\leaders\hrule\@height\arrayrulewidth\hfill\cr
+%
+  \noalign{\penalty\@M
+           \vskip 0.4ex}%
+%
+  \noalign{\penalty\@M}%
+  \@gtempa}
+
+\let\original@LT@array\LT@array
+\def\LT@array{%
+  \let\medskip\relax
+  \let\LT@hline\LT@nobreakhline
+  \original@LT@array}
+
+\makeatother
 $endif$
 
 $if(url)$
@@ -85,41 +137,26 @@ $endif$
               linkcolor=blue]{hyperref}
   \usepackage{microtype}
 \fi
-\hypersetup{breaklinks=true, pdfborder={0 0 0}}
+\hypersetup{breaklinks=true,
+            pdfauthor={$author-meta$},
+            pdftitle={$title-meta$},
+            pdfborder={0 0 0}}
 
 % We want the names `section 2', `subsection 4.1', and the like in local
-% links, omitting the original link text.  To do that, we redefine \href.
+% links, omitting the original link text.  To do that, we redefine
+% \hyperref.
 \makeatletter
 
-\let\original@href\href
+% We transform
+%
+%   \hyperref[foo]{bar}
+%
+% into
+%
+%   bar (\autoref{foo})
 
-% Here is the new \href wrapper.  We check whether the first token is \#.
-% If yes, we call \autoref, otherwise the original \href macro.  \@nil is a
-% delimiter token which we need, because we call the arguments in
-% \modified@href without braces so that we can split off the first token.
-\def\href#1{%
-  \modified@href #1\@nil}
-
-% Using \expandafter makes TeX finish the \if clause before one of the
-% \almost@xxx macros picks up the arguments.
-\def\modified@href#1#2\@nil{%
-  \ifx #1\#%
-    \expandafter\almost@autoref
-  \else
-    \expandafter\almost@original@href
-  \fi
-  {#1}{#2}}
-
-% We normalize \_ in the reference (argument #2), which we put into
-% parentheses after the label (argument #3).  Argument #1 holds \# which we
-% skip.
-\def\almost@autoref#1#2#3{%
-  #3 (\hyper@normalise\autoref{#2})}
-
-% For a non-local link, unify the split off first character with the
-% remaining part of the link.
-\def\almost@original@href#1#2{%
-  \original@href{#1#2}}
+\def\label@hyperref[#1]#2{%
+  #2 (\autoref{#1})}
 
 \makeatother
 
@@ -228,6 +265,7 @@ $endif$
 
 
 $if(numbersections)$
+\setcounter{secnumdepth}{5}
 $else$
 \setcounter{secnumdepth}{0}
 $endif$
