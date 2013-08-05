@@ -157,7 +157,7 @@ Both the GUI and console version share the same features, to be discussed in
 the next subsection.
 
 **Warning: ttfautohint cannot always process a font a second time.**
-If the font contains composite glyphs, and option `-c` is not used,
+If the font contains composite glyphs, and option `-c` is used,
 reprocessing with ttfautohint will fail.  For this reason it is strongly
 recommended to *not* delete the original, unhinted font so that you can
 always rerun ttfautohint.
