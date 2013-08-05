@@ -230,6 +230,9 @@ typedef enum TA_Direction_
 /* all inflection points in the outline have this flag set */
 #define TA_FLAG_INFLECTION (1 << 9)
 
+/* the current point is very near to another one */
+#define TA_FLAG_NEAR (1 << 10)
+
 
 /* edge hint flags */
 #define TA_EDGE_NORMAL 0
