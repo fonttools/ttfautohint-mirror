@@ -187,7 +187,7 @@ typedef struct TA_FaceGlobalsRec_* TA_FaceGlobals;
 
 typedef struct TA_ScriptMetricsRec_
 {
-  TA_ScriptClass clazz;
+  TA_ScriptClass script_class;
   TA_ScalerRec scaler;
   FT_Bool digits_have_same_width;
 

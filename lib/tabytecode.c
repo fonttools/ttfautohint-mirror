@@ -1737,7 +1737,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   }
 
   /* only scale the glyph if the dummy hinter has been used */
-  if (font->loader->metrics->clazz == &ta_dummy_script_class)
+  if (font->loader->metrics->script_class == &ta_dummy_script_class)
   {
     /* since `TA_init_recorder' hasn't been called yet, */
     /* we manually initialize the `font' and `glyph' fields */

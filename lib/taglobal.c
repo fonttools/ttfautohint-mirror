@@ -77,16 +77,16 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
   /* scan each script in a Unicode charmap */
   for (ss = 0; ta_script_classes[ss]; ss++)
   {
-    TA_ScriptClass clazz = ta_script_classes[ss];
+    TA_ScriptClass script_class = ta_script_classes[ss];
     TA_Script_UniRange range;
 
 
-    if (clazz->script_uni_ranges == NULL)
+    if (script_class->script_uni_ranges == NULL)
       continue;
 
     /* scan all Unicode points in the range and */
     /* set the corresponding glyph script index */
-    for (range = clazz->script_uni_ranges; range->first != 0; range++)
+    for (range = script_class->script_uni_ranges; range->first != 0; range++)
     {
       FT_ULong charcode = range->first;
       FT_UInt gindex;
@@ -196,15 +196,15 @@ ta_face_globals_free(TA_FaceGlobals globals)
     {
       if (globals->metrics[nn])
       {
-        TA_ScriptClass clazz = ta_script_classes[nn];
+        TA_ScriptClass script_class = ta_script_classes[nn];
 
 
 #if 0
-        FT_ASSERT(globals->metrics[nn]->clazz == clazz);
+        FT_ASSERT(globals->metrics[nn]->script_class == script_class);
 #endif
 
-        if (clazz->script_metrics_done)
-          clazz->script_metrics_done(globals->metrics[nn]);
+        if (script_class->script_metrics_done)
+          script_class->script_metrics_done(globals->metrics[nn]);
 
         free(globals->metrics[nn]);
         globals->metrics[nn] = NULL;
@@ -229,7 +229,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
 {
   TA_ScriptMetrics metrics = NULL;
   FT_UInt gidx;
-  TA_ScriptClass clazz;
+  TA_ScriptClass script_class;
   FT_UInt script = options & 15;
   const FT_Offset script_max = sizeof (ta_script_classes)
                                / sizeof (ta_script_classes[0]);
@@ -247,31 +247,31 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
       || gidx + 1 >= script_max)
     gidx = globals->glyph_scripts[gindex] & TA_SCRIPT_NONE;
 
-  clazz = ta_script_classes[gidx];
+  script_class = ta_script_classes[gidx];
   if (script == 0)
-    script = clazz->script;
+    script = script_class->script;
 
-  metrics = globals->metrics[clazz->script];
+  metrics = globals->metrics[script_class->script];
   if (metrics == NULL)
   {
     /* create the global metrics object if necessary */
-    metrics = (TA_ScriptMetrics)calloc(1, clazz->script_metrics_size);
+    metrics = (TA_ScriptMetrics)calloc(1, script_class->script_metrics_size);
     if (!metrics)
     {
       error = FT_Err_Out_Of_Memory;
       goto Exit;
     }
 
-    metrics->clazz = clazz;
+    metrics->script_class = script_class;
     metrics->globals = globals;
 
-    if (clazz->script_metrics_init)
+    if (script_class->script_metrics_init)
     {
-      error = clazz->script_metrics_init(metrics, globals->face);
+      error = script_class->script_metrics_init(metrics, globals->face);
       if (error)
       {
-        if (clazz->script_metrics_done)
-          clazz->script_metrics_done(metrics);
+        if (script_class->script_metrics_done)
+          script_class->script_metrics_done(metrics);
 
         free(metrics);
         metrics = NULL;
@@ -279,7 +279,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
       }
     }
 
-    globals->metrics[clazz->script] = metrics;
+    globals->metrics[script_class->script] = metrics;
   }
 
 Exit:

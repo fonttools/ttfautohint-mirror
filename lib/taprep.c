@@ -575,7 +575,7 @@ TA_table_build_prep(FT_Byte** prep,
   FT_Byte* buf_p = NULL;
 
 
-  if (font->loader->hints.metrics->clazz->script == TA_SCRIPT_NONE)
+  if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_NONE)
     vaxis = NULL;
   else
   {
