@@ -40,18 +40,15 @@ TA_WritingSystemClass const ta_writing_system_classes[] =
 };
 
 
-/* populate this list when you add new scripts */
+#undef SCRIPT
+#define SCRIPT(s, S) \
+          &ta_ ## s ## _script_class,
+
 TA_ScriptClass const ta_script_classes[] =
 {
-  &ta_dflt_script_class, /* XXX */
-  &ta_latn_script_class,
-#if 0
-  &ta_hani_script_class,
-  &ta_deva_script_class,
-#endif
-#ifdef FT_OPTION_AUTOFIT2
-  &ta_ltn2_script_class,
-#endif
+
+#include "tascript.h"
+
   NULL  /* do not remove */
 };
 

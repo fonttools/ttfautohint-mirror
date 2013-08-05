@@ -238,21 +238,15 @@ typedef struct TA_WritingSystemClassRec_
  *  We use four-letter script tags from the OpenType specification.
  */
 
+#undef SCRIPT
+#define SCRIPT(s, S) \
+          TA_SCRIPT_ ## S,
+
 /* The list of known scripts. */
 typedef enum TA_Script_
 {
-  TA_SCRIPT_DFLT = 0,
-  TA_SCRIPT_LATN = 1,
-#if 0
-  TA_SCRIPT_HANI = 2,
-  TA_SCRIPT_DEVA = 3,
-#endif
-#ifdef FT_OPTION_AUTOFIT2
-  TA_SCRIPT_LTN2 = 4,
-#endif
 
-  /* add new scripts here; */
-  /* don't forget to update the list in `taglobal.c' */
+#include "tascript.h"
 
   TA_SCRIPT_MAX /* do not remove */
 } TA_Script;

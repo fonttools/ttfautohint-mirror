@@ -1,7 +1,7 @@
 /* tawrtsys.h */
 
 /*
- * Copyright (C) 2011-2013 by Werner Lemberg.
+ * Copyright (C) 2013 by Werner Lemberg.
  *
  * This file is part of the ttfautohint library, and may only be used,
  * modified, and distributed under the terms given in `COPYING'.  By
@@ -14,7 +14,6 @@
 
 
 /* originally file `afwrtsys.h' (2013-Aug-05) from FreeType */
-
 
 
 #ifndef __TAWRTSYS_H__
@@ -36,21 +35,20 @@
 #endif /* __TAWRTSYS_H__ */
 
 
-  /* The following part can be included multiple times. */
-  /* Define `WRITING_SYSTEM' as needed.                 */
+/* The following part can be included multiple times. */
+/* Define `WRITING_SYSTEM' as needed.                 */
 
 
-  /* Add new writing systems here. */
+/* Add new writing systems here. */
 
-  WRITING_SYSTEM(dummy, DUMMY)
-  WRITING_SYSTEM(latin, LATIN)
+WRITING_SYSTEM(dummy, DUMMY)
+WRITING_SYSTEM(latin, LATIN)
 #if 0
-  WRITING_SYSTEM(cjk, CJK)
-  WRITING_SYSTEM(indic, INDIC)
+WRITING_SYSTEM(cjk, CJK)
+WRITING_SYSTEM(indic, INDIC)
 #endif
 #ifdef FT_OPTION_AUTOFIT2
-  WRITING_SYSTEM(latin2, LATIN2)
+WRITING_SYSTEM(latin2, LATIN2)
 #endif
 
-
-/* END */
+/* end of tawrtsys.h */
