@@ -56,15 +56,19 @@ typedef enum TA_Direction_
  *
  *  by David Turner and Werner Lemberg
  *
- *   http://www.tug.org/TUGboat/Articles/tb24-3/lemberg.pdf
+ *    http://www.tug.org/TUGboat/Articles/tb24-3/lemberg.pdf
+ *
+ *  with appropriate updates.
  *
  *
  *  Segments
  *
  *    `ta_{cjk,latin,...}_hints_compute_segments' are the functions to
- *    find segments in an outline.  A segment is a series of consecutive
- *    points that are approximately aligned along a coordinate axis.  The
- *    analysis to do so is specific to a script.
+ *    find segments in an outline.
+ *
+ *    A segment is a series of consecutive points that are approximately
+ *    aligned along a coordinate axis.  The analysis to do so is specific
+ *    to a writing system.
  *
  *    A segment must have at least two points, except in the case of
  *    `fake' segments that are generated to hint metrics appropriately,
@@ -73,16 +77,17 @@ typedef enum TA_Direction_
  *
  *  Edges
  *
+ *    `ta_{cjk,latin,...}_hints_compute_edges' are the functions to find
+ *    edges.
+ *
  *    As soon as segments are defined, the auto-hinter groups them into
  *    edges.  An edge corresponds to a single position on the main
  *    dimension that collects one or more segments (allowing for a small
  *    threshold).
  *
- *    The auto-hinter first tries to grid fit edges, then to align
- *    segments on the edges unless it detects that they form a serif.
- *
- *    `ta_{cjk,latin,...}_hints_compute_edges' are the functions to find
- *    edges; they are specific to a script.
+ *    As an example, the `latin' writing system first tries to grid-fit
+ *    edges, then to align segments on the edges unless it detects that
+ *    they form a serif.
  *
  *
  *                      A          H
@@ -100,6 +105,8 @@ typedef enum TA_Direction_
  *
  *
  *  Stems
+ *
+ *    Stems are detected by `ta_{cjk,latin,...}_hint_edges'.
  *
  *    Segments need to be `linked' to other ones in order to detect stems.
  *    A stem is made of two segments that face each other in opposite
@@ -121,17 +128,21 @@ typedef enum TA_Direction_
  *    The best candidate is stored in field `link' in structure
  *    `TA_Segment'.
  *
- *    Stems are detected by `ta_{cjk,latin,...}_hint_edges'.
- *
  *    In the above ASCII drawing, the best candidate for both AB and CD is
  *    GH, while the best candidate for GH is AB.  Similarly, the best
  *    candidate for EF and GH is AB, while the best candidate for AB is
  *    GH.
  *
+ *    The detection and handling of stems is dependent on the writing
+ *    system.
+ *
  *
  *  Serifs
  *
- *    On the opposite, a serif has
+ *    Serifs are detected by `ta_{cjk,latin,...}_hint_edges'.
+ *
+ *    In comparison to a stem, a serif (as handled by the auto-hinter
+ *    module which takes care of the `latin' writing system) has
  *
  *      best segment_1 = segment_2 && best segment_2 != segment_1
  *
@@ -140,8 +151,6 @@ typedef enum TA_Direction_
  *
  *    The best candidate is stored in field `serif' in structure
  *    `TA_Segment' (and `link' is set to NULL).
- *
- *    Serifs are detected by `ta_{cjk,latin,...}_hint_edges'.
  *
  *
  *  Touched points
@@ -172,7 +181,8 @@ typedef enum TA_Direction_
  *      differ greatly)
  *
  *    - inflection points (i.e., where the `in' and `out' angles are the
- *      same, but the curvature changes sign)
+ *      same, but the curvature changes sign) [currently, such points
+ *      aren't handled in the auto-hinter]
  *
  *    `ta_glyph_hints_align_strong_points' is the function which takes
  *    care of such situations; it is equivalent to the TrueType `IP'
