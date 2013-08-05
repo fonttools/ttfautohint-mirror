@@ -145,43 +145,10 @@ typedef struct TA_ScalerRec_
            && (a)->y_delta == (b)->y_delta)
 
 
-/*
- *  The list of known scripts.  Each different script corresponds to the
- *  following information:
- *
- *   - A set of Unicode ranges to test whether the face supports the
- *     script.
- *
- *   - A specific global analyzer that will compute global metrics
- *     specific to the script.
- *
- *   - A specific glyph analyzer that will compute segments and
- *     edges for each glyph covered by the script.
- *
- *   - A specific grid-fitting algorithm that will distort the
- *     scaled glyph outline according to the results of the glyph
- *     analyzer.
- *
- *  Note that a given analyzer and/or grid-fitting algorithm can be
- *  used by more than one script.
- */
+/* This is the main structure which combines writing systems and script */
+/* data (for a given face object, see below). */
 
-typedef enum TA_Script_
-{
-  TA_SCRIPT_DUMMY = 0,
-  TA_SCRIPT_LATIN = 1,
-  TA_SCRIPT_CJK = 2,
-  TA_SCRIPT_INDIC = 3, 
-#ifdef FT_OPTION_AUTOFIT2
-  TA_SCRIPT_LATIN2 = 4,
-#endif
-
-  /* add new scripts here; */
-  /* don't forget to update the list in `taglobal.c' */
-
-  TA_SCRIPT_MAX /* do not remove */
-} TA_Script;
-
+typedef struct TA_WritingSystemClassRec_ const* TA_WritingSystemClass;
 typedef struct TA_ScriptClassRec_ const* TA_ScriptClass;
 typedef struct TA_FaceGlobalsRec_* TA_FaceGlobals;
 
@@ -214,6 +181,87 @@ typedef void
                             TA_ScriptMetrics metrics);
 
 
+/*
+ *  In FreeType, a writing system consists of multiple scripts which can
+ *  be handled similarly *in a typographical way*; the relationship is not
+ *  based on history.  For example, both the Greek and the unrelated
+ *  Armenian scripts share the same features like ascender, descender,
+ *  x-height, etc.  Essentially, a writing system is covered by a
+ *  submodule of the auto-fitter; it contains
+ *
+ *  - a specific global analyzer which computes global metrics specific to
+ *    the script (based on script-specific characters to identify ascender
+ *    height, x-height, etc.),
+ *
+ *  - a specific glyph analyzer that computes segments and edges for each
+ *    glyph covered by the script,
+ *
+ *  - a specific grid-fitting algorithm that distorts the scaled glyph
+ *    outline according to the results of the glyph analyzer.
+ */
+
+/* The list of known writing systems. */
+typedef enum TA_WritingSystem_
+{
+  TA_WRITING_SYSTEM_DUMMY = 0,
+  TA_WRITING_SYSTEM_LATIN = 1,
+#if 0
+  TA_WRITING_SYSTEM_CJK = 2,
+  TA_WRITING_SYSTEM_INDIC = 3,
+#endif
+#ifdef FT_OPTION_AUTOFIT2
+  TA_WRITING_SYSTEM_LATIN2 = 4,
+#endif
+
+  /* add new writing systems here; */
+  /* don't forget to update the list in `taglobal.c' */
+
+  TA_WRITING_SYSTEM_MAX /* do not remove */
+} TA_WritingSystem;
+
+
+typedef struct TA_WritingSystemClassRec_
+{
+  TA_WritingSystem writing_system;
+
+  FT_Offset script_metrics_size;
+  TA_Script_InitMetricsFunc script_metrics_init;
+  TA_Script_ScaleMetricsFunc script_metrics_scale;
+  TA_Script_DoneMetricsFunc script_metrics_done;
+
+  TA_Script_InitHintsFunc script_hints_init;
+  TA_Script_ApplyHintsFunc script_hints_apply;
+} TA_WritingSystemClassRec;
+
+
+/*
+ *  Each script is associated with a set of Unicode ranges which gets used
+ *  to test whether the font face supports the script.  It also references
+ *  the writing system it belongs to.
+ *
+ *  We use four-letter script tags from the OpenType specification.
+ */
+
+/* The list of known scripts. */
+typedef enum TA_Script_
+{
+  TA_SCRIPT_DFLT = 0,
+  TA_SCRIPT_LATN = 1,
+#if 0
+  TA_SCRIPT_HANI = 2,
+  TA_SCRIPT_DEVA = 3,
+#endif
+#ifdef FT_OPTION_AUTOFIT2
+  TA_SCRIPT_LTN2 = 4,
+#endif
+
+  /* add new scripts here; */
+  /* don't forget to update the list in `taglobal.c' */
+
+  TA_SCRIPT_MAX /* do not remove */
+} TA_Script;
+
+
 typedef struct TA_Script_UniRangeRec_
 {
   FT_UInt32 first;
@@ -228,16 +276,10 @@ typedef const TA_Script_UniRangeRec* TA_Script_UniRange;
 typedef struct TA_ScriptClassRec_
 {
   TA_Script script;
+  TA_WritingSystem writing_system;
+
   TA_Script_UniRange script_uni_ranges; /* last must be { 0, 0 } */
   FT_UInt32 standard_char; /* for default width and height */
-
-  FT_Offset script_metrics_size;
-  TA_Script_InitMetricsFunc script_metrics_init;
-  TA_Script_ScaleMetricsFunc script_metrics_scale;
-  TA_Script_DoneMetricsFunc script_metrics_done;
-
-  TA_Script_InitHintsFunc script_hints_init;
-  TA_Script_ApplyHintsFunc script_hints_apply;
 } TA_ScriptClassRec;
 
 #endif /* __TATYPES_H__ */

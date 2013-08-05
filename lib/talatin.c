@@ -2548,10 +2548,25 @@ Exit:
 }
 
 
+const TA_WritingSystemClassRec ta_latin_writing_system_class =
+{
+  TA_WRITING_SYSTEM_LATIN,
+
+  sizeof (TA_LatinMetricsRec),
+
+  (TA_Script_InitMetricsFunc)ta_latin_metrics_init,
+  (TA_Script_ScaleMetricsFunc)ta_latin_metrics_scale,
+  (TA_Script_DoneMetricsFunc)NULL,
+
+  (TA_Script_InitHintsFunc)ta_latin_hints_init,
+  (TA_Script_ApplyHintsFunc)ta_latin_hints_apply
+};
+
+
 /* XXX: this should probably fine tuned to differentiate better between */
 /* scripts... */
 
-static const TA_Script_UniRangeRec ta_latin_uniranges[] =
+static const TA_Script_UniRangeRec ta_latn_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0020UL, 0x007FUL), /* Basic Latin (no control chars) */
   TA_UNIRANGE_REC(0x00A0UL, 0x00FFUL), /* Latin-1 Supplement (no control chars) */
@@ -2585,20 +2600,13 @@ static const TA_Script_UniRangeRec ta_latin_uniranges[] =
 };
 
 
-const TA_ScriptClassRec ta_latin_script_class =
+const TA_ScriptClassRec ta_latn_script_class =
 {
-  TA_SCRIPT_LATIN,
-  ta_latin_uniranges,
-  'o',
+  TA_SCRIPT_LATN,
+  TA_WRITING_SYSTEM_LATIN,
 
-  sizeof (TA_LatinMetricsRec),
-
-  (TA_Script_InitMetricsFunc)ta_latin_metrics_init,
-  (TA_Script_ScaleMetricsFunc)ta_latin_metrics_scale,
-  (TA_Script_DoneMetricsFunc)NULL,
-
-  (TA_Script_InitHintsFunc)ta_latin_hints_init,
-  (TA_Script_ApplyHintsFunc)ta_latin_hints_apply
+  ta_latn_uniranges,
+  'o'
 };
 
 /* end of talatin.c */

@@ -33,19 +33,36 @@
 #endif
 #endif /* 0 */
 
-/* populate this list when you add new scripts */
-static TA_ScriptClass const ta_script_classes[] =
+
+/* populate this list when you add new writing systems */
+TA_WritingSystemClass const ta_writing_system_classes[] =
 {
-  &ta_dummy_script_class,
-#ifdef FT_OPTION_AUTOFIT2
-  &ta_latin2_script_class,
-#endif
-  &ta_latin_script_class,
+  &ta_dummy_writing_system_class,
+  &ta_latin_writing_system_class,
 #if 0
-  &ta_cjk_script_class,
-  &ta_indic_script_class,
+  &ta_cjk_writing_system_class,
+  &ta_indic_writing_system_class,
+#endif
+#ifdef FT_OPTION_AUTOFIT2
+  &ta_latin2_writing_system_class,
 #endif
   NULL /* do not remove */
+};
+
+
+/* populate this list when you add new scripts */
+TA_ScriptClass const ta_script_classes[] =
+{
+  &ta_dflt_script_class, /* XXX */
+  &ta_latn_script_class,
+#if 0
+  &ta_hani_script_class,
+  &ta_deva_script_class,
+#endif
+#ifdef FT_OPTION_AUTOFIT2
+  &ta_ltn2_script_class,
+#endif
+  NULL  /* do not remove */
 };
 
 
@@ -196,15 +213,14 @@ ta_face_globals_free(TA_FaceGlobals globals)
     {
       if (globals->metrics[nn])
       {
-        TA_ScriptClass script_class = ta_script_classes[nn];
+        TA_ScriptClass script_class =
+          ta_script_classes[nn];
+        TA_WritingSystemClass writing_system_class =
+          ta_writing_system_classes[script_class->writing_system];
 
 
-#if 0
-        FT_ASSERT(globals->metrics[nn]->script_class == script_class);
-#endif
-
-        if (script_class->script_metrics_done)
-          script_class->script_metrics_done(globals->metrics[nn]);
+        if (writing_system_class->script_metrics_done)
+          writing_system_class->script_metrics_done(globals->metrics[nn]);
 
         free(globals->metrics[nn]);
         globals->metrics[nn] = NULL;
@@ -230,6 +246,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
   TA_ScriptMetrics metrics = NULL;
   FT_UInt gidx;
   TA_ScriptClass script_class;
+  TA_WritingSystemClass writing_system_class;
   FT_UInt script = options & 15;
   const FT_Offset script_max = sizeof (ta_script_classes)
                                / sizeof (ta_script_classes[0]);
@@ -247,7 +264,10 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
       || gidx + 1 >= script_max)
     gidx = globals->glyph_scripts[gindex] & TA_SCRIPT_NONE;
 
-  script_class = ta_script_classes[gidx];
+  script_class =
+    ta_script_classes[gidx];
+  writing_system_class =
+    ta_writing_system_classes[script_class->writing_system];
   if (script == 0)
     script = script_class->script;
 
@@ -255,7 +275,8 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
   if (metrics == NULL)
   {
     /* create the global metrics object if necessary */
-    metrics = (TA_ScriptMetrics)calloc(1, script_class->script_metrics_size);
+    metrics = (TA_ScriptMetrics)
+                calloc(1, writing_system_class->script_metrics_size);
     if (!metrics)
     {
       error = FT_Err_Out_Of_Memory;
@@ -265,13 +286,14 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
     metrics->script_class = script_class;
     metrics->globals = globals;
 
-    if (script_class->script_metrics_init)
+    if (writing_system_class->script_metrics_init)
     {
-      error = script_class->script_metrics_init(metrics, globals->face);
+      error = writing_system_class->script_metrics_init(metrics,
+                                                        globals->face);
       if (error)
       {
-        if (script_class->script_metrics_done)
-          script_class->script_metrics_done(metrics);
+        if (writing_system_class->script_metrics_done)
+          writing_system_class->script_metrics_done(metrics);
 
         free(metrics);
         metrics = NULL;

@@ -1707,7 +1707,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
 
   hints = &font->loader->hints;
 
-  /* do nothing if the setup delivered the dummy module only */
+  /* do nothing if the setup delivered the `dflt' script only */
   if (!hints->num_points)
     return FT_Err_Ok;
 
@@ -1736,8 +1736,8 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     goto Done1;
   }
 
-  /* only scale the glyph if the dummy hinter has been used */
-  if (font->loader->metrics->script_class == &ta_dummy_script_class)
+  /* only scale the glyph if the `dflt' script has been used */
+  if (font->loader->metrics->script_class == &ta_dflt_script_class)
   {
     /* since `TA_init_recorder' hasn't been called yet, */
     /* we manually initialize the `font' and `glyph' fields */

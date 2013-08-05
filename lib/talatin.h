@@ -24,9 +24,19 @@
 #include "tahints.h"
 
 
-/* the latin-specific script class */
+/* the `latin' writing system */
 
-extern const TA_ScriptClassRec ta_latin_script_class;
+extern const TA_WritingSystemClassRec ta_latin_writing_system_class;
+
+/* the latin-specific script classes */
+
+extern const TA_ScriptClassRec ta_latn_script_class;
+#if 0
+extern const TA_ScriptClassRec ta_armn_script_class;
+extern const TA_ScriptClassRec ta_cyrl_script_class;
+extern const TA_ScriptClassRec ta_grek_script_class;
+extern const TA_ScriptClassRec ta_hebr_script_class;
+#endif
 
 
 /* constants are given with units_per_em == 2048 in mind */

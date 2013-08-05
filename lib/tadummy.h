@@ -23,10 +23,12 @@
 #include "tatypes.h"
 
 
-/* a dummy script metrics class used when no hinting should */
-/* be performed; this is the default for non-latin glyphs */
+/* a dummy writing system and script class used when no hinting should be */
+/* performed */
 
-extern const TA_ScriptClassRec ta_dummy_script_class;
+extern const TA_WritingSystemClassRec ta_dummy_writing_system_class;
+
+extern const TA_ScriptClassRec ta_dflt_script_class;
 
 #endif /* __TADUMMY_H__ */
 

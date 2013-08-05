@@ -41,11 +41,9 @@ ta_dummy_hints_apply(TA_GlyphHints hints,
 }
 
 
-const TA_ScriptClassRec ta_dummy_script_class =
+const TA_WritingSystemClassRec ta_dummy_writing_system_class =
 {
-  TA_SCRIPT_DUMMY,
-  NULL,
-  0,
+  TA_WRITING_SYSTEM_DUMMY,
 
   sizeof (TA_ScriptMetricsRec),
 
@@ -55,6 +53,16 @@ const TA_ScriptClassRec ta_dummy_script_class =
 
   (TA_Script_InitHintsFunc)ta_dummy_hints_init,
   (TA_Script_ApplyHintsFunc)ta_dummy_hints_apply
+};
+
+
+const TA_ScriptClassRec ta_dflt_script_class =
+{
+  TA_SCRIPT_DFLT,
+  TA_WRITING_SYSTEM_DUMMY,
+
+  NULL,
+  '\0'
 };
 
 /* end of tadummy.c */

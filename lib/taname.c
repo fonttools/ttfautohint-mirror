@@ -308,7 +308,7 @@ build_name_table(Naming_Table* n,
     buf_new_len += 2 + 4 * n->lang_tag_count;
 
   buf_new = (FT_Byte*)malloc(buf_new_len);
-  if (!buf_new)   
+  if (!buf_new)
     return FT_Err_Out_Of_Memory;
 
   /* note that the OpenType specification says that `string_offset' is the */
@@ -420,7 +420,7 @@ build_name_table(Naming_Table* n,
   if (n->format == 1)
   {
     /* the first language tag record offset */
-    q = &buf_new[6 + 12 * n->name_count + 2 + 2]; 
+    q = &buf_new[6 + 12 * n->name_count + 2 + 2];
     for (i = 0; i < n->lang_tag_count; i++)
     {
       Lang_Tag_Record* r = &n->lang_tag_records[i];

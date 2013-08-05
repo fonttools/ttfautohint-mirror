@@ -24,12 +24,16 @@
 #include "tatypes.h"
 
 
+extern TA_WritingSystemClass const ta_writing_system_classes[];
+extern TA_ScriptClass const ta_script_classes[];
+
+
 /* Default values and flags for both autofitter globals */
 /* (originally found in AF_ModuleRec, we use FONT instead) */
 /* and face globals (in TA_FaceGlobalsRec). */
 
 /* index of fallback script in `ta_script_classes' */
-#define TA_SCRIPT_FALLBACK 0
+#define TA_SCRIPT_FALLBACK 0 /* dflt */
 /* a bit mask indicating an uncovered glyph */
 #define TA_SCRIPT_NONE 0x7F
 /* if this flag is set, we have an ASCII digit */
@@ -40,8 +44,8 @@
 #define TA_PROP_INCREASE_X_HEIGHT_MAX 0
 
 
-/* note that glyph_scripts[] is used to map each glyph into */
-/* an index into the `ta_script_classes' array. */
+/* note that glyph_scripts[] maps each glyph to an index into the */
+/* `ta_script_classes' array. */
 typedef struct TA_FaceGlobalsRec_
 {
   FT_Face face;
