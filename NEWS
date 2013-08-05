@@ -1,3 +1,29 @@
+New in 0.96:
+
+* Option `--components' has been replaced with `--composites': By default,
+  the components of a composite glyph are now hinted separately, since tests
+  has shown that this gives good results in most cases.  If this option is
+  set, however, the composite glyph itself gets hinted (and the hints of the
+  components are ignored).
+
+  An unfortunate side effect is that ttfautohint's option `-c' (which stays
+  as a shorthand for `--composites') now does exactly the opposite as in
+  previous releases.
+
+* Older versions of Monotype's `iType' bytecode interpreter have a serious
+  bug: The DIV instruction rounds the result, while the correct operation is
+  truncation.  This caused `exploding characters' with fonts hinted by
+  ttfautohint.  Since many printers contain this rasterizer without any
+  possibility to update to a non-buggy version, ttfautohint now contains
+  work-arounds to circumvent the problem.
+
+* Better support for glyphs where some points have almost the same position
+  (for example glyph `Oslash' in font `Roboto-Thin').
+
+* Better support for glyphs which use explicit `on' points around round
+  extrema.
+
+
 New in 0.95:
 
 * New option `--dehint' to strip off all hints without generating new hints.
