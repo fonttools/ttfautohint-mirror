@@ -200,24 +200,20 @@ typedef void
  *    outline according to the results of the glyph analyzer.
  */
 
+#define __TAWRTSYS_H__ /* don't load header files */
+#undef WRITING_SYSTEM
+#define WRITING_SYSTEM(ws, WS) \
+          TA_WRITING_SYSTEM_ ## WS,
+
 /* The list of known writing systems. */
 typedef enum TA_WritingSystem_
 {
-  TA_WRITING_SYSTEM_DUMMY = 0,
-  TA_WRITING_SYSTEM_LATIN = 1,
-#if 0
-  TA_WRITING_SYSTEM_CJK = 2,
-  TA_WRITING_SYSTEM_INDIC = 3,
-#endif
-#ifdef FT_OPTION_AUTOFIT2
-  TA_WRITING_SYSTEM_LATIN2 = 4,
-#endif
-
-  /* add new writing systems here; */
-  /* don't forget to update the list in `taglobal.c' */
+#include "tawrtsys.h"
 
   TA_WRITING_SYSTEM_MAX /* do not remove */
 } TA_WritingSystem;
+
+#undef __TAWRTSYS_H__
 
 
 typedef struct TA_WritingSystemClassRec_

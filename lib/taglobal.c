@@ -21,31 +21,21 @@
 
 #include "taglobal.h"
 
-#include "tadummy.h"
-#include "talatin.h"
-
-#if 0
-#include "tacjk.h"
-#include "taindic.h"
-
-#ifdef FT_OPTION_AUTOFIT2
-#include "talatin2.h"
-#endif
-#endif /* 0 */
+/* get writing system specific header files */
+#undef WRITING_SYSTEM
+#define WRITING_SYSTEM(ws, WS) /* empty */
+#include "tawrtsys.h"
 
 
-/* populate this list when you add new writing systems */
+#undef WRITING_SYSTEM
+#define WRITING_SYSTEM(ws, WS) \
+          &ta_ ## ws ## _writing_system_class,
+
 TA_WritingSystemClass const ta_writing_system_classes[] =
 {
-  &ta_dummy_writing_system_class,
-  &ta_latin_writing_system_class,
-#if 0
-  &ta_cjk_writing_system_class,
-  &ta_indic_writing_system_class,
-#endif
-#ifdef FT_OPTION_AUTOFIT2
-  &ta_latin2_writing_system_class,
-#endif
+
+#include "tawrtsys.h"
+
   NULL /* do not remove */
 };
 

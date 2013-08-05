@@ -50,6 +50,7 @@ libttfautohint_la_SOURCES = \
   tattc.c \
   tattf.c \
   tatypes.h \
+  tawrtsys.h \
   ttfautohint.c ttfautohint.h ttfautohint-errors.h
 
 libttfautohint_la_LIBADD = \
