@@ -148,7 +148,8 @@ main()
 [AC_MSG_RESULT(yes)
  CPPFLAGS="$old_CPPFLAGS"
  LIBS="$old_LIBS"],
-[AC_MSG_ERROR([Need FreeType version 2.4.5 or higher])])
+[AC_MSG_ERROR([Need FreeType version 2.4.5 or higher])],
+[AC_MSG_RESULT([skipped due to cross-compilation])])
 AC_LANG_POP
 
 
