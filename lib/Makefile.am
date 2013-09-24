@@ -57,4 +57,7 @@ libttfautohint_la_SOURCES = \
 libttfautohint_la_LIBADD = \
   libnumberset.la
 
+EXTRA_DIST = \
+  afblue.pl
+
 ## end of Makefile.am
