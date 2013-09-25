@@ -1,0 +1,149 @@
+//  tablue.dat
+//
+//    Auto-fitter data for blue strings.
+//
+// Copyright (C) 2011-2013 by Werner Lemberg.
+//
+// This file is part of the ttfautohint library, and may only be used,
+// modified, and distributed under the terms given in `COPYING'.  By
+// continuing to use, modify, or distribute this file you indicate that you
+// have read `COPYING' and understand and accept it fully.
+//
+// The file `COPYING' mentioned in the previous paragraph is distributed
+// with the ttfautohint library.
+
+// originally file `afblue.dat' (2013-Sep-22) from FreeType */
+
+
+// This file contains data specific to blue zones.  It gets processed by
+// a script to simulate `jagged arrays', with enumeration values holding
+// offsets into the arrays.
+//
+// The format of the file is rather simple:  A section starts with three
+// labels separated by whitespace and followed by a colon (everything in a
+// single line); the first label gives the name of the enumeration template,
+// the second the name of the array template, and the third the name of the
+// `maximum' template, holding the size of the largest array element.  The
+// script then fills the corresponding templates (indicated by `@'
+// characters around the name).
+//
+// A section contains one or more data records.  Each data record consists
+// of two or more lines.  The first line holds the enumeration name, and the
+// remaining lines the corresponding array data.
+//
+// There are two possible representations for array data.
+//
+// - A string of characters in UTF-8 encoding enclosed in double quotes,
+//   using C syntax.  There can be only one string per line, thus the
+//   starting and ending double quote must be the first and last character
+//   in the line, respectively, ignoring whitespace before and after the
+//   string.  If there are multiple strings (in multiple lines), they are
+//   concatenated to a single string.  In the output, a string gets
+//   represented as a series of singles bytes, followed by a zero byte.  The
+//   enumeration values simply hold byte offsets to the start of the
+//   corresponding strings.
+//
+// - Data blocks enclosed in balanced braces, which get copied verbatim and
+//   which can span multiple lines.  The opening brace of a block must be
+//   the first character of a line (ignoring whitespace), and the closing
+//   brace the last (ignoring whitespace also).  The script appends a comma
+//   character after each block and counts the number of blocks to set the
+//   enumeration values.
+//
+// A section can contain either strings only or data blocks only.
+//
+// A comment line starts with `//'; it gets removed.  A preprocessor
+// directive line (using the standard syntax of `cpp') starts with `#' and
+// gets copied verbatim to both the enumeration and the array.  Whitespace
+// outside of a string is insignificant.
+//
+// Preprocessor directives are ignored while the script computes maximum
+// values; this essentially means that the maximum values can easily be too
+// large.  Given that the purpose of those values is to create local
+// fixed-size arrays at compile time for further processing of the blue zone
+// data, this isn't a problem.  Note the the final zero byte of a string is
+// not counted.  Note also that the count holds the number of UTF-8 encoded
+// characters, not bytes.
+
+
+TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
+
+  TA_BLUE_STRING_LATIN_CAPITAL_TOP
+    "THEZOCQS"
+  TA_BLUE_STRING_LATIN_CAPITAL_BOTTOM
+    "HEZLOCUS"
+  TA_BLUE_STRING_LATIN_SMALL_F_TOP
+    "fijkdbh"
+  TA_BLUE_STRING_LATIN_SMALL
+    "xzroesc"
+  TA_BLUE_STRING_LATIN_SMALL_MINOR
+    "pqgjy"
+
+  TA_BLUE_STRING_GREEK_CAPITAL_TOP
+    "ΓΒΕΖΘΟΩ"
+  TA_BLUE_STRING_GREEK_CAPITAL_BOTTOM
+    "ΒΔΖΞΘΟ"
+  TA_BLUE_STRING_GREEK_SMALL_BETA_TOP
+    "βθδζλξ"
+  TA_BLUE_STRING_GREEK_SMALL
+    "αειοπστω"
+  TA_BLUE_STRING_GREEK_SMALL_MINOR
+    "βγημρφχψ"
+
+  TA_BLUE_STRING_CYRILLIC_CAPITAL_TOP
+    "БВЕПЗОСЭ"
+  TA_BLUE_STRING_CYRILLIC_CAPITAL_BOTTOM
+    "БВЕШЗОСЭ"
+  TA_BLUE_STRING_CYRILLIC_SMALL
+    "хпншезос"
+  TA_BLUE_STRING_CYRILLIC_SMALL_MINOR
+    "руф"
+
+  TA_BLUE_STRING_HEBREW_TOP
+    "בדהחךכםס"
+  TA_BLUE_STRING_HEBREW_BOTTOM
+    "בטכםסצ"
+  TA_BLUE_STRING_HEBREW_DESCENDER
+    "קךןףץ"
+
+
+TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
+
+  TA_BLUE_STRINGSET_LATN
+    { TA_BLUE_STRING_LATIN_CAPITAL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_LATIN_CAPITAL_BOTTOM, 0                                  }
+    { TA_BLUE_STRING_LATIN_SMALL_F_TOP,    TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_LATIN_SMALL,          TA_BLUE_PROPERTY_LATIN_TOP       |
+                                           TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
+    { TA_BLUE_STRING_LATIN_SMALL,          0                                  }
+    { TA_BLUE_STRING_LATIN_SMALL_MINOR,    0                                  }
+    { TA_BLUE_STRING_MAX,                  0                                  }
+
+  TA_BLUE_STRINGSET_GREK
+    { TA_BLUE_STRING_GREEK_CAPITAL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_GREEK_CAPITAL_BOTTOM, 0                                  }
+    { TA_BLUE_STRING_GREEK_SMALL_BETA_TOP, TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_GREEK_SMALL,          TA_BLUE_PROPERTY_LATIN_TOP       |
+                                           TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
+    { TA_BLUE_STRING_GREEK_SMALL,          0                                  }
+    { TA_BLUE_STRING_GREEK_SMALL_MINOR,    0                                  }
+    { TA_BLUE_STRING_MAX,                  0                                  }
+
+  TA_BLUE_STRINGSET_CYRL
+    { TA_BLUE_STRING_CYRILLIC_CAPITAL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_CYRILLIC_CAPITAL_BOTTOM, 0                                  }
+    { TA_BLUE_STRING_CYRILLIC_SMALL,          TA_BLUE_PROPERTY_LATIN_TOP       |
+                                              TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
+    { TA_BLUE_STRING_CYRILLIC_SMALL,          0                                  }
+    { TA_BLUE_STRING_CYRILLIC_SMALL_MINOR,    0                                  }
+    { TA_BLUE_STRING_MAX,                     0                                  }
+
+  TA_BLUE_STRINGSET_HEBR
+    { TA_BLUE_STRING_HEBREW_TOP,       TA_BLUE_PROPERTY_LATIN_TOP  |
+                                       TA_BLUE_PROPERTY_LATIN_LONG   }
+    { TA_BLUE_STRING_HEBREW_BOTTOM,    0                             }
+    { TA_BLUE_STRING_HEBREW_DESCENDER, 0                             }
+    { TA_BLUE_STRING_MAX,              0                             }
+
+
+// END

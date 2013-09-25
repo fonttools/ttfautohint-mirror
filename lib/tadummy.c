@@ -26,6 +26,12 @@ ta_dummy_hints_init(TA_GlyphHints hints,
                     TA_ScriptMetrics metrics)
 {
   ta_glyph_hints_rescale(hints, metrics);
+
+  hints->x_scale = metrics->scaler.x_scale;
+  hints->y_scale = metrics->scaler.y_scale;
+  hints->x_delta = metrics->scaler.x_delta;
+  hints->y_delta = metrics->scaler.y_delta;
+
   return FT_Err_Ok;
 }
 
@@ -34,10 +40,14 @@ static FT_Error
 ta_dummy_hints_apply(TA_GlyphHints hints,
                      FT_Outline* outline)
 {
-  FT_UNUSED(hints);
-  FT_UNUSED(outline);
+  FT_Error error;
 
-  return FT_Err_Ok;
+
+  error = ta_glyph_hints_reload(hints, outline);
+  if (!error)
+    ta_glyph_hints_save(hints, outline);
+
+  return error;
 }
 
 
@@ -59,6 +69,7 @@ const TA_WritingSystemClassRec ta_dummy_writing_system_class =
 const TA_ScriptClassRec ta_dflt_script_class =
 {
   TA_SCRIPT_DFLT,
+  (TA_Blue_Stringset)0,
   TA_WRITING_SYSTEM_DUMMY,
 
   NULL,

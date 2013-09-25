@@ -1,5 +1,7 @@
 /Makefile
 /Makefile.in
+/tablue.c
+/tablue.h
 *.o
 *.lo
 *.la

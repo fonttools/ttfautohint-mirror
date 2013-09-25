@@ -1,4 +1,4 @@
-/* tascript.h */
+/* tablue.c */
 
 /*
  * Copyright (C) 2013 by Werner Lemberg.
@@ -13,26 +13,23 @@
  */
 
 
-/* originally file `afscript.h' (2013-Aug-05) from FreeType */
+/* originally file `afblue.c' (2013-Aug-28) from FreeType */
 
 
-/* The following part can be included multiple times. */
-/* Define `SCRIPT' as needed.                         */
+#include "tatypes.h"
 
 
-/* Add new scripts here. */
+const char ta_blue_strings[] =
+{
+@TA_BLUE_STRINGS_ARRAY@
+};
 
-SCRIPT(cyrl, CYRL)
-SCRIPT(dflt, DFLT)
-SCRIPT(grek, GREK)
-SCRIPT(hebr, HEBR)
-SCRIPT(latn, LATN)
-#if 0
-SCRIPT(deva, DEVA)
-SCRIPT(hani, HANI)
-#endif
-#ifdef FT_OPTION_AUTOFIT2
-SCRIPT(ltn2, LTN2)
-#endif
 
-/* end of tascript.h */
+/* stringsets are specific to scripts */
+const TA_Blue_StringRec ta_blue_stringsets[] =
+{
+@TA_BLUE_STRINGSETS_ARRAY@
+};
+
+
+/* end of tablue.c */

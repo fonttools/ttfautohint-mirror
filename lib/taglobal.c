@@ -53,6 +53,21 @@ TA_ScriptClass const ta_script_classes[] =
 };
 
 
+#ifdef TA_DEBUG
+
+#undef SCRIPT
+#define SCRIPT(s, S) #s,
+
+const char* ta_script_names[] =
+{
+
+#include "tascript.h"
+
+};
+
+#endif /* TA_DEBUG */
+
+
 /* Compute the script index of each glyph within a given face. */
 
 static FT_Error
@@ -231,12 +246,9 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
                             TA_ScriptMetrics *ametrics)
 {
   TA_ScriptMetrics metrics = NULL;
-  FT_UInt gidx;
+  TA_Script script = (TA_Script)(options & 15);
   TA_ScriptClass script_class;
   TA_WritingSystemClass writing_system_class;
-  FT_UInt script = options & 15;
-  const FT_Offset script_max = sizeof (ta_script_classes)
-                               / sizeof (ta_script_classes[0]);
   FT_Error error = FT_Err_Ok;
 
 
@@ -246,19 +258,17 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
     goto Exit;
   }
 
-  gidx = script;
-  if (gidx == 0
-      || gidx + 1 >= script_max)
-    gidx = globals->glyph_scripts[gindex] & TA_SCRIPT_NONE;
+  /* if we have a forced script (via `options'), use it, */
+  /* otherwise look into `glyph_scripts' array */
+  if (script == TA_SCRIPT_DFLT || script + 1 >= TA_SCRIPT_MAX)
+    script = (TA_Script)(globals->glyph_scripts[gindex] & TA_SCRIPT_NONE);
 
   script_class =
-    ta_script_classes[gidx];
+    ta_script_classes[script];
   writing_system_class =
     ta_writing_system_classes[script_class->writing_system];
-  if (script == 0)
-    script = script_class->script;
 
-  metrics = globals->metrics[script_class->script];
+  metrics = globals->metrics[script];
   if (metrics == NULL)
   {
     /* create the global metrics object if necessary */
@@ -288,7 +298,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
       }
     }
 
-    globals->metrics[script_class->script] = metrics;
+    globals->metrics[script] = metrics;
   }
 
 Exit:

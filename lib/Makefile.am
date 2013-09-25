@@ -21,6 +21,7 @@ libnumberset_la_SOURCES = \
 
 libttfautohint_la_SOURCES = \
   ta.h \
+  tablue.c tablue.h \
   tabytecode.c tabytecode.h \
   tacvt.c \
   tadsig.c \
@@ -57,7 +58,26 @@ libttfautohint_la_SOURCES = \
 libttfautohint_la_LIBADD = \
   libnumberset.la
 
+BUILT_SOURCES = \
+  tablue.c tablue.h
+
 EXTRA_DIST = \
-  afblue.pl
+  afblue.pl \
+  tablue.cin tablue.hin \
+  tablue.dat
+
+tablue.c: tablue.dat tablue.cin
+	$(AM_V_GEN)rm -f $@-t $@ \
+	&& perl afblue.pl $(srcdir)/tablue.dat \
+	                  < $(srcdir)/tablue.cin \
+	                  > $@-t \
+	&& mv $@-t $@
+
+tablue.h: tablue.dat tablue.hin
+	$(AM_V_GEN)rm -f $@-t $@ \
+	&& perl afblue.pl $(srcdir)/tablue.dat \
+	                  < $(srcdir)/tablue.hin \
+	                  > $@-t \
+	&& mv $@-t $@
 
 ## end of Makefile.am

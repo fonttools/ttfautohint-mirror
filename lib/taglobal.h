@@ -27,6 +27,10 @@
 extern TA_WritingSystemClass const ta_writing_system_classes[];
 extern TA_ScriptClass const ta_script_classes[];
 
+#ifdef TA_DEBUG
+extern const char* ta_script_names[];
+#endif
+
 
 /* Default values and flags for both autofitter globals */
 /* (originally found in AF_ModuleRec, we use FONT instead) */

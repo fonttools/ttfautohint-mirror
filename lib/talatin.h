@@ -30,12 +30,12 @@ extern const TA_WritingSystemClassRec ta_latin_writing_system_class;
 
 /* the latin-specific script classes */
 
-extern const TA_ScriptClassRec ta_latn_script_class;
-#if 0
-extern const TA_ScriptClassRec ta_armn_script_class;
 extern const TA_ScriptClassRec ta_cyrl_script_class;
 extern const TA_ScriptClassRec ta_grek_script_class;
 extern const TA_ScriptClassRec ta_hebr_script_class;
+extern const TA_ScriptClassRec ta_latn_script_class;
+#if 0
+extern const TA_ScriptClassRec ta_armn_script_class;
 #endif
 
 
@@ -46,26 +46,14 @@ extern const TA_ScriptClassRec ta_hebr_script_class;
 
 /* Latin (global) metrics management */
 
-enum
-{
-  TA_LATIN_BLUE_CAPITAL_TOP,
-  TA_LATIN_BLUE_CAPITAL_BOTTOM,
-  TA_LATIN_BLUE_SMALL_F_TOP,
-  TA_LATIN_BLUE_SMALL_TOP,
-  TA_LATIN_BLUE_SMALL_BOTTOM,
-  TA_LATIN_BLUE_SMALL_MINOR,
-
-  TA_LATIN_BLUE_MAX
-};
-
-
 #define TA_LATIN_IS_TOP_BLUE(b) \
-          ((b) == TA_LATIN_BLUE_CAPITAL_TOP \
-           || (b) == TA_LATIN_BLUE_SMALL_F_TOP \
-           || (b) == TA_LATIN_BLUE_SMALL_TOP)
+          ((b)->properties & TA_BLUE_PROPERTY_LATIN_TOP)
+#define TA_LATIN_IS_SMALL_TOP_BLUE(b) \
+          ((b)->properties & TA_BLUE_PROPERTY_LATIN_SMALL_TOP)
+#define TA_LATIN_IS_LONG_BLUE(b) \
+          ((b)->properties &TA_BLUE_PROPERTY_LATIN_LONG)
 
 #define TA_LATIN_MAX_WIDTHS 16
-#define TA_LATIN_MAX_BLUES TA_LATIN_BLUE_MAX
 
 
 #define TA_LATIN_BLUE_ACTIVE  (1 << 0) /* set if zone height is <= 3/4px */
@@ -96,7 +84,7 @@ typedef struct TA_LatinAxisRec_
   /* ignored for horizontal metrics */
   FT_UInt blue_count;
   /* we add two blue zones for usWinAscent and usWinDescent */
-  TA_LatinBlueRec blues[TA_LATIN_BLUE_MAX + 2];
+  TA_LatinBlueRec blues[TA_BLUE_STRINGSET_MAX + 2];
 
   FT_Fixed org_scale;
   FT_Pos org_delta;

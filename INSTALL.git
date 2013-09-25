@@ -9,6 +9,7 @@ required when building from a release:
   automake (1.13)
   git (1.5.5)
   libtool (2.2.2)
+  perl (this is a prerequisite of automake also)
 
 If you configure to build the documentation files also (which are normally
 distributed with the release package), the following is necessary:

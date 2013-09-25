@@ -46,8 +46,11 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
   TA_GlyphHintsRec hints[1];
 
 
-  TA_LOG(("standard widths computation\n"
-          "===========================\n\n"));
+  TA_LOG(("\n"
+          "latin standard widths computation (script `%s')\n"
+          "=================================================\n"
+          "\n",
+          ta_script_names[metrics->root.script_class->script]));
 
   ta_glyph_hints_init(hints);
 
@@ -68,7 +71,7 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     if (glyph_index == 0)
       goto Exit;
 
-    TA_LOG(("standard character: 0x%X (glyph index %d)\n",
+    TA_LOG(("standard character: U+%04lX (glyph index %d)\n",
             metrics->root.script_class->standard_char, glyph_index));
 
     error = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
@@ -140,7 +143,7 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
       axis->width_count = num_widths;
     }
 
-Exit:
+  Exit:
     for (dim = 0; dim < TA_DIMENSION_MAX; dim++)
     {
       TA_LatinAxis axis = &metrics->axis[dim];
@@ -180,21 +183,6 @@ Exit:
 }
 
 
-#define TA_LATIN_MAX_TEST_CHARACTERS 12
-
-
-static const char ta_latin_blue_chars[TA_LATIN_MAX_BLUES]
-                                     [TA_LATIN_MAX_TEST_CHARACTERS + 1] =
-{
-  "THEZOCQS",
-  "HEZLOCUS",
-  "fijkdbh",
-  "xzroesc",
-  "xzroesc",
-  "pqgjy"
-};
-
-
 /* find all blue zones; flat segments give the reference points, */
 /* round segments the overshoot positions */
 
@@ -202,40 +190,42 @@ static void
 ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
                             FT_Face face)
 {
-  FT_Pos flats[TA_LATIN_MAX_TEST_CHARACTERS];
-  FT_Pos rounds[TA_LATIN_MAX_TEST_CHARACTERS];
+  FT_Pos flats[TA_BLUE_STRING_MAX_LEN];
+  FT_Pos rounds[TA_BLUE_STRING_MAX_LEN];
   FT_Int num_flats;
   FT_Int num_rounds;
 
-  FT_Int bb;
   TA_LatinBlue blue;
   FT_Error error;
   TA_LatinAxis axis = &metrics->axis[TA_DIMENSION_VERT];
   FT_Outline outline;
 
+  TA_Blue_Stringset bss = metrics->root.script_class->blue_stringset;
+  const TA_Blue_StringRec* bs = &ta_blue_stringsets[bss];
 
-  /* we compute the blues simply by loading each character from the */
-  /* `ta_latin_blue_chars[blues]' string, then finding its top-most or */
-  /* bottom-most points (depending on `TA_IS_TOP_BLUE') */
 
-  TA_LOG(("blue zones computation\n"
-          "======================\n\n"));
+  /* we walk over the blue character strings as specified in the  */
+  /* script's entry in the `af_blue_stringset' array */
 
-  for (bb = 0; bb < TA_LATIN_BLUE_MAX; bb++)
+  TA_LOG(("latin blue zones computation\n"
+          "============================\n"
+          "\n"));
+
+  for (; bs->string != TA_BLUE_STRING_MAX; bs++)
   {
-    const char* p = ta_latin_blue_chars[bb];
-    const char* limit = p + TA_LATIN_MAX_TEST_CHARACTERS;
+    const char* p = &ta_blue_strings[bs->string];
     FT_Pos* blue_ref;
     FT_Pos* blue_shoot;
 
 
-    TA_LOG(("blue zone %d:\n", bb));
+    TA_LOG(("blue zone %d:\n", axis->blue_count));
 
     num_flats = 0;
     num_rounds = 0;
 
-    for (; p < limit && *p; p++)
+    while (*p)
     {
+      FT_ULong ch;
       FT_UInt glyph_index;
       FT_Pos best_y; /* same as points.y */
       FT_Int best_point, best_contour_first, best_contour_last;
@@ -243,15 +233,23 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
       FT_Bool round = 0;
 
 
+      GET_UTF8_CHAR(ch, p);
+
       /* load the character in the face -- skip unknown or empty ones */
-      glyph_index = FT_Get_Char_Index(face, (FT_UInt)*p);
+      glyph_index = FT_Get_Char_Index(face, ch);
       if (glyph_index == 0)
+      {
+        TA_LOG(("  U+%04lX unavailable\n", ch));
         continue;
+      }
 
       error = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
       outline = face->glyph->outline;
       if (error || outline.n_points <= 0)
+      {
+        TA_LOG(("  U+%04lX contains no outlines\n", ch));
         continue;
+      }
 
       /* now compute min or max point indices and coordinates */
       points = outline.points;
@@ -276,11 +274,11 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
 
           /* avoid single-point contours since they are never rasterized; */
           /* in some fonts, they correspond to mark attachment points */
-          /* which are way outside of the glyph's real outline */
+          /* that are way outside of the glyph's real outline */
           if (last <= first)
             continue;
 
-          if (TA_LATIN_IS_TOP_BLUE(bb))
+          if (TA_LATIN_IS_TOP_BLUE(bs))
           {
             for (pp = first; pp <= last; pp++)
               if (best_point < 0
@@ -307,7 +305,6 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
             best_contour_last = last;
           }
         }
-        TA_LOG(("  %c  %ld", *p, best_y));
       }
 
       /* now check whether the point belongs to a straight or round */
@@ -390,6 +387,172 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
 
         } while (next != best_point);
 
+        if (TA_LATIN_IS_LONG_BLUE(bs))
+        {
+          /* If this flag is set, we have an additional constraint to */
+          /* get the blue zone distance: Find a segment of the topmost */
+          /* (or bottommost) contour that is longer than a heuristic */
+          /* threshold.  This ensures that small bumps in the outline */
+          /* are ignored (for example, the `vertical serifs' found in */
+          /* many Hebrew glyph designs). */
+
+          /* If this segment is long enough, we are done.  Otherwise, */
+          /* search the segment next to the extremum that is long */
+          /* enough, has the same direction, and a not too large */
+          /* vertical distance from the extremum.  Note that the */
+          /* algorithm doesn't check whether the found segment is */
+          /* actually the one (vertically) nearest to the extremum. */
+
+          /* heuristic threshold value */
+          FT_Pos length_threshold = metrics->units_per_em / 25;
+
+
+          dist = TA_ABS(points[best_segment_last].x -
+                          points[best_segment_first].x);
+
+          if (dist < length_threshold
+              && best_segment_last - best_segment_first + 2 <=
+                   best_contour_last - best_contour_first)
+          {
+            /* heuristic threshold value */
+            FT_Pos height_threshold = metrics->units_per_em / 4;
+
+            FT_Int first;
+            FT_Int last;
+            FT_Bool hit;
+
+            FT_Bool left2right;
+
+
+            /* compute direction */
+            prev = best_point;
+
+            do
+            {
+              if (prev > best_contour_first)
+                prev--;
+              else
+                prev = best_contour_last;
+
+              if (points[prev].x != best_x)
+                break;
+            } while (prev != best_point);
+
+            /* skip glyph for the degenerate case */
+            if (prev == best_point)
+              continue;
+
+            left2right = FT_BOOL(points[prev].x < points[best_point].x);
+
+            first = best_segment_last;
+            last = first;
+            hit = 0;
+
+            do
+            {
+              FT_Bool l2r;
+              FT_Pos d;
+              FT_Int p_first, p_last;
+
+
+              if (!hit)
+              {
+                /* no hit; adjust first point */
+                first = last;
+
+                /* also adjust first and last on point */
+                if (FT_CURVE_TAG(outline.tags[first]) == FT_CURVE_TAG_ON)
+                {
+                  p_first = first;
+                  p_last = first;
+                }
+                else
+                {
+                  p_first = -1;
+                  p_last = -1;
+                }
+
+                hit = 1;
+              }
+
+              if (last < best_contour_last)
+                last++;
+              else
+                last = best_contour_first;
+
+              if (TA_ABS(best_y - points[first].y) > height_threshold)
+              {
+                /* vertical distance too large */
+                hit = 0;
+                continue;
+              }
+
+              /* same test as above */
+              dist = TA_ABS(points[last].y - points[first].y);
+              if (dist > 5)
+                if (TA_ABS(points[last].x - points[first].x) <= 20 * dist)
+                {
+                  hit = 0;
+                  continue;
+                }
+
+              if (FT_CURVE_TAG(outline.tags[last]) == FT_CURVE_TAG_ON)
+              {
+                p_last = last;
+                if (p_first < 0)
+                  p_first = last;
+              }
+
+              l2r = FT_BOOL(points[first].x < points[last].x);
+              d = TA_ABS(points[last].x - points[first].x);
+
+              if (l2r == left2right
+                  && d >= length_threshold)
+              {
+                /* all constraints are met; update segment after finding */
+                /* its end */
+                do
+                {
+                  if (last < best_contour_last)
+                    last++;
+                  else
+                    last = best_contour_first;
+
+                  d = TA_ABS(points[last].y - points[first].y);
+                  if (d > 5)
+                    if (TA_ABS(points[next].x - points[first].x) <=
+                          20 * dist)
+                    {
+                      last--;
+                      break;
+                    }
+
+                  p_last = last;
+
+                  if (FT_CURVE_TAG(outline.tags[last]) == FT_CURVE_TAG_ON)
+                  {
+                    p_last = last;
+                    if (p_first < 0)
+                      p_first = last;
+                  }
+                } while (last != best_segment_first);
+
+                best_y = points[first].y;
+
+                best_segment_first = first;
+                best_segment_last = last;
+
+                best_on_point_first = p_first;
+                best_on_point_last = p_last;
+
+                break;
+              }
+            } while (last != best_segment_first);
+          }
+        }
+
+        TA_LOG(("  U+%04lX: best_y = %5ld", ch, best_y));
+
         /*
          * now set the `round' flag depending on the segment's kind:
          *
@@ -467,7 +630,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
       FT_Bool over_ref = FT_BOOL(shoot > ref);
 
 
-      if (TA_LATIN_IS_TOP_BLUE(bb) ^ over_ref)
+      if (TA_LATIN_IS_TOP_BLUE(bs) ^ over_ref)
       {
         *blue_ref =
         *blue_shoot = (shoot + ref) / 2;
@@ -478,13 +641,13 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     }
 
     blue->flags = 0;
-    if (TA_LATIN_IS_TOP_BLUE(bb))
+    if (TA_LATIN_IS_TOP_BLUE(bs))
       blue->flags |= TA_LATIN_BLUE_TOP;
 
     /* the following flag is used later to adjust the y and x scales */
     /* in order to optimize the pixel grid alignment */
     /* of the top of small letters */
-    if (bb == TA_LATIN_BLUE_SMALL_TOP)
+    if (TA_LATIN_IS_SMALL_TOP_BLUE(bs))
       blue->flags |= TA_LATIN_BLUE_ADJUSTMENT;
 
     TA_LOG(("    -> reference = %ld\n"
@@ -1924,8 +2087,9 @@ ta_latin_hint_edges(TA_GlyphHints hints,
   FT_UInt num_actions = 0;
 #endif
 
-  TA_LOG(("%s edge hinting\n", dim == TA_DIMENSION_VERT ? "horizontal"
-                                                        : "vertical"));
+  TA_LOG(("latin %s edge hinting (script `%s')\n",
+          dim == TA_DIMENSION_VERT ? "horizontal" : "vertical",
+          ta_script_names[hints->metrics->script_class->script]));
 
   /* we begin by aligning all stems relative to the blue zone if needed -- */
   /* that's only for horizontal edges */
@@ -2541,6 +2705,7 @@ ta_latin_hints_apply(TA_GlyphHints hints,
       ta_glyph_hints_align_weak_points(hints, (TA_Dimension)dim);
     }
   }
+
   ta_glyph_hints_save(hints, outline);
 
 Exit:
@@ -2575,23 +2740,17 @@ static const TA_Script_UniRangeRec ta_latn_uniranges[] =
   TA_UNIRANGE_REC(0x0250UL, 0x02AFUL), /* IPA Extensions */
   TA_UNIRANGE_REC(0x02B0UL, 0x02FFUL), /* Spacing Modifier Letters */
   TA_UNIRANGE_REC(0x0300UL, 0x036FUL), /* Combining Diacritical Marks */
-  TA_UNIRANGE_REC(0x0370UL, 0x03FFUL), /* Greek and Coptic */
-  TA_UNIRANGE_REC(0x0400UL, 0x04FFUL), /* Cyrillic */
-  TA_UNIRANGE_REC(0x0500UL, 0x052FUL), /* Cyrillic Supplement */
   TA_UNIRANGE_REC(0x1D00UL, 0x1D7FUL), /* Phonetic Extensions */
   TA_UNIRANGE_REC(0x1D80UL, 0x1DBFUL), /* Phonetic Extensions Supplement */
   TA_UNIRANGE_REC(0x1DC0UL, 0x1DFFUL), /* Combining Diacritical Marks Supplement */
   TA_UNIRANGE_REC(0x1E00UL, 0x1EFFUL), /* Latin Extended Additional */
-  TA_UNIRANGE_REC(0x1F00UL, 0x1FFFUL), /* Greek Extended */
   TA_UNIRANGE_REC(0x2000UL, 0x206FUL), /* General Punctuation */
   TA_UNIRANGE_REC(0x2070UL, 0x209FUL), /* Superscripts and Subscripts */
   TA_UNIRANGE_REC(0x20A0UL, 0x20CFUL), /* Currency Symbols */
   TA_UNIRANGE_REC(0x2150UL, 0x218FUL), /* Number Forms */
   TA_UNIRANGE_REC(0x2460UL, 0x24FFUL), /* Enclosed Alphanumerics */
   TA_UNIRANGE_REC(0x2C60UL, 0x2C7FUL), /* Latin Extended-C */
-  TA_UNIRANGE_REC(0x2DE0UL, 0x2DFFUL), /* Cyrillic Extended-A */
   TA_UNIRANGE_REC(0x2E00UL, 0x2E7FUL), /* Supplemental Punctuation */
-  TA_UNIRANGE_REC(0xA640UL, 0xA69FUL), /* Cyrillic Extended-B */
   TA_UNIRANGE_REC(0xA720UL, 0xA7FFUL), /* Latin Extended-D */
   TA_UNIRANGE_REC(0xFB00UL, 0xFB06UL), /* Alphab. Present. Forms (Latin Ligs) */
   TA_UNIRANGE_REC(0x1D400UL, 0x1D7FFUL), /* Mathematical Alphanumeric Symbols */
@@ -2599,14 +2758,68 @@ static const TA_Script_UniRangeRec ta_latn_uniranges[] =
   TA_UNIRANGE_REC(0UL, 0UL)
 };
 
+static const TA_Script_UniRangeRec ta_grek_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0370UL, 0x03FFUL), /* Greek and Coptic */
+  TA_UNIRANGE_REC(0x1F00UL, 0x1FFFUL), /* Greek Extended */
+  TA_UNIRANGE_REC(0UL, 0UL )
+};
+
+static const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0400UL, 0x04FFUL), /* Cyrillic */
+  TA_UNIRANGE_REC(0x0500UL, 0x052FUL), /* Cyrillic Supplement */
+  TA_UNIRANGE_REC(0x2DE0UL, 0x2DFFUL), /* Cyrillic Extended-A */
+  TA_UNIRANGE_REC(0xA640UL, 0xA69FUL), /* Cyrillic Extended-B */
+  TA_UNIRANGE_REC(0UL, 0UL )
+};
+
+static const TA_Script_UniRangeRec ta_hebr_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0590UL, 0x05FFUL), /* Hebrew */
+  TA_UNIRANGE_REC(0xFB1DUL, 0xFB4FUL), /* Alphab. Present. Forms (Hebrew) */
+  TA_UNIRANGE_REC(0UL, 0UL )
+};
+
 
 const TA_ScriptClassRec ta_latn_script_class =
 {
   TA_SCRIPT_LATN,
+  TA_BLUE_STRINGSET_LATN,
   TA_WRITING_SYSTEM_LATIN,
 
   ta_latn_uniranges,
   'o'
+};
+
+const TA_ScriptClassRec ta_grek_script_class =
+{
+  TA_SCRIPT_GREK,
+  TA_BLUE_STRINGSET_GREK,
+  TA_WRITING_SYSTEM_LATIN,
+
+  ta_grek_uniranges,
+  0x3BF /* ο */
+};
+
+const TA_ScriptClassRec ta_cyrl_script_class =
+{
+  TA_SCRIPT_CYRL,
+  TA_BLUE_STRINGSET_CYRL,
+  TA_WRITING_SYSTEM_LATIN,
+
+  ta_cyrl_uniranges,
+  0x43E /* о */
+};
+
+const TA_ScriptClassRec ta_hebr_script_class =
+{
+  TA_SCRIPT_HEBR,
+  TA_BLUE_STRINGSET_HEBR,
+  TA_WRITING_SYSTEM_LATIN,
+
+  ta_hebr_uniranges,
+  0x5DD /* ם */
 };
 
 /* end of talatin.c */

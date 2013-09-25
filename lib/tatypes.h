@@ -25,6 +25,8 @@
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
 
+#include "tablue.h"
+
 
 /* enable one of the following three definitions for debugging */
 /* #define TA_DEBUG */
@@ -245,7 +247,6 @@ typedef struct TA_WritingSystemClassRec_
 /* The list of known scripts. */
 typedef enum TA_Script_
 {
-
 #include "tascript.h"
 
   TA_SCRIPT_MAX /* do not remove */
@@ -266,6 +267,7 @@ typedef const TA_Script_UniRangeRec* TA_Script_UniRange;
 typedef struct TA_ScriptClassRec_
 {
   TA_Script script;
+  TA_Blue_Stringset blue_stringset;
   TA_WritingSystem writing_system;
 
   TA_Script_UniRange script_uni_ranges; /* last must be { 0, 0 } */
