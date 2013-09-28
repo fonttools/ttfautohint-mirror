@@ -501,37 +501,37 @@
 /* (assigned in `cvt') */
 
 /* the horizontal and vertical standard widths */
-#define CVT_HORZ_STANDARD_WIDTH_OFFSET(font) cvtl_max_runtime
-#define CVT_VERT_STANDARD_WIDTH_OFFSET(font) \
-          CVT_HORZ_STANDARD_WIDTH_OFFSET(font) + 1
+#define CVT_HORZ_STANDARD_WIDTH_OFFSET cvtl_max_runtime
+#define CVT_VERT_STANDARD_WIDTH_OFFSET \
+          CVT_HORZ_STANDARD_WIDTH_OFFSET + 1
 
 /* the horizontal stem widths */
-#define CVT_HORZ_WIDTHS_OFFSET(font) \
-          CVT_VERT_STANDARD_WIDTH_OFFSET(font) + 1
-#define CVT_HORZ_WIDTHS_SIZE(font) \
+#define CVT_HORZ_WIDTHS_OFFSET \
+          CVT_VERT_STANDARD_WIDTH_OFFSET + 1
+#define CVT_HORZ_WIDTHS_SIZE \
           ((font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT) \
            ? 0 \
            : ((TA_LatinMetrics)font->loader->hints.metrics)->axis[0].width_count)
 
 /* the vertical stem widths */
-#define CVT_VERT_WIDTHS_OFFSET(font) \
-          CVT_HORZ_WIDTHS_OFFSET(font) + CVT_HORZ_WIDTHS_SIZE(font)
-#define CVT_VERT_WIDTHS_SIZE(font) \
+#define CVT_VERT_WIDTHS_OFFSET \
+          CVT_HORZ_WIDTHS_OFFSET + CVT_HORZ_WIDTHS_SIZE
+#define CVT_VERT_WIDTHS_SIZE \
           ((font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT) \
            ? 0 \
            : ((TA_LatinMetrics)font->loader->hints.metrics)->axis[1].width_count)
 
 /* the number of blue zones (including the artificial ones) */
-#define CVT_BLUES_SIZE(font) \
+#define CVT_BLUES_SIZE \
           ((font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT) \
            ? 0 \
            : ((TA_LatinMetrics)font->loader->hints.metrics)->axis[1].blue_count + 2)
 
 /* the blue zone values for flat and round edges */
-#define CVT_BLUE_REFS_OFFSET(font) \
-          CVT_VERT_WIDTHS_OFFSET(font) + CVT_VERT_WIDTHS_SIZE(font)
-#define CVT_BLUE_SHOOTS_OFFSET(font) \
-          CVT_BLUE_REFS_OFFSET(font) + CVT_BLUES_SIZE(font)
+#define CVT_BLUE_REFS_OFFSET \
+          CVT_VERT_WIDTHS_OFFSET + CVT_VERT_WIDTHS_SIZE
+#define CVT_BLUE_SHOOTS_OFFSET \
+          CVT_BLUE_REFS_OFFSET + CVT_BLUES_SIZE
 
 
 extern FT_Byte ttfautohint_glyph_bytecode[7];

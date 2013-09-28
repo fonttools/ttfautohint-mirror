@@ -1315,13 +1315,13 @@ TA_hints_recorder(TA_Action action,
 
       if (edge->best_blue_is_shoot)
       {
-        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET(font) + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET(font) + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET + edge->best_blue_idx);
       }
       else
       {
-        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET(font) + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_REFS_OFFSET(font) + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_REFS_OFFSET + edge->best_blue_idx);
       }
 
       *(p++) = HIGH(edge->first - segments);
@@ -1370,13 +1370,13 @@ TA_hints_recorder(TA_Action action,
 
       if (edge->best_blue_is_shoot)
       {
-        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET(font) + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET(font) + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET + edge->best_blue_idx);
       }
       else
       {
-        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET(font) + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_REFS_OFFSET(font) + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_REFS_OFFSET + edge->best_blue_idx);
       }
 
       *(p++) = HIGH(edge->first - segments);
