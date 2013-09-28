@@ -903,7 +903,10 @@ TA_emit_hints_record(Recorder* recorder,
   endp = hints_record->buf + hints_record->buf_len;
   for (p = hints_record->buf; p < endp; p += 2)
     if (*p)
+    {
       need_words = 1;
+      break;
+    }
 
   /* with most fonts it is very rare */
   /* that any of the pushed arguments is larger than 0xFF, */
@@ -978,6 +981,8 @@ TA_emit_hints_records(Recorder* recorder,
 
   hints_record = hints_records;
 
+  /* emit hints records in `if' clauses, */
+  /* with the ppem size as the condition */
   for (i = 0; i < num_hints_records - 1; i++)
   {
     BCI(MPPEM);
