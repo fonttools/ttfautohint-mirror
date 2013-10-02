@@ -43,6 +43,7 @@ typedef struct Hints_Record_
 
 typedef struct Recorder_
 {
+  SFNT* sfnt;
   FONT* font;
   GLYPH* glyph; /* the current glyph */
   Hints_Record hints_record;
@@ -1126,6 +1127,7 @@ TA_hints_recorder(TA_Action action,
   TA_Point points = hints->points;
 
   Recorder* recorder = (Recorder*)hints->user;
+  SFNT* sfnt = recorder->sfnt;
   FONT* font = recorder->font;
   FT_UShort* wraps = recorder->wrap_around_segments;
   FT_Byte* p = recorder->hints_record.buf;
@@ -1498,6 +1500,7 @@ TA_hints_recorder(TA_Action action,
 
 static FT_Error
 TA_init_recorder(Recorder* recorder,
+                 SFNT* sfnt,
                  FONT* font,
                  GLYPH* glyph,
                  TA_GlyphHints hints)
@@ -1514,6 +1517,7 @@ TA_init_recorder(Recorder* recorder,
   FT_UShort num_strong_points = 0;
   FT_UShort* wrap_around_segment;
 
+  recorder->sfnt = sfnt;
   recorder->font = font;
   recorder->glyph = glyph;
   recorder->num_segments = axis->num_segments;
@@ -1745,7 +1749,8 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   if (font->loader->metrics->script_class == &ta_dflt_script_class)
   {
     /* since `TA_init_recorder' hasn't been called yet, */
-    /* we manually initialize the `font' and `glyph' fields */
+    /* we manually initialize the `sfnt', `font', and `glyph' fields */
+    recorder.sfnt = sfnt;
     recorder.font = font;
     recorder.glyph = glyph;
 
@@ -1759,7 +1764,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     goto Done1;
   }
 
-  error = TA_init_recorder(&recorder, font, glyph, hints);
+  error = TA_init_recorder(&recorder, sfnt, font, glyph, hints);
   if (error)
     goto Err;
 
