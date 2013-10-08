@@ -5105,9 +5105,9 @@ unsigned char FPGM(bci_hint_glyph) [] =
 
 
 #define COPY_FPGM(func_name) \
-          memcpy(buf_p, fpgm_ ## func_name, \
+          memcpy(bufp, fpgm_ ## func_name, \
                  sizeof (fpgm_ ## func_name)); \
-          buf_p += sizeof (fpgm_ ## func_name) \
+          bufp += sizeof (fpgm_ ## func_name) \
 
 static FT_Error
 TA_table_build_fpgm(FT_Byte** fpgm,
@@ -5118,7 +5118,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   FT_UInt buf_len;
   FT_UInt len;
   FT_Byte* buf;
-  FT_Byte* buf_p;
+  FT_Byte* bufp;
 
 
   /* for compatibility with dumb bytecode interpreters or analyzers, */
@@ -5279,24 +5279,24 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   buf[len - 3] = 0x00;
 
   /* copy font program into buffer and fill in the missing variables */
-  buf_p = buf;
+  bufp = buf;
 
   COPY_FPGM(bci_round);
   COPY_FPGM(bci_smooth_stem_width_a);
-  *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
+  *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
   COPY_FPGM(bci_smooth_stem_width_b);
-  *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
+  *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
   COPY_FPGM(bci_smooth_stem_width_c);
   COPY_FPGM(bci_get_best_width);
   COPY_FPGM(bci_strong_stem_width_a);
-  *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
-  *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_SIZE;
+  *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
+  *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_SIZE;
   COPY_FPGM(bci_strong_stem_width_b);
   COPY_FPGM(bci_loop_do);
   COPY_FPGM(bci_loop);
   COPY_FPGM(bci_cvt_rescale);
   COPY_FPGM(bci_blue_round_a);
-  *(buf_p++) = (unsigned char)CVT_BLUES_SIZE;
+  *(bufp++) = (unsigned char)CVT_BLUES_SIZE;
   COPY_FPGM(bci_blue_round_b);
   COPY_FPGM(bci_decrement_component_counter);
   COPY_FPGM(bci_get_point_extrema);

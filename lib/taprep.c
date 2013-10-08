@@ -551,9 +551,9 @@ Fail:
 #define COPY_PREP(snippet_name) \
           do \
           { \
-            memcpy(buf_p, prep_ ## snippet_name, \
+            memcpy(bufp, prep_ ## snippet_name, \
                    sizeof (prep_ ## snippet_name)); \
-            buf_p += sizeof (prep_ ## snippet_name); \
+            bufp += sizeof (prep_ ## snippet_name); \
           } while (0)
 
 static FT_Error
@@ -572,7 +572,7 @@ TA_table_build_prep(FT_Byte** prep,
   FT_UInt buf_new_len;
 
   FT_UInt len;
-  FT_Byte* buf_p = NULL;
+  FT_Byte* bufp = NULL;
 
 
   if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_NONE)
@@ -593,13 +593,13 @@ TA_table_build_prep(FT_Byte** prep,
 
   if (blue_adjustment && font->x_height_snapping_exceptions)
   {
-    buf_p = TA_sfnt_build_number_set(sfnt, &buf,
-                                     font->x_height_snapping_exceptions);
-    if (!buf_p)
+    bufp = TA_sfnt_build_number_set(sfnt, &buf,
+                                    font->x_height_snapping_exceptions);
+    if (!bufp)
       return FT_Err_Out_Of_Memory;
   }
 
-  buf_len = buf_p - buf;
+  buf_len = bufp - buf;
   buf_new_len = buf_len;
 
   if (font->hinting_limit)
@@ -669,13 +669,13 @@ TA_table_build_prep(FT_Byte** prep,
 
   /* copy remaining cvt program into buffer */
   /* and fill in the missing variables */
-  buf_p = buf + buf_len;
+  bufp = buf + buf_len;
 
   if (font->hinting_limit)
   {
     COPY_PREP(hinting_limit_a);
-    *(buf_p++) = HIGH(font->hinting_limit);
-    *(buf_p++) = LOW(font->hinting_limit);
+    *(bufp++) = HIGH(font->hinting_limit);
+    *(bufp++) = LOW(font->hinting_limit);
     COPY_PREP(hinting_limit_b);
   }
 
@@ -687,14 +687,14 @@ TA_table_build_prep(FT_Byte** prep,
       COPY_PREP(test_exception_a);
 
     COPY_PREP(align_top_a);
-    *(buf_p++) = (unsigned char)(CVT_BLUE_SHOOTS_OFFSET
-                                 + blue_adjustment - vaxis->blues);
+    *(bufp++) = (unsigned char)(CVT_BLUE_SHOOTS_OFFSET
+                                + blue_adjustment - vaxis->blues);
     COPY_PREP(align_top_b);
     if (font->increase_x_height)
     {
       COPY_PREP(align_top_c1a);
-      *(buf_p++) = HIGH(font->increase_x_height);
-      *(buf_p++) = LOW(font->increase_x_height);
+      *(bufp++) = HIGH(font->increase_x_height);
+      *(bufp++) = LOW(font->increase_x_height);
       COPY_PREP(align_top_c1b);
     }
     else
@@ -702,15 +702,15 @@ TA_table_build_prep(FT_Byte** prep,
     COPY_PREP(align_top_d);
 
     COPY_PREP(loop_cvt_a);
-    *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
-    *(buf_p++) = (unsigned char)CVT_VERT_WIDTHS_SIZE;
+    *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
+    *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_SIZE;
     /* don't loop over the artificial blue zones */
     COPY_PREP(loop_cvt_b);
-    *(buf_p++) = (unsigned char)CVT_BLUE_REFS_OFFSET;
-    *(buf_p++) = (unsigned char)(CVT_BLUES_SIZE - 2);
+    *(bufp++) = (unsigned char)CVT_BLUE_REFS_OFFSET;
+    *(bufp++) = (unsigned char)(CVT_BLUES_SIZE - 2);
     COPY_PREP(loop_cvt_c);
-    *(buf_p++) = (unsigned char)CVT_BLUE_SHOOTS_OFFSET;
-    *(buf_p++) = (unsigned char)(CVT_BLUES_SIZE - 2);
+    *(bufp++) = (unsigned char)CVT_BLUE_SHOOTS_OFFSET;
+    *(bufp++) = (unsigned char)(CVT_BLUES_SIZE - 2);
     COPY_PREP(loop_cvt_d);
 
     if (font->x_height_snapping_exceptions)
@@ -718,26 +718,26 @@ TA_table_build_prep(FT_Byte** prep,
   }
 
   COPY_PREP(compute_extra_light_a);
-  *(buf_p++) = (unsigned char)CVT_VERT_STANDARD_WIDTH_OFFSET;
+  *(bufp++) = (unsigned char)CVT_VERT_STANDARD_WIDTH_OFFSET;
   COPY_PREP(compute_extra_light_b);
 
   if (CVT_BLUES_SIZE)
   {
     COPY_PREP(round_blues_a);
-    *(buf_p++) = (unsigned char)CVT_BLUE_REFS_OFFSET;
-    *(buf_p++) = (unsigned char)CVT_BLUES_SIZE;
+    *(bufp++) = (unsigned char)CVT_BLUE_REFS_OFFSET;
+    *(bufp++) = (unsigned char)CVT_BLUES_SIZE;
     COPY_PREP(round_blues_b);
   }
 
   COPY_PREP(set_stem_width_handling_a);
-  *(buf_p++) = font->gray_strong_stem_width ? bci_strong_stem_width
-                                            : bci_smooth_stem_width;
+  *(bufp++) = font->gray_strong_stem_width ? bci_strong_stem_width
+                                           : bci_smooth_stem_width;
   COPY_PREP(set_stem_width_handling_b);
-  *(buf_p++) = font->gdi_cleartype_strong_stem_width ? bci_strong_stem_width
-                                                     : bci_smooth_stem_width;
-  COPY_PREP(set_stem_width_handling_c);
-  *(buf_p++) = font->dw_cleartype_strong_stem_width ? bci_strong_stem_width
+  *(bufp++) = font->gdi_cleartype_strong_stem_width ? bci_strong_stem_width
                                                     : bci_smooth_stem_width;
+  COPY_PREP(set_stem_width_handling_c);
+  *(bufp++) = font->dw_cleartype_strong_stem_width ? bci_strong_stem_width
+                                                   : bci_smooth_stem_width;
   COPY_PREP(set_stem_width_handling_d);
   COPY_PREP(set_dropout_mode);
   COPY_PREP(reset_component_counter);

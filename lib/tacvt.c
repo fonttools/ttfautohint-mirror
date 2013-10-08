@@ -79,7 +79,7 @@ TA_table_build_cvt(FT_Byte** cvt,
   FT_UInt buf_len;
   FT_UInt len;
   FT_Byte* buf;
-  FT_Byte* buf_p;
+  FT_Byte* bufp;
   FT_UInt cvt_offset;
 
   FT_Error error;
@@ -119,7 +119,9 @@ TA_table_build_cvt(FT_Byte** cvt,
 
       hwidth_count += haxis->width_count;
       vwidth_count += vaxis->width_count;
-      blue_count += vaxis->blue_count + 2; /* with artificial blue zones */
+      /* there are two artificial blue zones at the end of the array */
+      /* that are not part of `vaxis->blue_count' */
+      blue_count += vaxis->blue_count + 2;
     }
   }
 
@@ -147,7 +149,7 @@ TA_table_build_cvt(FT_Byte** cvt,
   buf[len - 2] = 0x00;
   buf[len - 3] = 0x00;
 
-  buf_p = buf;
+  bufp = buf;
 
   /*
    * some CVT values are initialized (and modified) at runtime:
@@ -160,15 +162,15 @@ TA_table_build_cvt(FT_Byte** cvt,
   for (i = 0; i < (cvtl_max_runtime
                    + data->num_used_scripts
                    + 2 * data->num_used_scripts) * 2; i++)
-    *(buf_p++) = 0;
+    *(bufp++) = 0;
 
-  cvt_offset = buf_p - buf;
+  cvt_offset = bufp - buf;
 
   /* loop again over all scripts and copy CVT data */
   for (i = 0; i < i_max; i++)
   {
     /* collect offsets */
-    data->cvt_offsets[i] = ((FT_UInt)(buf_p - buf) - cvt_offset) >> 1;
+    data->cvt_offsets[i] = ((FT_UInt)(bufp - buf) - cvt_offset) >> 1;
 
     error = TA_sfnt_compute_global_hints(sfnt, font, i);
     if (error == TA_Err_Missing_Glyph)
@@ -198,41 +200,41 @@ TA_table_build_cvt(FT_Byte** cvt,
     /* horizontal standard width */
     if (hwidth_count > 0)
     {
-      *(buf_p++) = HIGH(haxis->widths[0].org);
-      *(buf_p++) = LOW(haxis->widths[0].org);
+      *(bufp++) = HIGH(haxis->widths[0].org);
+      *(bufp++) = LOW(haxis->widths[0].org);
     }
     else
     {
-      *(buf_p++) = 0;
-      *(buf_p++) = 50;
+      *(bufp++) = 0;
+      *(bufp++) = 50;
     }
 
     for (j = 0; j < hwidth_count; j++)
     {
       if (haxis->widths[j].org > 0xFFFF)
         goto Err;
-      *(buf_p++) = HIGH(haxis->widths[j].org);
-      *(buf_p++) = LOW(haxis->widths[j].org);
+      *(bufp++) = HIGH(haxis->widths[j].org);
+      *(bufp++) = LOW(haxis->widths[j].org);
     }
 
     /* vertical standard width */
     if (vwidth_count > 0)
     {
-      *(buf_p++) = HIGH(vaxis->widths[0].org);
-      *(buf_p++) = LOW(vaxis->widths[0].org);
+      *(bufp++) = HIGH(vaxis->widths[0].org);
+      *(bufp++) = LOW(vaxis->widths[0].org);
     }
     else
     {
-      *(buf_p++) = 0;
-      *(buf_p++) = 50;
+      *(bufp++) = 0;
+      *(bufp++) = 50;
     }
 
     for (j = 0; j < vwidth_count; j++)
     {
       if (vaxis->widths[j].org > 0xFFFF)
         goto Err;
-      *(buf_p++) = HIGH(vaxis->widths[j].org);
-      *(buf_p++) = LOW(vaxis->widths[j].org);
+      *(bufp++) = HIGH(vaxis->widths[j].org);
+      *(bufp++) = LOW(vaxis->widths[j].org);
     }
 
     data->cvt_blue_adjustment_offsets[i] = 0xFFFFU;
@@ -241,16 +243,16 @@ TA_table_build_cvt(FT_Byte** cvt,
     {
       if (vaxis->blues[j].ref.org > 0xFFFF)
         goto Err;
-      *(buf_p++) = HIGH(vaxis->blues[j].ref.org);
-      *(buf_p++) = LOW(vaxis->blues[j].ref.org);
+      *(bufp++) = HIGH(vaxis->blues[j].ref.org);
+      *(bufp++) = LOW(vaxis->blues[j].ref.org);
     }
 
     for (j = 0; j < blue_count; j++)
     {
       if (vaxis->blues[j].shoot.org > 0xFFFF)
         goto Err;
-      *(buf_p++) = HIGH(vaxis->blues[j].shoot.org);
-      *(buf_p++) = LOW(vaxis->blues[j].shoot.org);
+      *(bufp++) = HIGH(vaxis->blues[j].shoot.org);
+      *(bufp++) = LOW(vaxis->blues[j].shoot.org);
 
       if (vaxis->blues[j].flags & TA_LATIN_BLUE_ADJUSTMENT)
         data->cvt_blue_adjustment_offsets[i] = j;
