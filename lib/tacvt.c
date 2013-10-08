@@ -18,7 +18,8 @@
 
 static FT_Error
 TA_sfnt_compute_global_hints(SFNT* sfnt,
-                             FONT* font)
+                             FONT* font,
+                             FT_UInt script_idx)
 {
   FT_Error error;
   FT_Face face = sfnt->face;
@@ -43,10 +44,10 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
     idx = 0;
   else
   {
-    /* load glyph `o' to trigger all initializations */
-    /* XXX make this configurable for non-latin scripts */
+    /* load standard character to trigger script initializations */
     /* XXX make this configurable to use a different letter */
-    idx = FT_Get_Char_Index(face, 'o');
+    idx = FT_Get_Char_Index(face,
+                            ta_script_classes[script_idx]->standard_char);
     if (!idx)
       return TA_Err_Missing_Glyph;
   }
@@ -64,6 +65,9 @@ TA_table_build_cvt(FT_Byte** cvt,
                    SFNT* sfnt,
                    FONT* font)
 {
+  SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
+  glyf_Data* data = (glyf_Data*)glyf_table->data;
+
   TA_LatinAxis haxis;
   TA_LatinAxis vaxis;
 
@@ -71,43 +75,66 @@ TA_table_build_cvt(FT_Byte** cvt,
   FT_UInt vwidth_count;
   FT_UInt blue_count;
 
-  FT_UInt i;
+  FT_UInt i, j, i_max;
   FT_UInt buf_len;
   FT_UInt len;
   FT_Byte* buf;
   FT_Byte* buf_p;
+  FT_UInt cvt_offset;
 
   FT_Error error;
 
 
-  error = TA_sfnt_compute_global_hints(sfnt, font);
-  if (error)
-    return error;
+  /* checking multiple scripts doesn't make sense for symbol fonts */
+  i_max = font->symbol ? 1 : TA_SCRIPT_MAX;
 
-  if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT)
+  /* loop over all scripts and collect the relevant CVT data */
+  /* to compute the necessary array sizes and meta-information */
+  hwidth_count = 0;
+  vwidth_count = 0;
+  blue_count = 0;
+
+  data->num_used_scripts = 0;
+
+  for (i = 0; i < i_max; i++)
   {
-    haxis = NULL;
-    vaxis = NULL;
+    error = TA_sfnt_compute_global_hints(sfnt, font, i);
+    if (error == TA_Err_Missing_Glyph)
+    {
+      data->script_ids[i] = 0xFFFFU;
+      continue;
+    }
+    if (error)
+      return error;
 
-    hwidth_count = 0;
-    vwidth_count = 0;
-    blue_count = 0;
+    data->script_ids[i] = data->num_used_scripts++;
+
+    if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT)
+      continue;
+    else
+    {
+      /* XXX: generalize this to handle other metrics also */
+      haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
+      vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
+
+      hwidth_count += haxis->width_count;
+      vwidth_count += vaxis->width_count;
+      blue_count += vaxis->blue_count + 2; /* with artificial blue zones */
+    }
   }
-  else
-  {
-    haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
-    vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
 
-    hwidth_count = haxis->width_count;
-    vwidth_count = vaxis->width_count;
-    blue_count = vaxis->blue_count + 2; /* with artificial blue zones */
-  }
+  /* exit if the font doesn't contain a single supported script */
+  if (!data->num_used_scripts)
+    return TA_Err_Missing_Glyph;
 
-  buf_len = 2 * (cvtl_max_runtime /* runtime values */
-                 + 2 /* vertical and horizontal standard width */
-                 + hwidth_count
-                 + vwidth_count
-                 + 2 * blue_count);
+  buf_len = cvtl_max_runtime /* runtime values 1 */
+            + data->num_used_scripts /* runtime values 2 (for scaling) */
+            + 2 * data->num_used_scripts /* runtime values 3 (blue data) */
+            + 2 * data->num_used_scripts /* vert. and horiz. std. widths */
+            + hwidth_count
+            + vwidth_count
+            + 2 * blue_count; /* round and flat blue zones */
+  buf_len <<= 1; /* we have 16bit values */
 
   /* buffer length must be a multiple of four */
   len = (buf_len + 3) & ~3;
@@ -122,65 +149,116 @@ TA_table_build_cvt(FT_Byte** cvt,
 
   buf_p = buf;
 
-  /* some CVT values are initialized (and modified) at runtime; */
-  /* see the `cvtl_xxx' macros in tabytecode.h */
-  for (i = 0; i < cvtl_max_runtime; i++)
-  {
+  /*
+   * some CVT values are initialized (and modified) at runtime:
+   *
+   *   (1) the `cvtl_xxx' values (see `tabytecode.h')
+   *   (2) a scaling value for each script
+   *   (3) offset and size of the vertical widths array
+   *       (needed by `bci_{smooth,strong}_stem_width') for each script
+   */
+  for (i = 0; i < (cvtl_max_runtime
+                   + data->num_used_scripts
+                   + 2 * data->num_used_scripts) * 2; i++)
     *(buf_p++) = 0;
-    *(buf_p++) = 0;
-  }
 
-  if (hwidth_count > 0)
-  {
-    *(buf_p++) = HIGH(haxis->widths[0].org);
-    *(buf_p++) = LOW(haxis->widths[0].org);
-  }
-  else
-  {
-    *(buf_p++) = 0;
-    *(buf_p++) = 50;
-  }
-  if (vwidth_count > 0)
-  {
-    *(buf_p++) = HIGH(vaxis->widths[0].org);
-    *(buf_p++) = LOW(vaxis->widths[0].org);
-  }
-  else
-  {
-    *(buf_p++) = 0;
-    *(buf_p++) = 50;
-  }
+  cvt_offset = buf_p - buf;
 
-  for (i = 0; i < hwidth_count; i++)
+  /* loop again over all scripts and copy CVT data */
+  for (i = 0; i < i_max; i++)
   {
-    if (haxis->widths[i].org > 0xFFFF)
-      goto Err;
-    *(buf_p++) = HIGH(haxis->widths[i].org);
-    *(buf_p++) = LOW(haxis->widths[i].org);
-  }
+    /* collect offsets */
+    data->cvt_offsets[i] = ((FT_UInt)(buf_p - buf) - cvt_offset) >> 1;
 
-  for (i = 0; i < vwidth_count; i++)
-  {
-    if (vaxis->widths[i].org > 0xFFFF)
-      goto Err;
-    *(buf_p++) = HIGH(vaxis->widths[i].org);
-    *(buf_p++) = LOW(vaxis->widths[i].org);
-  }
+    error = TA_sfnt_compute_global_hints(sfnt, font, i);
+    if (error == TA_Err_Missing_Glyph)
+      continue;
+    if (error)
+      return error;
 
-  for (i = 0; i < blue_count; i++)
-  {
-    if (vaxis->blues[i].ref.org > 0xFFFF)
-      goto Err;
-    *(buf_p++) = HIGH(vaxis->blues[i].ref.org);
-    *(buf_p++) = LOW(vaxis->blues[i].ref.org);
-  }
+    if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT)
+    {
+      haxis = NULL;
+      vaxis = NULL;
 
-  for (i = 0; i < blue_count; i++)
-  {
-    if (vaxis->blues[i].shoot.org > 0xFFFF)
-      goto Err;
-    *(buf_p++) = HIGH(vaxis->blues[i].shoot.org);
-    *(buf_p++) = LOW(vaxis->blues[i].shoot.org);
+      hwidth_count = 0;
+      vwidth_count = 0;
+      blue_count = 0;
+    }
+    else
+    {
+      haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
+      vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
+
+      hwidth_count = haxis->width_count;
+      vwidth_count = vaxis->width_count;
+      blue_count = vaxis->blue_count + 2; /* with artificial blue zones */
+    }
+
+    /* horizontal standard width */
+    if (hwidth_count > 0)
+    {
+      *(buf_p++) = HIGH(haxis->widths[0].org);
+      *(buf_p++) = LOW(haxis->widths[0].org);
+    }
+    else
+    {
+      *(buf_p++) = 0;
+      *(buf_p++) = 50;
+    }
+
+    for (j = 0; j < hwidth_count; j++)
+    {
+      if (haxis->widths[j].org > 0xFFFF)
+        goto Err;
+      *(buf_p++) = HIGH(haxis->widths[j].org);
+      *(buf_p++) = LOW(haxis->widths[j].org);
+    }
+
+    /* vertical standard width */
+    if (vwidth_count > 0)
+    {
+      *(buf_p++) = HIGH(vaxis->widths[0].org);
+      *(buf_p++) = LOW(vaxis->widths[0].org);
+    }
+    else
+    {
+      *(buf_p++) = 0;
+      *(buf_p++) = 50;
+    }
+
+    for (j = 0; j < vwidth_count; j++)
+    {
+      if (vaxis->widths[j].org > 0xFFFF)
+        goto Err;
+      *(buf_p++) = HIGH(vaxis->widths[j].org);
+      *(buf_p++) = LOW(vaxis->widths[j].org);
+    }
+
+    data->cvt_blue_adjustment_offsets[i] = 0xFFFFU;
+
+    for (j = 0; j < blue_count; j++)
+    {
+      if (vaxis->blues[j].ref.org > 0xFFFF)
+        goto Err;
+      *(buf_p++) = HIGH(vaxis->blues[j].ref.org);
+      *(buf_p++) = LOW(vaxis->blues[j].ref.org);
+    }
+
+    for (j = 0; j < blue_count; j++)
+    {
+      if (vaxis->blues[j].shoot.org > 0xFFFF)
+        goto Err;
+      *(buf_p++) = HIGH(vaxis->blues[j].shoot.org);
+      *(buf_p++) = LOW(vaxis->blues[j].shoot.org);
+
+      if (vaxis->blues[j].flags & TA_LATIN_BLUE_ADJUSTMENT)
+        data->cvt_blue_adjustment_offsets[i] = j;
+    }
+
+    data->cvt_horz_width_sizes[i] = hwidth_count;
+    data->cvt_vert_width_sizes[i] = vwidth_count;
+    data->cvt_blue_zone_sizes[i] = blue_count;
   }
 
   *cvt = buf;

@@ -138,6 +138,17 @@ typedef struct glyf_Data_
   FT_ULong cvt_idx;
   FT_ULong fpgm_idx;
   FT_ULong prep_idx;
+
+  /* scripts present in a font get a running number */
+  FT_UInt script_ids[TA_SCRIPT_MAX];
+  FT_UInt num_used_scripts;
+
+  /* we have separate CVT data for each script */
+  FT_UInt cvt_offsets[TA_SCRIPT_MAX];
+  FT_UInt cvt_horz_width_sizes[TA_SCRIPT_MAX];
+  FT_UInt cvt_vert_width_sizes[TA_SCRIPT_MAX];
+  FT_UInt cvt_blue_zone_sizes[TA_SCRIPT_MAX];
+  FT_UInt cvt_blue_adjustment_offsets[TA_SCRIPT_MAX];
 } glyf_Data;
 
 /* an SFNT table */
