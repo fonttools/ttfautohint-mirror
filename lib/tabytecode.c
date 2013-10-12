@@ -26,6 +26,7 @@
 
 #ifdef TA_DEBUG
 int _ta_debug = 0;
+int _ta_debug_global = 0;
 int _ta_debug_disable_horz_hints;
 int _ta_debug_disable_vert_hints;
 int _ta_debug_disable_blue_hints;
@@ -1688,13 +1689,17 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   }
 
   /* computing the segments is resolution independent, */
-  /* thus the pixel size in this call is arbitrary */
-  error = FT_Set_Pixel_Sizes(face, 20, 20);
+  /* thus the pixel size in this call is arbitrary -- */
+  /* however, we avoid unnecessary debugging output */
+  /* if we use the lowest value of the hinting range */
+  error = FT_Set_Pixel_Sizes(face,
+                             font->hinting_range_min,
+                             font->hinting_range_min);
   if (error)
     return error;
 
 #ifdef TA_DEBUG
-  /* temporarily disable debugging output */
+  /* temporarily disable some debugging output */
   /* to avoid getting the information twice */
   _ta_debug_save = _ta_debug;
   _ta_debug = 0;

@@ -46,11 +46,11 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
   TA_GlyphHintsRec hints[1];
 
 
-  TA_LOG(("\n"
-          "latin standard widths computation (script `%s')\n"
-          "=================================================\n"
-          "\n",
-          ta_script_names[metrics->root.script_class->script]));
+  TA_LOG_GLOBAL(("\n"
+                 "latin standard widths computation (script `%s')\n"
+                 "=================================================\n"
+                 "\n",
+                 ta_script_names[metrics->root.script_class->script]));
 
   ta_glyph_hints_init(hints);
 
@@ -71,8 +71,8 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     if (glyph_index == 0)
       goto Exit;
 
-    TA_LOG(("standard character: U+%04lX (glyph index %d)\n",
-            metrics->root.script_class->standard_char, glyph_index));
+    TA_LOG_GLOBAL(("standard character: U+%04lX (glyph index %d)\n",
+                   metrics->root.script_class->standard_char, glyph_index));
 
     error = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
     if (error || face->glyph->outline.n_points <= 0)
@@ -163,21 +163,21 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
         FT_UInt i;
 
 
-        TA_LOG(("%s widths:\n",
-                dim == TA_DIMENSION_VERT ? "horizontal"
-                                         : "vertical"));
+        TA_LOG_GLOBAL(("%s widths:\n",
+                       dim == TA_DIMENSION_VERT ? "horizontal"
+                                                : "vertical"));
 
-        TA_LOG(("  %d (standard)", axis->standard_width));
+        TA_LOG_GLOBAL(("  %d (standard)", axis->standard_width));
         for (i = 1; i < axis->width_count; i++)
-          TA_LOG((" %d", axis->widths[i].org));
+          TA_LOG_GLOBAL((" %d", axis->widths[i].org));
 
-        TA_LOG(("\n"));
+        TA_LOG_GLOBAL(("\n"));
       }
 #endif
     }
   }
 
-  TA_LOG(("\n"));
+  TA_LOG_GLOBAL(("\n"));
 
   ta_glyph_hints_done(hints);
 }
@@ -207,9 +207,9 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
   /* we walk over the blue character strings as specified in the  */
   /* script's entry in the `af_blue_stringset' array */
 
-  TA_LOG(("latin blue zones computation\n"
-          "============================\n"
-          "\n"));
+  TA_LOG_GLOBAL(("latin blue zones computation\n"
+                 "============================\n"
+                 "\n"));
 
   for (; bs->string != TA_BLUE_STRING_MAX; bs++)
   {
@@ -218,7 +218,44 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     FT_Pos* blue_shoot;
 
 
-    TA_LOG(("blue zone %d:\n", axis->blue_count));
+#ifdef TA_DEBUG
+    {
+      FT_Bool have_flag = 0;
+
+
+      TA_LOG_GLOBAL(("blue zone %d", axis->blue_count));
+
+      if (bs->properties)
+      {
+        TA_LOG_GLOBAL((" ("));
+
+        if (TA_LATIN_IS_TOP_BLUE(bs))
+        {
+          TA_LOG_GLOBAL(("top"));
+          have_flag = 1;
+        }
+
+        if (TA_LATIN_IS_SMALL_TOP_BLUE(bs))
+        {
+          if (have_flag)
+            TA_LOG_GLOBAL((", "));
+          TA_LOG_GLOBAL(("small top"));
+          have_flag = 1;
+        }
+
+        if (TA_LATIN_IS_LONG_BLUE(bs))
+        {
+          if (have_flag)
+            TA_LOG_GLOBAL((", "));
+          TA_LOG_GLOBAL(("long"));
+        }
+
+        TA_LOG_GLOBAL((")"));
+      }
+
+      TA_LOG_GLOBAL((":\n"));
+    }
+#endif /* TA_DEBUG */
 
     num_flats = 0;
     num_rounds = 0;
@@ -239,7 +276,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
       glyph_index = FT_Get_Char_Index(face, ch);
       if (glyph_index == 0)
       {
-        TA_LOG(("  U+%04lX unavailable\n", ch));
+        TA_LOG_GLOBAL(("  U+%04lX unavailable\n", ch));
         continue;
       }
 
@@ -247,7 +284,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
       outline = face->glyph->outline;
       if (error || outline.n_points <= 0)
       {
-        TA_LOG(("  U+%04lX contains no outlines\n", ch));
+        TA_LOG_GLOBAL(("  U+%04lX contains no outlines\n", ch));
         continue;
       }
 
@@ -551,7 +588,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
           }
         }
 
-        TA_LOG(("  U+%04lX: best_y = %5ld", ch, best_y));
+        TA_LOG_GLOBAL(("  U+%04lX: best_y = %5ld", ch, best_y));
 
         /*
          * now set the `round' flag depending on the segment's kind:
@@ -575,7 +612,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
                           || FT_CURVE_TAG(outline.tags[best_segment_last])
                                != FT_CURVE_TAG_ON);
 
-        TA_LOG((" (%s)\n", round ? "round" : "flat"));
+        TA_LOG_GLOBAL((" (%s)\n", round ? "round" : "flat"));
       }
 
       if (round)
@@ -588,7 +625,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     {
       /* we couldn't find a single glyph to compute this blue zone, */
       /* we will simply ignore it then */
-      TA_LOG(("  empty\n"));
+      TA_LOG_GLOBAL(("  empty\n"));
       continue;
     }
 
@@ -635,8 +672,8 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
         *blue_ref =
         *blue_shoot = (shoot + ref) / 2;
 
-        TA_LOG(("  [overshoot smaller than reference,"
-                " taking mean value]\n"));
+        TA_LOG_GLOBAL(("  [overshoot smaller than reference,"
+                       " taking mean value]\n"));
       }
     }
 
@@ -650,9 +687,9 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     if (TA_LATIN_IS_SMALL_TOP_BLUE(bs))
       blue->flags |= TA_LATIN_BLUE_ADJUSTMENT;
 
-    TA_LOG(("    -> reference = %ld\n"
-            "       overshoot = %ld\n",
-            *blue_ref, *blue_shoot));
+    TA_LOG_GLOBAL(("    -> reference = %ld\n"
+                   "       overshoot = %ld\n",
+                   *blue_ref, *blue_shoot));
   }
 
   /* add two blue zones for usWinAscent and usWinDescent */
@@ -671,20 +708,20 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
       blue->ref.org =
       blue->shoot.org = os2->usWinAscent;
 
-      TA_LOG(("artificial blue zone for usWinAscent:\n"
-              "    -> reference = %ld\n"
-              "       overshoot = %ld\n",
-              blue->ref.org, blue->shoot.org));
+      TA_LOG_GLOBAL(("artificial blue zone for usWinAscent:\n"
+                     "    -> reference = %ld\n"
+                     "       overshoot = %ld\n",
+                     blue->ref.org, blue->shoot.org));
 
       blue = &axis->blues[axis->blue_count + 1];
       blue->flags = TA_LATIN_BLUE_ACTIVE;
       blue->ref.org =
       blue->shoot.org = -os2->usWinDescent;
 
-      TA_LOG(("artificial blue zone for usWinDescent:\n"
-              "    -> reference = %ld\n"
-              "       overshoot = %ld\n",
-              blue->ref.org, blue->shoot.org));
+      TA_LOG_GLOBAL(("artificial blue zone for usWinDescent:\n"
+                     "    -> reference = %ld\n"
+                     "       overshoot = %ld\n",
+                     blue->ref.org, blue->shoot.org));
     }
     else
     {
@@ -700,7 +737,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     }
   }
 
-  TA_LOG(("\n"));
+  TA_LOG_GLOBAL(("\n"));
 
   return;
 }
@@ -812,7 +849,7 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
   axis->org_scale = scale;
   axis->org_delta = delta;
 
-  /* correct X and Y scale to optimize the alignment of the top of */
+  /* correct Y scale to optimize the alignment of the top of */
   /* small letters to the pixel grid */
   /* (if we do x-height snapping for this ppem value) */
   if (!number_set_is_element(
@@ -856,7 +893,20 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
       if (scaled != fitted)
       {
         if (dim == TA_DIMENSION_VERT)
+        {
           scale = FT_MulDiv(scale, fitted, scaled);
+
+          TA_LOG_GLOBAL((
+            "ta_latin_metrics_scale_dim:"
+            " x height alignment (script `%s'):\n"
+            "                           "
+            " vertical scaling changed from %.4f to %.4f (by %d%%)\n"
+            "\n",
+            ta_script_names[metrics->root.script_class->script],
+            axis->org_scale / 65536.0,
+            scale / 65536.0,
+            (fitted - scaled) * 100 / scaled));
+        }
       }
     }
   }
@@ -875,6 +925,10 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
     metrics->root.scaler.y_delta = delta;
   }
 
+  TA_LOG_GLOBAL(("%s widths (script `%s')\n",
+                 dim == TA_DIMENSION_HORZ ? "horizontal" : "vertical",
+                 ta_script_names[metrics->root.script_class->script]));
+
   /* scale the widths */
   for (nn = 0; nn < axis->width_count; nn++)
   {
@@ -883,15 +937,30 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
 
     width->cur = FT_MulFix(width->org, scale);
     width->fit = width->cur;
+
+    TA_LOG_GLOBAL(("  %d scaled to %.2f\n",
+                   width->org,
+                   width->cur / 64.0));
   }
+
+  TA_LOG_GLOBAL(("\n"));
 
   /* an extra-light axis corresponds to a standard width that is */
   /* smaller than 5/8 pixels */
   axis->extra_light =
     (FT_Bool)(FT_MulFix(axis->standard_width, scale) < 32 + 8);
 
+#ifdef TA_DEBUG
+  if (axis->extra_light)
+    TA_LOG_GLOBAL(("this font is extra light\n"
+                   "\n"));
+#endif
+
   if (dim == TA_DIMENSION_VERT)
   {
+    TA_LOG_GLOBAL(("blue zones (script `%s')\n",
+                   ta_script_names[metrics->root.script_class->script]));
+
     /* scale the blue zones */
     for (nn = 0; nn < axis->blue_count; nn++)
     {
@@ -959,6 +1028,19 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
 #endif
 
         blue->flags |= TA_LATIN_BLUE_ACTIVE;
+
+        TA_LOG_GLOBAL(("  reference %d: %d scaled to %.2f%s\n"
+                       "  overshoot %d: %d scaled to %.2f%s\n",
+                       nn,
+                       blue->ref.org,
+                       blue->ref.fit / 64.0,
+                       blue->flags & TA_LATIN_BLUE_ACTIVE ? ""
+                                                          : " (inactive)",
+                       nn,
+                       blue->shoot.org,
+                       blue->shoot.fit / 64.0,
+                       blue->flags & TA_LATIN_BLUE_ACTIVE ? ""
+                                                          : " (inactive)"));
       }
     }
 
@@ -981,6 +1063,8 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
       b->shoot.cur =
       b->shoot.fit = FT_MulFix(b->ref.org, a->org_scale) + delta;
     }
+
+    TA_LOG_GLOBAL(("\n"));
   }
 }
 

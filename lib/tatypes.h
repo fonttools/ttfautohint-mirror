@@ -55,11 +55,19 @@
       _ta_message x; \
   } while (0)
 
+#define TA_LOG_GLOBAL(x) \
+  do \
+  { \
+    if (_ta_debug_global) \
+      _ta_message x; \
+  } while (0)
+
 void
 _ta_message(const char* format,
             ...);
 
 extern int _ta_debug;
+extern int _ta_debug_global;
 extern int _ta_debug_disable_horz_hints;
 extern int _ta_debug_disable_vert_hints;
 extern int _ta_debug_disable_blue_hints;
@@ -68,6 +76,9 @@ extern void* _ta_debug_hints;
 #else /* !TA_DEBUG */
 
 #define TA_LOG(x) \
+  do { } while (0) /* nothing */
+
+#define TA_LOG_GLOBAL(x) \
   do { } while (0) /* nothing */
 
 #endif /* !TA_DEBUG */

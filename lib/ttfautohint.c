@@ -399,7 +399,10 @@ No_check:
     goto Err;
 
   if (font->debug)
+  {
     _ta_debug = 1;
+    _ta_debug_global = 1;
+  }
 
   /* we do some loops over all subfonts */
   for (i = 0; i < font->num_sfnts; i++)
