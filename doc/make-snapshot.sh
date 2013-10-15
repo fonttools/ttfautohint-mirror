@@ -25,7 +25,7 @@
 #   already run, since firefox replaces the process with a new window of the
 #   already running instance.
 #
-# o It loops forever for programs like `k3b' which spawns itself, thus
+# o It loops forever for programs like `k3b' that spawns itself, thus
 #   having a different process ID for the visible window.
 
 

@@ -177,7 +177,7 @@ typedef int
  * whitespace within the format string is not significant, a trailing comma
  * is ignored.  Fields are parsed from left to right; if a field occurs
  * multiple times, the last field's argument wins.  The same is true for
- * fields which are mutually exclusive.  Depending on the field, zero or one
+ * fields that are mutually exclusive.  Depending on the field, zero or one
  * argument is expected.
  *
  * Note that fields marked as 'not implemented yet' are subject to change.
@@ -190,7 +190,7 @@ typedef int
  *     opened for binary reading.  Mutually exclusive with `in-buffer`.
  *
  * `in-buffer`
- * :   A pointer of type `const char*` to a buffer which contains the input
+ * :   A pointer of type `const char*` to a buffer that contains the input
  *     font.  Needs `in-buffer-len`.  Mutually exclusive with `in-file`.
  *
  * `in-buffer-len`
@@ -202,7 +202,7 @@ typedef int
  *     opened for binary writing.  Mutually exclusive with `out-buffer`.
  *
  * `out-buffer`
- * :   A pointer of type `char**` to a buffer which contains the output
+ * :   A pointer of type `char**` to a buffer that contains the output
  *     font.  Needs `out-buffer-len`.  Mutually exclusive with `out-file`.
  *     Deallocate the memory with `free`.
  *
@@ -220,12 +220,12 @@ typedef int
  *     is not set or set to NULL, no progress callback function is used.
  *
  * `progress-callback-data`
- * :   A pointer of type `void*` to user data which is passed to the
+ * :   A pointer of type `void*` to user data that is passed to the
  *     progress callback function.
  *
  * `error-string`
  * :   A pointer of type `unsigned char**` to a string (in UTF-8 encoding)
- *     which verbally describes the error code.  You must not change the
+ *     that verbally describes the error code.  You must not change the
  *     returned value.
  *
  * `info-callback`
@@ -235,7 +235,7 @@ typedef int
  *     set to NULL, the table data stays unmodified.
  *
  * `info-callback-data`
- * :   A pointer of type `void*` to user data which is passed to the info
+ * :   A pointer of type `void*` to user data that is passed to the info
  *     callback function.
  *
  * `debug`
@@ -258,7 +258,7 @@ typedef int
  *
  * `hinting-limit`
  * :   An integer (which must be larger than or equal to the value of
- *     `hinting-range-max`) which gives the largest PPEM value at which
+ *     `hinting-range-max`) that gives the largest PPEM value at which
  *     hinting is applied.  For larger values, hinting is switched off.  If
  *     this field is not set, it defaults to `TA_HINTING_LIMIT`.  If it is
  *     set to\ 0, no hinting limit is added to the bytecode.
@@ -285,19 +285,19 @@ typedef int
  * ### Hinting Algorithms
  *
  * `gray-strong-stem-width`
- * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) which
+ * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) that
  *     specifies whether horizontal stems should be snapped and positioned
  *     to integer pixel values for normal grayscale rendering.
  *
  * `gdi-cleartype-strong-stem-width`
- * :   An integer (1\ for 'on', which is the default, and 0\ for 'off') which
+ * :   An integer (1\ for 'on', which is the default, and 0\ for 'off') that
  *     specifies whether horizontal stems should be snapped and positioned
  *     to integer pixel values for GDI ClearType rendering, this is, the
  *     rasterizer version (as returned by the GETINFO bytecode instruction)
  *     is in the range 36\ <= version <\ 38 and ClearType is enabled.
  *
  * `dw-cleartype-strong-stem-width`
- * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) which
+ * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) that
  *     specifies whether horizontal stems should be snapped and positioned
  *     to integer pixel values for DW ClearType rendering, this is, the
  *     rasterizer version (as returned by the GETINFO bytecode instruction)
@@ -312,7 +312,7 @@ typedef int
  *     this flag to improve the legibility of small font sizes if necessary.
  *
  * `x-height-snapping-exceptions`
- * :   A pointer of type `const char*` to a null-terminated string which
+ * :   A pointer of type `const char*` to a null-terminated string that
  *     gives a list of comma separated PPEM values or value ranges at which
  *     no x-height snapping shall be applied.  A value range has the form
  *     *value1*`-`*value2*, meaning *value1* <= PPEM <= *value2*.  *value1*
@@ -336,13 +336,13 @@ typedef int
  * ### Scripts
  *
  * `fallback-script`
- * :   An integer which specifies the default script for glyphs not in the
+ * :   An integer that specifies the default script for glyphs not in the
  *     'latin' range.  If set to\ 1, the 'latin' script is used (other
  *     scripts are not supported yet).  By default, no script is used
  *     (value\ 0; this disables autohinting for such glyphs).
  *
  * `symbol`
- * :   Set this integer to\ 1 if you want to process a font which lacks the
+ * :   Set this integer to\ 1 if you want to process a font that lacks the
  *     characters of a supported script, for example, a symbol font.
  *     ttfautohint then uses default values for the standard stem width and
  *     height instead of deriving these values from a script's key character
@@ -382,7 +382,7 @@ typedef int
  *
  *   * ttfautohint can't process a font a second time (well, it can, if the
  *     font doesn't contain composite glyphs).  Just think of ttfautohint as
- *     being a compiler, a tool which also can't process its created output
+ *     being a compiler, a tool that also can't process its created output
  *     again.
  *
  * ```C

@@ -19,11 +19,11 @@
 Introduction
 ============
 
-**ttfautohint** is a library written in\ C which takes a TrueType font as
+**ttfautohint** is a library written in\ C that takes a TrueType font as
 the input, removes its bytecode instructions (if any), and returns a new
 font where all glyphs are bytecode hinted using the information given by
 FreeType's autohinting module.  The idea is to provide the excellent quality
-of the autohinter on platforms which don't use FreeType.
+of the autohinter on platforms that don't use FreeType.
 
 The library has a single API function, `TTF_autohint`, which is described
 [below](#the-ttfautohint-api).
@@ -88,7 +88,7 @@ What problems can arise with TrueType hinting?
 ----------------------------------------------
 
 While it is relatively easy to specify PostScript hints (either manually or
-by an auto-hinter which works at font creation time), creating TrueType
+by an auto-hinter that works at font creation time), creating TrueType
 hints is far more difficult.  There are at least two reasons:
 
   - TrueType instructions form a programming language, operating at a very
@@ -122,7 +122,7 @@ Why ttfautohint?
 ----------------
 
 The ttfautohint library brings the excellent quality of FreeType rendering
-to platforms which don't use FreeType, yet require hinting for text to look
+to platforms that don't use FreeType, yet require hinting for text to look
 good -- like Microsoft Windows.  Roughly speaking, it converts the glyph
 analysis done by FreeType's auto-hinting module to TrueType bytecode.
 Internally, the auto-hinter's algorithm resembles PostScript hinting
@@ -232,7 +232,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 
 `--latin-fallback`, `-f`
 :   Set fallback script to 'latin', this is, use the 'latin' auto-hinting
-    module instead of 'none' for all glyphs which can't be assigned to a
+    module instead of 'none' for all glyphs that can't be assigned to a
     script.  See [below](#scripts) for more details.
 
 ### Hinting Limit
@@ -240,7 +240,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 `--hinting-limit=`*n*, `-G`\ *n*
 :   The *hinting limit* is the PPEM value (in pixels) where hinting gets
     switched off (using the `INSTCTRL` bytecode instruction); it has zero
-    impact on the file size.  The default value for *n* is 200 which means
+    impact on the file size.  The default value for *n* is 200, which means
     that the font is not hinted for PPEM values larger than 200.
 
     Note that hinting in the range 'hinting-range-max' up to 'hinting-limit'
@@ -337,7 +337,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     represents the designsize), the sum of `usWinAscent` and `usWinDescent`
     could be 1.25×2000 = 2500.
 
-    In case ttfautohint is used as an auto-hinting tool for fonts which can
+    In case ttfautohint is used as an auto-hinting tool for fonts that can
     be no longer modified to change the metrics, option `-W` in combination
     with '`-X "-"`' to suppress any vertical enlargement should prevent
     almost all clipping.
@@ -347,7 +347,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 `--pre-hinting`, `-p`
 :   *Pre-hinting* means that a font's original bytecode is applied to all
     glyphs before it is replaced with bytecode created by ttfautohint.
-    This makes only sense if your font already has some hints in it which
+    This makes only sense if your font already has some hints in it that
     modify the shape even at EM size (normally 2048px); for example, some
     CJK fonts need this because the bytecode is used to scale and shift
     subglyphs.  For most fonts, however, this is not the case.
@@ -370,7 +370,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 :   Use default values for standard (horizontal) stem width and height
     instead of deriving them from latin character 'o'.  Use this option
     (usually in combination with option `--latin-fallback`) to hint symbol
-    or dingbat fonts or math glyphs, for example, which lack character 'o',
+    or dingbat fonts or math glyphs, for example, that lack character 'o',
     at the expense of possibly poor hinting results at small sizes.
 
 ### Dehint
@@ -394,7 +394,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 `--strong-stem-width=`*string*, `-w`\ *string*
 :   ttfautohint offers two different routines to handle (horizontal) stem
     widths and stem positions: 'smooth' and 'strong'.  The former uses
-    discrete values which slightly increase the stem contrast with almost no
+    discrete values that slightly increase the stem contrast with almost no
     distortion of the outlines, while the latter snaps both stem widths and
     stem positions to integer pixel values as much as possible, yielding a
     crisper appearance at the cost of much more distortion.
@@ -423,7 +423,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     with possible values '`g`' for grayscale, '`G`' for GDI ClearType, and
     '`D`' for DW ClearType.  If a letter is found in *string*, the strong
     stem width routine is used for the corresponding rendering target (and
-    smooth stem width handling otherwise).  The default value is '`G`' which
+    smooth stem width handling otherwise).  The default value is '`G`', which
     means that strong stem width handling is activated for GDI ClearType
     only.  To use smooth stem width handling for all three rendering
     targets, use the empty string as an argument, usually connoted with
@@ -447,7 +447,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 ### Font License Restrictions
 
 `--ignore-restrictions`, `-i`
-:   By default, fonts which have bit\ 1 set in the 'fsType' field of the
+:   By default, fonts that have bit\ 1 set in the 'fsType' field of the
     `OS/2` table are rejected.  If you have a permission of the font's legal
     owner to modify the font, specify this command line option.
 
@@ -476,7 +476,7 @@ Background and Technical Details
 
 [Real-Time Grid Fitting of Typographic
 Outlines](http://www.tug.org/TUGboat/tb24-3/lemberg.pdf) is a scholarly
-paper which describes FreeType's auto-hinter in some detail.  Regarding the
+paper that describes FreeType's auto-hinter in some detail.  Regarding the
 described data structures it is slightly out of date, but the algorithm
 itself hasn't changed.
 
@@ -551,10 +551,10 @@ Blue Zones
   *all* glyphs within these zones are aligned.](img/blue-zones)
 
 Outlines of certain characters are used to determine *blue zones*.  This
-concept is the same as with Type\ 1 fonts: All glyph points which lie in
+concept is the same as with Type\ 1 fonts: All glyph points that lie in
 certain small horizontal zones get aligned vertically.
 
-Here a table which shows the characters used by the latin module; the values
+Here a table that shows the characters used by the latin module; the values
 are hard-coded in the source code.
 
   ID    Blue zone                              Characters
@@ -582,7 +582,7 @@ Aligning outlines along the grid lines is called *grid fitting*.  It doesn't
 necessarily mean that the outlines are positioned *exactly* on the grid,
 however, especially if you want a smooth appearance at different sizes.
 This is the central routine of the auto-hinter; its actions are highly
-dependent on the used script.  Currently, only support for scripts which
+dependent on the used script.  Currently, only support for scripts that
 work similarly to Latin (i.e.  Greek and Cyrillic) is available.
 
   * Align edges linked to blue zones.
@@ -692,7 +692,7 @@ register called `cvtl_is_subglyph` in the source code), indicating that we
 are within a composite glyph.  The final bytecode of the composite glyph
 eventually decrements this variable again.
 
-As an example, let's consider composite glyph 'Agrave' ('À') which has the
+As an example, let's consider composite glyph 'Agrave' ('À'), which has the
 subglyph 'A' as the base and 'grave' as its accent.  After processing with
 ttfautohint it consists of three components: '\.ttfautohint', 'A', and
 'grave' (in this order).
@@ -716,7 +716,7 @@ rendering as a stand-alone glyph) disables proper hinting of all glyphs in
 the font!  Under normal circumstances this never happens because
 '\.ttfautohint' doesn't have an entry in the font's `cmap` table.  (However,
 some test and demo programs like FreeType's `ftview` application or other
-glyph viewers which are able to bypass the `cmap` table might be affected.)
+glyph viewers that are able to bypass the `cmap` table might be affected.)
 
 
 Scripts
@@ -726,9 +726,9 @@ ttfautohint checks which auto-hinting module should be used to hint a
 specific glyph.  To do so, it checks a glyph's Unicode character code
 whether it belongs to a given script.  Currently, only FreeType's 'latin'
 autohinting module is implemented, but more are expected to come.  Here is
-the hardcoded list of character ranges which are hinted by this 'latin'
+the hardcoded list of character ranges that are hinted by this 'latin'
 module.  As you can see, this also covers some non-latin scripts (in the
-Unicode sense) which have similar typographical properties.
+Unicode sense) that have similar typographical properties.
 
      Character range     Description
   ---------------------  -------------
@@ -762,12 +762,12 @@ Unicode sense) which have similar typographical properties.
   `0x1F100` - `0x1F1FF`  Enclosed Alphanumeric Supplement
 
 If a glyph's character code is not covered by a script range, it is not
-hinted (or rather, it gets hinted by the 'dummy' auto-hinting module which
+hinted (or rather, it gets hinted by the 'dummy' auto-hinting module that
 essentially does nothing).  This can be changed by specifying a *fallback
 script* with [option `--latin-fallback`](#fallback-script).
 
 It is planned to extend ttfautohint so that the `GSUB` OpenType table gets
-analyzed, mapping character codes to all glyph indices which can be reached
+analyzed, mapping character codes to all glyph indices that can be reached
 by switching on or off various OpenType features.
 
 
@@ -795,7 +795,7 @@ work.
     ttfautohint can't digitally sign a font; you have to do that afterwards.
 
   * `name`: The 'version' entries are modified to add information about the
-    parameters which have been used for calling ttfautohint.  This can be
+    parameters that have been used for calling ttfautohint.  This can be
     controlled with the [`--no-info`](#add-ttfautohint-info) option.
 
   * `GPOS`, `hmtx`, `loca`, `head`, `maxp`, `post`: Updated to fit the
@@ -805,7 +805,7 @@ work.
   * `LTSH`, `hdmx`: Since ttfautohint doesn't do any horizontal hinting,
     those tables are superfluous and thus removed.
 
-  * `VDMX`: Removed, since it depends on the original bytecode which
+  * `VDMX`: Removed, since it depends on the original bytecode, which
     ttfautohint removes.  A font editor might recompute the necessary data
     later on.
 
