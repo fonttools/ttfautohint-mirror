@@ -72,6 +72,27 @@ unsigned char PREP(store_0x10000) [] =
 
 };
 
+/* store number of scripts (needed in `fpgm' table) */
+
+unsigned char PREP(store_num_used_scripts_a) [] =
+{
+
+  PUSHB_2,
+    cvtl_num_used_scripts,
+
+};
+
+/*  %c, number of used scripts */
+
+unsigned char PREP(store_num_used_scripts_b) [] =
+{
+
+  WCVTP,
+
+};
+
+/* if the current ppem value is an exception, don't apply scaling */
+
 unsigned char PREP(test_exception_a) [] =
 {
 
@@ -83,142 +104,80 @@ unsigned char PREP(test_exception_a) [] =
 
 };
 
+/* provide scaling factors for all scripts */
+
 unsigned char PREP(align_top_a) [] =
 {
 
-  /* optimize the alignment of the top of small letters to the pixel grid */
-
-  PUSHB_1,
+    PUSHB_2,
+      sal_i,
+      CVT_SCALING_VALUE_OFFSET(0),
+    WS,
 
 };
 
-/*  %c, index of alignment blue zone */
+/*  PUSH (num_used_scripts + 2) */
+/*    ... */
+/*    %c, script 1's x height blue zone idx */
+/*    %c, script 0's x height blue zone idx */
+/*    %c, num_used_scripts */
 
 unsigned char PREP(align_top_b) [] =
 {
 
-  RCVT,
-  DUP,
-  DUP,
-
-};
-
-unsigned char PREP(align_top_c1a) [] =
-{
-
-  /* use this if option `increase_x_height' > 0 */
-  /* apply much `stronger' rounding up of x height for */
-  /* 6 <= PPEM <= increase_x_height */
-  MPPEM,
-  PUSHW_1,
-
-};
-
-/*  %d, x height increase limit */
-
-unsigned char PREP(align_top_c1b) [] =
-{
-
-  LTEQ,
-  MPPEM,
-  PUSHB_1,
-    6,
-  GTEQ,
-  AND,
-  IF,
-    PUSHB_1,
-      52, /* threshold = 52 */
-
-  ELSE,
-    PUSHB_1,
-      40, /* threshold = 40 */
-
-  EIF,
-  ADD,
-  FLOOR, /* fitted = FLOOR(scaled + threshold) */
-
-};
-
-unsigned char PREP(align_top_c2) [] =
-{
-
-  PUSHB_1,
-    40,
-  ADD,
-  FLOOR, /* fitted = FLOOR(scaled + 40) */
-
-};
-
-unsigned char PREP(align_top_d) [] =
-{
-
-  DUP, /* s: scaled scaled fitted fitted */
-  ROLL,
-  NEQ,
-  IF, /* s: scaled fitted */
-    PUSHB_1,
-      2,
-    CINDEX,
-    SUB, /* s: scaled (fitted-scaled) */
-    PUSHB_1,
-      cvtl_0x10000,
-    RCVT,
-    MUL, /* (fitted-scaled) in 16.16 format */
-    SWAP,
-    DIV, /* ((fitted-scaled) / scaled) in 16.16 format */
-
-    PUSHB_1,
-      sal_scale,
-    SWAP,
-    WS,
+      bci_align_top,
+    LOOPCALL,
 
 };
 
 unsigned char PREP(loop_cvt_a) [] =
 {
 
-    /* loop over vertical CVT entries */
-    PUSHB_3,
+    /* loop over (almost all) vertical CVT entries of all scripts, part 1 */
+    PUSHB_2,
+      sal_i,
+      CVT_SCALING_VALUE_OFFSET(0),
+    WS,
 
 };
 
-/*    %c, first vertical index */
-/*    %c, number of vertical indices */
+/*  PUSH (2*num_used_scripts + 2) */
+/*    ... */
+/*    %c, script 1's first vertical index */
+/*    %c, script 1's number of vertical indices */
+/*        (std. width, widths, flat blues zones without artifical ones) */
+/*    %c, script 0's first vertical index */
+/*    %c, script 0's number of vertical indices */
+/*        (std. width, widths, flat blues zones without artifical ones) */
+/*    %c, num_used_scripts */
 
 unsigned char PREP(loop_cvt_b) [] =
 {
 
-      bci_cvt_rescale,
+      bci_cvt_rescale_range,
     LOOPCALL,
 
-    /* loop over blue refs */
-    PUSHB_3,
+    /* loop over (almost all) vertical CVT entries of all scripts, part 2 */
+    PUSHB_2,
+      sal_i,
+      CVT_SCALING_VALUE_OFFSET(0),
+    WS,
 
 };
 
-/*    %c, first blue ref index */
-/*    %c, number of blue ref indices */
+/*  PUSH (2*num_used_scripts + 2) */
+/*    ... */
+/*    %c, script 1's first round blue zone index */
+/*    %c, script 1's number of round blue zones (without artificial ones) */
+/*    %c, script 0's first round blue zone index */
+/*    %c, script 0's number of round blue zones (without artificial ones) */
+/*    %c, num_used_scripts */
 
 unsigned char PREP(loop_cvt_c) [] =
 {
 
-      bci_cvt_rescale,
+      bci_cvt_rescale_range,
     LOOPCALL,
-
-    /* loop over blue shoots */
-    PUSHB_3,
-
-};
-
-/*    %c, first blue shoot index */
-/*    %c, number of blue shoot indices */
-
-unsigned char PREP(loop_cvt_d) [] =
-{
-
-      bci_cvt_rescale,
-    LOOPCALL,
-  EIF,
 
 };
 
@@ -229,42 +188,75 @@ unsigned char PREP(test_exception_b) [] =
 
 };
 
-unsigned char PREP(compute_extra_light_a) [] =
+unsigned char PREP(store_vwidth_data_a) [] =
 {
 
-  /* compute (vertical) `extra_light' flag */
-  PUSHB_3,
-    cvtl_is_extra_light,
-    40,
+  PUSHB_2,
+    sal_i,
 
 };
 
-/*  %c, index of vertical standard_width */
+/*  %c, offset to vertical width offset data in CVT */
 
-unsigned char PREP(compute_extra_light_b) [] =
+unsigned char PREP(store_vwidth_data_b) [] =
 {
 
-  RCVT,
-  GT, /* standard_width < 40 */
-  WCVTP,
+  WS,
 
 };
 
-unsigned char PREP(round_blues_a) [] =
+/*PUSH (num_used_scripts + 2) */
+/*  ... */
+/*  %c, script 1's first vertical width index */
+/*  %c, script 0's first vertical width index */
+/*  %c, num_used_scripts */
+
+unsigned char PREP(store_vwidth_data_c) [] =
 {
 
-  /* use discrete values for blue zone widths */
-  PUSHB_3,
+    bci_vwidth_data_store,
+  LOOPCALL,
+
+  PUSHB_2,
+    sal_i,
 
 };
 
-/*  %c, first blue ref index */
-/*  %c, number of blue ref indices */
+/*  %c, offset to vertical width size data in CVT */
 
-unsigned char PREP(round_blues_b) [] =
+unsigned char PREP(store_vwidth_data_d) [] =
 {
 
-    bci_blue_round,
+  WS,
+
+};
+
+/*PUSH (num_used_scripts + 2) */
+/*  ... */
+/*  %c, script 1's number of vertical widths */
+/*  %c, script 0's number of vertical widths */
+/*  %c, num_used_scripts */
+
+unsigned char PREP(store_vwidth_data_e) [] =
+{
+
+    bci_vwidth_data_store,
+  LOOPCALL,
+
+};
+
+/*PUSH (2*num_used_scripts + 2) */
+/*  ... */
+/*  %c, script 1's first blue ref index */
+/*  %c, script 1's number of blue ref indices */
+/*  %c, script 0's first blue ref index */
+/*  %c, script 0's number of blue ref indices */
+/*  %c, num_used_scripts */
+
+unsigned char PREP(round_blues) [] =
+{
+
+    bci_blue_round_range,
   LOOPCALL,
 
 };
@@ -562,9 +554,10 @@ TA_table_build_prep(FT_Byte** prep,
                     SFNT* sfnt,
                     FONT* font)
 {
-  TA_LatinAxis vaxis;
-  TA_LatinBlue blue_adjustment = NULL;
-  FT_UInt i;
+  SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
+  glyf_Data* data = (glyf_Data*)glyf_table->data;
+
+  FT_Int i;
 
   FT_Byte* buf = NULL;
   FT_Byte* buf_new;
@@ -575,23 +568,7 @@ TA_table_build_prep(FT_Byte** prep,
   FT_Byte* bufp = NULL;
 
 
-  if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_NONE)
-    vaxis = NULL;
-  else
-  {
-    vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
-
-    for (i = 0; i < vaxis->blue_count; i++)
-    {
-      if (vaxis->blues[i].flags & TA_LATIN_BLUE_ADJUSTMENT)
-      {
-        blue_adjustment = &vaxis->blues[i];
-        break;
-      }
-    }
-  }
-
-  if (blue_adjustment && font->x_height_snapping_exceptions)
+  if (font->x_height_snapping_exceptions)
   {
     bufp = TA_sfnt_build_number_set(sfnt, &buf,
                                     font->x_height_snapping_exceptions);
@@ -608,40 +585,48 @@ TA_table_build_prep(FT_Byte** prep,
                    + sizeof (PREP(hinting_limit_b));
 
   buf_new_len += sizeof (PREP(store_0x10000));
-
-  if (blue_adjustment)
-  {
-    if (font->x_height_snapping_exceptions)
-      buf_new_len += sizeof (PREP(test_exception_a));
-    buf_new_len += sizeof (PREP(align_top_a))
-                   + 1
-                   + sizeof (PREP(align_top_b))
-                   + (font->increase_x_height
-                       ? (sizeof (PREP(align_top_c1a))
-                          + 2
-                          + sizeof (PREP(align_top_c1b)))
-                       : sizeof (PREP(align_top_c2)))
-                   + sizeof (PREP(align_top_d))
-                   + sizeof (PREP(loop_cvt_a))
-                   + 2
-                   + sizeof (PREP(loop_cvt_b))
-                   + 2
-                   + sizeof (PREP(loop_cvt_c))
-                   + 2
-                   + sizeof (PREP(loop_cvt_d));
-    if (font->x_height_snapping_exceptions)
-      buf_new_len += sizeof (PREP(test_exception_b));
-  }
-
-  buf_new_len += sizeof (PREP(compute_extra_light_a))
+  buf_new_len += sizeof (PREP(store_num_used_scripts_a))
                  + 1
-                 + sizeof (PREP(compute_extra_light_b));
+                 + sizeof (PREP(store_num_used_scripts_b));
 
-  if (CVT_BLUES_SIZE)
-    buf_new_len += sizeof (PREP(round_blues_a))
-                   + 2
-                   + sizeof (PREP(round_blues_b));
+  if (font->x_height_snapping_exceptions)
+    buf_new_len += sizeof (PREP(test_exception_a));
 
+  buf_new_len += sizeof (PREP(align_top_a))
+                 + (data->num_used_scripts > 6
+                      ? data->num_used_scripts + 3
+                      : data->num_used_scripts + 2)
+                 + sizeof (PREP(align_top_b));
+  buf_new_len += sizeof (PREP(loop_cvt_a))
+                 + (data->num_used_scripts > 3
+                     ? 2 * data->num_used_scripts + 3
+                     : 2 * data->num_used_scripts + 2)
+                 + sizeof (PREP(loop_cvt_b))
+                 + (data->num_used_scripts > 3
+                     ? 2 * data->num_used_scripts + 3
+                     : 2 * data->num_used_scripts + 2)
+                 + sizeof (PREP(loop_cvt_c));
+
+  if (font->x_height_snapping_exceptions)
+    buf_new_len += sizeof (PREP(test_exception_b));
+
+  buf_new_len += sizeof (PREP(store_vwidth_data_a))
+                 + 1
+                 + sizeof (PREP(store_vwidth_data_b))
+                 + (data->num_used_scripts > 6
+                     ? data->num_used_scripts + 3
+                     : data->num_used_scripts + 2)
+                 + sizeof (PREP(store_vwidth_data_c))
+                 + 1
+                 + sizeof (PREP(store_vwidth_data_d))
+                 + (data->num_used_scripts > 6
+                     ? data->num_used_scripts + 3
+                     : data->num_used_scripts + 2)
+                 + sizeof (PREP(store_vwidth_data_e));
+  buf_new_len += (data->num_used_scripts > 3
+                     ? 2 * data->num_used_scripts + 3
+                     : 2 * data->num_used_scripts + 2)
+                 + sizeof (PREP(round_blues));
   buf_new_len += sizeof (PREP(set_stem_width_handling_a))
                  + 1
                  + sizeof (PREP(set_stem_width_handling_b))
@@ -681,53 +666,137 @@ TA_table_build_prep(FT_Byte** prep,
 
   COPY_PREP(store_0x10000);
 
-  if (blue_adjustment)
+  COPY_PREP(store_num_used_scripts_a);
+  *(bufp++) = (unsigned char)data->num_used_scripts;
+  COPY_PREP(store_num_used_scripts_b);
+
+  if (font->x_height_snapping_exceptions)
+    COPY_PREP(test_exception_a);
+
+  COPY_PREP(align_top_a);
+  if (data->num_used_scripts > 6)
   {
-    if (font->x_height_snapping_exceptions)
-      COPY_PREP(test_exception_a);
-
-    COPY_PREP(align_top_a);
-    *(bufp++) = (unsigned char)(CVT_BLUE_SHOOTS_OFFSET
-                                + blue_adjustment - vaxis->blues);
-    COPY_PREP(align_top_b);
-    if (font->increase_x_height)
-    {
-      COPY_PREP(align_top_c1a);
-      *(bufp++) = HIGH(font->increase_x_height);
-      *(bufp++) = LOW(font->increase_x_height);
-      COPY_PREP(align_top_c1b);
-    }
-    else
-      COPY_PREP(align_top_c2);
-    COPY_PREP(align_top_d);
-
-    COPY_PREP(loop_cvt_a);
-    *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
-    *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_SIZE;
-    /* don't loop over the artificial blue zones */
-    COPY_PREP(loop_cvt_b);
-    *(bufp++) = (unsigned char)CVT_BLUE_REFS_OFFSET;
-    *(bufp++) = (unsigned char)(CVT_BLUES_SIZE - 2);
-    COPY_PREP(loop_cvt_c);
-    *(bufp++) = (unsigned char)CVT_BLUE_SHOOTS_OFFSET;
-    *(bufp++) = (unsigned char)(CVT_BLUES_SIZE - 2);
-    COPY_PREP(loop_cvt_d);
-
-    if (font->x_height_snapping_exceptions)
-      COPY_PREP(test_exception_b);
+    BCI(NPUSHB);
+    BCI(data->num_used_scripts + 2);
   }
-
-  COPY_PREP(compute_extra_light_a);
-  *(bufp++) = (unsigned char)CVT_VERT_STANDARD_WIDTH_OFFSET;
-  COPY_PREP(compute_extra_light_b);
-
-  if (CVT_BLUES_SIZE)
+  else
+    BCI(PUSHB_1 - 1 + data->num_used_scripts + 2);
+  /* XXX: make this work for offsets > 255 */
+  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
   {
-    COPY_PREP(round_blues_a);
-    *(bufp++) = (unsigned char)CVT_BLUE_REFS_OFFSET;
-    *(bufp++) = (unsigned char)CVT_BLUES_SIZE;
-    COPY_PREP(round_blues_b);
+    if (data->script_ids[i] == 0xFFFFU)
+      continue;
+
+    *(bufp++) = CVT_X_HEIGHT_BLUE_OFFSET(i) >= 0xFFFFU
+                  ? 0
+                  : (unsigned char)CVT_X_HEIGHT_BLUE_OFFSET(i);
   }
+  *(bufp++) = data->num_used_scripts;
+  COPY_PREP(align_top_b);
+
+  COPY_PREP(loop_cvt_a);
+  if (data->num_used_scripts > 3)
+  {
+    BCI(NPUSHB);
+    BCI(2 * data->num_used_scripts + 2);
+  }
+  else
+    BCI(PUSHB_1 - 1 + 2 * data->num_used_scripts + 2);
+  /* XXX: make this work for offsets > 255 */
+  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  {
+    if (data->script_ids[i] == 0xFFFFU)
+      continue;
+
+    /* don't loop over artificial blue zones */
+    *(bufp++) = (unsigned char)CVT_VERT_STANDARD_WIDTH_OFFSET(i);
+    *(bufp++) = (unsigned char)(1
+                                + CVT_VERT_WIDTHS_SIZE(i)
+                                + CVT_BLUES_SIZE(i) - 2);
+  }
+  *(bufp++) = data->num_used_scripts;
+  COPY_PREP(loop_cvt_b);
+  if (data->num_used_scripts > 3)
+  {
+    BCI(NPUSHB);
+    BCI(2 * data->num_used_scripts + 2);
+  }
+  else
+    BCI(PUSHB_1 - 1 + 2 * data->num_used_scripts + 2);
+  /* XXX: make this work for offsets > 255 */
+  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  {
+    if (data->script_ids[i] == 0xFFFFU)
+      continue;
+
+    /* don't loop over artificial blue zones */
+    *(bufp++) = (unsigned char)CVT_BLUE_SHOOTS_OFFSET(i);
+    *(bufp++) = (unsigned char)(CVT_BLUES_SIZE(i) - 2);
+  }
+  *(bufp++) = data->num_used_scripts;
+  COPY_PREP(loop_cvt_c);
+
+  if (font->x_height_snapping_exceptions)
+    COPY_PREP(test_exception_b);
+
+  COPY_PREP(store_vwidth_data_a);
+  *(bufp++) = (unsigned char)CVT_VWIDTH_OFFSET_DATA(0);
+  COPY_PREP(store_vwidth_data_b);
+  if (data->num_used_scripts > 6)
+  {
+    BCI(NPUSHB);
+    BCI(data->num_used_scripts + 2);
+  }
+  else
+    BCI(PUSHB_1 - 1 + data->num_used_scripts + 2);
+  /* XXX: make this work for offsets > 255 */
+  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  {
+    if (data->script_ids[i] == 0xFFFFU)
+      continue;
+
+    *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET(i);
+  }
+  *(bufp++) = data->num_used_scripts;
+  COPY_PREP(store_vwidth_data_c);
+  *(bufp++) = (unsigned char)CVT_VWIDTH_SIZE_DATA(0);
+  COPY_PREP(store_vwidth_data_d);
+  if (data->num_used_scripts > 6)
+  {
+    BCI(NPUSHB);
+    BCI(data->num_used_scripts + 2);
+  }
+  else
+    BCI(PUSHB_1 - 1 + data->num_used_scripts + 2);
+  /* XXX: make this work for values > 255 */
+  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  {
+    if (data->script_ids[i] == 0xFFFFU)
+      continue;
+
+    *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_SIZE(i);
+  }
+  *(bufp++) = data->num_used_scripts;
+  COPY_PREP(store_vwidth_data_e);
+
+  if (data->num_used_scripts > 3)
+  {
+    BCI(NPUSHB);
+    BCI(2 * data->num_used_scripts + 2);
+  }
+  else
+    BCI(PUSHB_1 - 1 + 2 * data->num_used_scripts + 2);
+  /* XXX: make this work for offsets > 255 */
+  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  {
+    if (data->script_ids[i] == 0xFFFFU)
+      continue;
+
+    *(bufp++) = (unsigned char)CVT_BLUE_REFS_OFFSET(i);
+    *(bufp++) = (unsigned char)CVT_BLUES_SIZE(i);
+  }
+  *(bufp++) = data->num_used_scripts;
+  COPY_PREP(round_blues);
 
   COPY_PREP(set_stem_width_handling_a);
   *(bufp++) = font->gray_strong_stem_width ? bci_strong_stem_width

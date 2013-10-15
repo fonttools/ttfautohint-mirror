@@ -321,7 +321,7 @@ unsigned char FPGM(bci_round) [] =
  *
  *      if (stem_is_serif
  *          && dist < 3*64)
- *         || is_extra_light:
+ *         || std_width < 40:
  *        return width
  *      else if base_is_round:
  *        if dist < 80
@@ -358,20 +358,20 @@ unsigned char FPGM(bci_round) [] =
  *        dist = -dist
  *      return dist
  *
- *
  * in: width
  *     stem_is_serif
  *     base_is_round
  *
  * out: new_width
  *
- * CVT: cvtl_is_extra_light
- *      std_width
+ * sal: sal_vwidth_data_offset
+ *
+ * CVT: std_width
  *
  * uses: bci_round
  */
 
-unsigned char FPGM(bci_smooth_stem_width_a) [] =
+unsigned char FPGM(bci_smooth_stem_width) [] =
 {
 
   PUSHB_1,
@@ -391,10 +391,14 @@ unsigned char FPGM(bci_smooth_stem_width_a) [] =
   MINDEX, /* s: base_is_round width dist (dist<3*64) stem_is_serif */
   AND, /* stem_is_serif && dist < 3*64 */
 
-  PUSHB_1,
-    cvtl_is_extra_light,
+  PUSHB_2,
+    40,
+    sal_vwidth_data_offset,
+  RS,
+  RCVT, /* double indirection */
   RCVT,
-  OR, /* (stem_is_serif && dist < 3*64) || is_extra_light */
+  GT, /* standard_width < 40 */
+  OR, /* (stem_is_serif && dist < 3*64) || standard_width < 40 */
 
   IF, /* s: base_is_round width dist */
     POP,
@@ -428,14 +432,9 @@ unsigned char FPGM(bci_smooth_stem_width_a) [] =
 
     DUP, /* s: width dist dist */
     PUSHB_1,
-
-};
-
-/*    %c, index of std_width */
-
-unsigned char FPGM(bci_smooth_stem_width_b) [] =
-{
-
+      sal_vwidth_data_offset,
+    RS,
+    RCVT, /* double indirection */
     RCVT,
     SUB,
     ABS, /* s: width dist delta */
@@ -446,14 +445,9 @@ unsigned char FPGM(bci_smooth_stem_width_b) [] =
     IF, /* s: width dist */
       POP,
       PUSHB_1,
-
-};
-
-/*      %c, index of std_width */
-
-unsigned char FPGM(bci_smooth_stem_width_c) [] =
-{
-
+        sal_vwidth_data_offset,
+      RS,
+      RCVT, /* double indirection */
       RCVT, /* dist = std_width */
       DUP,
       PUSHB_1,
@@ -640,6 +634,7 @@ unsigned char FPGM(bci_get_best_width) [] =
  *
  * sal: sal_best
  *      sal_ref
+ *      sal_vwidth_data_offset
  *
  * CVT: widths[]
  *
@@ -647,7 +642,7 @@ unsigned char FPGM(bci_get_best_width) [] =
  *       bci_round
  */
 
-unsigned char FPGM(bci_strong_stem_width_a) [] =
+unsigned char FPGM(bci_strong_stem_width) [] =
 {
 
   PUSHB_1,
@@ -672,15 +667,21 @@ unsigned char FPGM(bci_strong_stem_width_a) [] =
   SWAP,
   WS, /* sal_ref = width */
 
-  PUSHB_3,
-};
+  PUSHB_1,
+    sal_vwidth_data_offset,
+  RS,
+  RCVT, /* first index of vertical widths */
 
-/*  %c, first index of vertical widths */
-/*  %c, number of vertical widths */
+  PUSHB_1,
+    sal_vwidth_data_offset,
+  RS,
+  PUSHB_1,
+    cvtl_num_used_scripts,
+  RCVT,
+  ADD,
+  RCVT, /* number of vertical widths */
 
-unsigned char FPGM(bci_strong_stem_width_b) [] =
-{
-
+  PUSHB_1,
     bci_get_best_width,
   LOOPCALL,
 
@@ -983,12 +984,14 @@ unsigned char FPGM(bci_vwidth_data_store) [] =
  *
  * in: ref_idx
  *
+ * sal: sal_i (number of blue zones)
+ *
  * out: ref_idx+1
  *
  * uses: bci_round
  */
 
-unsigned char FPGM(bci_blue_round_a) [] =
+unsigned char FPGM(bci_blue_round) [] =
 {
 
   PUSHB_1,
@@ -1005,15 +1008,10 @@ unsigned char FPGM(bci_blue_round_a) [] =
   CALL,
   SWAP, /* s: ref_idx ref_idx round(ref) ref */
 
-  PUSHB_2,
-
-};
-
-/*  %c, blue_count */
-
-unsigned char FPGM(bci_blue_round_b) [] =
-{
-
+  PUSHB_1,
+    sal_i,
+  RS,
+  PUSHB_1,
     4,
   CINDEX,
   ADD, /* s: ref_idx ref_idx round(ref) ref shoot_idx */
@@ -1570,7 +1568,25 @@ unsigned char FPGM(bci_create_segment) [] =
  *   twilight points to represent segments, and finally calls
  *   `bci_hint_glyph' to handle the rest.
  *
+ *   The second argument (`data_offset') addresses three CVT arrays in
+ *   parallel:
+ *
+ *     CVT(data_offset):
+ *       the current script's scaling value (stored in `sal_scale')
+ *
+ *     data_offset + CVT(cvtl_num_used_scripts):
+ *       offset to the current script's vwidth index array (this value gets
+ *       stored in `sal_vwidth_data_offset')
+ *
+ *     data_offset + 2*CVT(cvtl_num_used_scripts):
+ *       offset to the current script's vwidth size
+ *
+ *   This addressing scheme ensures that (a) we only need a single argument,
+ *   and (b) this argument supports up to (256-cvtl_max_runtime) scripts,
+ *   which should be sufficient for a long time.
+ *
  * in: num_packed_segments
+ *     data_offset
  *     num_segments (N)
  *     segment_start_0
  *     segment_end_0
@@ -1591,6 +1607,8 @@ unsigned char FPGM(bci_create_segment) [] =
  *      sal_j (current twilight point)
  *      sal_num_packed_segments
  *      sal_base (the base for delta values in nibbles)
+ *      sal_vwidth_data_offset
+ *      sal_scale
  *
  * CVT: cvtl_is_subglyph
  *
@@ -1627,6 +1645,22 @@ unsigned char FPGM(bci_create_segments) [] =
       sal_num_packed_segments,
     SWAP,
     WS,
+
+    DUP,
+    RCVT,
+    PUSHB_1,
+      sal_scale, /* sal_scale = CVT(data_offset) */
+    SWAP,
+    WS,
+
+    PUSHB_1,
+      sal_vwidth_data_offset,
+    SWAP,
+    PUSHB_1,
+      cvtl_num_used_scripts,
+    RCVT,
+    ADD,
+    WS, /* sal_vwidth_data_offset = data_offset + num_used_scripts */
 
     DUP,
     ADD,
@@ -1841,6 +1875,7 @@ unsigned char FPGM(bci_create_segments_9) [] =
  *
  * sal: sal_num_packed_segments
  *      sal_segment_offset
+ *      sal_vwidth_data_offset
  *
  * CVT: cvtl_is_subglyph
  *
@@ -1875,6 +1910,22 @@ unsigned char FPGM(bci_create_segments_composite) [] =
       sal_num_packed_segments,
     SWAP,
     WS,
+
+    DUP,
+    RCVT,
+    PUSHB_1,
+      sal_scale, /* sal_scale = CVT(data_offset) */
+    SWAP,
+    WS,
+
+    PUSHB_1,
+      sal_vwidth_data_offset,
+    SWAP,
+    PUSHB_1,
+      cvtl_num_used_scripts,
+    RCVT,
+    ADD,
+    WS, /* sal_vwidth_data_offset = data_offset + num_used_scripts */
 
     DUP,
     ADD,
@@ -5397,23 +5448,15 @@ TA_table_build_fpgm(FT_Byte** fpgm,
                 : sizeof (FPGM(bci_align_top_b2)))
             + sizeof (FPGM(bci_align_top_c))
             + sizeof (FPGM(bci_round))
-            + sizeof (FPGM(bci_smooth_stem_width_a))
-            + 1
-            + sizeof (FPGM(bci_smooth_stem_width_b))
-            + 1
-            + sizeof (FPGM(bci_smooth_stem_width_c))
+            + sizeof (FPGM(bci_smooth_stem_width))
             + sizeof (FPGM(bci_get_best_width))
-            + sizeof (FPGM(bci_strong_stem_width_a))
-            + 2
-            + sizeof (FPGM(bci_strong_stem_width_b))
+            + sizeof (FPGM(bci_strong_stem_width))
             + sizeof (FPGM(bci_loop_do))
             + sizeof (FPGM(bci_loop))
             + sizeof (FPGM(bci_cvt_rescale))
             + sizeof (FPGM(bci_cvt_rescale_range))
             + sizeof (FPGM(bci_vwidth_data_store))
-            + sizeof (FPGM(bci_blue_round_a))
-            + 1
-            + sizeof (FPGM(bci_blue_round_b))
+            + sizeof (FPGM(bci_blue_round))
             + sizeof (FPGM(bci_blue_round_range))
             + sizeof (FPGM(bci_decrement_component_counter))
             + sizeof (FPGM(bci_get_point_extrema))
@@ -5566,24 +5609,15 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_align_top_c);
 
   COPY_FPGM(bci_round);
-  COPY_FPGM(bci_smooth_stem_width_a);
-  *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
-  COPY_FPGM(bci_smooth_stem_width_b);
-  *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
-  COPY_FPGM(bci_smooth_stem_width_c);
+  COPY_FPGM(bci_smooth_stem_width);
   COPY_FPGM(bci_get_best_width);
-  COPY_FPGM(bci_strong_stem_width_a);
-  *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
-  *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_SIZE;
-  COPY_FPGM(bci_strong_stem_width_b);
+  COPY_FPGM(bci_strong_stem_width);
   COPY_FPGM(bci_loop_do);
   COPY_FPGM(bci_loop);
   COPY_FPGM(bci_cvt_rescale);
   COPY_FPGM(bci_cvt_rescale_range);
   COPY_FPGM(bci_vwidth_data_store);
-  COPY_FPGM(bci_blue_round_a);
-  *(bufp++) = (unsigned char)CVT_BLUES_SIZE;
-  COPY_FPGM(bci_blue_round_b);
+  COPY_FPGM(bci_blue_round);
   COPY_FPGM(bci_blue_round_range);
   COPY_FPGM(bci_decrement_component_counter);
   COPY_FPGM(bci_get_point_extrema);

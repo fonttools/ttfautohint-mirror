@@ -310,7 +310,8 @@
 #define sal_ref sal_best + 1
 #define sal_func sal_ref + 1
 #define sal_anchor sal_func + 1
-#define sal_scale sal_anchor + 1
+#define sal_vwidth_data_offset sal_anchor + 1
+#define sal_scale sal_vwidth_data_offset + 1
 #define sal_point_min sal_scale + 1
 #define sal_point_max sal_point_min + 1
 #define sal_base sal_point_max + 1
@@ -494,48 +495,102 @@
 #define cvtl_temp 0 /* used for creating twilight points */
 #define cvtl_0x10000 cvtl_temp + 1
 #define cvtl_funits_to_pixels cvtl_0x10000 + 1
-#define cvtl_is_extra_light cvtl_funits_to_pixels + 1
-#define cvtl_is_subglyph cvtl_is_extra_light + 1
-#define cvtl_stem_width_function cvtl_is_subglyph + 1
+#define cvtl_is_subglyph cvtl_funits_to_pixels + 1
+#define cvtl_num_used_scripts cvtl_is_subglyph + 1
+#define cvtl_stem_width_function cvtl_num_used_scripts + 1
 #define cvtl_is_element cvtl_stem_width_function + 1
 
 #define cvtl_max_runtime cvtl_is_element + 1 /* must be last */
 
-/* symbolic names for compile-time CVT locations */
+
+/* symbolic names for build-time CVT locations */
 /* (assigned in `cvt') */
 
-/* the horizontal and vertical standard widths */
-#define CVT_HORZ_STANDARD_WIDTH_OFFSET cvtl_max_runtime
-#define CVT_VERT_STANDARD_WIDTH_OFFSET \
-          CVT_HORZ_STANDARD_WIDTH_OFFSET + 1
+/* note that each script has its own set of CVT data, */
+/* to be accessed using the offsets in the `cvt_offsets' array */
+/* first script index is 0 */
 
-/* the horizontal stem widths */
-#define CVT_HORZ_WIDTHS_OFFSET \
-          CVT_VERT_STANDARD_WIDTH_OFFSET + 1
-#define CVT_HORZ_WIDTHS_SIZE \
-          ((font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT) \
-           ? 0 \
-           : ((TA_LatinMetrics)font->loader->hints.metrics)->axis[0].width_count)
+/* the following macros access the variables `font' and `sfnt' */
+#define CVT_DATA ((glyf_Data*)(font->tables[sfnt->glyf_idx].data))
 
-/* the vertical stem widths */
-#define CVT_VERT_WIDTHS_OFFSET \
-          CVT_HORZ_WIDTHS_OFFSET + CVT_HORZ_WIDTHS_SIZE
-#define CVT_VERT_WIDTHS_SIZE \
-          ((font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT) \
-           ? 0 \
-           : ((TA_LatinMetrics)font->loader->hints.metrics)->axis[1].width_count)
+/*
+ * we have the following layout in the CVT table:
+ *
+ *   . values initialized at runtime (`cvtl_max_runtime' elements)
+ *   . scaling values for each script ID (`num_used_script' elements)    (*)
+ *   . offset to the vertical stem widths array for each script ID       (*)
+ *     (`num_used_script' elements)
+ *   . size of the vertical stem widths array for each script ID         (*)
+ *     (`num_used_script' elements)
+ *
+ *   script ID 0:
+ *     . horizontal standard width (1 element)
+ *     . horizontal stem widths (`cvt_horz_width_sizes[id_to_idx(0)]'
+ *       elements)
+ *     . vertical standard width (1 element)
+ *     . vertical stem widths (`cvt_vert_width_sizes[id_to_idx(0)]'
+ *       elements)
+ *     . flat blue zones (`cvt_blue_zone_sizes[id_to_idx(0)]' elements)
+ *     . round blue zones (`cvt_blue_zone_sizes[id_to_idx(0)]' elements)
+ *   script ID 1:
+ *     ...
+ *
+ * (*) see function `bci_create_segments' how these three arrays get
+ *     accessed
+ *
+ * note that the `id_to_idx' function is hypothetic since the code works
+ * exactly the opposite way: the `cvt_*' arrays are indexed by the script
+ * index, and the `script_ids' array maps script indices to script IDs
+ */
 
-/* the number of blue zones (including the artificial ones) */
-#define CVT_BLUES_SIZE \
-          ((font->loader->hints.metrics->script_class->script == TA_SCRIPT_DFLT) \
-           ? 0 \
-           : ((TA_LatinMetrics)font->loader->hints.metrics)->axis[1].blue_count + 2)
+/* scaling value index of script ID id */
+#define CVT_SCALING_VALUE_OFFSET(id) \
+          cvtl_max_runtime + (id)
 
-/* the blue zone values for flat and round edges */
-#define CVT_BLUE_REFS_OFFSET \
-          CVT_VERT_WIDTHS_OFFSET + CVT_VERT_WIDTHS_SIZE
-#define CVT_BLUE_SHOOTS_OFFSET \
-          CVT_BLUE_REFS_OFFSET + CVT_BLUES_SIZE
+/* vwidth offset data of script ID id */
+#define CVT_VWIDTH_OFFSET_DATA(id) \
+          CVT_SCALING_VALUE_OFFSET(id) \
+          + CVT_DATA->num_used_scripts \
+
+/* vwidth size data of script ID id */
+#define CVT_VWIDTH_SIZE_DATA(id) \
+          CVT_VWIDTH_OFFSET_DATA(id) \
+          + CVT_DATA->num_used_scripts
+
+/* horizontal standard width indices of script i */
+#define CVT_HORZ_STANDARD_WIDTH_OFFSET(i) \
+          cvtl_max_runtime \
+          + 3 * CVT_DATA->num_used_scripts \
+          + CVT_DATA->cvt_offsets[i]
+/* start and size of horizontal stem widths array of script i */
+#define CVT_HORZ_WIDTHS_OFFSET(i) \
+          CVT_HORZ_STANDARD_WIDTH_OFFSET(i) + 1
+#define CVT_HORZ_WIDTHS_SIZE(i) \
+          CVT_DATA->cvt_horz_width_sizes[i]
+
+/* vertical standard width indices of script i */
+#define CVT_VERT_STANDARD_WIDTH_OFFSET(i) \
+          CVT_HORZ_WIDTHS_OFFSET(i) + CVT_HORZ_WIDTHS_SIZE(i)
+/* start and size of vertical stem widths array of script i */
+#define CVT_VERT_WIDTHS_OFFSET(i) \
+          CVT_VERT_STANDARD_WIDTH_OFFSET(i) + 1
+#define CVT_VERT_WIDTHS_SIZE(i) \
+          CVT_DATA->cvt_vert_width_sizes[i]
+
+/* number of blue zones (including artificial ones) of script i */
+#define CVT_BLUES_SIZE(i) \
+          CVT_DATA->cvt_blue_zone_sizes[i]
+
+/* start of blue zone arrays for flat and round edges of script i */
+#define CVT_BLUE_REFS_OFFSET(i) \
+          CVT_VERT_WIDTHS_OFFSET(i) + CVT_VERT_WIDTHS_SIZE(i)
+#define CVT_BLUE_SHOOTS_OFFSET(i) \
+          CVT_BLUE_REFS_OFFSET(i) + CVT_BLUES_SIZE(i)
+
+/* x height blue zone (shoot) index of script i (valid if < 0xFFFF) */
+#define CVT_X_HEIGHT_BLUE_OFFSET(i) \
+          CVT_BLUE_SHOOTS_OFFSET(i) \
+          + CVT_DATA->cvt_blue_adjustment_offsets[i]
 
 
 extern FT_Byte ttfautohint_glyph_bytecode[7];

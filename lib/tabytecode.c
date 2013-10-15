@@ -197,6 +197,12 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
   TA_Segment seg;
   TA_Segment seg_limit;
 
+  SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
+  glyf_Data* data = (glyf_Data*)glyf_table->data;
+
+  FT_UInt script_id = data->script_ids
+                        [font->loader->metrics->script_class->script];
+
   FT_Outline outline = font->loader->gloader->base.outline;
 
   FT_UInt* args;
@@ -249,7 +255,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
   num_args = num_packed_segments
              + 2 * (num_segments - num_packed_segments)
              + 2 * recorder->num_wrap_around_segments
-             + 2;
+             + 3;
 
   /* collect all arguments temporarily in an array (in reverse order) */
   /* so that we can easily split into chunks of 255 args */
@@ -268,6 +274,8 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
     *(arg--) = bci_create_segments_composite_0 + num_packed_segments;
   else
     *(arg--) = bci_create_segments_0 + num_packed_segments;
+
+  *(arg--) = CVT_SCALING_VALUE_OFFSET(script_id);
   *(arg--) = num_segments;
 
   base = 0;
@@ -1133,6 +1141,8 @@ TA_hints_recorder(TA_Action action,
   FT_UShort* wraps = recorder->wrap_around_segments;
   FT_Byte* p = recorder->hints_record.buf;
 
+  FT_UInt script = font->loader->metrics->script_class->script;
+
   FT_UShort* ip;
   FT_UShort* limit;
 
@@ -1323,13 +1333,13 @@ TA_hints_recorder(TA_Action action,
 
       if (edge->best_blue_is_shoot)
       {
-        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET(script) + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET(script) + edge->best_blue_idx);
       }
       else
       {
-        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_REFS_OFFSET + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET(script) + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_REFS_OFFSET(script) + edge->best_blue_idx);
       }
 
       *(p++) = HIGH(edge->first - segments);
@@ -1378,13 +1388,13 @@ TA_hints_recorder(TA_Action action,
 
       if (edge->best_blue_is_shoot)
       {
-        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET(script) + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET(script) + edge->best_blue_idx);
       }
       else
       {
-        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_REFS_OFFSET + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET(script) + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_REFS_OFFSET(script) + edge->best_blue_idx);
       }
 
       *(p++) = HIGH(edge->first - segments);
