@@ -151,6 +151,139 @@
 
 
 /*
+ * bci_align_top
+ *
+ *   Optimize the alignment of the top of small letters to the pixel grid.
+ *
+ *   This function gets used in the `prep' table.
+ *
+ * in: blue_idx (CVT index for the script's top of small letters blue zone)
+ *
+ * sal: sal_i (CVT index of the script's scaling value;
+ *             gets incremented by 1 after execution)
+ */
+
+unsigned char FPGM(bci_align_top_a) [] =
+{
+
+  PUSHB_1,
+    bci_align_top,
+  FDEF,
+
+  /* only get CVT value for non-zero index */
+  DUP,
+  PUSHB_1,
+    0,
+  NEQ,
+  IF,
+    RCVT,
+  EIF,
+  DUP,
+  DUP, /* s: blue blue blue */
+
+};
+
+/* if (font->increase_x_height) */
+/* { */
+
+unsigned char FPGM(bci_align_top_b1a) [] =
+{
+
+  /* apply much `stronger' rounding up of x height for */
+  /* 6 <= PPEM <= increase_x_height */
+  MPPEM,
+  PUSHW_1,
+
+};
+
+/*  %d, x height increase limit */
+
+unsigned char FPGM(bci_align_top_b1b) [] =
+{
+
+  LTEQ,
+  MPPEM,
+  PUSHB_1,
+    6,
+  GTEQ,
+  AND,
+  IF,
+    PUSHB_1,
+      52, /* threshold = 52 */
+
+  ELSE,
+    PUSHB_1,
+      40, /* threshold = 40 */
+
+  EIF,
+  ADD,
+  FLOOR, /* fitted = FLOOR(blue + threshold) */
+
+};
+
+/* } */
+
+/* if (!font->increase_x_height) */
+/* { */
+
+unsigned char FPGM(bci_align_top_b2) [] =
+{
+
+  PUSHB_1,
+    40,
+  ADD,
+  FLOOR, /* fitted = FLOOR(blue + 40) */
+
+};
+
+/* } */
+
+unsigned char FPGM(bci_align_top_c) [] =
+{
+
+  DUP, /* s: blue blue fitted fitted */
+  ROLL,
+  NEQ,
+  IF, /* s: blue fitted */
+    PUSHB_1,
+      2,
+    CINDEX,
+    SUB, /* s: blue (fitted-blue) */
+    PUSHB_1,
+      cvtl_0x10000,
+    RCVT,
+    MUL, /* (fitted-blue) in 16.16 format */
+    SWAP,
+    DIV, /* factor = ((fitted-blue) / blue) in 16.16 format */
+
+  ELSE,
+    POP,
+    POP,
+    PUSHB_1,
+      0, /* factor = 0 */
+
+  EIF,
+
+  PUSHB_1,
+    sal_i,
+  RS, /* s: factor idx */
+  SWAP,
+  WCVTP,
+
+  PUSHB_3,
+    sal_i,
+    1,
+    sal_i,
+  RS,
+  ADD, /* sal_i = sal_i + 1 */
+  WS,
+
+  ENDF,
+
+};
+
+
+/*
  * bci_round
  *
  *   Round a 26.6 number.  Contrary to the ROUND bytecode instruction, no
@@ -738,6 +871,95 @@ unsigned char FPGM(bci_cvt_rescale) [] =
 
 
 /*
+ * bci_cvt_rescale_range
+ *
+ *   Rescale a range of CVT values with `bci_cvt_rescale', using a custom
+ *   scaling value.
+ *
+ *   This function gets used in the `prep' table.
+ *
+ * in: num_cvt
+ *     cvt_start_idx
+ *
+ * sal: sal_i (CVT index of the script's scaling value;
+ *             gets incremented by 1 after execution)
+ *      sal_scale
+ *
+ * uses: bci_cvt_rescale
+ */
+
+unsigned char FPGM(bci_cvt_rescale_range) [] =
+{
+
+  PUSHB_1,
+    bci_cvt_rescale_range,
+  FDEF,
+
+  /* store scaling value in `sal_scale' */
+  PUSHB_3,
+    bci_cvt_rescale,
+    sal_scale,
+    sal_i,
+  RS,
+  RCVT,
+  WS, /* s: cvt_start_idx num_cvt bci_cvt_rescale */
+
+  LOOPCALL,
+  POP,
+
+  PUSHB_3,
+    sal_i,
+    1,
+    sal_i,
+  RS,
+  ADD, /* sal_i = sal_i + 1 */
+  WS,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_vwidth_data_store
+ *
+ *   Store a vertical width array value.
+ *
+ *   This function gets used in the `prep' table.
+ *
+ * in: value
+ *
+ * sal: sal_i (CVT index of the script's vwidth data;
+ *             gets incremented by 1 after execution)
+ */
+
+unsigned char FPGM(bci_vwidth_data_store) [] =
+{
+
+  PUSHB_1,
+    bci_vwidth_data_store,
+  FDEF,
+
+  PUSHB_1,
+    sal_i,
+  RS,
+  SWAP,
+  WCVTP,
+
+  PUSHB_3,
+    sal_i,
+    1,
+    sal_i,
+  RS,
+  ADD, /* sal_i = sal_i + 1 */
+  WS,
+
+  ENDF,
+
+};
+
+
+/*
  * bci_blue_round
  *
  *   Round a blue ref value and adjust its corresponding shoot value.
@@ -847,6 +1069,44 @@ unsigned char FPGM(bci_blue_round_b) [] =
   PUSHB_1,
     1,
   ADD, /* s: (ref_idx + 1) */
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_blue_round_range
+ *
+ *   Round a range of blue zones (both reference and shoot values).
+ *
+ *   This function gets used in the `prep' table.
+ *
+ * in: num_blue_zones
+ *     blue_ref_idx
+ *
+ * sal: sal_i (holds a copy of `num_blue_zones' for `bci_blue_round')
+ *
+ * uses: bci_blue_round
+ */
+
+unsigned char FPGM(bci_blue_round_range) [] =
+{
+
+  PUSHB_1,
+    bci_blue_round_range,
+  FDEF,
+
+  DUP,
+  PUSHB_1,
+    sal_i,
+  SWAP,
+  WS,
+
+  PUSHB_1,
+    bci_blue_round,
+  LOOPCALL,
+  POP,
 
   ENDF,
 
@@ -5104,9 +5364,12 @@ unsigned char FPGM(bci_hint_glyph) [] =
 
 
 #define COPY_FPGM(func_name) \
-          memcpy(bufp, fpgm_ ## func_name, \
-                 sizeof (fpgm_ ## func_name)); \
-          bufp += sizeof (fpgm_ ## func_name) \
+          do \
+          { \
+            memcpy(bufp, fpgm_ ## func_name, \
+                   sizeof (fpgm_ ## func_name)); \
+            bufp += sizeof (fpgm_ ## func_name); \
+          } while (0)
 
 static FT_Error
 TA_table_build_fpgm(FT_Byte** fpgm,
@@ -5126,7 +5389,14 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   /* (depending on options of `TTFautohint'), */
   /* but implementing dynamic FDEF indices would be a lot of work */
 
-  buf_len = sizeof (FPGM(bci_round))
+  buf_len = sizeof (FPGM(bci_align_top_a))
+            + (font->increase_x_height
+                ? (sizeof (FPGM(bci_align_top_b1a))
+                   + 2
+                   + sizeof (FPGM(bci_align_top_b1b)))
+                : sizeof (FPGM(bci_align_top_b2)))
+            + sizeof (FPGM(bci_align_top_c))
+            + sizeof (FPGM(bci_round))
             + sizeof (FPGM(bci_smooth_stem_width_a))
             + 1
             + sizeof (FPGM(bci_smooth_stem_width_b))
@@ -5139,9 +5409,12 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_loop_do))
             + sizeof (FPGM(bci_loop))
             + sizeof (FPGM(bci_cvt_rescale))
+            + sizeof (FPGM(bci_cvt_rescale_range))
+            + sizeof (FPGM(bci_vwidth_data_store))
             + sizeof (FPGM(bci_blue_round_a))
             + 1
             + sizeof (FPGM(bci_blue_round_b))
+            + sizeof (FPGM(bci_blue_round_range))
             + sizeof (FPGM(bci_decrement_component_counter))
             + sizeof (FPGM(bci_get_point_extrema))
             + sizeof (FPGM(bci_nibbles))
@@ -5280,6 +5553,18 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   /* copy font program into buffer and fill in the missing variables */
   bufp = buf;
 
+  COPY_FPGM(bci_align_top_a);
+  if (font->increase_x_height)
+  {
+    COPY_FPGM(bci_align_top_b1a);
+    *(bufp++) = HIGH(font->increase_x_height);
+    *(bufp++) = LOW(font->increase_x_height);
+    COPY_FPGM(bci_align_top_b1b);
+  }
+  else
+    COPY_FPGM(bci_align_top_b2);
+  COPY_FPGM(bci_align_top_c);
+
   COPY_FPGM(bci_round);
   COPY_FPGM(bci_smooth_stem_width_a);
   *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET;
@@ -5294,9 +5579,12 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_loop_do);
   COPY_FPGM(bci_loop);
   COPY_FPGM(bci_cvt_rescale);
+  COPY_FPGM(bci_cvt_rescale_range);
+  COPY_FPGM(bci_vwidth_data_store);
   COPY_FPGM(bci_blue_round_a);
   *(bufp++) = (unsigned char)CVT_BLUES_SIZE;
   COPY_FPGM(bci_blue_round_b);
+  COPY_FPGM(bci_blue_round_range);
   COPY_FPGM(bci_decrement_component_counter);
   COPY_FPGM(bci_get_point_extrema);
   COPY_FPGM(bci_nibbles);
