@@ -143,7 +143,8 @@ TTF_autohint(const char* options,
     else if (COMPARE("error-string"))
       error_stringp = va_arg(ap, const unsigned char**);
     else if (COMPARE("fallback-script"))
-      fallback_script = va_arg(ap, FT_UInt);
+      fallback_script = va_arg(ap, FT_UInt) ? TA_SCRIPT_LATN
+                                            : TA_SCRIPT_FALLBACK;
     else if (COMPARE("gdi-cleartype-strong-stem-width"))
       gdi_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("gray-strong-stem-width"))
@@ -341,7 +342,7 @@ No_check:
       DUMPVAL("dw-cleartype-strong-stem-width",
               font->dw_cleartype_strong_stem_width);
       DUMPVAL("fallback-script",
-              font->fallback_script);
+              font->fallback_script != TA_SCRIPT_FALLBACK);
       DUMPVAL("gdi-cleartype-strong-stem-width",
               font->gdi_cleartype_strong_stem_width);
       DUMPVAL("gray-strong-stem-width",
