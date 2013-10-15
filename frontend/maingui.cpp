@@ -1035,12 +1035,14 @@ Main_GUI::create_layout()
     tr("<b>TTFautohint</b> provides two different hinting algorithms"
        " which can be selected for various hinting modes."
        ""
-       "<p><i>strong:</i> Position horizontal stems and snap stem widths"
+       "<p><i>strong</i> (checkbox set):"
+       " Position horizontal stems and snap stem widths"
        " to integer pixel values.  While making the output look crisper,"
        " outlines become more distorted.</p>"
        ""
-       "<p><i>smooth:</i> Use discrete values for horizontal stems"
-       " and stem widths.  This only slightly increases the contrast"
+       "<p><i>smooth</i> (checkbox not set):"
+       " Use discrete values for horizontal stems and stem widths."
+       "  This only slightly increases the contrast"
        " but avoids larger outline distortion.</p>"));
 
   gray_box = new QCheckBox(tr("Grayscale"), this);

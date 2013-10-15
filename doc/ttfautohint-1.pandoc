@@ -289,7 +289,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     or *value2* (or both) can be missing; a missing value is replaced by the
     beginning or end of the whole interval of valid PPEM values,
     respectively (6\ to 32767).  Whitespace is not significant; superfluous
-    commas are ignored, and ranges must be specified in increasing order. 
+    commas are ignored, and ranges must be specified in increasing order.
     For example, the string `"7-9, 11, 13-"` means the values 7, 8, 9, 11,
     13, 14, 15, etc.  Consequently, if the supplied argument is `"-"`, no
     x-height snapping takes place at all.  The default is the empty string
@@ -422,14 +422,16 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     The command line option expects *string* to contain up to three letters
     with possible values '`g`' for grayscale, '`G`' for GDI ClearType, and
     '`D`' for DW ClearType.  If a letter is found in *string*, the strong
-    stem width routine is used for the corresponding rendering target.  The
-    default value is '`G`' which means that strong stem width handling is
-    activated for GDI ClearType only.  To use smooth stem width handling for
-    all three rendering targets, use the empty string as an argument,
-    usually connoted with '`""`'.
+    stem width routine is used for the corresponding rendering target (and
+    smooth stem width handling otherwise).  The default value is '`G`' which
+    means that strong stem width handling is activated for GDI ClearType
+    only.  To use smooth stem width handling for all three rendering
+    targets, use the empty string as an argument, usually connoted with
+    '`""`'.
 
-    In the GUI, simply set the corresponding check box to select the stem
-    width routine for a given rendering target.
+    In the GUI, simply set the corresponding check box to select the strong
+    width routine for a given rendering target.  If you unset the check box,
+    the smooth width routine gets used.
 
     The following FontForge snapshot images use the font ['Mertz
     Bold'](http://code.newtypography.co.uk/mertz-sans/) (still under
