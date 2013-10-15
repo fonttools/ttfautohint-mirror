@@ -168,9 +168,9 @@ unsigned char PREP(align_top_d) [] =
     DIV, /* ((fitted-scaled) / scaled) in 16.16 format */
 
     PUSHB_1,
-      cvtl_scale,
+      sal_scale,
     SWAP,
-    WCVTP,
+    WS,
 
 };
 

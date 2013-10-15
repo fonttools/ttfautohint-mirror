@@ -138,8 +138,8 @@
 #define DO_SCALE \
   DUP, /* s: a a */ \
   PUSHB_1, \
-    cvtl_scale, \
-  RCVT, \
+    sal_scale, \
+  RS, \
   MUL, /* delta * 2^10 */ \
   DIV_BY_1024, /* delta */ \
   ADD /* a + delta */
@@ -702,9 +702,9 @@ unsigned char FPGM(bci_loop) [] =
 /*
  * bci_cvt_rescale
  *
- *   Rescale CVT value by `cvtl_scale' (in 16.16 format).
+ *   Rescale CVT value by `sal_scale' (in 16.16 format).
  *
- *   The scaling factor `cvtl_scale' isn't stored as `b/c' but as `(b-c)/c';
+ *   The scaling factor `sal_scale' isn't stored as `b/c' but as `(b-c)/c';
  *   consequently, the calculation `a * b/c' is done as `a + delta' with
  *   `delta = a * (b-c)/c'.  This avoids overflow.
  *
@@ -712,7 +712,7 @@ unsigned char FPGM(bci_loop) [] =
  *
  * out: cvt_idx+1
  *
- * CVT: cvtl_scale
+ * sal: sal_scale
  */
 
 unsigned char FPGM(bci_cvt_rescale) [] =
@@ -1120,9 +1120,9 @@ unsigned char FPGM(bci_number_set_is_element2) [] =
  *      sal_point_max
  *      sal_base
  *      sal_num_packed_segments
+ *      sal_scale
  *
- * CVT: cvtl_scale
- *      cvtl_temp
+ * CVT: cvtl_temp
  *
  * uses: bci_get_point_extrema
  *       bci_nibbles
@@ -1951,7 +1951,7 @@ unsigned char FPGM(bci_align_segments) [] =
  * in: min_point
  *     max_point
  *
- * CVT: cvtl_scale
+ * sal: sal_scale
  */
 
 unsigned char FPGM(bci_scale_contour) [] =
@@ -2167,14 +2167,15 @@ unsigned char FPGM(bci_shift_contour) [] =
  *
  *     offset * scale - offset = offset * (scale - 1)
  *
- *   Note that `cvtl_scale' is equal to the above `scale - 1'.
+ *   Note that `sal_scale' is equal to the above `scale - 1'.
  *
  * in: offset (in FUnits)
  *     num_contours
  *     first_contour
  *
  * CVT: cvtl_funits_to_pixels
- *      cvtl_scale
+ *
+ * sal: sal_scale
  *
  * uses: bci_round
  *       bci_shift_contour
@@ -2201,8 +2202,8 @@ unsigned char FPGM(bci_shift_subglyph) [] =
   CALL, /* offset = round(offset) */
 
   PUSHB_1,
-    cvtl_scale,
-  RCVT,
+    sal_scale,
+  RS,
   MUL,
   DIV_BY_1024, /* delta = offset * (scale - 1) */
 
@@ -2252,8 +2253,7 @@ unsigned char FPGM(bci_shift_subglyph) [] =
  * in: point
  *
  * sal: sal_i (edge_orig_pos)
- *
- * CVT: cvtl_scale
+ *      sal_scale
  */
 
 unsigned char FPGM(bci_ip_outer_align_point) [] =
@@ -2322,8 +2322,7 @@ unsigned char FPGM(bci_ip_on_align_points) [] =
  *
  * sal: sal_i (edge_orig_pos)
  *      sal_j (stretch_factor)
- *
- * CVT: cvtl_scale
+ *      sal_scale
  */
 
 unsigned char FPGM(bci_ip_between_align_point) [] =

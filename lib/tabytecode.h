@@ -311,7 +311,8 @@
 #define sal_func sal_ref + 1
 #define sal_anchor sal_func + 1
 #define sal_point_min sal_anchor + 1
-#define sal_point_max sal_point_min + 1
+#define sal_scale sal_point_min + 1
+#define sal_point_max sal_scale + 1
 #define sal_base sal_point_max + 1
 #define sal_num_packed_segments sal_base + 1
 #define sal_segment_offset sal_num_packed_segments + 1 /* must be last */
@@ -488,8 +489,7 @@
 
 #define cvtl_temp 0 /* used for creating twilight points */
 #define cvtl_0x10000 cvtl_temp + 1
-#define cvtl_scale cvtl_0x10000 + 1
-#define cvtl_funits_to_pixels cvtl_scale + 1
+#define cvtl_funits_to_pixels cvtl_0x10000 + 1
 #define cvtl_is_extra_light cvtl_funits_to_pixels + 1
 #define cvtl_is_subglyph cvtl_is_extra_light + 1
 #define cvtl_stem_width_function cvtl_is_subglyph + 1
