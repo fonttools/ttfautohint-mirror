@@ -266,7 +266,7 @@ show_help(bool
 "the larger the hint set range, the more hint sets get computed,\n"
 "usually increasing the output font size.  Note, however,\n"
 "that the `gasp' table of the output file enables grayscale hinting\n"
-"for all sizes (limited by option -G which is handled in the bytecode).\n"
+"for all sizes (limited by option -G, which is handled in the bytecode).\n"
 "\n");
   fprintf(handle,
 #ifdef BUILD_GUI

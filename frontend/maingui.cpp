@@ -920,7 +920,7 @@ Main_GUI::create_layout()
   fallback_label->setBuddy(fallback_box);
   fallback_label->setToolTip(
     tr("This sets the fallback script module for glyphs"
-       " which <b>TTFautohint</b> can't map to a script automatically."));
+       " that <b>TTFautohint</b> can't map to a script automatically."));
   fallback_box->insertItem(0, tr("None"));
   fallback_box->insertItem(1, tr("Latin"));
 
@@ -1014,7 +1014,7 @@ Main_GUI::create_layout()
     tr("If switched on, <b>TTFautohint</b> uses default values"
        " for standard stem width and height"
        " instead of deriving these values from the input font.<br>"
-       "Use this for fonts which don't contain glyphs"
+       "Use this for fonts that don't contain glyphs"
        " of a (supported) script."));
 
   dehint_box = new QCheckBox(tr("&Dehint"), this);
@@ -1033,7 +1033,7 @@ Main_GUI::create_layout()
   stem_label = new QLabel(tr("Strong Stem &Width and Positioning:"));
   stem_label->setToolTip(
     tr("<b>TTFautohint</b> provides two different hinting algorithms"
-       " which can be selected for various hinting modes."
+       " that can be selected for various hinting modes."
        ""
        "<p><i>strong</i> (checkbox set):"
        " Position horizontal stems and snap stem widths"

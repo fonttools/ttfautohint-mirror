@@ -12,7 +12,7 @@
 
 
 // Derived class `Drag_Drop_Line_Edit' is Tooltip_Line_Edit
-// which accepts drag and drop.
+// that accepts drag and drop.
 
 #include <config.h>
 
@@ -26,7 +26,7 @@ Drag_Drop_Line_Edit::Drag_Drop_Line_Edit(QWidget* parent)
 
 
 // XXX: There are no standardized MIME types for TTFs and TTCs
-//      which work everywhere.  So we rely on the extension.
+//      that work everywhere.  So we rely on the extension.
 
 void
 Drag_Drop_Line_Edit::dragEnterEvent(QDragEnterEvent* event)

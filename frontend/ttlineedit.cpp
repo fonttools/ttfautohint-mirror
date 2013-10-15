@@ -11,7 +11,7 @@
 // with the ttfautohint library.
 
 
-// Derived class `Tooltip_Line_Edit' is QLineEdit which displays a tooltip
+// Derived class `Tooltip_Line_Edit' is QLineEdit that displays a tooltip
 // if the data in the field is wider than the field width.
 
 #include <config.h>

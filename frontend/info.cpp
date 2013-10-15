@@ -22,7 +22,7 @@
 #define TTFAUTOHINT_STRING "; ttfautohint"
 #define TTFAUTOHINT_STRING_WIDE "\0;\0 \0t\0t\0f\0a\0u\0t\0o\0h\0i\0n\0t"
 
-// build string which gets appended to the `Version' field(s)
+// build string that gets appended to the `Version' field(s)
 
 extern "C" {
 
