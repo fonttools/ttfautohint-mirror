@@ -952,8 +952,9 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
 
 #ifdef TA_DEBUG
   if (axis->extra_light)
-    TA_LOG_GLOBAL(("this font is extra light\n"
-                   "\n"));
+    TA_LOG_GLOBAL(("`%s' script is extra light (at current resolution)\n"
+                   "\n",
+                   ta_script_names[metrics->root.script_class->script]));
 #endif
 
   if (dim == TA_DIMENSION_VERT)
