@@ -22,17 +22,17 @@
 
 /* Add new scripts here. */
 
-SCRIPT(cyrl, CYRL)
-SCRIPT(dflt, DFLT)
-SCRIPT(grek, GREK)
-SCRIPT(hebr, HEBR)
-SCRIPT(latn, LATN)
+SCRIPT(cyrl, CYRL, "Cyrillic")
+SCRIPT(dflt, DFLT, "no script")
+SCRIPT(grek, GREK, "Greek")
+SCRIPT(hebr, HEBR, "Hebrew")
+SCRIPT(latn, LATN, "Latin")
 #if 0
-SCRIPT(deva, DEVA)
-SCRIPT(hani, HANI)
+SCRIPT(deva, DEVA, "Indic scripts")
+SCRIPT(hani, HANI, "CJKV ideographs")
 #endif
 #ifdef FT_OPTION_AUTOFIT2
-SCRIPT(ltn2, LTN2)
+SCRIPT(ltn2, LTN2, "Latin 2")
 #endif
 
 /* end of tascript.h */

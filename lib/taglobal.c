@@ -41,7 +41,7 @@ TA_WritingSystemClass const ta_writing_system_classes[] =
 
 
 #undef SCRIPT
-#define SCRIPT(s, S) \
+#define SCRIPT(s, S, d) \
           &ta_ ## s ## _script_class,
 
 TA_ScriptClass const ta_script_classes[] =
@@ -56,7 +56,7 @@ TA_ScriptClass const ta_script_classes[] =
 #ifdef TA_DEBUG
 
 #undef SCRIPT
-#define SCRIPT(s, S) #s,
+#define SCRIPT(s, S, d) #s,
 
 const char* ta_script_names[] =
 {

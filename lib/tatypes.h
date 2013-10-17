@@ -252,7 +252,7 @@ typedef struct TA_WritingSystemClassRec_
  */
 
 #undef SCRIPT
-#define SCRIPT(s, S) \
+#define SCRIPT(s, S, d) \
           TA_SCRIPT_ ## S,
 
 /* The list of known scripts. */
