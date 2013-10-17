@@ -258,7 +258,7 @@ typedef struct TA_WritingSystemClassRec_
 /* The list of known scripts. */
 typedef enum TA_Script_
 {
-#include "tascript.h"
+#include <ttfautohint-scripts.h>
 
   TA_SCRIPT_MAX /* do not remove */
 } TA_Script;

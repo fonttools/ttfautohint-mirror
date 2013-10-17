@@ -1,4 +1,4 @@
-/* tascript.h */
+/* ttfautohint-scripts.h */
 
 /*
  * Copyright (C) 2013 by Werner Lemberg.
@@ -35,4 +35,4 @@ SCRIPT(hani, HANI, "CJKV ideographs")
 SCRIPT(ltn2, LTN2, "Latin 2")
 #endif
 
-/* end of tascript.h */
+/* end of ttfautohint-scripts.h */

@@ -47,7 +47,7 @@ TA_WritingSystemClass const ta_writing_system_classes[] =
 TA_ScriptClass const ta_script_classes[] =
 {
 
-#include "tascript.h"
+#include <ttfautohint-scripts.h>
 
   NULL  /* do not remove */
 };
@@ -61,7 +61,7 @@ TA_ScriptClass const ta_script_classes[] =
 const char* ta_script_names[] =
 {
 
-#include "tascript.h"
+#include <ttfautohint-scripts.h>
 
 };
 

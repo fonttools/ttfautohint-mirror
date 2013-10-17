@@ -44,7 +44,6 @@ libttfautohint_la_SOURCES = \
   taname.c \
   tapost.c \
   taprep.c \
-  tascript.h \
   tasfnt.c \
   tasort.c tasort.h \
   tatables.c tatables.h \
@@ -53,7 +52,8 @@ libttfautohint_la_SOURCES = \
   tattf.c \
   tatypes.h \
   tawrtsys.h \
-  ttfautohint.c ttfautohint.h ttfautohint-errors.h
+  ttfautohint.c \
+  ttfautohint.h ttfautohint-errors.h ttfautohint-scripts.h
 
 libttfautohint_la_LIBADD = \
   libnumberset.la
