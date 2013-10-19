@@ -235,7 +235,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
           have_flag = 1;
         }
 
-        if (TA_LATIN_IS_SMALL_TOP_BLUE(bs))
+        if (TA_LATIN_IS_X_HEIGHT_BLUE(bs))
         {
           if (have_flag)
             TA_LOG_GLOBAL((", "));
@@ -684,7 +684,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     /* the following flag is used later to adjust the y and x scales */
     /* in order to optimize the pixel grid alignment */
     /* of the top of small letters */
-    if (TA_LATIN_IS_SMALL_TOP_BLUE(bs))
+    if (TA_LATIN_IS_X_HEIGHT_BLUE(bs))
       blue->flags |= TA_LATIN_BLUE_ADJUSTMENT;
 
     TA_LOG_GLOBAL(("    -> reference = %ld\n"

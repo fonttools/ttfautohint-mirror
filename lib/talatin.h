@@ -48,8 +48,8 @@ extern const TA_ScriptClassRec ta_armn_script_class;
 
 #define TA_LATIN_IS_TOP_BLUE(b) \
           ((b)->properties & TA_BLUE_PROPERTY_LATIN_TOP)
-#define TA_LATIN_IS_SMALL_TOP_BLUE(b) \
-          ((b)->properties & TA_BLUE_PROPERTY_LATIN_SMALL_TOP)
+#define TA_LATIN_IS_X_HEIGHT_BLUE(b) \
+          ((b)->properties & TA_BLUE_PROPERTY_LATIN_X_HEIGHT)
 #define TA_LATIN_IS_LONG_BLUE(b) \
           ((b)->properties &TA_BLUE_PROPERTY_LATIN_LONG)
 

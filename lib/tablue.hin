@@ -88,7 +88,7 @@ extern const char ta_blue_strings[];
 /* blue string can't be used in more than a single writing system, which */
 /* is a safe bet. */
 #define TA_BLUE_PROPERTY_LATIN_TOP (1 << 0)
-#define TA_BLUE_PROPERTY_LATIN_SMALL_TOP (1 << 1)
+#define TA_BLUE_PROPERTY_LATIN_X_HEIGHT (1 << 1)
 #define TA_BLUE_PROPERTY_LATIN_LONG (1 << 2)
 
 #define TA_BLUE_PROPERTY_CJK_HORIZ (1 << 0)
