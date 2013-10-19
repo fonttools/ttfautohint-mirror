@@ -230,10 +230,11 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 
 ### Fallback Script
 
-`--latin-fallback`, `-f`
-:   Set fallback script to 'latin', this is, use the 'latin' auto-hinting
-    module instead of 'none' for all glyphs that can't be assigned to a
-    script.  See [below](#scripts) for more details.
+`--fallback-script=`*s*, `-f`\ *s*
+:   Set fallback script to tag *s*, which is a string consisting of four
+    characters like `latn` or `dflt`.  It gets used for for all glyphs that
+    can't be assigned to a script automatically.  See [below](#scripts) for
+    more details.
 
 ### Hinting Limit
 
@@ -580,10 +581,10 @@ Grid Fitting
 
 Aligning outlines along the grid lines is called *grid fitting*.  It doesn't
 necessarily mean that the outlines are positioned *exactly* on the grid,
-however, especially if you want a smooth appearance at different sizes.
+however, especially if you want a smooth appearance at different sizes. 
 This is the central routine of the auto-hinter; its actions are highly
-dependent on the used script.  Currently, only support for scripts that
-work similarly to Latin (i.e.  Greek and Cyrillic) is available.
+dependent on the used script.  Currently, only support for scripts that work
+similarly to Latin (e.g. Greek or Cyrillic) is available.
 
   * Align edges linked to blue zones.
 
@@ -725,10 +726,19 @@ Scripts
 ttfautohint checks which auto-hinting module should be used to hint a
 specific glyph.  To do so, it checks a glyph's Unicode character code
 whether it belongs to a given script.  Currently, only FreeType's 'latin'
-autohinting module is implemented, but more are expected to come.  Here is
-the hardcoded list of character ranges that are hinted by this 'latin'
-module.  As you can see, this also covers some non-latin scripts (in the
-Unicode sense) that have similar typographical properties.
+autohinting module is implemented, but more are expected to come.  Note,
+however, that this module is capable to hint other scripts too.
+
+Here is the hardcoded list of character ranges that are hinted by this
+'latin' module.  As you can see, this also covers some non-latin scripts (in
+the Unicode sense) that have similar typographical properties.
+
+In ttfautohint, scripts are identified by four-character tags.  The value
+`dflt` indicates 'no script', which gets hinted by 'dummy' auto-hinting
+module.
+
+
+Table: `latn` character ranges.
 
      Character range     Description
   ---------------------  -------------
@@ -739,32 +749,53 @@ Unicode sense) that have similar typographical properties.
   `0x0250` - `0x02AF`    IPA Extensions
   `0x02B0` - `0x02FF`    Spacing Modifier Letters
   `0x0300` - `0x036F`    Combining Diacritical Marks
-  `0x0370` - `0x03FF`    Greek and Coptic
-  `0x0400` - `0x04FF`    Cyrillic
-  `0x0500` - `0x052F`    Cyrillic Supplement
   `0x1D00` - `0x1D7F`    Phonetic Extensions
   `0x1D80` - `0x1DBF`    Phonetic Extensions Supplement
   `0x1DC0` - `0x1DFF`    Combining Diacritical Marks Supplement
   `0x1E00` - `0x1EFF`    Latin Extended Additional
-  `0x1F00` - `0x1FFF`    Greek Extended
   `0x2000` - `0x206F`    General Punctuation
   `0x2070` - `0x209F`    Superscripts and Subscripts
   `0x20A0` - `0x20CF`    Currency Symbols
   `0x2150` - `0x218F`    Number Forms
   `0x2460` - `0x24FF`    Enclosed Alphanumerics
   `0x2C60` - `0x2C7F`    Latin Extended-C
-  `0x2DE0` - `0x2DFF`    Cyrillic Extended-A
   `0x2E00` - `0x2E7F`    Supplemental Punctuation
-  `0xA640` - `0xA69F`    Cyrillic Extended-B
   `0xA720` - `0xA7FF`    Latin Extended-D
   `0xFB00` - `0xFB06`    Alphabetical Presentation Forms (Latin Ligatures)
   `0x1D400` - `0x1D7FF`  Mathematical Alphanumeric Symbols
   `0x1F100` - `0x1F1FF`  Enclosed Alphanumeric Supplement
 
+
+Table: `grek` character ranges.
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0370` - `0x03FF`    Greek and Coptic
+  `0x1F00` - `0x1FFF`    Greek Extended
+
+
+Table: `cyrl` character ranges.
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0400` - `0x04FF`    Cyrillic
+  `0x0500` - `0x052F`    Cyrillic Supplement
+  `0x2DE0` - `0x2DFF`    Cyrillic Extended-A
+  `0xA640` - `0xA69F`    Cyrillic Extended-B
+
+
+Table: `hebr` character ranges.
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0590` - `0x05FF     Hebrew
+  `0xFB1D` - `0xFB4F     Alphabetic Presentation Forms (Hebrew)
+
+
 If a glyph's character code is not covered by a script range, it is not
 hinted (or rather, it gets hinted by the 'dummy' auto-hinting module that
 essentially does nothing).  This can be changed by specifying a *fallback
-script* with [option `--latin-fallback`](#fallback-script).
+script* with [option `--fallback-script`](#fallback-script).
 
 It is planned to extend ttfautohint so that the `GSUB` OpenType table gets
 analyzed, mapping character codes to all glyph indices that can be reached
