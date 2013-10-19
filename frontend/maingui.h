@@ -45,10 +45,11 @@ class Main_GUI
 
 public:
   Main_GUI(int, int, int,
+           bool, bool,
+           bool, int,
+           const char*,
            bool, bool, bool,
-           int, const char*,
-           bool, bool, bool,
-           bool, bool, int, bool,
+           bool, bool, const char*, bool,
            bool);
   ~Main_GUI();
 
@@ -87,7 +88,7 @@ private:
   int pre_hinting;
   int hint_composites;
   int no_info;
-  int latin_fallback;
+  int fallback_script_idx;
   int symbol;
   int dehint;
 

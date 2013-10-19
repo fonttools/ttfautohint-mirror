@@ -72,23 +72,26 @@ if WITH_DOC
   dist_man_MANS = $(manpages)
 endif
 
-# `ttfautohint.h' holds default values for some options.
+# `ttfautohint.h' holds default values for some options,
+# `ttfautohint-scripts.' the list of available scripts
 ttfautohint.1: $(top_srcdir)/frontend/main.cpp \
                $(top_srcdir)/lib/ttfautohint.h \
+               $(top_srcdir)/lib/ttfautohint-scripts.h \
                $(top_srcdir)/.version
 	$(MAKE) $(AM_MAKEFLAGS) ttfautohint$(EXEEXT)
 	$(HELP2MAN) --output=$@ \
 	            --no-info \
-	            --name="add new auto-generated hints to a TrueType font" \
+	            --name="add new, auto-generated hints to a TrueType font" \
 	            ./ttfautohint$(EXEEXT)
 
 ttfautohintGUI.1: $(top_srcdir)/frontend/main.cpp \
                   $(top_srcdir)/lib/ttfautohint.h \
+                  $(top_srcdir)/lib/ttfautohint-scripts.h \
                   $(top_srcdir)/.version
 	$(MAKE) $(AM_MAKEFLAGS) ttfautohintGUI$(EXEEXT)
 	$(HELP2MAN) --output=$@ \
 	            --no-info \
-	            --name="add new auto-generated hints to a TrueType font" \
+	            --name="add new, auto-generated hints to a TrueType font" \
 	            --help-option=--help-all \
 	            ./ttfautohintGUI$(EXEEXT)
 

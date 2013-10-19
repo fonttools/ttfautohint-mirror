@@ -63,6 +63,7 @@ build_version_string(Info_Data* idata)
   d += sprintf(d, " -r %d", idata->hinting_range_max);
   d += sprintf(d, " -G %d", idata->hinting_limit);
   d += sprintf(d, " -x %d", idata->increase_x_height);
+  d += sprintf(d, " -f %s", idata->fallback_script);
 
   count = 0;
   strong[0] = '\0';
@@ -75,7 +76,10 @@ build_version_string(Info_Data* idata)
     strong[count++] = 'G';
   if (idata->dw_cleartype_strong_stem_width)
     strong[count++] = 'D';
-  d += sprintf(d, " -w \"%s\"", strong);
+  if (*strong)
+    d += sprintf(d, " -w %s", strong);
+  else
+    d += sprintf(d, " -w \"\"");
 
   if (idata->windows_compatibility)
     d += sprintf(d, " -W");
@@ -83,8 +87,6 @@ build_version_string(Info_Data* idata)
     d += sprintf(d, " -p");
   if (!idata->hint_composites)
     d += sprintf(d, " -c");
-  if (idata->latin_fallback)
-    d += sprintf(d, " -f");
   if (idata->symbol)
     d += sprintf(d, " -s");
   if (idata->x_height_snapping_exceptions)

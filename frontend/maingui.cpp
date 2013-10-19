@@ -37,6 +37,25 @@
 #endif
 
 
+// the available script tags and its descriptions are directly extracted
+// from `ttfautohint-scripts.h'
+typedef struct Script_Names_
+{
+  const char* tag;
+  const char* description;
+} Script_Names;
+
+#undef SCRIPT
+#define SCRIPT(s, S, d) \
+          {#s, d},
+
+const Script_Names script_names[] =
+{
+#include <ttfautohint-scripts.h>
+  {NULL, NULL}
+};
+
+
 Main_GUI::Main_GUI(int range_min,
                    int range_max,
                    int limit,
@@ -50,7 +69,7 @@ Main_GUI::Main_GUI(int range_min,
                    bool pre,
                    bool composites,
                    bool no,
-                   int fallback,
+                   const char* fallback,
                    bool symb,
                    bool dh)
 : hinting_range_min(range_min),
@@ -66,10 +85,23 @@ Main_GUI::Main_GUI(int range_min,
   pre_hinting(pre),
   hint_composites(composites),
   no_info(no),
-  latin_fallback(fallback),
   symbol(symb),
   dehint(dh)
 {
+  int i;
+  int dflt_script_idx = 0;
+
+  // map fallback script tag to an index,
+  // replacing an invalid one with the default value
+  for (i = 0; script_names[i].tag; i++)
+  {
+    if (!strcmp("dflt", script_names[i].tag))
+      dflt_script_idx = i;
+    if (!strcmp(fallback, script_names[i].tag))
+      break;
+  }
+  fallback_script_idx = script_names[i].tag ? i : dflt_script_idx;
+
   x_height_snapping_exceptions = NULL;
 
   create_layout();
@@ -750,9 +782,12 @@ again:
   info_data.windows_compatibility = wincomp_box->isChecked();
   info_data.pre_hinting = pre_box->isChecked();
   info_data.hint_composites = hint_box->isChecked();
-  info_data.latin_fallback = fallback_box->currentIndex();
   info_data.symbol = symbol_box->isChecked();
   info_data.dehint = dehint_box->isChecked();
+
+  strncpy(info_data.fallback_script,
+          script_names[fallback_box->currentIndex()].tag,
+          sizeof (info_data.fallback_script));
 
   if (info_box->isChecked())
   {
@@ -812,7 +847,7 @@ again:
                  info_data.hint_composites,
                  info_data.increase_x_height,
                  snapping_string.constData(),
-                 info_data.latin_fallback, info_data.symbol,
+                 info_data.fallback_script, info_data.symbol,
                  info_data.dehint);
 
   if (info_box->isChecked())
@@ -921,8 +956,14 @@ Main_GUI::create_layout()
   fallback_label->setToolTip(
     tr("This sets the fallback script module for glyphs"
        " that <b>TTFautohint</b> can't map to a script automatically."));
-  fallback_box->insertItem(0, tr("None"));
-  fallback_box->insertItem(1, tr("Latin"));
+  for (int i = 0; script_names[i].tag; i++)
+  {
+    // XXX: how to provide translations?
+    fallback_box->insertItem(i,
+                             QString("%1 (%2)")
+                                     .arg(script_names[i].tag)
+                                     .arg(script_names[i].description));
+  }
 
   //
   // hinting limit
@@ -1235,7 +1276,7 @@ Main_GUI::set_defaults()
   min_box->setValue(hinting_range_min);
   max_box->setValue(hinting_range_max);
 
-  fallback_box->setCurrentIndex(latin_fallback);
+  fallback_box->setCurrentIndex(fallback_script_idx);
 
   limit_box->setValue(hinting_limit ? hinting_limit : hinting_range_max);
   // handle command line option `--hinting-limit=0'

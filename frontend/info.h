@@ -40,7 +40,7 @@ typedef struct Info_Data_
   bool windows_compatibility;
   bool pre_hinting;
   bool hint_composites;
-  int latin_fallback;
+  char fallback_script[5];
   bool symbol;
   bool dehint;
 } Info_Data;

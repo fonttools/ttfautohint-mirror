@@ -61,6 +61,25 @@
 using namespace std;
 
 
+// the available script tags and its descriptions are directly extracted
+// from `ttfautohint-scripts.h'
+typedef struct Script_Names_
+{
+  const char* tag;
+  const char* description;
+} Script_Names;
+
+#undef SCRIPT
+#define SCRIPT(s, S, d) \
+          {#s, d},
+
+const Script_Names script_names[] =
+{
+#include <ttfautohint-scripts.h>
+  {NULL, NULL}
+};
+
+
 #ifndef BUILD_GUI
 extern "C" {
 
@@ -163,7 +182,7 @@ show_help(bool
 #endif
 "  -c, --composites           hint glyph composites also\n"
 "  -d, --dehint               remove all hints\n"
-"  -f, --latin-fallback       set fallback script to latin\n"
+"  -f, --fallback-script=S    set fallback script (default: dflt)\n"
 "  -G, --hinting-limit=N      switch off hinting above this PPEM value\n"
 "                             (default: %d); value 0 means no limit\n"
 "  -h, --help                 display this help and exit\n"
@@ -256,7 +275,6 @@ show_help(bool
   fprintf(handle,
 "The program accepts both TTF and TTC files as input.\n"
 "Use option -i only if you have a legal permission to modify the font.\n"
-"If option -f is not set, glyphs not in the latin range stay unhinted.\n"
 "The used PPEM value for option -p is FUnits per em, normally 2048.\n"
 "With option -s, use default values for standard stem width and height,\n"
 "otherwise they are derived from latin character `o'.\n"
@@ -267,6 +285,30 @@ show_help(bool
 "usually increasing the output font size.  Note, however,\n"
 "that the `gasp' table of the output file enables grayscale hinting\n"
 "for all sizes (limited by option -G, which is handled in the bytecode).\n"
+"\n");
+  fprintf(handle,
+"Option -f takes a four-letter string that identifies the script\n"
+"to be used as a fallback for glyphs that have character codes\n"
+"outside of known script ranges.  Possible values are\n"
+"\n");
+  const Script_Names* sn = script_names;
+  for(;;)
+  {
+    fprintf(handle, "  %s (%s)",
+            sn->tag, sn->description);
+    sn++;
+    if (sn->tag)
+      fprintf(handle, ",\n");
+    else
+    {
+      fprintf(handle, ".\n");
+      break;
+    }
+  }
+  fprintf(handle,
+"\n"
+"If no option -f is given, or if its value is `dflt',\n"
+"no fallback script is used.\n"
 "\n");
   fprintf(handle,
 #ifdef BUILD_GUI
@@ -326,9 +368,10 @@ main(int argc,
   bool pre_hinting = false;
   bool hint_composites = false;
   bool no_info = false;
-  int latin_fallback = 0; // leave it as int; this probably gets extended
   bool symbol = false;
 
+  const char* fallback_script = NULL;
+  bool have_fallback_script = false;
   const char* x_height_snapping_exceptions_string = NULL;
   bool have_x_height_snapping_exceptions_string = false;
 
@@ -372,12 +415,12 @@ main(int argc,
       {"debug", no_argument, NULL, DEBUG_OPTION},
 #endif
       {"dehint", no_argument, NULL, 'd'},
+      {"fallback-script", required_argument, NULL, 'f'},
       {"hinting-limit", required_argument, NULL, 'G'},
       {"hinting-range-max", required_argument, NULL, 'r'},
       {"hinting-range-min", required_argument, NULL, 'l'},
       {"ignore-restrictions", no_argument, NULL, 'i'},
       {"increase-x-height", required_argument, NULL, 'x'},
-      {"latin-fallback", no_argument, NULL, 'f'},
       {"no-info", no_argument, NULL, 'n'},
       {"pre-hinting", no_argument, NULL, 'p'},
       {"strong-stem-width", required_argument, NULL, 'w'},
@@ -417,7 +460,7 @@ main(int argc,
     };
 
     int option_index;
-    int c = getopt_long_only(argc, argv, "cdfG:hil:npr:stVvw:Wx:X:",
+    int c = getopt_long_only(argc, argv, "cdf:G:hil:npr:stVvw:Wx:X:",
                              long_options, &option_index);
     if (c == -1)
       break;
@@ -433,7 +476,8 @@ main(int argc,
       break;
 
     case 'f':
-      latin_fallback = 1;
+      fallback_script = optarg;
+      have_fallback_script = true;
       break;
 
     case 'G':
@@ -540,6 +584,7 @@ main(int argc,
   if (dehint)
   {
     // -d makes ttfautohint ignore all other hinting options
+    have_fallback_script = false;
     have_hinting_range_min = false;
     have_hinting_range_max = false;
     have_hinting_limit = false;
@@ -547,6 +592,8 @@ main(int argc,
     have_x_height_snapping_exceptions_string = false;
   }
 
+  if (!have_fallback_script)
+    fallback_script = "dflt";
   if (!have_hinting_range_min)
     hinting_range_min = TA_HINTING_RANGE_MIN;
   if (!have_hinting_range_max)
@@ -621,6 +668,20 @@ main(int argc,
                         x_height_snapping_exceptions_string,
                         s - x_height_snapping_exceptions_string + 1, "^");
       }
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  if (have_fallback_script)
+  {
+    const Script_Names* sn;
+
+    for (sn = script_names; sn->tag; sn++)
+      if (!strcmp(fallback_script, sn->tag))
+        break;
+    if (!sn->tag)
+    {
+      fprintf(stderr, "Unknown script tag `%s'\n", fallback_script);
       exit(EXIT_FAILURE);
     }
   }
@@ -702,8 +763,11 @@ main(int argc,
     info_data.hint_composites = hint_composites;
     info_data.increase_x_height = increase_x_height;
     info_data.x_height_snapping_exceptions = x_height_snapping_exceptions;
-    info_data.latin_fallback = latin_fallback;
     info_data.symbol = symbol;
+
+    strncpy(info_data.fallback_script,
+            fallback_script,
+            sizeof (info_data.fallback_script));
 
     info_data.dehint = dehint;
 
@@ -744,7 +808,7 @@ main(int argc,
                  ignore_restrictions, windows_compatibility,
                  pre_hinting, hint_composites,
                  increase_x_height, x_height_snapping_exceptions_string,
-                 latin_fallback, symbol,
+                 fallback_script, symbol,
                  dehint, debug);
 
   if (!no_info)
@@ -823,7 +887,7 @@ main(int argc,
                dw_cleartype_strong_stem_width, increase_x_height,
                x_height_snapping_exceptions_string,
                ignore_restrictions, windows_compatibility, pre_hinting,
-               hint_composites, no_info, latin_fallback, symbol,
+               hint_composites, no_info, fallback_script, symbol,
                dehint);
   gui.show();
 
