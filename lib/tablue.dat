@@ -76,7 +76,7 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "fijkdbh"
   TA_BLUE_STRING_LATIN_SMALL
     "xzroesc"
-  TA_BLUE_STRING_LATIN_SMALL_MINOR
+  TA_BLUE_STRING_LATIN_SMALL_DESCENDER
     "pqgjy"
 
   TA_BLUE_STRING_GREEK_CAPITAL_TOP
@@ -87,7 +87,7 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "βθδζλξ"
   TA_BLUE_STRING_GREEK_SMALL
     "αειοπστω"
-  TA_BLUE_STRING_GREEK_SMALL_MINOR
+  TA_BLUE_STRING_GREEK_SMALL_DESCENDER
     "βγημρφχψ"
 
   TA_BLUE_STRING_CYRILLIC_CAPITAL_TOP
@@ -96,7 +96,7 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "БВЕШЗОСЭ"
   TA_BLUE_STRING_CYRILLIC_SMALL
     "хпншезос"
-  TA_BLUE_STRING_CYRILLIC_SMALL_MINOR
+  TA_BLUE_STRING_CYRILLIC_SMALL_DESCENDER
     "руф"
 
   TA_BLUE_STRING_HEBREW_TOP
@@ -110,33 +110,33 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
 TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
 
   TA_BLUE_STRINGSET_LATN
-    { TA_BLUE_STRING_LATIN_CAPITAL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP         }
-    { TA_BLUE_STRING_LATIN_CAPITAL_BOTTOM, 0                                  }
-    { TA_BLUE_STRING_LATIN_SMALL_F_TOP,    TA_BLUE_PROPERTY_LATIN_TOP         }
-    { TA_BLUE_STRING_LATIN_SMALL,          TA_BLUE_PROPERTY_LATIN_TOP       |
-                                           TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
-    { TA_BLUE_STRING_LATIN_SMALL,          0                                  }
-    { TA_BLUE_STRING_LATIN_SMALL_MINOR,    0                                  }
-    { TA_BLUE_STRING_MAX,                  0                                  }
+    { TA_BLUE_STRING_LATIN_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_LATIN_CAPITAL_BOTTOM,  0                                  }
+    { TA_BLUE_STRING_LATIN_SMALL_F_TOP,     TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_LATIN_SMALL,           TA_BLUE_PROPERTY_LATIN_TOP       |
+                                            TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
+    { TA_BLUE_STRING_LATIN_SMALL,           0                                  }
+    { TA_BLUE_STRING_LATIN_SMALL_DESCENDER, 0                                  }
+    { TA_BLUE_STRING_MAX,                   0                                  }
 
   TA_BLUE_STRINGSET_GREK
-    { TA_BLUE_STRING_GREEK_CAPITAL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP         }
-    { TA_BLUE_STRING_GREEK_CAPITAL_BOTTOM, 0                                  }
-    { TA_BLUE_STRING_GREEK_SMALL_BETA_TOP, TA_BLUE_PROPERTY_LATIN_TOP         }
-    { TA_BLUE_STRING_GREEK_SMALL,          TA_BLUE_PROPERTY_LATIN_TOP       |
-                                           TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
-    { TA_BLUE_STRING_GREEK_SMALL,          0                                  }
-    { TA_BLUE_STRING_GREEK_SMALL_MINOR,    0                                  }
-    { TA_BLUE_STRING_MAX,                  0                                  }
+    { TA_BLUE_STRING_GREEK_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_GREEK_CAPITAL_BOTTOM,  0                                  }
+    { TA_BLUE_STRING_GREEK_SMALL_BETA_TOP,  TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_GREEK_SMALL,           TA_BLUE_PROPERTY_LATIN_TOP       |
+                                            TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
+    { TA_BLUE_STRING_GREEK_SMALL,           0                                  }
+    { TA_BLUE_STRING_GREEK_SMALL_DESCENDER, 0                                  }
+    { TA_BLUE_STRING_MAX,                   0                                  }
 
   TA_BLUE_STRINGSET_CYRL
-    { TA_BLUE_STRING_CYRILLIC_CAPITAL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP         }
-    { TA_BLUE_STRING_CYRILLIC_CAPITAL_BOTTOM, 0                                  }
-    { TA_BLUE_STRING_CYRILLIC_SMALL,          TA_BLUE_PROPERTY_LATIN_TOP       |
-                                              TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
-    { TA_BLUE_STRING_CYRILLIC_SMALL,          0                                  }
-    { TA_BLUE_STRING_CYRILLIC_SMALL_MINOR,    0                                  }
-    { TA_BLUE_STRING_MAX,                     0                                  }
+    { TA_BLUE_STRING_CYRILLIC_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP         }
+    { TA_BLUE_STRING_CYRILLIC_CAPITAL_BOTTOM,  0                                  }
+    { TA_BLUE_STRING_CYRILLIC_SMALL,           TA_BLUE_PROPERTY_LATIN_TOP       |
+                                               TA_BLUE_PROPERTY_LATIN_SMALL_TOP   }
+    { TA_BLUE_STRING_CYRILLIC_SMALL,           0                                  }
+    { TA_BLUE_STRING_CYRILLIC_SMALL_DESCENDER, 0                                  }
+    { TA_BLUE_STRING_MAX,                      0                                  }
 
   TA_BLUE_STRINGSET_HEBR
     { TA_BLUE_STRING_HEBREW_TOP,       TA_BLUE_PROPERTY_LATIN_TOP  |
