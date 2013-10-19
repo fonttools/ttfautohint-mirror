@@ -336,10 +336,11 @@ typedef int
  * ### Scripts
  *
  * `fallback-script`
- * :   An integer that specifies the default script for glyphs not in the
- *     'latin' range.  If set to\ 1, the 'latin' script is used (other
- *     scripts are not supported yet).  By default, no script is used
- *     (value\ 0; this disables autohinting for such glyphs).
+ * :   A string consisting of four lowercase characters that specifies the
+ *     default script for glyphs which can't be mapped to a script
+ *     automatically.  If set to `"dflt"` (which is the default), no script
+ *     is used.  Valid values can be found in the header file
+ *     `ttfautohint-scripts.h`.
  *
  * `symbol`
  * :   Set this integer to\ 1 if you want to process a font that lacks the

@@ -1219,7 +1219,7 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
   FT_Face face = sfnt->face;
   TA_FaceGlobals curr_globals;
 
-  FT_UInt saved_fallback_script = font->fallback_script;
+  TA_Script saved_fallback_script = font->fallback_script;
 
 
   /* using TA_SCRIPT_NONE as the fallback script ensures */

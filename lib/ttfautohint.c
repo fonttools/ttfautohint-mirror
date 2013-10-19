@@ -88,14 +88,26 @@ TTF_autohint(const char* options,
   FT_Bool ignore_restrictions = 0;
   FT_Bool pre_hinting = 0;
   FT_Bool hint_composites = 0;
-  FT_UInt fallback_script = TA_SCRIPT_FALLBACK;
   FT_Bool symbol = 0;
+
+  const char* fallback_script_string = NULL;
+  TA_Script fallback_script = TA_SCRIPT_DFLT;
 
   FT_Bool dehint = 0;
 
   FT_Bool debug = 0;
 
   const char* op;
+
+#undef SCRIPT
+#define SCRIPT(s, S, d) #s,
+
+  const char* script_names[] =
+  {
+
+#include <ttfautohint-scripts.h>
+
+  };
 
 
   if (!options || !*options)
@@ -143,8 +155,7 @@ TTF_autohint(const char* options,
     else if (COMPARE("error-string"))
       error_stringp = va_arg(ap, const unsigned char**);
     else if (COMPARE("fallback-script"))
-      fallback_script = va_arg(ap, FT_UInt) ? TA_SCRIPT_LATN
-                                            : TA_SCRIPT_FALLBACK;
+      fallback_script_string = va_arg(ap, const char*);
     else if (COMPARE("gdi-cleartype-strong-stem-width"))
       gdi_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("gray-strong-stem-width"))
@@ -283,6 +294,23 @@ TTF_autohint(const char* options,
   if (increase_x_height < 0)
     increase_x_height = TA_INCREASE_X_HEIGHT;
 
+  if (fallback_script_string)
+  {
+    int i;
+
+
+    for (i = 0; i < TA_SCRIPT_MAX; i++)
+      if (!strcmp(script_names[i], fallback_script_string))
+        break;
+    if (i == TA_SCRIPT_MAX)
+    {
+      error = FT_Err_Invalid_Argument;
+      goto Err1;
+    }
+
+    fallback_script = i;
+  }
+
   if (x_height_snapping_exceptions_string)
   {
     const char* s = number_set_parse(x_height_snapping_exceptions_string,
@@ -341,8 +369,8 @@ No_check:
 
       DUMPVAL("dw-cleartype-strong-stem-width",
               font->dw_cleartype_strong_stem_width);
-      DUMPVAL("fallback-script",
-              font->fallback_script != TA_SCRIPT_FALLBACK);
+      DUMPSTR("fallback-script",
+              script_names[font->fallback_script]);
       DUMPVAL("gdi-cleartype-strong-stem-width",
               font->gdi_cleartype_strong_stem_width);
       DUMPVAL("gray-strong-stem-width",

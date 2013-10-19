@@ -237,7 +237,7 @@ struct FONT_
   FT_Bool pre_hinting;
   FT_Bool hint_composites;
   FT_Bool ignore_restrictions;
-  FT_UInt fallback_script;
+  TA_Script fallback_script;
   FT_Bool symbol;
   FT_Bool dehint;
   FT_Bool debug;
