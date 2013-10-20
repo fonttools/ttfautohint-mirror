@@ -203,10 +203,10 @@ if test x"$with_doc" != x"no"; then
   fi
 
   # PDF documentation
-  AC_CHECK_PROG([PDFLATEX], [pdflatex], [pdflatex], [no])
+  AC_CHECK_PROGS([LATEX], [lualatex xelatex], [no])
   if test x"$PDFLATEX" == x"no"; then
     TA_DOC([$pdf_file],
-           [Need pdflatex to create documentation in PDF format])
+           [Need lualatex or xelatex to create documentation in PDF format])
   fi
 fi
 

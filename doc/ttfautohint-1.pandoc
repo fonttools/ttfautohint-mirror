@@ -368,11 +368,13 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 ### Symbol Font
 
 `--symbol`, `-s`
-:   Use default values for standard (horizontal) stem width and height
-    instead of deriving them from latin character 'o'.  Use this option
-    (usually in combination with option `--latin-fallback`) to hint symbol
-    or dingbat fonts or math glyphs, for example, that lack character 'o',
-    at the expense of possibly poor hinting results at small sizes.
+:   Apply default values for standard (horizontal) stem width and height
+    instead of deriving them from a script-specific, hard-coded default
+    character (which usually resembles the shape of a lowercase 'o').  Use
+    this option (usually in combination with option `--fallback-script`) to
+    hint symbol or dingbat fonts or math glyphs, for example, that lack a
+    default character, at the expense of possibly poor hinting results at
+    small sizes.
 
 ### Dehint
 
@@ -526,13 +528,24 @@ hinting.
     appearance.
 
       + Compute standard stem widths and heights of the font.  The values
-        are normally taken from the glyph of letter 'o'.
+        are normally taken from a glyph that resembles letter 'o'.
 
       + Compute blue zones, see [below](#blue-zones).
 
     If stem widths and heights of single glyphs differ by a large value, or
     if ttfautohint fails to find proper blue zones, hinting becomes quite
     poor, leading even to severe shape distortions.
+
+
+Table: script-specific standard characters of the 'latin' module
+
+  script    standard character
+  --------  --------------------
+  `cyrl`    'о', U+043E, CYRILLIC SMALL LETTER O
+  `grek`    'ο', U+03BF, GREEK SMALL LETTER OMICRON
+  `hebr`    'ם', U+05DD, HEBREW LETTER FINAL MEM
+  `latn`    'o', U+006F, LATIN SMALL LETTER O
+
 
   * Glyph Analysis
 
@@ -555,8 +568,11 @@ Outlines of certain characters are used to determine *blue zones*.  This
 concept is the same as with Type\ 1 fonts: All glyph points that lie in
 certain small horizontal zones get aligned vertically.
 
-Here a table that shows the characters used by the latin module; the values
-are hard-coded in the source code.
+Here a series of tables that show the blue zone characters of the latin
+module's available scripts; the values are hard-coded in the source code.
+
+
+Table: `latn` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -567,10 +583,44 @@ are hard-coded in the source code.
   5     bottom of small letters                xzroesc
   6     bottom of descenders of small letters  pqgjy
 
+
 The 'round' characters (e.g. 'OCQS') from Zones 1, 2, and 5 are also used to
 control the overshoot handling; to improve rendering at small sizes, zone\ 4
 gets adjusted to be on the pixel grid; cf. the [`--increase-x-height`
 option](#x-height-increase-limit).
+
+
+Table: `grek` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 ΓΒΕΖΘΟΩ
+  2     bottom of capital letters              ΒΔΖΞΘΟ
+  3     top of 'small beta' like letters       βθδζλξ
+  4     top of small letters                   αειοπστω
+  5     bottom of small letters                αειοπστω
+  6     bottom of descenders of small letters  βγημρφχψ
+
+
+Table: `cyrl` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 БВЕПЗОСЭ
+  2     bottom of capital letters              БВЕШЗОСЭ
+  3     top of small letters                   хпншезос
+  4     bottom of small letters                хпншезос
+  5     bottom of descenders of small letters  руф
+
+
+Table: `hebr` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         בדהחךכםס
+  2     bottom of letters                      בטכםסצ
+  3     bottom of descenders of letters        קךןףץ
+
 
 ![This image shows the relevant glyph terms for vertical blue zone
   positions.](img/glyph-terms)

@@ -97,7 +97,7 @@ if WITH_DOC
                    template.tex $(top_srcdir)/.version
 	  TEXINPUTS="$(srcdir);" \
 	  $(PANDOC) --smart \
-	            --latex-engine=$(PDFLATEX) \
+	            --latex-engine=$(LATEX) \
 	            --template=$(srcdir)/template.tex \
 	            --default-image-extension=".pdf" \
 	            --variable="version:$(VERSION)" \
