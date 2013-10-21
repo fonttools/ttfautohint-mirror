@@ -1,3 +1,13 @@
+New in 0.97:
+
+* Improved script support.  Besides Cyrillic and Greek, which are now
+  handled separately from Latin, ttfautohint can handle Hebrew.
+
+* Option `-f' now takes a parameter to specify the fallback script.  The
+  corresponding long option name has been renamed from `--latin-fallback' to
+  `--fallback-script'.
+
+
 New in 0.96:
 
 * Option `--components' has been replaced with `--composites': By default,
