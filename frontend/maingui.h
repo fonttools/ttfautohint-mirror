@@ -53,6 +53,8 @@ public:
            bool);
   ~Main_GUI();
 
+  void create_alternative_layout();
+
 protected:
   void closeEvent(QCloseEvent*);
 
@@ -109,9 +111,11 @@ private:
   QMenu* file_menu;
   QMenu* help_menu;
 
+  QLabel* input_label;
   Drag_Drop_Line_Edit* input_line;
   QPushButton* input_button;
 
+  QLabel* output_label;
   Drag_Drop_Line_Edit* output_line;
   QPushButton* output_button;
 

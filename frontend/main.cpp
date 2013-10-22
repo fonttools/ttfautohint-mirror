@@ -889,6 +889,23 @@ main(int argc,
                ignore_restrictions, windows_compatibility, pre_hinting,
                hint_composites, no_info, fallback_script, symbol,
                dehint);
+
+  // display the window off the screen --
+  // to get proper window dimensions including the frame,
+  // the window manager must have a chance to decorate it
+  gui.move(-50000, -50000);
+  gui.show();
+
+  // if the vertical size of our window is too large,
+  // select a horizontal layout
+  QRect screen(QApplication::desktop()->availableGeometry());
+  if (gui.frameGeometry().height() > screen.width())
+  {
+    gui.create_alternative_layout();
+    gui.adjustSize();
+  }
+
+  gui.move(0, 0);
   gui.show();
 
   return app.exec();
