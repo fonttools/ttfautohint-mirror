@@ -277,7 +277,8 @@ show_help(bool
 "Use option -i only if you have a legal permission to modify the font.\n"
 "The used PPEM value for option -p is FUnits per em, normally 2048.\n"
 "With option -s, use default values for standard stem width and height,\n"
-"otherwise they are derived from latin character `o'.\n"
+"otherwise they are derived from script-specific characters\n"
+"resembling the shape of character `o'.\n"
 "\n");
   fprintf(handle,
 "A hint set contains the optimal hinting for a certain PPEM value;\n"
