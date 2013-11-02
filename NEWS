@@ -7,6 +7,11 @@ New in 0.97:
   corresponding long option name has been renamed from `--latin-fallback' to
   `--fallback-script'.
 
+* Work around a bug in display environments that use FreeType 2.5.0 and
+  earlier for rendering: Sometimes, the `strong' stem width routine was used
+  for DW ClearType (this is, subpixel hinting in FreeType is enabled) even
+  if `smooth' was selected while generating the font with ttfautohint.
+
 
 New in 0.96:
 

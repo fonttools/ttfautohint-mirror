@@ -329,11 +329,20 @@ unsigned char PREP(set_stem_width_handling_c) [] =
       /* version >= 38, sub-pixel positioning is enabled */
       LTEQ,
       IF,
-        /* check whether sub-pixel positioning is enabled (bit 10) */
-        PUSHW_1,
-          0x04,
-          0x00,
+        /* check whether sub-pixel positioning is enabled (bit 10) -- */
+        /* due to a bug in FreeType 2.5.0 and earlier, */
+        /* bit 6 must be set also to get the correct information, */
+        /* so we test that both return values (in bits 13 and 17) are set */
+        PUSHW_3,
+          0x08, /* bits 13 and 17 shifted by 6 bits */
+          0x80,
+          0x00, /* we do `MUL' with value 1, */
+          0x01, /* which is essentially a division by 64 */
+          0x04, /* bits 6 and 10 */
+          0x40,
         GETINFO,
+        MUL,
+        EQ,
         IF,
           PUSHB_2,
             cvtl_stem_width_function,
