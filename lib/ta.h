@@ -312,7 +312,7 @@ TA_sfnt_create_glyf_data(SFNT* sfnt,
 FT_Error
 TA_sfnt_handle_coverage(SFNT* sfnt,
                         FONT* font);
-void
+FT_Bool
 TA_sfnt_adjust_master_coverage(SFNT* sfnt,
                                FONT* font);
 #if 0

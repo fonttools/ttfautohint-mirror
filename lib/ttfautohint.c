@@ -506,7 +506,8 @@ No_check:
       SFNT* sfnt = &font->sfnts[i];
 
 
-      TA_sfnt_adjust_master_coverage(sfnt, font);
+      if (TA_sfnt_adjust_master_coverage(sfnt, font))
+        break;
     }
   }
 

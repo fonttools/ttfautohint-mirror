@@ -1278,7 +1278,7 @@ Exit:
 }
 
 
-void
+FT_Bool
 TA_sfnt_adjust_master_coverage(SFNT* sfnt,
                                FONT* font)
 {
@@ -1306,7 +1306,10 @@ TA_sfnt_adjust_master_coverage(SFNT* sfnt,
         gscripts[nn] |= master_globals->font->fallback_script;
       }
     }
+    return 1; /* master coverage adjusted */
   }
+  else
+    return 0;
 }
 
 
