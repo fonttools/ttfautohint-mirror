@@ -101,7 +101,24 @@ TA_table_build_cvt(FT_Byte** cvt,
     error = TA_sfnt_compute_global_hints(sfnt, font, i);
     if (error == TA_Err_Missing_Glyph)
     {
+      TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
+      FT_Byte* gscripts = globals->glyph_scripts;
+      FT_Int nn;
+
+
       data->script_ids[i] = 0xFFFFU;
+
+      /* remove all references to this script; */
+      /* otherwise blue zones are computed later on, which we don't want */
+      for (nn = 0; nn < globals->glyph_count; nn++)
+      {
+        if ((gscripts[nn] & ~TA_DIGIT) == i)
+        {
+          gscripts[nn] &= ~TA_SCRIPT_NONE;
+          gscripts[nn] |= globals->font->fallback_script;
+        }
+      }
+
       continue;
     }
     if (error)
