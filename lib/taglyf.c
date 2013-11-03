@@ -1207,6 +1207,14 @@ TA_sfnt_create_glyf_data(SFNT* sfnt,
 }
 
 
+/* While the auto-hinter is glyph oriented (this is, using `glyf' data), */
+/* it relies on the `cmap' table to get script coverage data. */
+/* In TTCs, subfonts normally share the same `glyf' table */
+/* but use different `cmap's.  Covering the most common situation, */
+/* namely a single `glyf' table and multiple `cmap's, */
+/* ttfautohint merges coverage data for the first subfont's `glyf' table */
+/* with all other subfonts that also use this very `glyf' table. */
+
 FT_Error
 TA_sfnt_handle_coverage(SFNT* sfnt,
                         FONT* font)
