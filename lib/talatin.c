@@ -1058,11 +1058,29 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
       b->shoot.cur =
       b->shoot.fit = FT_MulFix(b->ref.org, a->org_scale) + delta;
 
+      TA_LOG_GLOBAL(("  reference %d: %d scaled to %.2f (artificial)\n"
+                     "  overshoot %d: %d scaled to %.2f (artificial)\n",
+                     a->blue_count,
+                     b->ref.org,
+                     b->ref.fit / 64.0,
+                     a->blue_count,
+                     b->shoot.org,
+                     b->shoot.fit / 64.0));
+
       b = &a->blues[a->blue_count + 1];
       b->ref.cur =
       b->ref.fit =
       b->shoot.cur =
       b->shoot.fit = FT_MulFix(b->ref.org, a->org_scale) + delta;
+
+      TA_LOG_GLOBAL(("  reference %d: %d scaled to %.2f (artificial)\n"
+                     "  overshoot %d: %d scaled to %.2f (artificial)\n",
+                     a->blue_count + 1,
+                     b->ref.org,
+                     b->ref.fit / 64.0,
+                     a->blue_count + 1,
+                     b->shoot.org,
+                     b->shoot.fit / 64.0));
     }
 
     TA_LOG_GLOBAL(("\n"));
