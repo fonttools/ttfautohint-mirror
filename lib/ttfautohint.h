@@ -92,7 +92,7 @@ typedef int TA_Error;
  * `TA_Err_Canceled`.  Use this for a 'Cancel' button or similar features in
  * interactive use.
  *
- * *progress_data* is a void pointer to user supplied data.
+ * *progress_data* is a void pointer to user-supplied data.
  *
  * ```C
  */
@@ -128,7 +128,7 @@ typedef int
  * reallocate the data if necessary, ensuring that the string length doesn't
  * exceed 0xFFFF.
  *
- * *info_data* is a void pointer to user supplied data.
+ * *info_data* is a void pointer to user-supplied data.
  *
  * If an error occurs, return a non-zero value and don't modify *str* and
  * *str_len* (such errors are handled as non-fatal).
@@ -265,13 +265,13 @@ typedef int
  *
  * `hint-composites`
  * :   If this integer is set to\ 1, composite glyphs get separate hints.
- *     This implies adding a special glyph to the font, as documented
- *     [here](#the-.ttfautohint-glyph).  Setting it to\ 0 (which is the
- *     default), the hints of the composite glyphs' components are used.
- *     Adding hints for composite glyphs increases the size of the resulting
- *     bytecode a lot, but it might deliver better hinting results.
- *     However, this depends on the processed font and must be checked by
- *     inspection.
+ *     This implies adding a special glyph to the font called
+ *     ['.ttfautohint'](#the-.ttfautohint-glyph).  Setting it to\ 0 (which
+ *     is the default), the hints of the composite glyphs' components are
+ *     used.  Adding hints for composite glyphs increases the size of the
+ *     resulting bytecode a lot, but it might deliver better hinting
+ *     results.  However, this depends on the processed font and must be
+ *     checked by inspection.
  *
  * `pre-hinting`
  * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) to
@@ -381,10 +381,10 @@ typedef int
  *     for standard hinting, and symmetric grid-fitting and symmetric
  *     smoothing for horizontal subpixel hinting (ClearType).
  *
- *   * ttfautohint can't process a font a second time (well, it can, if the
- *     font doesn't contain composite glyphs).  Just think of ttfautohint as
- *     being a compiler, a tool that also can't process its created output
- *     again.
+ *   * ttfautohint can process its own output a second time only if option
+ *     `hint-composites` is not set (or if the font doesn't contain
+ *     composite glyphs at all).  This limitation might change in the
+ *     future.
  *
  * ```C
  */

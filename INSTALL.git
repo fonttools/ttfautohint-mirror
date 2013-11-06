@@ -19,7 +19,7 @@ distributed with the release package), the following is necessary:
   inkscape (0.48.2)
   X11
   ImageMagick (6.7.4)
-  pdflatex (TeXLive 2011)
+  lualatex or xelatex(TeXLive 2013)
 
 The version numbers in parentheses are known to work.  Newer versions should
 work also.

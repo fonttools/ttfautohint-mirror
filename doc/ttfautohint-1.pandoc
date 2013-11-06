@@ -64,7 +64,7 @@ In general, there are three possible ways to hint a glyph.
     the rasterizer.  More sophisticated rasterizers are able to produce
     better rendering results.
 
-    This is how Type\ 1 and CFF font hints work.
+    This is how Type\ 1 and CFF hints work.
 
  2. The font contains exact instructions (also called *bytecode*) on how to
     move the points of its outlines, depending on the resolution of the
@@ -177,7 +177,7 @@ output to standard output if no output file name is specified.
 A typical call looks like the following.
 
 ```
-    ttfautohint -v -f foo.ttf foo-autohinted.ttf
+    ttfautohint -v -f latn foo.ttf foo-autohinted.ttf
 ```
 
 For demonstration purposes, here the same using a pipe and redirection.
@@ -185,7 +185,7 @@ Note that Windows's default command line interpreter, `cmd.exe`, doesn't
 support piping with binary files, unfortunately.
 
 ```
-    cat foo.ttf | ttfautohint -v -f > foo-autohinted.ttf
+    cat foo.ttf | ttfautohint -v -f latn > foo-autohinted.ttf
 ```
 
 
@@ -333,7 +333,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     baseline-to-baseline distance used by TeX and other sophisticated text
     processing applications, namely 1.2×designsize, which gives satisfying
     results in most cases.  It is also near to the factor 1.25 recommended
-    in the abovementioned How-To.  For example, if the vertical extension of
+    in the abovementioned how-to.  For example, if the vertical extension of
     the largest glyph is 2000 units (assuming that it approximately
     represents the designsize), the sum of `usWinAscent` and `usWinDescent`
     could be 1.25×2000 = 2500.
@@ -362,8 +362,8 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     bytecode size a lot, however, it might yield better hinting results.
 
     If this option is used (and a font actually contains composite glyphs),
-    ttfautohint cannot reprocess its own output for technical reasons, see
-    [below](#the-.ttfautohint-glyph).
+    ttfautohint currently cannot reprocess its own output for technical
+    reasons, see [below](#the-.ttfautohint-glyph).
 
 ### Symbol Font
 
@@ -562,7 +562,9 @@ Blue Zones
 ----------
 
 ![Two blue zones relevant to the glyph 'a'.  Vertical point coordinates of
-  *all* glyphs within these zones are aligned.](img/blue-zones)
+  *all* glyphs within these zones are aligned, provided the blue zone is
+  active (this is, its vertical size is smaller than
+  3/4\ pixels).](img/blue-zones)
 
 Outlines of certain characters are used to determine *blue zones*.  This
 concept is the same as with Type\ 1 fonts: All glyph points that lie in
@@ -716,7 +718,7 @@ lower limit at which hinting is switched off.
 
 An example.  Let's assume that we have a hinting range 10\ <= ppem <=\ 100,
 and the hinting limit is set to 250.  For a given glyph, ttfautohint finds
-out that four hint sets must be computed to exactly cover thes hinting
+out that four hint sets must be computed to exactly cover this hinting
 range: 10-15, 16-40, 41-80, and 81-100.  For ppem values below 10ppem, the
 hint set covering 10-15ppem is used, for ppem values larger than 100 the
 hint set covering 81-100ppem is used.  For ppem values larger than 250, no
