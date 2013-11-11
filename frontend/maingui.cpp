@@ -1104,10 +1104,10 @@ Main_GUI::create_layout(bool horizontal_layout)
                                + tr("&Run")
                                + "    "); // make label wider
 
-//  if (horizontal_layout)
+  if (horizontal_layout)
     create_horizontal_layout();
-//  else
-//    create_vertical_layout();
+  else
+    create_vertical_layout();
 }
 
 
