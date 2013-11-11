@@ -906,7 +906,8 @@ main(int argc,
     // prevents any effect of unsetting `WA_Moved' if `show' has already
     // been called.
 
-    Main_GUI dummy(hinting_range_min, hinting_range_max, hinting_limit,
+    Main_GUI dummy(alternative_layout,
+                   hinting_range_min, hinting_range_max, hinting_limit,
                    gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                    dw_cleartype_strong_stem_width, increase_x_height,
                    x_height_snapping_exceptions_string,
@@ -924,18 +925,14 @@ main(int argc,
       alternative_layout = true;
   }
 
-  Main_GUI gui(hinting_range_min, hinting_range_max, hinting_limit,
+  Main_GUI gui(alternative_layout,
+               hinting_range_min, hinting_range_max, hinting_limit,
                gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                dw_cleartype_strong_stem_width, increase_x_height,
                x_height_snapping_exceptions_string,
                ignore_restrictions, windows_compatibility, pre_hinting,
                hint_composites, no_info, fallback_script, symbol,
                dehint);
-  if (alternative_layout)
-  {
-    gui.create_alternative_layout();
-    gui.adjustSize();
-  }
   gui.show();
 
   return app.exec();

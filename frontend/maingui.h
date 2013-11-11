@@ -44,7 +44,8 @@ class Main_GUI
   Q_OBJECT
 
 public:
-  Main_GUI(int, int, int,
+  Main_GUI(bool,
+           int, int, int,
            bool, bool,
            bool, int,
            const char*,
@@ -52,8 +53,6 @@ public:
            bool, bool, const char*, bool,
            bool);
   ~Main_GUI();
-
-  void create_alternative_layout();
 
 protected:
   void closeEvent(QCloseEvent*);
@@ -94,7 +93,10 @@ private:
   int symbol;
   int dehint;
 
-  void create_layout();
+  void create_layout(bool);
+  void create_horizontal_layout();
+  void create_vertical_layout();
+
 
   void create_connections();
   void create_actions();

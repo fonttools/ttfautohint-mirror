@@ -56,7 +56,8 @@ const Script_Names script_names[] =
 };
 
 
-Main_GUI::Main_GUI(int range_min,
+Main_GUI::Main_GUI(bool horizontal_layout,
+                   int range_min,
                    int range_max,
                    int limit,
                    bool gray,
@@ -104,7 +105,7 @@ Main_GUI::Main_GUI(int range_min,
 
   x_height_snapping_exceptions = NULL;
 
-  create_layout();
+  create_layout(horizontal_layout);
   create_connections();
   create_actions();
   create_menus();
@@ -872,7 +873,7 @@ again:
 // XXX distances are specified in pixels,
 //     making the layout dependent on the output device resolution
 void
-Main_GUI::create_layout()
+Main_GUI::create_layout(bool horizontal_layout)
 {
   //
   // file stuff
@@ -900,19 +901,6 @@ Main_GUI::create_layout()
     tr("<b></b>The output file, which will be essentially identical"
        " to the input font but will contain new, generated hints."));
   output_line->setCompleter(completer);
-
-  // layout
-  QGridLayout* file_layout = new QGridLayout;
-
-  file_layout->addWidget(input_label, 0, 0, Qt::AlignRight);
-  file_layout->addWidget(input_line, 0, 1);
-  file_layout->addWidget(input_button, 0, 2);
-
-  file_layout->setRowStretch(1, 1);
-
-  file_layout->addWidget(output_label, 2, 0, Qt::AlignRight);
-  file_layout->addWidget(output_line, 2, 1);
-  file_layout->addWidget(output_button, 2, 2);
 
   //
   // minmax controls
@@ -1116,6 +1104,31 @@ Main_GUI::create_layout()
                                + tr("&Run")
                                + "    "); // make label wider
 
+//  if (horizontal_layout)
+    create_horizontal_layout();
+//  else
+//    create_vertical_layout();
+}
+
+
+// XXX distances are specified in pixels,
+//     making the layout dependent on the output device resolution
+void
+Main_GUI::create_vertical_layout()
+{
+  // top area
+  QGridLayout* file_layout = new QGridLayout;
+
+  file_layout->addWidget(input_label, 0, 0, Qt::AlignRight);
+  file_layout->addWidget(input_line, 0, 1);
+  file_layout->addWidget(input_button, 0, 2);
+
+  file_layout->setRowStretch(1, 1);
+
+  file_layout->addWidget(output_label, 2, 0, Qt::AlignRight);
+  file_layout->addWidget(output_line, 2, 1);
+  file_layout->addWidget(output_button, 2, 2);
+
   //
   // the whole gui
   //
@@ -1195,85 +1208,85 @@ Main_GUI::create_layout()
 // XXX distances are specified in pixels,
 //     making the layout dependent on the output device resolution
 void
-Main_GUI::create_alternative_layout()
+Main_GUI::create_horizontal_layout()
 {
   // top area
-  QGridLayout* file_alt_layout = new QGridLayout;
+  QGridLayout* file_layout = new QGridLayout;
 
-  file_alt_layout->addWidget(input_label, 0, 0, Qt::AlignRight);
-  file_alt_layout->addWidget(input_line, 0, 1);
-  file_alt_layout->addWidget(input_button, 0, 2);
+  file_layout->addWidget(input_label, 0, 0, Qt::AlignRight);
+  file_layout->addWidget(input_line, 0, 1);
+  file_layout->addWidget(input_button, 0, 2);
 
-  file_alt_layout->setRowStretch(1, 1);
+  file_layout->setRowStretch(1, 1);
 
-  file_alt_layout->addWidget(output_label, 2, 0, Qt::AlignRight);
-  file_alt_layout->addWidget(output_line, 2, 1);
-  file_alt_layout->addWidget(output_button, 2, 2);
+  file_layout->addWidget(output_label, 2, 0, Qt::AlignRight);
+  file_layout->addWidget(output_line, 2, 1);
+  file_layout->addWidget(output_button, 2, 2);
 
-  QGridLayout* gui_alt_layout = new QGridLayout;
+  QGridLayout* gui_layout = new QGridLayout;
   QFrame* hline = new QFrame;
   hline->setFrameShape(QFrame::HLine);
   int row = 0; // this counter simplifies inserting new items
 
   // margin
-  gui_alt_layout->setColumnMinimumWidth(0, 10); // XXX urgh, pixels...
-  gui_alt_layout->setColumnStretch(0, 1);
+  gui_layout->setColumnMinimumWidth(0, 10); // XXX urgh, pixels...
+  gui_layout->setColumnStretch(0, 1);
 
   // left
-  gui_alt_layout->setRowMinimumHeight(row, 10); // XXX urgh, pixels...
-  gui_alt_layout->setRowStretch(row++, 1);
+  gui_layout->setRowMinimumHeight(row, 10); // XXX urgh, pixels...
+  gui_layout->setRowStretch(row++, 1);
 
-  gui_alt_layout->addLayout(file_alt_layout, row, 0, row, -1);
-  gui_alt_layout->setRowStretch(row++, 1);
+  gui_layout->addLayout(file_layout, row, 0, row, -1);
+  gui_layout->setRowStretch(row++, 1);
 
-  gui_alt_layout->addWidget(hline, row, 0, row, -1);
-  gui_alt_layout->setRowStretch(row++, 1);
+  gui_layout->addWidget(hline, row, 0, row, -1);
+  gui_layout->setRowStretch(row++, 1);
 
-  gui_alt_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
-  gui_alt_layout->setRowStretch(row++, 1);
+  gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
+  gui_layout->setRowStretch(row++, 1);
 
-  gui_alt_layout->addWidget(min_label, row, 1, Qt::AlignRight);
-  gui_alt_layout->addWidget(min_box, row++, 2, Qt::AlignLeft);
-  gui_alt_layout->addWidget(max_label, row, 1, Qt::AlignRight);
-  gui_alt_layout->addWidget(max_box, row++, 2, Qt::AlignLeft);
+  gui_layout->addWidget(min_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(min_box, row++, 2, Qt::AlignLeft);
+  gui_layout->addWidget(max_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(max_box, row++, 2, Qt::AlignLeft);
 
-  gui_alt_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
-  gui_alt_layout->setRowStretch(row++, 1);
+  gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
+  gui_layout->setRowStretch(row++, 1);
 
-  gui_alt_layout->addWidget(fallback_label, row, 1, Qt::AlignRight);
-  gui_alt_layout->addWidget(fallback_box, row++, 2, Qt::AlignLeft);
+  gui_layout->addWidget(fallback_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(fallback_box, row++, 2, Qt::AlignLeft);
 
-  gui_alt_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
-  gui_alt_layout->setRowStretch(row++, 1);
+  gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
+  gui_layout->setRowStretch(row++, 1);
 
-  gui_alt_layout->addWidget(limit_label, row, 1, Qt::AlignRight);
-  gui_alt_layout->addWidget(limit_box, row++, 2, Qt::AlignLeft);
-  gui_alt_layout->addWidget(no_limit_box, row++, 2);
+  gui_layout->addWidget(limit_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(limit_box, row++, 2, Qt::AlignLeft);
+  gui_layout->addWidget(no_limit_box, row++, 2);
 
-  gui_alt_layout->addWidget(increase_label, row, 1, Qt::AlignRight);
-  gui_alt_layout->addWidget(increase_box, row++, 2, Qt::AlignLeft);
-  gui_alt_layout->addWidget(no_increase_box, row++, 2);
+  gui_layout->addWidget(increase_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(increase_box, row++, 2, Qt::AlignLeft);
+  gui_layout->addWidget(no_increase_box, row++, 2);
 
-  gui_alt_layout->addWidget(snapping_label, row, 1, Qt::AlignRight);
-  gui_alt_layout->addWidget(snapping_line, row++, 2, Qt::AlignLeft);
+  gui_layout->addWidget(snapping_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(snapping_line, row++, 2, Qt::AlignLeft);
 
   // column separator
-  gui_alt_layout->setColumnMinimumWidth(3, 20); // XXX urgh, pixels...
-  gui_alt_layout->setColumnStretch(3, 1);
+  gui_layout->setColumnMinimumWidth(3, 20); // XXX urgh, pixels...
+  gui_layout->setColumnStretch(3, 1);
 
   // right
   row = 4;
-  gui_alt_layout->addWidget(wincomp_box, row++, 4);
-  gui_alt_layout->addWidget(pre_box, row++, 4);
-  gui_alt_layout->addWidget(hint_box, row++, 4);
-  gui_alt_layout->addWidget(symbol_box, row++, 4);
-  gui_alt_layout->addWidget(dehint_box, row++, 4);
-  gui_alt_layout->addWidget(info_box, row++, 4);
+  gui_layout->addWidget(wincomp_box, row++, 4);
+  gui_layout->addWidget(pre_box, row++, 4);
+  gui_layout->addWidget(hint_box, row++, 4);
+  gui_layout->addWidget(symbol_box, row++, 4);
+  gui_layout->addWidget(dehint_box, row++, 4);
+  gui_layout->addWidget(info_box, row++, 4);
 
-  gui_alt_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
-  gui_alt_layout->setRowStretch(row++, 1);
+  gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
+  gui_layout->setRowStretch(row++, 1);
 
-  gui_alt_layout->addWidget(stem_label, row++, 4);
+  gui_layout->addWidget(stem_label, row++, 4);
 
   QGridLayout* stem_layout = new QGridLayout;
   stem_layout->setColumnMinimumWidth(0, 20); // XXX urgh, pixels...
@@ -1281,23 +1294,22 @@ Main_GUI::create_alternative_layout()
   stem_layout->addWidget(gdi_box, 1, 1);
   stem_layout->addWidget(dw_box, 2, 1);
 
-  gui_alt_layout->addLayout(stem_layout, row, 4, 3, 1);
+  gui_layout->addLayout(stem_layout, row, 4, 3, 1);
   row += 3;
 
-  gui_alt_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
-  gui_alt_layout->setRowStretch(row++, 1);
+  gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
+  gui_layout->setRowStretch(row++, 1);
 
-  gui_alt_layout->addWidget(run_button, row++, 4, Qt::AlignRight);
+  gui_layout->addWidget(run_button, row++, 4, Qt::AlignRight);
 
   // margin
-  gui_alt_layout->setColumnMinimumWidth(5, 10); // XXX urgh, pixels...
-  gui_alt_layout->setColumnStretch(5, 1);
+  gui_layout->setColumnMinimumWidth(5, 10); // XXX urgh, pixels...
+  gui_layout->setColumnStretch(5, 1);
 
   // create dummy widget to register layout
-  QWidget* main_alt_widget = new QWidget;
-  main_alt_widget->setLayout(gui_alt_layout);
-  // setCentralWidget automatically deletes the old widget
-  setCentralWidget(main_alt_widget);
+  QWidget* main_widget = new QWidget;
+  main_widget->setLayout(gui_layout);
+  setCentralWidget(main_widget);
   setWindowTitle("TTFautohint");
 }
 
