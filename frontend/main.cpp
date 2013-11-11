@@ -883,6 +883,47 @@ main(int argc,
   app.setOrganizationName("FreeType");
   app.setOrganizationDomain("freetype.org");
 
+  bool alternative_layout = false;
+  {
+    // Display the window off the screen -- to get proper window dimensions
+    // including the frame, the window manager must have a chance to
+    // decorate it.
+    //
+    // We don't want to change the default window positioning algorithm of
+    // the platform's window manager, so we create the main GUI window
+    // twice.
+    //
+    // The original idea, however, was to simply move the off-screen window
+    // back to the screen with
+    //
+    //   gui.move(100, 100);
+    //   gui.setAttribute(Qt::WA_Moved, false);
+    //   gui.show();
+    //
+    // (unsetting the `WA_Moved' attribute makes the window manager handle
+    // the previous call to `move' as a position suggestion instead of a
+    // request).  Unfortuntely, there seems to be a bug in Qt 4.8.4 which
+    // prevents any effect of unsetting `WA_Moved' if `show' has already
+    // been called.
+
+    Main_GUI dummy(hinting_range_min, hinting_range_max, hinting_limit,
+                   gray_strong_stem_width, gdi_cleartype_strong_stem_width,
+                   dw_cleartype_strong_stem_width, increase_x_height,
+                   x_height_snapping_exceptions_string,
+                   ignore_restrictions, windows_compatibility, pre_hinting,
+                   hint_composites, no_info, fallback_script, symbol,
+                   dehint);
+
+    dummy.move(-50000, -50000);
+    dummy.show();
+
+    // if the vertical size of our window is too large,
+    // select a horizontal layout
+    QRect screen(QApplication::desktop()->availableGeometry());
+    if (dummy.frameGeometry().height() > screen.width())
+      alternative_layout = true;
+  }
+
   Main_GUI gui(hinting_range_min, hinting_range_max, hinting_limit,
                gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                dw_cleartype_strong_stem_width, increase_x_height,
@@ -890,23 +931,11 @@ main(int argc,
                ignore_restrictions, windows_compatibility, pre_hinting,
                hint_composites, no_info, fallback_script, symbol,
                dehint);
-
-  // display the window off the screen --
-  // to get proper window dimensions including the frame,
-  // the window manager must have a chance to decorate it
-  gui.move(-50000, -50000);
-  gui.show();
-
-  // if the vertical size of our window is too large,
-  // select a horizontal layout
-  QRect screen(QApplication::desktop()->availableGeometry());
-  if (gui.frameGeometry().height() > screen.width())
+  if (alternative_layout)
   {
     gui.create_alternative_layout();
     gui.adjustSize();
   }
-
-  gui.move(0, 0);
   gui.show();
 
   return app.exec();
