@@ -5425,7 +5425,6 @@ unsigned char FPGM(bci_hint_glyph) [] =
 static FT_Error
 TA_table_build_fpgm(FT_Byte** fpgm,
                     FT_ULong* fpgm_len,
-                    SFNT* sfnt,
                     FONT* font)
 {
   FT_UInt buf_len;
@@ -5774,7 +5773,7 @@ TA_sfnt_build_fpgm_table(SFNT* sfnt,
     goto Exit;
   }
 
-  error = TA_table_build_fpgm(&fpgm_buf, &fpgm_len, sfnt, font);
+  error = TA_table_build_fpgm(&fpgm_buf, &fpgm_len, font);
   if (error)
     goto Exit;
 
