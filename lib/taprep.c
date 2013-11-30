@@ -277,11 +277,11 @@ unsigned char PREP(set_stem_width_handling_a) [] =
 
   /* set default positioning */
   PUSHB_2,
-    cvtl_stem_width_function,
+    cvtl_use_strong_stem_width_function,
 
 };
 
-/*  %d, either bci_smooth_stem_width or bci_strong_stem_width */
+/*  %d, either 0 or 100 */
 
 unsigned char PREP(set_stem_width_handling_b) [] =
 {
@@ -304,10 +304,10 @@ unsigned char PREP(set_stem_width_handling_b) [] =
     GETINFO,
     IF,
       PUSHB_2,
-        cvtl_stem_width_function,
+        cvtl_use_strong_stem_width_function,
 };
 
-/*      %d, either bci_smooth_stem_width or bci_strong_stem_width */
+/*      %d, either 0 or 100 */
 
 unsigned char PREP(set_stem_width_handling_c) [] =
 {
@@ -340,11 +340,11 @@ unsigned char PREP(set_stem_width_handling_c) [] =
         EQ,
         IF,
           PUSHB_2,
-            cvtl_stem_width_function,
+            cvtl_use_strong_stem_width_function,
 
 };
 
-/*          %d, either bci_smooth_stem_width or bci_strong_stem_width */
+/*          %d, either 0 or 100 */
 
 unsigned char PREP(set_stem_width_handling_d) [] =
 {
@@ -803,14 +803,11 @@ TA_table_build_prep(FT_Byte** prep,
   COPY_PREP(round_blues);
 
   COPY_PREP(set_stem_width_handling_a);
-  *(bufp++) = font->gray_strong_stem_width ? bci_strong_stem_width
-                                           : bci_smooth_stem_width;
+  *(bufp++) = font->gray_strong_stem_width ? 100 : 0;
   COPY_PREP(set_stem_width_handling_b);
-  *(bufp++) = font->gdi_cleartype_strong_stem_width ? bci_strong_stem_width
-                                                    : bci_smooth_stem_width;
+  *(bufp++) = font->gdi_cleartype_strong_stem_width ? 100 : 0;
   COPY_PREP(set_stem_width_handling_c);
-  *(bufp++) = font->dw_cleartype_strong_stem_width ? bci_strong_stem_width
-                                                   : bci_smooth_stem_width;
+  *(bufp++) = font->dw_cleartype_strong_stem_width ? 100 : 0;
   COPY_PREP(set_stem_width_handling_d);
   COPY_PREP(set_dropout_mode);
   COPY_PREP(reset_component_counter);

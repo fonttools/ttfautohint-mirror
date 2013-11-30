@@ -2953,7 +2953,7 @@ unsigned char FPGM(bci_action_ip_between) [] =
  *
  *   Common code for bci_action_adjust routines.
  *
- * uses: func[cvtl_stem_width_function]
+ * uses: func[sal_stem_width_function]
  */
 
 unsigned char FPGM(bci_adjust_common) [] =
@@ -2976,8 +2976,8 @@ unsigned char FPGM(bci_adjust_common) [] =
   MD_orig_ZP2_0, /* s: [...] edge2 edge is_round is_serif org_len */
 
   PUSHB_1,
-    cvtl_stem_width_function,
-  RCVT,
+    sal_stem_width_function,
+  RS,
   CALL,
   NEG, /* s: [...] edge2 edge -cur_len */
 
@@ -3257,7 +3257,7 @@ unsigned char FPGM(bci_action_adjust_round_serif) [] =
  *      sal_temp2
  *      sal_temp3
  *
- * uses: func[cvtl_stem_width_function]
+ * uses: func[sal_stem_width_function]
  *       bci_round
  */
 
@@ -3298,8 +3298,8 @@ unsigned char FPGM(bci_stem_common) [] =
   WS,
 
   PUSHB_1,
-    cvtl_stem_width_function,
-  RCVT,
+    sal_stem_width_function,
+  RS,
   CALL, /* s: [...] edge2 edge cur_len */
 
   DUP,
@@ -3840,7 +3840,7 @@ unsigned char FPGM(bci_action_stem_round_serif) [] =
  *     stem_point (in twilight zone)
  *     ... stuff for bci_align_segments (base) ...
  *
- * uses: func[cvtl_stem_width_function]
+ * uses: func[sal_stem_width_function]
  *       bci_align_segments
  */
 
@@ -3867,8 +3867,8 @@ unsigned char FPGM(bci_link) [] =
   MD_orig_ZP2_0, /* s: stem is_round is_serif dist_orig */
 
   PUSHB_1,
-    cvtl_stem_width_function,
-  RCVT,
+    sal_stem_width_function,
+  RS,
   CALL, /* s: stem new_dist */
 
   SWAP,
@@ -4012,7 +4012,7 @@ unsigned char FPGM(bci_action_link_round_serif) [] =
  *      sal_temp2
  *      sal_temp3
  *
- * uses: func[cvtl_stem_width_function]
+ * uses: func[sal_stem_width_function]
  *       bci_round
  *       bci_align_segments
  */
@@ -4059,8 +4059,8 @@ unsigned char FPGM(bci_anchor) [] =
   WS,
 
   PUSHB_1,
-    cvtl_stem_width_function,
-  RCVT,
+    sal_stem_width_function,
+  RS,
   CALL, /* s: edge2 edge cur_len */
 
   DUP,
@@ -5329,6 +5329,9 @@ unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
  *     ...
  *
  * CVT: cvtl_is_subglyph
+ *      cvtl_use_strong_stem_width_function
+ *
+ * sal: sal_stem_width_function
  *
  * uses: bci_action_ip_before
  *       bci_action_ip_after
@@ -5396,6 +5399,23 @@ unsigned char FPGM(bci_hint_glyph) [] =
   PUSHB_1,
     bci_hint_glyph,
   FDEF,
+
+  /* set up stem width function based on flag in CVT */
+  PUSHB_4,
+    sal_stem_width_function,
+    bci_strong_stem_width,
+    bci_smooth_stem_width,
+    cvtl_use_strong_stem_width_function,
+  RCVT,
+  IF,
+    POP,
+
+  ELSE,
+    SWAP,
+    POP,
+
+  EIF,
+  WS,
 
 /* start_loop: */
   /* loop until all data on stack is used */

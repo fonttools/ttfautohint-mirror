@@ -310,7 +310,8 @@
 #define sal_ref sal_best + 1
 #define sal_func sal_ref + 1
 #define sal_anchor sal_func + 1
-#define sal_vwidth_data_offset sal_anchor + 1
+#define sal_stem_width_function sal_anchor + 1
+#define sal_vwidth_data_offset sal_stem_width_function + 1
 #define sal_scale sal_vwidth_data_offset + 1
 #define sal_point_min sal_scale + 1
 #define sal_point_max sal_point_min + 1
@@ -496,8 +497,8 @@
 #define cvtl_funits_to_pixels cvtl_temp + 1
 #define cvtl_is_subglyph cvtl_funits_to_pixels + 1
 #define cvtl_num_used_scripts cvtl_is_subglyph + 1
-#define cvtl_stem_width_function cvtl_num_used_scripts + 1
-#define cvtl_is_element cvtl_stem_width_function + 1
+#define cvtl_use_strong_stem_width_function cvtl_num_used_scripts + 1
+#define cvtl_is_element cvtl_use_strong_stem_width_function + 1
 
 #define cvtl_max_runtime cvtl_is_element + 1 /* must be last */
 
