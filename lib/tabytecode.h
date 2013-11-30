@@ -493,8 +493,7 @@
 /* (assigned in `prep' or `fpgm') */
 
 #define cvtl_temp 0 /* used for creating twilight points */
-#define cvtl_0x10000 cvtl_temp + 1
-#define cvtl_funits_to_pixels cvtl_0x10000 + 1
+#define cvtl_funits_to_pixels cvtl_temp + 1
 #define cvtl_is_subglyph cvtl_funits_to_pixels + 1
 #define cvtl_num_used_scripts cvtl_is_subglyph + 1
 #define cvtl_stem_width_function cvtl_num_used_scripts + 1

@@ -249,9 +249,12 @@ unsigned char FPGM(bci_align_top_c) [] =
       2,
     CINDEX,
     SUB, /* s: blue (fitted-blue) */
-    PUSHB_1,
-      cvtl_0x10000,
-    RCVT,
+    PUSHW_2,
+      0x08, /* 0x800 */
+      0x00,
+      0x08, /* 0x800 */
+      0x00,
+    MUL, /* 0x10000 */
     MUL, /* (fitted-blue) in 16.16 format */
     SWAP,
     DIV, /* factor = ((fitted-blue) / blue) in 16.16 format */
@@ -4870,8 +4873,6 @@ unsigned char FPGM(bci_action_serif_anchor_upper_lower_bound) [] =
  * bci_serif_link1_common
  *
  *   Common code for bci_action_serif_link1 routines.
- *
- * CVT: cvtl_0x10000
  */
 
 unsigned char FPGM(bci_serif_link1_common) [] =
@@ -4937,9 +4938,12 @@ unsigned char FPGM(bci_serif_link1_common) [] =
     CINDEX, /* s: [...] after edge before a a c b c */
     SUB, /* b-c */
 
-    PUSHB_1,
-      cvtl_0x10000,
-    RCVT,
+    PUSHW_2,
+      0x08, /* 0x800 */
+      0x00,
+      0x08, /* 0x800 */
+      0x00,
+    MUL, /* 0x10000 */
     MUL, /* (b-c) in 16.16 format */
     SWAP,
 

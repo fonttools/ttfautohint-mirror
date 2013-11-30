@@ -47,13 +47,14 @@ unsigned char PREP(hinting_limit_b) [] =
 
 };
 
-/* we often need 0x10000 which can't be pushed directly onto the stack, */
-/* thus we provide it in the CVT as `cvtl_0x10000'; */
-/* at the same time, we store it in CVT index `cvtl_funits_to_pixels' also */
-/* as a scaled value to have a conversion factor from FUnits to pixels */
+/* we store 0x10000 in CVT index `cvtl_funits_to_pixels' as a scaled value */
+/* to have a conversion factor from FUnits to pixels */
 
-unsigned char PREP(store_0x10000) [] =
+unsigned char PREP(store_funits_to_pixels) [] =
 {
+
+  PUSHB_1,
+    cvtl_funits_to_pixels,
 
   PUSHW_2,
     0x08, /* 0x800 */
@@ -62,15 +63,6 @@ unsigned char PREP(store_0x10000) [] =
     0x00,
   MUL, /* 0x10000 */
 
-  DUP,
-  PUSHB_1,
-    cvtl_0x10000,
-  SWAP,
-  WCVTP,
-
-  PUSHB_1,
-    cvtl_funits_to_pixels,
-  SWAP,
   WCVTF, /* store value 1 in 16.16 format, scaled */
 
 };
@@ -596,7 +588,7 @@ TA_table_build_prep(FT_Byte** prep,
                    + 2
                    + sizeof (PREP(hinting_limit_b));
 
-  buf_new_len += sizeof (PREP(store_0x10000));
+  buf_new_len += sizeof (PREP(store_funits_to_pixels));
   buf_new_len += sizeof (PREP(store_num_used_scripts_a))
                  + 1
                  + sizeof (PREP(store_num_used_scripts_b));
@@ -676,7 +668,7 @@ TA_table_build_prep(FT_Byte** prep,
     COPY_PREP(hinting_limit_b);
   }
 
-  COPY_PREP(store_0x10000);
+  COPY_PREP(store_funits_to_pixels);
 
   COPY_PREP(store_num_used_scripts_a);
   *(bufp++) = (unsigned char)data->num_used_scripts;
