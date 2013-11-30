@@ -1272,7 +1272,7 @@ unsigned char FPGM(bci_nibbles) [] =
  * bci_number_set_is_element
  *
  *   Pop values from stack until it is empty.  If one of them is equal to
- *   the current PPEM value, set `cvtl_is_element' to 1 (and to 0
+ *   the current PPEM value, set `cvtl_is_element' to 100 (and to 0
  *   otherwise).
  *
  * in: ppem_value_1
@@ -1295,7 +1295,7 @@ unsigned char FPGM(bci_number_set_is_element) [] =
   IF,
     PUSHB_2,
       cvtl_is_element,
-      1,
+      100,
     WCVTP,
   EIF,
 
@@ -1315,7 +1315,7 @@ unsigned char FPGM(bci_number_set_is_element) [] =
  * bci_number_set_is_element2
  *
  *   Pop value ranges from stack until it is empty.  If one of them contains
- *   the current PPEM value, set `cvtl_is_element' to 1 (and to 0
+ *   the current PPEM value, set `cvtl_is_element' to 100 (and to 0
  *   otherwise).
  *
  * in: ppem_range_1_start
@@ -1343,7 +1343,7 @@ unsigned char FPGM(bci_number_set_is_element2) [] =
     IF,
       PUSHB_2,
         cvtl_is_element,
-        1,
+        100,
       WCVTP,
     EIF,
   ELSE,
