@@ -496,8 +496,7 @@
 #define cvtl_temp 0 /* used for creating twilight points */
 #define cvtl_funits_to_pixels cvtl_temp + 1
 #define cvtl_is_subglyph cvtl_funits_to_pixels + 1
-#define cvtl_num_used_scripts cvtl_is_subglyph + 1
-#define cvtl_use_strong_stem_width_function cvtl_num_used_scripts + 1
+#define cvtl_use_strong_stem_width_function cvtl_is_subglyph + 1
 #define cvtl_is_element cvtl_use_strong_stem_width_function + 1
 
 #define cvtl_max_runtime cvtl_is_element + 1 /* must be last */

@@ -67,25 +67,6 @@ unsigned char PREP(store_funits_to_pixels) [] =
 
 };
 
-/* store number of scripts (needed in `fpgm' table) */
-
-unsigned char PREP(store_num_used_scripts_a) [] =
-{
-
-  PUSHB_2,
-    cvtl_num_used_scripts,
-
-};
-
-/*  %c, number of used scripts */
-
-unsigned char PREP(store_num_used_scripts_b) [] =
-{
-
-  WCVTP,
-
-};
-
 /* if the current ppem value is an exception, don't apply scaling */
 
 unsigned char PREP(test_exception_a) [] =
@@ -589,9 +570,6 @@ TA_table_build_prep(FT_Byte** prep,
                    + sizeof (PREP(hinting_limit_b));
 
   buf_new_len += sizeof (PREP(store_funits_to_pixels));
-  buf_new_len += sizeof (PREP(store_num_used_scripts_a))
-                 + 1
-                 + sizeof (PREP(store_num_used_scripts_b));
 
   if (font->x_height_snapping_exceptions)
     buf_new_len += sizeof (PREP(test_exception_a));
@@ -669,10 +647,6 @@ TA_table_build_prep(FT_Byte** prep,
   }
 
   COPY_PREP(store_funits_to_pixels);
-
-  COPY_PREP(store_num_used_scripts_a);
-  *(bufp++) = (unsigned char)data->num_used_scripts;
-  COPY_PREP(store_num_used_scripts_b);
 
   if (font->x_height_snapping_exceptions)
     COPY_PREP(test_exception_a);

@@ -645,7 +645,7 @@ unsigned char FPGM(bci_get_best_width) [] =
  *       bci_round
  */
 
-unsigned char FPGM(bci_strong_stem_width) [] =
+unsigned char FPGM(bci_strong_stem_width_a) [] =
 {
 
   PUSHB_1,
@@ -679,8 +679,14 @@ unsigned char FPGM(bci_strong_stem_width) [] =
     sal_vwidth_data_offset,
   RS,
   PUSHB_1,
-    cvtl_num_used_scripts,
-  RCVT,
+
+};
+
+/*  %d, number of used scripts */
+
+unsigned char FPGM(bci_strong_stem_width_b) [] =
+{
+
   ADD,
   RCVT, /* number of vertical widths */
 
@@ -1577,11 +1583,11 @@ unsigned char FPGM(bci_create_segment) [] =
  *     CVT(data_offset):
  *       the current script's scaling value (stored in `sal_scale')
  *
- *     data_offset + CVT(cvtl_num_used_scripts):
+ *     data_offset + num_used_scripts:
  *       offset to the current script's vwidth index array (this value gets
  *       stored in `sal_vwidth_data_offset')
  *
- *     data_offset + 2*CVT(cvtl_num_used_scripts):
+ *     data_offset + 2*num_used_scripts:
  *       offset to the current script's vwidth size
  *
  *   This addressing scheme ensures that (a) we only need a single argument,
@@ -1627,7 +1633,7 @@ unsigned char FPGM(bci_create_segment) [] =
  *
  */
 
-unsigned char FPGM(bci_create_segments) [] =
+unsigned char FPGM(bci_create_segments_a) [] =
 {
 
   PUSHB_1,
@@ -1660,8 +1666,14 @@ unsigned char FPGM(bci_create_segments) [] =
       sal_vwidth_data_offset,
     SWAP,
     PUSHB_1,
-      cvtl_num_used_scripts,
-    RCVT,
+
+};
+
+/*  %d, number of used scripts */
+
+unsigned char FPGM(bci_create_segments_b) [] =
+{
+
     ADD,
     WS, /* sal_vwidth_data_offset = data_offset + num_used_scripts */
 
@@ -1888,7 +1900,7 @@ unsigned char FPGM(bci_create_segments_9) [] =
  *       bci_hint_glyph
  */
 
-unsigned char FPGM(bci_create_segments_composite) [] =
+unsigned char FPGM(bci_create_segments_composite_a) [] =
 {
 
   PUSHB_1,
@@ -1925,8 +1937,14 @@ unsigned char FPGM(bci_create_segments_composite) [] =
       sal_vwidth_data_offset,
     SWAP,
     PUSHB_1,
-      cvtl_num_used_scripts,
-    RCVT,
+
+};
+
+/*  %d, number of used scripts */
+
+unsigned char FPGM(bci_create_segments_composite_b) [] =
+{
+
     ADD,
     WS, /* sal_vwidth_data_offset = data_offset + num_used_scripts */
 
@@ -5450,8 +5468,12 @@ unsigned char FPGM(bci_hint_glyph) [] =
 static FT_Error
 TA_table_build_fpgm(FT_Byte** fpgm,
                     FT_ULong* fpgm_len,
+                    SFNT* sfnt,
                     FONT* font)
 {
+  SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
+  glyf_Data* data = (glyf_Data*)glyf_table->data;
+
   FT_UInt buf_len;
   FT_UInt len;
   FT_Byte* buf;
@@ -5474,7 +5496,9 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_round))
             + sizeof (FPGM(bci_smooth_stem_width))
             + sizeof (FPGM(bci_get_best_width))
-            + sizeof (FPGM(bci_strong_stem_width))
+            + sizeof (FPGM(bci_strong_stem_width_a))
+            + 1
+            + sizeof (FPGM(bci_strong_stem_width_b))
             + sizeof (FPGM(bci_loop_do))
             + sizeof (FPGM(bci_loop))
             + sizeof (FPGM(bci_cvt_rescale))
@@ -5489,7 +5513,9 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_number_set_is_element2))
 
             + sizeof (FPGM(bci_create_segment))
-            + sizeof (FPGM(bci_create_segments))
+            + sizeof (FPGM(bci_create_segments_a))
+            + 1
+            + sizeof (FPGM(bci_create_segments_b))
 
             + sizeof (FPGM(bci_create_segments_0))
             + sizeof (FPGM(bci_create_segments_1))
@@ -5502,7 +5528,9 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_create_segments_8))
             + sizeof (FPGM(bci_create_segments_9))
 
-            + sizeof (FPGM(bci_create_segments_composite))
+            + sizeof (FPGM(bci_create_segments_composite_a))
+            + 1
+            + sizeof (FPGM(bci_create_segments_composite_b))
 
             + sizeof (FPGM(bci_create_segments_composite_0))
             + sizeof (FPGM(bci_create_segments_composite_1))
@@ -5635,7 +5663,9 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_round);
   COPY_FPGM(bci_smooth_stem_width);
   COPY_FPGM(bci_get_best_width);
-  COPY_FPGM(bci_strong_stem_width);
+  COPY_FPGM(bci_strong_stem_width_a);
+  *(bufp++) = (unsigned char)data->num_used_scripts;
+  COPY_FPGM(bci_strong_stem_width_b);
   COPY_FPGM(bci_loop_do);
   COPY_FPGM(bci_loop);
   COPY_FPGM(bci_cvt_rescale);
@@ -5650,7 +5680,9 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_number_set_is_element2);
 
   COPY_FPGM(bci_create_segment);
-  COPY_FPGM(bci_create_segments);
+  COPY_FPGM(bci_create_segments_a);
+  *(bufp++) = (unsigned char)data->num_used_scripts;
+  COPY_FPGM(bci_create_segments_b);
 
   COPY_FPGM(bci_create_segments_0);
   COPY_FPGM(bci_create_segments_1);
@@ -5663,7 +5695,9 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_create_segments_8);
   COPY_FPGM(bci_create_segments_9);
 
-  COPY_FPGM(bci_create_segments_composite);
+  COPY_FPGM(bci_create_segments_composite_a);
+  *(bufp++) = (unsigned char)data->num_used_scripts;
+  COPY_FPGM(bci_create_segments_composite_b);
 
   COPY_FPGM(bci_create_segments_composite_0);
   COPY_FPGM(bci_create_segments_composite_1);
@@ -5798,7 +5832,7 @@ TA_sfnt_build_fpgm_table(SFNT* sfnt,
     goto Exit;
   }
 
-  error = TA_table_build_fpgm(&fpgm_buf, &fpgm_len, font);
+  error = TA_table_build_fpgm(&fpgm_buf, &fpgm_len, sfnt, font);
   if (error)
     goto Exit;
 
