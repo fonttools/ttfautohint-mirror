@@ -1132,7 +1132,7 @@ unsigned char FPGM(bci_decrement_component_counter) [] =
     cvtl_is_subglyph,
   RCVT,
   PUSHB_1,
-    1,
+    100,
   SUB,
   WCVTP,
 

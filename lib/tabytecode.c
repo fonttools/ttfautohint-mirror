@@ -78,7 +78,7 @@ FT_Byte ttfautohint_glyph_bytecode[7] =
   /* increment `cvtl_is_subglyph' counter */
   PUSHB_3,
     cvtl_is_subglyph,
-    1,
+    100,
     cvtl_is_subglyph,
   RCVT,
   ADD,
