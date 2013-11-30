@@ -22,8 +22,11 @@
 unsigned char PREP(hinting_limit_a) [] =
 {
 
-  /* first of all, check whether we do hinting at all */
+  /* all our measurements are taken along the y axis, */
+  /* including the ppem and CVT values */
+  SVTCA_y,
 
+  /* first of all, check whether we do hinting at all */
   MPPEM,
   PUSHW_1,
 

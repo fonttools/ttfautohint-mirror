@@ -1631,6 +1631,9 @@ unsigned char FPGM(bci_create_segments) [] =
     bci_create_segments,
   FDEF,
 
+  /* all our measurements are taken along the y axis */
+  SVTCA_y,
+
   /* only do something if we are not a subglyph */
   PUSHB_2,
     0,
@@ -1638,9 +1641,6 @@ unsigned char FPGM(bci_create_segments) [] =
   RCVT,
   EQ,
   IF,
-    /* all our measurements are taken along the y axis */
-    SVTCA_y,
-
     PUSHB_1,
       sal_num_packed_segments,
     SWAP,
@@ -1892,6 +1892,9 @@ unsigned char FPGM(bci_create_segments_composite) [] =
     bci_create_segments_composite,
   FDEF,
 
+  /* all our measurements are taken along the y axis */
+  SVTCA_y,
+
   PUSHB_1,
     bci_decrement_component_counter,
   CALL,
@@ -1903,9 +1906,6 @@ unsigned char FPGM(bci_create_segments_composite) [] =
   RCVT,
   EQ,
   IF,
-    /* all our measurements are taken along the y axis */
-    SVTCA_y,
-
     PUSHB_1,
       sal_num_packed_segments,
     SWAP,
@@ -2337,6 +2337,9 @@ unsigned char FPGM(bci_scale_glyph) [] =
     bci_scale_glyph,
   FDEF,
 
+  /* all our measurements are taken along the y axis */
+  SVTCA_y,
+
   /* only do something if we are not a subglyph */
   PUSHB_2,
     0,
@@ -2344,9 +2347,6 @@ unsigned char FPGM(bci_scale_glyph) [] =
   RCVT,
   EQ,
   IF,
-    /* all our measurements are taken along the y axis */
-    SVTCA_y,
-
     PUSHB_1,
       1,
     SZPS, /* set zp0, zp1, and zp2 to normal zone 1 */
@@ -2388,6 +2388,9 @@ unsigned char FPGM(bci_scale_composite_glyph) [] =
     bci_scale_composite_glyph,
   FDEF,
 
+  /* all our measurements are taken along the y axis */
+  SVTCA_y,
+
   PUSHB_1,
     bci_decrement_component_counter,
   CALL,
@@ -2399,9 +2402,6 @@ unsigned char FPGM(bci_scale_composite_glyph) [] =
   RCVT,
   EQ,
   IF,
-    /* all our measurements are taken along the y axis */
-    SVTCA_y,
-
     PUSHB_1,
       1,
     SZPS, /* set zp0, zp1, and zp2 to normal zone 1 */
@@ -2499,6 +2499,7 @@ unsigned char FPGM(bci_shift_subglyph) [] =
     bci_shift_subglyph,
   FDEF,
 
+  /* all our measurements are taken along the y axis */
   SVTCA_y,
 
   PUSHB_1,
