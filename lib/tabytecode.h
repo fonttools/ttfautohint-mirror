@@ -544,52 +544,52 @@
 
 /* scaling value index of script ID id */
 #define CVT_SCALING_VALUE_OFFSET(id) \
-          cvtl_max_runtime + (id)
+          (cvtl_max_runtime + (id))
 
 /* vwidth offset data of script ID id */
 #define CVT_VWIDTH_OFFSET_DATA(id) \
-          CVT_SCALING_VALUE_OFFSET(id) \
-          + CVT_DATA->num_used_scripts \
+          (CVT_SCALING_VALUE_OFFSET(id) \
+           + CVT_DATA->num_used_scripts) \
 
 /* vwidth size data of script ID id */
 #define CVT_VWIDTH_SIZE_DATA(id) \
-          CVT_VWIDTH_OFFSET_DATA(id) \
-          + CVT_DATA->num_used_scripts
+          (CVT_VWIDTH_OFFSET_DATA(id) \
+           + CVT_DATA->num_used_scripts)
 
 /* horizontal standard width indices of script i */
 #define CVT_HORZ_STANDARD_WIDTH_OFFSET(i) \
-          cvtl_max_runtime \
-          + 3 * CVT_DATA->num_used_scripts \
-          + CVT_DATA->cvt_offsets[i]
+          (cvtl_max_runtime \
+           + 3 * CVT_DATA->num_used_scripts \
+           + CVT_DATA->cvt_offsets[i])
 /* start and size of horizontal stem widths array of script i */
 #define CVT_HORZ_WIDTHS_OFFSET(i) \
-          CVT_HORZ_STANDARD_WIDTH_OFFSET(i) + 1
+          (CVT_HORZ_STANDARD_WIDTH_OFFSET(i) + 1)
 #define CVT_HORZ_WIDTHS_SIZE(i) \
-          CVT_DATA->cvt_horz_width_sizes[i]
+          (CVT_DATA->cvt_horz_width_sizes[i])
 
 /* vertical standard width indices of script i */
 #define CVT_VERT_STANDARD_WIDTH_OFFSET(i) \
-          CVT_HORZ_WIDTHS_OFFSET(i) + CVT_HORZ_WIDTHS_SIZE(i)
+          (CVT_HORZ_WIDTHS_OFFSET(i) + CVT_HORZ_WIDTHS_SIZE(i))
 /* start and size of vertical stem widths array of script i */
 #define CVT_VERT_WIDTHS_OFFSET(i) \
-          CVT_VERT_STANDARD_WIDTH_OFFSET(i) + 1
+          (CVT_VERT_STANDARD_WIDTH_OFFSET(i) + 1)
 #define CVT_VERT_WIDTHS_SIZE(i) \
-          CVT_DATA->cvt_vert_width_sizes[i]
+          (CVT_DATA->cvt_vert_width_sizes[i])
 
 /* number of blue zones (including artificial ones) of script i */
 #define CVT_BLUES_SIZE(i) \
-          CVT_DATA->cvt_blue_zone_sizes[i]
+          (CVT_DATA->cvt_blue_zone_sizes[i])
 
 /* start of blue zone arrays for flat and round edges of script i */
 #define CVT_BLUE_REFS_OFFSET(i) \
-          CVT_VERT_WIDTHS_OFFSET(i) + CVT_VERT_WIDTHS_SIZE(i)
+          (CVT_VERT_WIDTHS_OFFSET(i) + CVT_VERT_WIDTHS_SIZE(i))
 #define CVT_BLUE_SHOOTS_OFFSET(i) \
-          CVT_BLUE_REFS_OFFSET(i) + CVT_BLUES_SIZE(i)
+          (CVT_BLUE_REFS_OFFSET(i) + CVT_BLUES_SIZE(i))
 
 /* x height blue zone (shoot) index of script i (valid if < 0xFFFF) */
 #define CVT_X_HEIGHT_BLUE_OFFSET(i) \
-          CVT_BLUE_SHOOTS_OFFSET(i) \
-          + CVT_DATA->cvt_blue_adjustment_offsets[i]
+          (CVT_BLUE_SHOOTS_OFFSET(i) \
+           + CVT_DATA->cvt_blue_adjustment_offsets[i])
 
 
 extern FT_Byte ttfautohint_glyph_bytecode[7];
