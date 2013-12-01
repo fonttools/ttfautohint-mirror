@@ -517,9 +517,9 @@
  *
  *   . values initialized at runtime (`cvtl_max_runtime' elements)
  *   . scaling values for each script ID (`num_used_script' elements)    (*)
- *   . offset to the vertical stem widths array for each script ID       (*)
+ *   . offset to the vertical stem widths array for each script ID       (*+)
  *     (`num_used_script' elements)
- *   . size of the vertical stem widths array for each script ID         (*)
+ *   . size of the vertical stem widths array for each script ID         (*+)
  *     (`num_used_script' elements)
  *
  *   script ID 0:
@@ -536,6 +536,12 @@
  *
  * (*) see function `bci_create_segments' how these three arrays get
  *     accessed
+ *
+ * (+) the values are stored as multiples of 64 to avoid rounding issues
+ *     with non-square pixels (CVT values might be scaled forth and back by
+ *     the bytecode interpreter while storing and reading if the aspect
+ *     ratio between the horizontal and vertical resolution isn't equal
+ *     to 1)
  *
  * note that the `id_to_idx' function is hypothetic since the code works
  * exactly the opposite way: the `cvt_*' arrays are indexed by the script

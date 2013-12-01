@@ -394,12 +394,14 @@ unsigned char FPGM(bci_smooth_stem_width) [] =
   MINDEX, /* s: base_is_round width dist (dist<3*64) stem_is_serif */
   AND, /* stem_is_serif && dist < 3*64 */
 
-  PUSHB_2,
+  PUSHB_3,
     40,
+     1,
     sal_vwidth_data_offset,
   RS,
-  RCVT, /* double indirection */
-  RCVT,
+  RCVT, /* first indirection */
+  MUL, /* divide by 64 */
+  RCVT, /* second indirection */
   GT, /* standard_width < 40 */
   OR, /* (stem_is_serif && dist < 3*64) || standard_width < 40 */
 
@@ -434,11 +436,13 @@ unsigned char FPGM(bci_smooth_stem_width) [] =
     EIF,
 
     DUP, /* s: width dist dist */
-    PUSHB_1,
+    PUSHB_2,
+      1,
       sal_vwidth_data_offset,
     RS,
-    RCVT, /* double indirection */
-    RCVT,
+    RCVT, /* first indirection */
+    MUL, /* divide by 64 */
+    RCVT, /* second indirection */
     SUB,
     ABS, /* s: width dist delta */
 
@@ -447,11 +451,13 @@ unsigned char FPGM(bci_smooth_stem_width) [] =
     LT, /* delta < 40 */
     IF, /* s: width dist */
       POP,
-      PUSHB_1,
+      PUSHB_2,
+        1,
         sal_vwidth_data_offset,
       RS,
-      RCVT, /* double indirection */
-      RCVT, /* dist = std_width */
+      RCVT, /* first indirection */
+      MUL, /* divide by 64 */
+      RCVT, /* second indirection; dist = std_width */
       DUP,
       PUSHB_1,
         48,
@@ -670,10 +676,12 @@ unsigned char FPGM(bci_strong_stem_width_a) [] =
   SWAP,
   WS, /* sal_ref = width */
 
-  PUSHB_1,
+  PUSHB_2,
+    1,
     sal_vwidth_data_offset,
   RS,
-  RCVT, /* first index of vertical widths */
+  RCVT,
+  MUL, /* divide by 64; first index of vertical widths */
 
   PUSHB_1,
     sal_vwidth_data_offset,
@@ -682,7 +690,7 @@ unsigned char FPGM(bci_strong_stem_width_a) [] =
 
 };
 
-/*  %d, number of used scripts */
+/*  %c, number of used scripts */
 
 unsigned char FPGM(bci_strong_stem_width_b) [] =
 {
@@ -1669,7 +1677,7 @@ unsigned char FPGM(bci_create_segments_a) [] =
 
 };
 
-/*  %d, number of used scripts */
+/*  %c, number of used scripts */
 
 unsigned char FPGM(bci_create_segments_b) [] =
 {
@@ -1940,7 +1948,7 @@ unsigned char FPGM(bci_create_segments_composite_a) [] =
 
 };
 
-/*  %d, number of used scripts */
+/*  %c, number of used scripts */
 
 unsigned char FPGM(bci_create_segments_composite_b) [] =
 {

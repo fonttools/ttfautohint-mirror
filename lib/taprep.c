@@ -92,7 +92,7 @@ unsigned char PREP(align_top_a) [] =
 
 };
 
-/*  PUSH (num_used_scripts + 2) */
+/*  PUSHB (num_used_scripts + 2) */
 /*    ... */
 /*    %c, script 1's x height blue zone idx */
 /*    %c, script 0's x height blue zone idx */
@@ -117,7 +117,7 @@ unsigned char PREP(loop_cvt_a) [] =
 
 };
 
-/*  PUSH (2*num_used_scripts + 2) */
+/*  PUSHB (2*num_used_scripts + 2) */
 /*    ... */
 /*    %c, script 1's first vertical index */
 /*    %c, script 1's number of vertical indices */
@@ -141,7 +141,7 @@ unsigned char PREP(loop_cvt_b) [] =
 
 };
 
-/*  PUSH (2*num_used_scripts + 2) */
+/*  PUSHB (2*num_used_scripts + 2) */
 /*    ... */
 /*    %c, script 1's first round blue zone index */
 /*    %c, script 1's number of round blue zones (without artificial ones) */
@@ -181,16 +181,17 @@ unsigned char PREP(store_vwidth_data_b) [] =
 
 };
 
-/*PUSH (num_used_scripts + 2) */
+/*PUSHW (num_used_scripts + 2) */
 /*  ... */
-/*  %c, script 1's first vertical width index */
-/*  %c, script 0's first vertical width index */
-/*  %c, num_used_scripts */
+/*  %d, script 1's first vertical width index (in multiples of 64) */
+/*  %d, script 0's first vertical width index (in multiples of 64) */
+/*  %d, num_used_scripts */
 
 unsigned char PREP(store_vwidth_data_c) [] =
 {
 
-    bci_vwidth_data_store,
+    0x00, /* high byte */
+    bci_vwidth_data_store, /* low byte */
   LOOPCALL,
 
   PUSHB_2,
@@ -207,21 +208,22 @@ unsigned char PREP(store_vwidth_data_d) [] =
 
 };
 
-/*PUSH (num_used_scripts + 2) */
+/*PUSHW (num_used_scripts + 2) */
 /*  ... */
-/*  %c, script 1's number of vertical widths */
-/*  %c, script 0's number of vertical widths */
-/*  %c, num_used_scripts */
+/*  %d, script 1's number of vertical widths (in multiples of 64) */
+/*  %d, script 0's number of vertical widths (in multiples of 64) */
+/*  %d, num_used_scripts */
 
 unsigned char PREP(store_vwidth_data_e) [] =
 {
 
-    bci_vwidth_data_store,
+    0x00, /* high byte */
+    bci_vwidth_data_store, /* low byte */
   LOOPCALL,
 
 };
 
-/*PUSH (2*num_used_scripts + 2) */
+/*PUSHB (2*num_used_scripts + 2) */
 /*  ... */
 /*  %c, script 1's first blue ref index */
 /*  %c, script 1's number of blue ref indices */
@@ -262,7 +264,7 @@ unsigned char PREP(set_stem_width_handling_a) [] =
 
 };
 
-/*  %d, either 0 or 100 */
+/*  %c, either 0 or 100 */
 
 unsigned char PREP(set_stem_width_handling_b) [] =
 {
@@ -288,7 +290,7 @@ unsigned char PREP(set_stem_width_handling_b) [] =
         cvtl_use_strong_stem_width_function,
 };
 
-/*      %d, either 0 or 100 */
+/*      %c, either 0 or 100 */
 
 unsigned char PREP(set_stem_width_handling_c) [] =
 {
@@ -325,7 +327,7 @@ unsigned char PREP(set_stem_width_handling_c) [] =
 
 };
 
-/*          %d, either 0 or 100 */
+/*          %c, either 0 or 100 */
 
 unsigned char PREP(set_stem_width_handling_d) [] =
 {
@@ -596,14 +598,14 @@ TA_table_build_prep(FT_Byte** prep,
                  + 1
                  + sizeof (PREP(store_vwidth_data_b))
                  + (data->num_used_scripts > 6
-                     ? data->num_used_scripts + 3
-                     : data->num_used_scripts + 2)
+                      ? 2 * (data->num_used_scripts + 1) + 2
+                      : 2 * (data->num_used_scripts + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_c))
                  + 1
                  + sizeof (PREP(store_vwidth_data_d))
                  + (data->num_used_scripts > 6
-                     ? data->num_used_scripts + 3
-                     : data->num_used_scripts + 2)
+                      ? 2 * (data->num_used_scripts + 1) + 2
+                      : 2 * (data->num_used_scripts + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_e));
   buf_new_len += (data->num_used_scripts > 3
                      ? 2 * data->num_used_scripts + 3
@@ -722,39 +724,41 @@ TA_table_build_prep(FT_Byte** prep,
   COPY_PREP(store_vwidth_data_b);
   if (data->num_used_scripts > 6)
   {
-    BCI(NPUSHB);
+    BCI(NPUSHW);
     BCI(data->num_used_scripts + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + data->num_used_scripts + 2);
-  /* XXX: make this work for offsets > 255 */
+    BCI(PUSHW_1 - 1 + data->num_used_scripts + 2);
   for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
   {
     if (data->script_ids[i] == 0xFFFFU)
       continue;
 
-    *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_OFFSET(i);
+    *(bufp++) = HIGH(CVT_VERT_WIDTHS_OFFSET(i) * 64);
+    *(bufp++) = LOW(CVT_VERT_WIDTHS_OFFSET(i) * 64);
   }
-  *(bufp++) = data->num_used_scripts;
+  *(bufp++) = HIGH(data->num_used_scripts);
+  *(bufp++) = LOW(data->num_used_scripts);
   COPY_PREP(store_vwidth_data_c);
   *(bufp++) = (unsigned char)CVT_VWIDTH_SIZE_DATA(0);
   COPY_PREP(store_vwidth_data_d);
   if (data->num_used_scripts > 6)
   {
-    BCI(NPUSHB);
+    BCI(NPUSHW);
     BCI(data->num_used_scripts + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + data->num_used_scripts + 2);
-  /* XXX: make this work for values > 255 */
+    BCI(PUSHW_1 - 1 + data->num_used_scripts + 2);
   for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
   {
     if (data->script_ids[i] == 0xFFFFU)
       continue;
 
-    *(bufp++) = (unsigned char)CVT_VERT_WIDTHS_SIZE(i);
+    *(bufp++) = HIGH(CVT_VERT_WIDTHS_SIZE(i) * 64);
+    *(bufp++) = LOW(CVT_VERT_WIDTHS_SIZE(i) * 64);
   }
-  *(bufp++) = data->num_used_scripts;
+  *(bufp++) = HIGH(data->num_used_scripts);
+  *(bufp++) = LOW(data->num_used_scripts);
   COPY_PREP(store_vwidth_data_e);
 
   if (data->num_used_scripts > 3)
