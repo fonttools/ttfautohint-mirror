@@ -1230,10 +1230,10 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
   TA_Script saved_fallback_script = font->fallback_script;
 
 
-  /* using TA_SCRIPT_NONE as the fallback script ensures */
+  /* using TA_SCRIPT_UNASSIGNED as the fallback script ensures */
   /* that uncovered glyphs stay as-is */
   /* (we handle the fallback script later on) */
-  font->fallback_script = TA_SCRIPT_NONE;
+  font->fallback_script = TA_SCRIPT_UNASSIGNED;
 
   /* trigger computation of coverage */
   error = ta_loader_init(font);
@@ -1273,7 +1273,7 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
     /* for example, glyph `A' can be used for both Cyrillic and Latin */
     while (master < limit)
     {
-      if ((*curr & ~TA_DIGIT) != TA_SCRIPT_NONE)
+      if ((*curr & ~TA_DIGIT) != TA_SCRIPT_UNASSIGNED)
         *master = *curr;
 
       master++;
@@ -1308,9 +1308,9 @@ TA_sfnt_adjust_master_coverage(SFNT* sfnt,
 
     for (nn = 0; nn < master_globals->glyph_count; nn++)
     {
-      if ((gscripts[nn] & ~TA_DIGIT) == TA_SCRIPT_NONE)
+      if ((gscripts[nn] & ~TA_DIGIT) == TA_SCRIPT_UNASSIGNED)
       {
-        gscripts[nn] &= ~TA_SCRIPT_NONE;
+        gscripts[nn] &= ~TA_SCRIPT_UNASSIGNED;
         gscripts[nn] |= master_globals->font->fallback_script;
       }
     }

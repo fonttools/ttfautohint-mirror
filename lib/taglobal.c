@@ -81,8 +81,8 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
   FT_UInt i;
 
 
-  /* the value TA_SCRIPT_NONE means `uncovered glyph' */
-  memset(globals->glyph_scripts, TA_SCRIPT_NONE, globals->glyph_count);
+  /* the value TA_SCRIPT_UNASSIGNED means `uncovered glyph' */
+  memset(globals->glyph_scripts, TA_SCRIPT_UNASSIGNED, globals->glyph_count);
 
   error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
   if (error)
@@ -115,7 +115,7 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
 
       if (gindex != 0
           && gindex < (FT_ULong)globals->glyph_count
-          && gscripts[gindex] == TA_SCRIPT_NONE)
+          && gscripts[gindex] == TA_SCRIPT_UNASSIGNED)
         gscripts[gindex] = (FT_Byte)ss;
 
       for (;;)
@@ -126,7 +126,7 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
           break;
 
         if (gindex < (FT_ULong)globals->glyph_count
-            && gscripts[gindex] == TA_SCRIPT_NONE)
+            && gscripts[gindex] == TA_SCRIPT_UNASSIGNED)
           gscripts[gindex] = (FT_Byte)ss;
       }
     }
@@ -146,16 +146,16 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
 Exit:
   /* by default, all uncovered glyphs are set to the fallback script */
   /* XXX: Shouldn't we disable hinting or do something similar? */
-  if (globals->font->fallback_script != TA_SCRIPT_NONE)
+  if (globals->font->fallback_script != TA_SCRIPT_UNASSIGNED)
   {
     FT_Long nn;
 
 
     for (nn = 0; nn < globals->glyph_count; nn++)
     {
-      if ((gscripts[nn] & ~TA_DIGIT) == TA_SCRIPT_NONE)
+      if ((gscripts[nn] & ~TA_DIGIT) == TA_SCRIPT_UNASSIGNED)
       {
-        gscripts[nn] &= ~TA_SCRIPT_NONE;
+        gscripts[nn] &= ~TA_SCRIPT_UNASSIGNED;
         gscripts[nn] |= globals->font->fallback_script;
       }
     }
@@ -261,7 +261,8 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
   /* if we have a forced script (via `options'), use it, */
   /* otherwise look into `glyph_scripts' array */
   if (script == TA_SCRIPT_DFLT || script + 1 >= TA_SCRIPT_MAX)
-    script = (TA_Script)(globals->glyph_scripts[gindex] & TA_SCRIPT_NONE);
+    script = (TA_Script)(globals->glyph_scripts[gindex]
+                         & TA_SCRIPT_UNASSIGNED);
 
   script_class =
     ta_script_classes[script];

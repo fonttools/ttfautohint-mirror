@@ -114,7 +114,7 @@ TA_table_build_cvt(FT_Byte** cvt,
       {
         if ((gscripts[nn] & ~TA_DIGIT) == i)
         {
-          gscripts[nn] &= ~TA_SCRIPT_NONE;
+          gscripts[nn] &= ~TA_SCRIPT_UNASSIGNED;
           gscripts[nn] |= globals->font->fallback_script;
         }
       }

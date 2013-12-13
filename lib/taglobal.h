@@ -39,7 +39,7 @@ extern const char* ta_script_names[];
 /* index of fallback script in `ta_script_classes' */
 #define TA_SCRIPT_FALLBACK TA_SCRIPT_DFLT
 /* a bit mask indicating an uncovered glyph */
-#define TA_SCRIPT_NONE 0x7F
+#define TA_SCRIPT_UNASSIGNED 0x7F
 /* if this flag is set, we have an ASCII digit */
 #define TA_DIGIT 0x80
 
