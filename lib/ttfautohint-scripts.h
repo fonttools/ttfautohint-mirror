@@ -23,7 +23,7 @@
 /* Add new scripts here. */
 
 SCRIPT(cyrl, CYRL, "Cyrillic")
-SCRIPT(dflt, DFLT, "no script")
+SCRIPT(none, NONE, "no script")
 SCRIPT(grek, GREK, "Greek")
 SCRIPT(hebr, HEBR, "Hebrew")
 SCRIPT(latn, LATN, "Latin")

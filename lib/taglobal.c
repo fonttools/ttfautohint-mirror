@@ -260,7 +260,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
 
   /* if we have a forced script (via `options'), use it, */
   /* otherwise look into `glyph_scripts' array */
-  if (script == TA_SCRIPT_DFLT || script + 1 >= TA_SCRIPT_MAX)
+  if (script == TA_SCRIPT_NONE || script + 1 >= TA_SCRIPT_MAX)
     script = (TA_Script)(globals->glyph_scripts[gindex]
                          & TA_SCRIPT_UNASSIGNED);
 

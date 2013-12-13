@@ -91,7 +91,7 @@ TTF_autohint(const char* options,
   FT_Bool symbol = 0;
 
   const char* fallback_script_string = NULL;
-  TA_Script fallback_script = TA_SCRIPT_DFLT;
+  TA_Script fallback_script = TA_SCRIPT_NONE;
 
   FT_Bool dehint = 0;
 

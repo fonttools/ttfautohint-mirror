@@ -37,7 +37,7 @@ extern const char* ta_script_names[];
 /* and face globals (in TA_FaceGlobalsRec). */
 
 /* index of fallback script in `ta_script_classes' */
-#define TA_SCRIPT_FALLBACK TA_SCRIPT_DFLT
+#define TA_SCRIPT_FALLBACK TA_SCRIPT_NONE
 /* a bit mask indicating an uncovered glyph */
 #define TA_SCRIPT_UNASSIGNED 0x7F
 /* if this flag is set, we have an ASCII digit */

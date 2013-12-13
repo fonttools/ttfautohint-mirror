@@ -536,7 +536,7 @@ ta_loader_load_glyph(FONT* font,
   if (!error)
   {
     TA_ScriptMetrics metrics;
-    FT_UInt options = TA_SCRIPT_DFLT;
+    FT_UInt options = TA_SCRIPT_NONE;
 
 
 #ifdef FT_OPTION_AUTOFIT2

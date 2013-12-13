@@ -66,9 +66,9 @@ const TA_WritingSystemClassRec ta_dummy_writing_system_class =
 };
 
 
-const TA_ScriptClassRec ta_dflt_script_class =
+const TA_ScriptClassRec ta_none_script_class =
 {
-  TA_SCRIPT_DFLT,
+  TA_SCRIPT_NONE,
   (TA_Blue_Stringset)0,
   TA_WRITING_SYSTEM_DUMMY,
 

@@ -338,7 +338,7 @@ typedef int
  * `fallback-script`
  * :   A string consisting of four lowercase characters that specifies the
  *     default script for glyphs which can't be mapped to a script
- *     automatically.  If set to `"dflt"` (which is the default), no script
+ *     automatically.  If set to `"none"` (which is the default), no script
  *     is used.  Valid values can be found in the header file
  *     `ttfautohint-scripts.h`.
  *

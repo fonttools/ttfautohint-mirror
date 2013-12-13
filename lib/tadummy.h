@@ -28,7 +28,7 @@
 
 extern const TA_WritingSystemClassRec ta_dummy_writing_system_class;
 
-extern const TA_ScriptClassRec ta_dflt_script_class;
+extern const TA_ScriptClassRec ta_none_script_class;
 
 #endif /* __TADUMMY_H__ */
 
