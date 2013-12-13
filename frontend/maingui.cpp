@@ -90,18 +90,18 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   dehint(dh)
 {
   int i;
-  int dflt_script_idx = 0;
+  int none_script_idx = 0;
 
   // map fallback script tag to an index,
   // replacing an invalid one with the default value
   for (i = 0; script_names[i].tag; i++)
   {
-    if (!strcmp("dflt", script_names[i].tag))
-      dflt_script_idx = i;
+    if (!strcmp("none", script_names[i].tag))
+      none_script_idx = i;
     if (!strcmp(fallback, script_names[i].tag))
       break;
   }
-  fallback_script_idx = script_names[i].tag ? i : dflt_script_idx;
+  fallback_script_idx = script_names[i].tag ? i : none_script_idx;
 
   x_height_snapping_exceptions = NULL;
 

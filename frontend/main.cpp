@@ -182,7 +182,7 @@ show_help(bool
 #endif
 "  -c, --composites           hint glyph composites also\n"
 "  -d, --dehint               remove all hints\n"
-"  -f, --fallback-script=S    set fallback script (default: dflt)\n"
+"  -f, --fallback-script=S    set fallback script (default: none)\n"
 "  -G, --hinting-limit=N      switch off hinting above this PPEM value\n"
 "                             (default: %d); value 0 means no limit\n"
 "  -h, --help                 display this help and exit\n"
@@ -308,7 +308,7 @@ show_help(bool
   }
   fprintf(handle,
 "\n"
-"If no option -f is given, or if its value is `dflt',\n"
+"If no option -f is given, or if its value is `none',\n"
 "no fallback script is used.\n"
 "\n");
   fprintf(handle,
@@ -594,7 +594,7 @@ main(int argc,
   }
 
   if (!have_fallback_script)
-    fallback_script = "dflt";
+    fallback_script = "none";
   if (!have_hinting_range_min)
     hinting_range_min = TA_HINTING_RANGE_MIN;
   if (!have_hinting_range_max)

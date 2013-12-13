@@ -23,10 +23,10 @@
 /* Add new scripts here. */
 
 SCRIPT(cyrl, CYRL, "Cyrillic")
-SCRIPT(none, NONE, "no script")
 SCRIPT(grek, GREK, "Greek")
 SCRIPT(hebr, HEBR, "Hebrew")
 SCRIPT(latn, LATN, "Latin")
+SCRIPT(none, NONE, "no script")
 #if 0
 SCRIPT(deva, DEVA, "Indic scripts")
 SCRIPT(hani, HANI, "CJKV ideographs")
