@@ -1026,8 +1026,9 @@ Main_GUI::create_layout(bool horizontal_layout)
   pre_box = new QCheckBox(tr("Pr&e-hinting"), this);
   pre_box->setToolTip(
     tr("If switched on, the original bytecode of the input font"
-       " gets applied before <b>TTFautohint</b> starts processing"
-       " the outlines of the glyphs."));
+       " gets applied (at EM size, usually 2048ppem)"
+       " to derive the glyph outlines for <b>TTFautohint</b>."
+       "  Note that the original bytecode will always be discarded."));
 
   hint_box = new QCheckBox(tr("Hint Co&mposites")
                            + "                ", this); // make label wider
