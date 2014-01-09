@@ -38,4 +38,6 @@ doc/template.html
 doc/template.tex
 doc/ttfautohint-css.html
 #
+lib/afblue.pl
+#
 # EOF
