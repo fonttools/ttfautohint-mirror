@@ -10,7 +10,8 @@
 # The file `COPYING' mentioned in the previous paragraph is distributed
 # with the ttfautohint library.
 
-AM_CPPFLAGS = $(FREETYPE_CPPFLAGS)
+AM_CPPFLAGS = $(FREETYPE_CPPFLAGS) \
+              $(HARFBUZZ_CFLAGS)
 
 noinst_LTLIBRARIES = \
   libttfautohint.la \
@@ -56,7 +57,9 @@ libttfautohint_la_SOURCES = \
   ttfautohint.h ttfautohint-errors.h ttfautohint-scripts.h
 
 libttfautohint_la_LIBADD = \
-  libnumberset.la
+  libnumberset.la \
+  $(FREETYPE_LIBS) \
+  $(HARFBUZZ_LIBS)
 
 BUILT_SOURCES = \
   tablue.c tablue.h

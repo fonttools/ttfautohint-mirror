@@ -28,6 +28,7 @@ AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CPP
 AC_PROG_CC
 AC_PROG_CXX
+PKG_PROG_PKG_CONFIG([0.24])
 
 # AM_PROG_AR is new in automake 1.11.2;
 # however, MinGW doesn't have it yet (May 2012)
@@ -37,6 +38,8 @@ gl_EARLY
 gl_INIT
 
 AC_TYPE_UINT64_T
+
+PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 0.9.19])
 
 AT_WITH_QT
 AT_REQUIRE_QT_VERSION([4.6])

@@ -13,6 +13,7 @@
 #
 m4/autotroll.m4
 m4/ltlize_lang.m4
+m4/pkg.m4
 FTL.TXT
 GPLv2.TXT
 INSTALL
