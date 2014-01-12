@@ -24,6 +24,7 @@ libttfautohint_la_SOURCES = \
   ta.h \
   tablue.c tablue.h \
   tabytecode.c tabytecode.h \
+  tacover.h \
   tacvt.c \
   tadsig.c \
   tadummy.c tadummy.h \
@@ -36,6 +37,7 @@ libttfautohint_la_SOURCES = \
   taglobal.c taglobal.h \
   taglyf.c \
   tagpos.c \
+  taharfbuzz.c taharfbuzz.h \
   tahints.c tahints.h \
   tahmtx.c \
   talatin.c talatin.h \
@@ -45,8 +47,10 @@ libttfautohint_la_SOURCES = \
   taname.c \
   tapost.c \
   taprep.c \
+  taranges.c taranges.h \
   tasfnt.c \
   tasort.c tasort.h \
+  tastyles.h \
   tatables.c tatables.h \
   tatime.c \
   tattc.c \

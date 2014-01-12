@@ -1,0 +1,35 @@
+/* taranges.h */
+
+/*
+ * Copyright (C) 2014 by Werner Lemberg.
+ *
+ * This file is part of the ttfautohint library, and may only be used,
+ * modified, and distributed under the terms given in `COPYING'.  By
+ * continuing to use, modify, or distribute this file you indicate that you
+ * have read `COPYING' and understand and accept it fully.
+ *
+ * The file `COPYING' mentioned in the previous paragraph is distributed
+ * with the ttfautohint library.
+ */
+
+
+/* originally file `afranges.h' (2014-Jan-11) from FreeType */
+
+/* heavily modified 2014 by Werner Lemberg <wl@gnu.org> */
+
+#ifndef __TARANGES_H__
+#define __TARANGES_H__
+
+
+#include "tatypes.h"
+
+
+#undef SCRIPT
+#define SCRIPT(s, S, d, h, dc) \
+          extern const TA_Script_UniRangeRec ta_ ## s ## _uniranges[];
+
+#include "ttfautohint-scripts.h"
+
+#endif /* __TARANGES_H__ */
+
+/* end of taranges.h */
