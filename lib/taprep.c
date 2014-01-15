@@ -690,9 +690,10 @@ TA_table_build_prep(FT_Byte** prep,
 
     /* don't loop over artificial blue zones */
     *(bufp++) = (unsigned char)CVT_VERT_STANDARD_WIDTH_OFFSET(i);
-    *(bufp++) = (unsigned char)(1
-                                + CVT_VERT_WIDTHS_SIZE(i)
-                                + CVT_BLUES_SIZE(i) - 2);
+    *(bufp++) = (unsigned char)(
+                  1
+                  + CVT_VERT_WIDTHS_SIZE(i)
+                  + (CVT_BLUES_SIZE(i) > 1 ? CVT_BLUES_SIZE(i) - 2 : 0));
   }
   *(bufp++) = data->num_used_styles;
   COPY_PREP(loop_cvt_b);
@@ -711,7 +712,8 @@ TA_table_build_prep(FT_Byte** prep,
 
     /* don't loop over artificial blue zones */
     *(bufp++) = (unsigned char)CVT_BLUE_SHOOTS_OFFSET(i);
-    *(bufp++) = (unsigned char)(CVT_BLUES_SIZE(i) - 2);
+    *(bufp++) = (unsigned char)(
+                  CVT_BLUES_SIZE(i) > 1 ? CVT_BLUES_SIZE(i) - 2 : 0);
   }
   *(bufp++) = data->num_used_styles;
   COPY_PREP(loop_cvt_c);
