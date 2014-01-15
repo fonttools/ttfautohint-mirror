@@ -164,7 +164,7 @@ ta_get_coverage(TA_FaceGlobals globals,
           " ",
           ta_style_names[style_class->style]));
 
-#ifdef FT_DEBUG_LEVEL_TRACE
+#ifdef TA_DEBUG
   count = 0;
 #endif
 
