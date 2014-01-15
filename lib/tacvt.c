@@ -23,7 +23,8 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
 {
   FT_Error error;
   FT_Face face = sfnt->face;
-  FT_UInt idx;
+  FT_ULong glyph_index;
+  FT_Long y_offset;
   FT_Int32 load_flags;
 
 
@@ -41,22 +42,33 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
   }
 
   if (font->symbol)
-    idx = 0;
+    glyph_index = 0;
   else
   {
-    TA_StyleClass st = ta_style_classes[style_idx];
-    TA_ScriptClass sc = ta_script_classes[st->script];
+    TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
+    TA_StyleClass style_class = ta_style_classes[style_idx];
+    TA_ScriptClass script_class = ta_script_classes[style_class->script];
+
+    TA_StyleMetricsRec dummy;
 
 
-    /* load standard character to trigger style initializations */
-    /* XXX make this configurable to use a different letter */
-    idx = FT_Get_Char_Index(face, sc->standard_char);
-    if (!idx)
+    /* we don't have a `TA_Loader' object yet */
+    dummy.globals = globals;
+    dummy.style_class = style_class;
+
+    /* XXX: Extend this with a list of possible standard characters: */
+    /*      Especially in non-default coverages, a single standard   */
+    /*      character may not be available.                          */
+    ta_get_char_index(&dummy,
+                      script_class->standard_char,
+                      &glyph_index,
+                      &y_offset);
+    if (!glyph_index)
       return TA_Err_Missing_Glyph;
   }
 
   load_flags = 1 << 29; /* vertical hinting only */
-  error = ta_loader_load_glyph(font, face, idx, load_flags);
+  error = ta_loader_load_glyph(font, face, glyph_index, load_flags);
 
   return error;
 }
