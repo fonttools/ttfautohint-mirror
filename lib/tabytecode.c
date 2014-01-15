@@ -1761,7 +1761,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   }
 
   /* only scale the glyph if the `none_dflt' style has been used */
-  if (font->loader->metrics->script_class == &ta_none_script_class)
+  if (font->loader->metrics->style_class == &ta_none_dflt_style_class)
   {
     /* since `TA_init_recorder' hasn't been called yet, */
     /* we manually initialize the `sfnt', `font', and `glyph' fields */

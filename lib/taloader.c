@@ -195,9 +195,9 @@ ta_loader_load_g(TA_Loader loader,
     /* now load the slot image into the auto-outline */
     /* and run the automatic hinting process */
     {
+      TA_StyleClass style_class = metrics->style_class;
       TA_WritingSystemClass writing_system_class =
-                              ta_writing_system_classes
-                                [metrics->script_class->writing_system];
+        ta_writing_system_classes[style_class->writing_system];
 
 
       if (writing_system_class->style_hints_apply)
@@ -536,22 +536,22 @@ ta_loader_load_glyph(FONT* font,
   if (!error)
   {
     TA_StyleMetrics metrics;
-    FT_UInt options = TA_STYLE_NONE;
+    FT_UInt options = TA_STYLE_NONE_DFLT;
 
 
 #ifdef FT_OPTION_AUTOFIT2
     /* XXX: undocumented hook to activate the latin2 hinter */
     if (load_flags & (1UL << 20))
-      options = TA_STYLE_LTN2;
+      options = TA_STYLE_LTN2_DFLT;
 #endif
 
     error = ta_face_globals_get_metrics(loader->globals, gindex,
                                         options, &metrics);
     if (!error)
     {
+      TA_StyleClass style_class = metrics->style_class;
       TA_WritingSystemClass writing_system_class =
-                              ta_writing_system_classes
-                                [metrics->script_class->writing_system];
+        ta_writing_system_classes[style_class->writing_system];
 
 
       loader->metrics = metrics;

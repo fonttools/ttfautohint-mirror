@@ -70,7 +70,7 @@ typedef struct Script_Names_
 } Script_Names;
 
 #undef SCRIPT
-#define SCRIPT(s, S, d) \
+#define SCRIPT(s, S, d, h, dc) \
           {#s, d},
 
 const Script_Names script_names[] =

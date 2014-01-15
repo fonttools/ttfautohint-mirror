@@ -44,10 +44,13 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
     idx = 0;
   else
   {
+    TA_StyleClass st = ta_style_classes[style_idx];
+    TA_ScriptClass sc = ta_script_classes[st->script];
+
+
     /* load standard character to trigger style initializations */
     /* XXX make this configurable to use a different letter */
-    idx = FT_Get_Char_Index(face,
-                            ta_script_classes[script_idx]->standard_char);
+    idx = FT_Get_Char_Index(face, sc->standard_char);
     if (!idx)
       return TA_Err_Missing_Glyph;
   }
@@ -126,7 +129,7 @@ TA_table_build_cvt(FT_Byte** cvt,
 
     data->style_ids[i] = data->num_used_styles++;
 
-    if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_NONE)
+    if (font->loader->hints.metrics->style_class == &ta_none_dflt_style_class)
       continue;
     else
     {
@@ -195,7 +198,7 @@ TA_table_build_cvt(FT_Byte** cvt,
     if (error)
       return error;
 
-    if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_NONE)
+    if (font->loader->hints.metrics->style_class == &ta_none_dflt_style_class)
     {
       haxis = NULL;
       vaxis = NULL;
