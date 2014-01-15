@@ -91,7 +91,9 @@ TTF_autohint(const char* options,
   FT_Bool symbol = 0;
 
   const char* fallback_script_string = NULL;
-  TA_Script fallback_script = TA_SCRIPT_NONE;
+  const char* default_script_string = NULL;
+  TA_Style fallback_style = TA_STYLE_NONE_DFLT;
+  TA_Script default_script = TA_SCRIPT_LATN;
 
   FT_Bool dehint = 0;
 
@@ -100,7 +102,7 @@ TTF_autohint(const char* options,
   const char* op;
 
 #undef SCRIPT
-#define SCRIPT(s, S, d) #s,
+#define SCRIPT(s, S, d, h, dc) #s,
 
   const char* script_names[] =
   {
@@ -148,6 +150,8 @@ TTF_autohint(const char* options,
     /* handle options -- don't forget to update parameter dump below! */
     if (COMPARE("debug"))
       debug = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("default-script"))
+      default_script_string = va_arg(ap, const char*);
     else if (COMPARE("dehint"))
       dehint = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("dw-cleartype-strong-stem-width"))
@@ -300,8 +304,15 @@ TTF_autohint(const char* options,
 
 
     for (i = 0; i < TA_STYLE_MAX; i++)
-      if (!strcmp(script_names[i], fallback_script_string))
+    {
+      TA_StyleClass style_class = ta_style_classes[i];
+
+
+      if (style_class->coverage == TA_COVERAGE_DEFAULT
+          && !strcmp(script_names[style_class->script],
+                     fallback_script_string))
         break;
+    }
     if (i == TA_STYLE_MAX)
     {
       error = FT_Err_Invalid_Argument;
@@ -309,6 +320,25 @@ TTF_autohint(const char* options,
     }
 
     fallback_style = i;
+  }
+
+  if (default_script_string)
+  {
+    int i;
+
+
+    for (i = 0; i < TA_SCRIPT_MAX; i++)
+    {
+      if (!strcmp(script_names[i], default_script_string))
+        break;
+    }
+    if (i == TA_SCRIPT_MAX)
+    {
+      error = FT_Err_Invalid_Argument;
+      goto Err1;
+    }
+
+    default_script = i;
   }
 
   if (x_height_snapping_exceptions_string)
@@ -339,6 +369,7 @@ TTF_autohint(const char* options,
   font->pre_hinting = pre_hinting;
   font->hint_composites = hint_composites;
   font->fallback_style = fallback_style;
+  font->default_script = default_script;
   font->symbol = symbol;
 
 No_check:
@@ -367,10 +398,12 @@ No_check:
       char *s;
 
 
+      DUMPVAL("default-script",
+              font->default_script);
       DUMPVAL("dw-cleartype-strong-stem-width",
               font->dw_cleartype_strong_stem_width);
       DUMPSTR("fallback-script",
-              script_names[font->fallback_script]);
+              script_names[ta_style_classes[font->fallback_style]->script]);
       DUMPVAL("gdi-cleartype-strong-stem-width",
               font->gdi_cleartype_strong_stem_width);
       DUMPVAL("gray-strong-stem-width",

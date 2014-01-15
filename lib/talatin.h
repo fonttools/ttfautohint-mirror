@@ -28,16 +28,6 @@
 
 extern const TA_WritingSystemClassRec ta_latin_writing_system_class;
 
-/* the latin-specific script classes */
-
-extern const TA_ScriptClassRec ta_cyrl_script_class;
-extern const TA_ScriptClassRec ta_grek_script_class;
-extern const TA_ScriptClassRec ta_hebr_script_class;
-extern const TA_ScriptClassRec ta_latn_script_class;
-#if 0
-extern const TA_ScriptClassRec ta_armn_script_class;
-#endif
-
 
 /* constants are given with units_per_em == 2048 in mind */
 #define TA_LATIN_CONSTANT(metrics, c) \
@@ -134,7 +124,7 @@ ta_latin_metrics_check_digits(TA_LatinMetrics metrics,
 
 
 /* the next functions shouldn't normally be exported; */
-/* however, other scripts might like to use these functions as-is */
+/* however, other writing systems might like to use these functions as-is */
 
 FT_Error
 ta_latin_hints_compute_segments(TA_GlyphHints hints,

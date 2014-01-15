@@ -65,15 +65,4 @@ const TA_WritingSystemClassRec ta_dummy_writing_system_class =
   (TA_WritingSystem_ApplyHintsFunc)ta_dummy_hints_apply
 };
 
-
-const TA_StyleClassRec ta_none_style_class =
-{
-  TA_STYLE_NONE,
-  (TA_Blue_Stringset)0,
-  TA_WRITING_SYSTEM_DUMMY,
-
-  NULL,
-  '\0'
-};
-
 /* end of tadummy.c */

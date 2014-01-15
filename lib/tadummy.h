@@ -23,12 +23,9 @@
 #include "tatypes.h"
 
 
-/* a dummy writing system and script class used when no hinting should be */
-/* performed */
+/* a dummy writing system used when no hinting should be performed */
 
 extern const TA_WritingSystemClassRec ta_dummy_writing_system_class;
-
-extern const TA_ScriptClassRec ta_none_script_class;
 
 #endif /* __TADUMMY_H__ */
 

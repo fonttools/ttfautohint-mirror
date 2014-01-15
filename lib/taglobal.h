@@ -22,9 +22,27 @@
 
 #include "ta.h"
 #include "tatypes.h"
+#include "taharfbuzz.h"
 
 
 extern TA_WritingSystemClass const ta_writing_system_classes[];
+
+
+#undef SCRIPT
+#define SCRIPT(s, S, d, h, dc) \
+          extern const TA_ScriptClassRec ta_ ## s ## _script_class;
+
+#include "ttfautohint-scripts.h"
+
+extern TA_ScriptClass const ta_script_classes[];
+
+
+#undef STYLE
+#define STYLE(s, S, d, ws, sc, ss, c) \
+          extern const TA_StyleClassRec ta_ ## s ## _style_class;
+
+#include "tastyles.h"
+
 extern TA_StyleClass const ta_style_classes[];
 
 
@@ -38,7 +56,9 @@ extern const char* ta_style_names[];
 /* and face globals (in TA_FaceGlobalsRec). */
 
 /* index of fallback style in `ta_style_classes' */
-#define TA_STYLE_FALLBACK TA_STYLE_NONE
+#define TA_STYLE_FALLBACK TA_STYLE_NONE_DFLT
+/* default script for OpenType */
+#define TA_SCRIPT_DEFAULT  AF_SCRIPT_LATN
 /* a bit mask indicating an uncovered glyph */
 #define TA_STYLE_UNASSIGNED 0x7F
 /* if this flag is set, we have an ASCII digit */
@@ -56,6 +76,8 @@ typedef struct TA_FaceGlobalsRec_
   FT_Face face;
   FT_Long glyph_count; /* same as face->num_glyphs */
   FT_Byte* glyph_styles;
+
+  hb_font_t* hb_font;
 
   /* per-face auto-hinter properties */
   FT_UInt increase_x_height;

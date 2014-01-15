@@ -335,9 +335,17 @@ typedef int
  *
  * ### Scripts
  *
+ * `default-script`
+ * :   A string consisting of four lowercase characters that specifies the
+ *     default script for OpenType features.  After applying all features
+ *     that are handled specially, use this value for the remaining
+ *     features.  The default value is `"latn"`; if set to `"none"`, no
+ *     script is used.  Valid values can be found in the header file
+ *     `ttfautohint-scripts.h`.
+ *
  * `fallback-script`
  * :   A string consisting of four lowercase characters that specifies the
- *     default script for glyphs which can't be mapped to a script
+ *     default script for glyphs that can't be mapped to a script
  *     automatically.  If set to `"none"` (which is the default), no script
  *     is used.  Valid values can be found in the header file
  *     `ttfautohint-scripts.h`.

@@ -48,7 +48,7 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
 
   TA_LOG_GLOBAL(("\n"
                  "latin standard widths computation (style `%s')\n"
-                 "=================================================\n"
+                 "=====================================================\n"
                  "\n",
                  ta_style_names[metrics->root.style_class->style]));
 
@@ -59,20 +59,28 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
 
   {
     FT_Error error;
-    FT_UInt glyph_index;
+    FT_ULong glyph_index;
+    FT_Long y_offset;
     int dim;
     TA_LatinMetricsRec dummy[1];
     TA_Scaler scaler = &dummy->root.scaler;
 
+    TA_StyleClass style_class = metrics->root.style_class;
+    TA_ScriptClass script_class = ta_script_classes[style_class->script];
 
-    glyph_index = FT_Get_Char_Index(
-                    face,
-                    metrics->root.script_class->standard_char);
+
+    /* XXX: Extend this with a list of possible standard characters: */
+    /*      Especially in non-default coverages, a singe standard    */
+    /*      character may not be available.                          */
+    ta_get_char_index(&metrics->root,
+                      script_class->standard_char,
+                      &glyph_index,
+                      &y_offset);
     if (glyph_index == 0)
       goto Exit;
 
     TA_LOG_GLOBAL(("standard character: U+%04lX (glyph index %d)\n",
-                   metrics->root.script_class->standard_char, glyph_index));
+                   script_class->standard_char, glyph_index));
 
     error = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
     if (error || face->glyph->outline.n_points <= 0)
@@ -200,7 +208,9 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
   TA_LatinAxis axis = &metrics->axis[TA_DIMENSION_VERT];
   FT_Outline outline;
 
-  TA_Blue_Stringset bss = metrics->root.script_class->blue_stringset;
+  TA_StyleClass sc = metrics->root.style_class;
+
+  TA_Blue_Stringset bss = sc->blue_stringset;
   const TA_Blue_StringRec* bs = &ta_blue_stringsets[bss];
 
 
@@ -263,7 +273,8 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     while (*p)
     {
       FT_ULong ch;
-      FT_UInt glyph_index;
+      FT_ULong glyph_index;
+      FT_Long y_offset;
       FT_Pos best_y; /* same as points.y */
       FT_Int best_point, best_contour_first, best_contour_last;
       FT_Vector* points;
@@ -273,7 +284,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
       GET_UTF8_CHAR(ch, p);
 
       /* load the character in the face -- skip unknown or empty ones */
-      glyph_index = FT_Get_Char_Index(face, ch);
+      ta_get_char_index(&metrics->root, ch, &glyph_index, &y_offset);
       if (glyph_index == 0)
       {
         TA_LOG_GLOBAL(("  U+%04lX unavailable\n", ch));
@@ -588,6 +599,14 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
           }
         }
 
+        /*
+         * for computing blue zones, we add the y offset as returned
+         * by the currently used OpenType feature --
+         * for example, superscript glyphs might be identical
+         * to subscript glyphs with a vertical shift
+         */
+        best_y += y_offset;
+
         TA_LOG_GLOBAL(("  U+%04lX: best_y = %5ld", ch, best_y));
 
         /*
@@ -757,10 +776,11 @@ ta_latin_metrics_check_digits(TA_LatinMetrics metrics,
   /* digit `0' is 0x30 in all supported charmaps */
   for (i = 0x30; i <= 0x39; i++)
   {
-    FT_UInt glyph_index;
+    FT_ULong glyph_index;
+    FT_Long y_offset;
 
 
-    glyph_index = FT_Get_Char_Index(face, i);
+    ta_get_char_index(&metrics->root, i, &glyph_index, &y_offset);
     if (glyph_index == 0)
       continue;
 
@@ -2828,101 +2848,6 @@ const TA_WritingSystemClassRec ta_latin_writing_system_class =
 
   (TA_WritingSystem_InitHintsFunc)ta_latin_hints_init,
   (TA_WritingSystem_ApplyHintsFunc)ta_latin_hints_apply
-};
-
-
-/* XXX: this should probably fine tuned to differentiate better between */
-/* scripts... */
-
-static const TA_Script_UniRangeRec ta_latn_uniranges[] =
-{
-  TA_UNIRANGE_REC(0x0020UL, 0x007FUL), /* Basic Latin (no control chars) */
-  TA_UNIRANGE_REC(0x00A0UL, 0x00FFUL), /* Latin-1 Supplement (no control chars) */
-  TA_UNIRANGE_REC(0x0100UL, 0x017FUL), /* Latin Extended-A */
-  TA_UNIRANGE_REC(0x0180UL, 0x024FUL), /* Latin Extended-B */
-  TA_UNIRANGE_REC(0x0250UL, 0x02AFUL), /* IPA Extensions */
-  TA_UNIRANGE_REC(0x02B0UL, 0x02FFUL), /* Spacing Modifier Letters */
-  TA_UNIRANGE_REC(0x0300UL, 0x036FUL), /* Combining Diacritical Marks */
-  TA_UNIRANGE_REC(0x1D00UL, 0x1D7FUL), /* Phonetic Extensions */
-  TA_UNIRANGE_REC(0x1D80UL, 0x1DBFUL), /* Phonetic Extensions Supplement */
-  TA_UNIRANGE_REC(0x1DC0UL, 0x1DFFUL), /* Combining Diacritical Marks Supplement */
-  TA_UNIRANGE_REC(0x1E00UL, 0x1EFFUL), /* Latin Extended Additional */
-  TA_UNIRANGE_REC(0x2000UL, 0x206FUL), /* General Punctuation */
-  TA_UNIRANGE_REC(0x2070UL, 0x209FUL), /* Superscripts and Subscripts */
-  TA_UNIRANGE_REC(0x20A0UL, 0x20CFUL), /* Currency Symbols */
-  TA_UNIRANGE_REC(0x2150UL, 0x218FUL), /* Number Forms */
-  TA_UNIRANGE_REC(0x2460UL, 0x24FFUL), /* Enclosed Alphanumerics */
-  TA_UNIRANGE_REC(0x2C60UL, 0x2C7FUL), /* Latin Extended-C */
-  TA_UNIRANGE_REC(0x2E00UL, 0x2E7FUL), /* Supplemental Punctuation */
-  TA_UNIRANGE_REC(0xA720UL, 0xA7FFUL), /* Latin Extended-D */
-  TA_UNIRANGE_REC(0xFB00UL, 0xFB06UL), /* Alphab. Present. Forms (Latin Ligs) */
-  TA_UNIRANGE_REC(0x1D400UL, 0x1D7FFUL), /* Mathematical Alphanumeric Symbols */
-  TA_UNIRANGE_REC(0x1F100UL, 0x1F1FFUL), /* Enclosed Alphanumeric Supplement */
-  TA_UNIRANGE_REC(0UL, 0UL)
-};
-
-static const TA_Script_UniRangeRec ta_grek_uniranges[] =
-{
-  TA_UNIRANGE_REC(0x0370UL, 0x03FFUL), /* Greek and Coptic */
-  TA_UNIRANGE_REC(0x1F00UL, 0x1FFFUL), /* Greek Extended */
-  TA_UNIRANGE_REC(0UL, 0UL )
-};
-
-static const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
-{
-  TA_UNIRANGE_REC(0x0400UL, 0x04FFUL), /* Cyrillic */
-  TA_UNIRANGE_REC(0x0500UL, 0x052FUL), /* Cyrillic Supplement */
-  TA_UNIRANGE_REC(0x2DE0UL, 0x2DFFUL), /* Cyrillic Extended-A */
-  TA_UNIRANGE_REC(0xA640UL, 0xA69FUL), /* Cyrillic Extended-B */
-  TA_UNIRANGE_REC(0UL, 0UL )
-};
-
-static const TA_Script_UniRangeRec ta_hebr_uniranges[] =
-{
-  TA_UNIRANGE_REC(0x0590UL, 0x05FFUL), /* Hebrew */
-  TA_UNIRANGE_REC(0xFB1DUL, 0xFB4FUL), /* Alphab. Present. Forms (Hebrew) */
-  TA_UNIRANGE_REC(0UL, 0UL )
-};
-
-
-const TA_ScriptClassRec ta_latn_script_class =
-{
-  TA_SCRIPT_LATN,
-  TA_BLUE_STRINGSET_LATN,
-  TA_WRITING_SYSTEM_LATIN,
-
-  ta_latn_uniranges,
-  'o'
-};
-
-const TA_ScriptClassRec ta_grek_script_class =
-{
-  TA_SCRIPT_GREK,
-  TA_BLUE_STRINGSET_GREK,
-  TA_WRITING_SYSTEM_LATIN,
-
-  ta_grek_uniranges,
-  0x3BF /* ο */
-};
-
-const TA_ScriptClassRec ta_cyrl_script_class =
-{
-  TA_SCRIPT_CYRL,
-  TA_BLUE_STRINGSET_CYRL,
-  TA_WRITING_SYSTEM_LATIN,
-
-  ta_cyrl_uniranges,
-  0x43E /* о */
-};
-
-const TA_ScriptClassRec ta_hebr_script_class =
-{
-  TA_SCRIPT_HEBR,
-  TA_BLUE_STRINGSET_HEBR,
-  TA_WRITING_SYSTEM_LATIN,
-
-  ta_hebr_uniranges,
-  0x5DD /* ם */
 };
 
 /* end of talatin.c */

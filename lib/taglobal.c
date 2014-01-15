@@ -20,6 +20,35 @@
 #include <stdlib.h>
 
 #include "taglobal.h"
+#include "taranges.h"
+#include "taharfbuzz.h"
+
+
+#undef SCRIPT
+#define SCRIPT(s, S, d, h, dc) \
+          const TA_ScriptClassRec ta_ ## s ## _script_class = \
+          { \
+            TA_SCRIPT_ ## S, \
+            ta_ ## s ## _uniranges, \
+            dc \
+          };
+
+#include <ttfautohint-scripts.h>
+
+
+#undef STYLE
+#define STYLE(s, S, d, ws, sc, ss, c) \
+          const TA_StyleClassRec ta_ ## s ## _style_class = \
+          { \
+            TA_STYLE_ ## S, \
+            ws, \
+            sc, \
+            ss, \
+            c \
+          };
+
+#include "tastyles.h"
+
 
 /* get writing system specific header files */
 #undef WRITING_SYSTEM
@@ -41,7 +70,7 @@ TA_WritingSystemClass const ta_writing_system_classes[] =
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d) \
+#define SCRIPT(s, S, d, h, dc) \
           &ta_ ## s ## _script_class,
 
 TA_ScriptClass const ta_script_classes[] =
@@ -49,14 +78,27 @@ TA_ScriptClass const ta_script_classes[] =
 
 #include <ttfautohint-scripts.h>
 
-  NULL  /* do not remove */
+  NULL /* do not remove */
+};
+
+
+#undef STYLE
+#define STYLE(s, S, d, ws, sc, ss, c) \
+          &ta_ ## s ## _style_class,
+
+TA_StyleClass const ta_style_classes[] =
+{
+
+#include "tastyles.h"
+
+  NULL /* do not remove */
 };
 
 
 #ifdef TA_DEBUG
 
 #undef STYLE
-#define STYLE(s, S, d) #s,
+#define STYLE(s, S, d, ws, sc, ss, c) #s,
 
 const char* ta_style_names[] =
 {
@@ -79,6 +121,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
   FT_Byte* gstyles = globals->glyph_styles;
   FT_UInt ss;
   FT_UInt i;
+  FT_UInt dflt = -1;
 
 
   /* the value TA_STYLE_UNASSIGNED means `uncovered glyph' */
@@ -97,6 +140,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
   for (ss = 0; ta_style_classes[ss]; ss++)
   {
     TA_StyleClass style_class = ta_style_classes[ss];
+    TA_ScriptClass script_class = ta_script_classes[style_class->script];
     TA_Script_UniRange range;
 
 
@@ -105,31 +149,55 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
     /* scan all Unicode points in the range and */
     /* set the corresponding glyph style index */
-    for (range = script_class->script_uni_ranges; range->first != 0; range++)
+    if (style_class->coverage == TA_COVERAGE_DEFAULT)
     {
-      FT_ULong charcode = range->first;
-      FT_UInt gindex;
+      if (style_class->script == globals->font->default_script)
+        dflt = ss;
+
+      for (range = script_class->script_uni_ranges; range->first != 0; range++)
+      {
+        FT_ULong charcode = range->first;
+        FT_UInt gindex;
 
 
-      gindex = FT_Get_Char_Index(face, charcode);
+        gindex = FT_Get_Char_Index(face, charcode);
 
-      if (gindex != 0
-          && gindex < (FT_ULong)globals->glyph_count
-          && gstyles[gindex] == TA_STYLE_UNASSIGNED)
+        if (gindex != 0
+            && gindex < (FT_ULong)globals->glyph_count
+            && gstyles[gindex] == TA_STYLE_UNASSIGNED)
         gstyles[gindex] = (FT_Byte)ss;
 
-      for (;;)
-      {
-        charcode = FT_Get_Next_Char(face, charcode, &gindex);
+        for (;;)
+        {
+          charcode = FT_Get_Next_Char(face, charcode, &gindex);
 
-        if (gindex == 0 || charcode > range->last)
-          break;
+          if (gindex == 0 || charcode > range->last)
+            break;
 
-        if (gindex < (FT_ULong)globals->glyph_count
-            && gstyles[gindex] == TA_STYLE_UNASSIGNED)
-          gstyles[gindex] = (FT_Byte)ss;
+          if (gindex < (FT_ULong)globals->glyph_count
+              && gstyles[gindex] == TA_STYLE_UNASSIGNED)
+            gstyles[gindex] = (FT_Byte)ss;
+        }
       }
     }
+    else
+    {
+      /* get glyphs not directly addressable by cmap */
+      ta_get_coverage(globals, style_class, gstyles);
+    }
+  }
+
+  /* handle the default OpenType features of the default script ... */
+  ta_get_coverage(globals, ta_style_classes[dflt], gstyles);
+
+  /* ... and the remaining default OpenType features */
+  for (ss = 0; ta_style_classes[ss]; ss++)
+  {
+    TA_StyleClass  style_class = ta_style_classes[ss];
+
+
+    if (ss != dflt && style_class->coverage == TA_COVERAGE_DEFAULT)
+      ta_get_coverage(globals, style_class, gstyles);
   }
 
   /* mark ASCII digits */
@@ -187,6 +255,7 @@ ta_face_globals_new(FT_Face face,
   globals->glyph_count = face->num_glyphs;
   globals->glyph_styles = (FT_Byte*)(globals + 1);
   globals->font = font;
+  globals->hb_font = hb_ft_font_create(face, NULL);
 
   error = ta_face_globals_compute_style_coverage(globals);
   if (error)
@@ -229,6 +298,9 @@ ta_face_globals_free(TA_FaceGlobals globals)
       }
     }
 
+    hb_font_destroy(globals->hb_font);
+
+    globals->hb_font = NULL;
     globals->glyph_count = 0;
     globals->glyph_styles = NULL; /* no need to free this one! */
     globals->face = NULL;
@@ -246,7 +318,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
                             TA_StyleMetrics *ametrics)
 {
   TA_StyleMetrics metrics = NULL;
-  TA_Style style = (TA_Style)(options & 15);
+  TA_Style style = (TA_Style)options;
   TA_WritingSystemClass writing_system_class;
   TA_StyleClass style_class;
   FT_Error error = FT_Err_Ok;
@@ -260,7 +332,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
 
   /* if we have a forced style (via `options'), use it, */
   /* otherwise look into `glyph_styles' array */
-  if (style == TA_STYLE_NONE || style + 1 >= TA_STYLE_MAX)
+  if (style == TA_STYLE_NONE_DFLT || style + 1 >= TA_STYLE_MAX)
     style = (TA_Style)(globals->glyph_styles[gindex]
                        & TA_STYLE_UNASSIGNED);
 

@@ -17,22 +17,40 @@
 
 
 /* The following part can be included multiple times. */
-/* Define `SCRIPT' as needed.                         */
+/* Define `SCRIPT' as needed. */
 
 
-/* Add new scripts here. */
+/*
+ * Add new scripts here.  The first and second arguments are the
+ * script name in lowercase and uppercase, respectively, followed
+ * by a description string.  Then comes the corresponding HarfBuzz
+ * script name tag, followed by the default character (to derive
+ * the standard width and height of stems).
+ */
 
-SCRIPT(cyrl, CYRL, "Cyrillic")
-SCRIPT(grek, GREK, "Greek")
-SCRIPT(hebr, HEBR, "Hebrew")
-SCRIPT(latn, LATN, "Latin")
-SCRIPT(none, NONE, "no script")
-#if 0
-SCRIPT(deva, DEVA, "Indic scripts")
-SCRIPT(hani, HANI, "CJKV ideographs")
-#endif
-#ifdef FT_OPTION_AUTOFIT2
-SCRIPT(ltn2, LTN2, "Latin 2")
-#endif
+SCRIPT(cyrl, CYRL,
+       "Cyrillic",
+       HB_SCRIPT_CYRILLIC,
+       0x43E) /* о */
+
+SCRIPT(grek, GREK,
+       "Greek",
+       HB_SCRIPT_GREEK,
+       0x3BF) /* ο */
+
+SCRIPT(hebr, HEBR,
+       "Hebrew",
+       HB_SCRIPT_HEBREW,
+       0x5DD) /* ם */
+
+SCRIPT(latn, LATN,
+       "Latin",
+       HB_SCRIPT_LATIN,
+       'o')
+
+SCRIPT(none, NONE,
+       "no script",
+       HB_SCRIPT_INVALID,
+       '\0')
 
 /* end of ttfautohint-scripts.h */
