@@ -139,16 +139,16 @@ typedef struct glyf_Data_
   FT_ULong fpgm_idx;
   FT_ULong prep_idx;
 
-  /* scripts present in a font get a running number */
-  FT_UInt script_ids[TA_SCRIPT_MAX];
-  FT_UInt num_used_scripts;
+  /* styles present in a font get a running number */
+  FT_UInt style_ids[TA_STYLE_MAX];
+  FT_UInt num_used_styles;
 
-  /* we have separate CVT data for each script */
-  FT_UInt cvt_offsets[TA_SCRIPT_MAX];
-  FT_UInt cvt_horz_width_sizes[TA_SCRIPT_MAX];
-  FT_UInt cvt_vert_width_sizes[TA_SCRIPT_MAX];
-  FT_UInt cvt_blue_zone_sizes[TA_SCRIPT_MAX];
-  FT_UInt cvt_blue_adjustment_offsets[TA_SCRIPT_MAX];
+  /* we have separate CVT data for each style */
+  FT_UInt cvt_offsets[TA_STYLE_MAX];
+  FT_UInt cvt_horz_width_sizes[TA_STYLE_MAX];
+  FT_UInt cvt_vert_width_sizes[TA_STYLE_MAX];
+  FT_UInt cvt_blue_zone_sizes[TA_STYLE_MAX];
+  FT_UInt cvt_blue_adjustment_offsets[TA_STYLE_MAX];
 } glyf_Data;
 
 /* an SFNT table */
@@ -237,7 +237,7 @@ struct FONT_
   FT_Bool pre_hinting;
   FT_Bool hint_composites;
   FT_Bool ignore_restrictions;
-  TA_Script fallback_script;
+  TA_Style fallback_style;
   FT_Bool symbol;
   FT_Bool dehint;
   FT_Bool debug;

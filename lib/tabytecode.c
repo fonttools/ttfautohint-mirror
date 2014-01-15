@@ -200,8 +200,8 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
   SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
   glyf_Data* data = (glyf_Data*)glyf_table->data;
 
-  FT_UInt script_id = data->script_ids
-                        [font->loader->metrics->script_class->script];
+  FT_UInt style_id = data->style_ids
+                       [font->loader->metrics->style_class->style];
 
   FT_Outline outline = font->loader->gloader->base.outline;
 
@@ -275,7 +275,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
   else
     *(arg--) = bci_create_segments_0 + num_packed_segments;
 
-  *(arg--) = CVT_SCALING_VALUE_OFFSET(script_id);
+  *(arg--) = CVT_SCALING_VALUE_OFFSET(style_id);
   *(arg--) = num_segments;
 
   base = 0;
@@ -1141,7 +1141,7 @@ TA_hints_recorder(TA_Action action,
   FT_UShort* wraps = recorder->wrap_around_segments;
   FT_Byte* p = recorder->hints_record.buf;
 
-  FT_UInt script = font->loader->metrics->script_class->script;
+  FT_UInt style = font->loader->metrics->style_class->style;
 
   FT_UShort* ip;
   FT_UShort* limit;
@@ -1333,13 +1333,13 @@ TA_hints_recorder(TA_Action action,
 
       if (edge->best_blue_is_shoot)
       {
-        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET(script) + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET(script) + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET(style) + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET(style) + edge->best_blue_idx);
       }
       else
       {
-        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET(script) + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_REFS_OFFSET(script) + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET(style) + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_REFS_OFFSET(style) + edge->best_blue_idx);
       }
 
       *(p++) = HIGH(edge->first - segments);
@@ -1388,13 +1388,13 @@ TA_hints_recorder(TA_Action action,
 
       if (edge->best_blue_is_shoot)
       {
-        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET(script) + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET(script) + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_SHOOTS_OFFSET(style) + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_SHOOTS_OFFSET(style) + edge->best_blue_idx);
       }
       else
       {
-        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET(script) + edge->best_blue_idx);
-        *(p++) = LOW(CVT_BLUE_REFS_OFFSET(script) + edge->best_blue_idx);
+        *(p++) = HIGH(CVT_BLUE_REFS_OFFSET(style) + edge->best_blue_idx);
+        *(p++) = LOW(CVT_BLUE_REFS_OFFSET(style) + edge->best_blue_idx);
       }
 
       *(p++) = HIGH(edge->first - segments);
@@ -1731,7 +1731,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
 
   hints = &font->loader->hints;
 
-  /* do nothing if the setup delivered the `none' script only */
+  /* do nothing if the setup delivered the `none_dflt' style only */
   if (!hints->num_points)
     return FT_Err_Ok;
 
@@ -1760,7 +1760,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     goto Done1;
   }
 
-  /* only scale the glyph if the `none' script has been used */
+  /* only scale the glyph if the `none_dflt' style has been used */
   if (font->loader->metrics->script_class == &ta_none_script_class)
   {
     /* since `TA_init_recorder' hasn't been called yet, */

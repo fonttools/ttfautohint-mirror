@@ -505,9 +505,9 @@
 /* symbolic names for build-time CVT locations */
 /* (assigned in `cvt') */
 
-/* note that each script has its own set of CVT data, */
+/* note that each style has its own set of CVT data, */
 /* to be accessed using the offsets in the `cvt_offsets' array */
-/* first script index is 0 */
+/* first style index is 0 */
 
 /* the following macros access the variables `font' and `sfnt' */
 #define CVT_DATA ((glyf_Data*)(font->tables[sfnt->glyf_idx].data))
@@ -516,13 +516,13 @@
  * we have the following layout in the CVT table:
  *
  *   . values initialized at runtime (`cvtl_max_runtime' elements)
- *   . scaling values for each script ID (`num_used_script' elements)    (*)
- *   . offset to the vertical stem widths array for each script ID       (*+)
- *     (`num_used_script' elements)
- *   . size of the vertical stem widths array for each script ID         (*+)
- *     (`num_used_script' elements)
+ *   . scaling values for each style ID (`num_used_styles' elements)     (*)
+ *   . offset to the vertical stem widths array for each style ID        (*+)
+ *     (`num_used_styles' elements)
+ *   . size of the vertical stem widths array for each style ID          (*+)
+ *     (`num_used_styles' elements)
  *
- *   script ID 0:
+ *   style ID 0:
  *     . horizontal standard width (1 element)
  *     . horizontal stem widths (`cvt_horz_width_sizes[id_to_idx(0)]'
  *       elements)
@@ -531,7 +531,7 @@
  *       elements)
  *     . flat blue zones (`cvt_blue_zone_sizes[id_to_idx(0)]' elements)
  *     . round blue zones (`cvt_blue_zone_sizes[id_to_idx(0)]' elements)
- *   script ID 1:
+ *   style ID 1:
  *     ...
  *
  * (*) see function `bci_create_segments' how these three arrays get
@@ -544,55 +544,55 @@
  *     to 1)
  *
  * note that the `id_to_idx' function is hypothetic since the code works
- * exactly the opposite way: the `cvt_*' arrays are indexed by the script
- * index, and the `script_ids' array maps script indices to script IDs
+ * exactly the opposite way: the `cvt_*' arrays are indexed by the style
+ * index, and the `style_ids' array maps style indices to style IDs
  */
 
-/* scaling value index of script ID id */
+/* scaling value index of style ID id */
 #define CVT_SCALING_VALUE_OFFSET(id) \
           (cvtl_max_runtime + (id))
 
-/* vwidth offset data of script ID id */
+/* vwidth offset data of style ID id */
 #define CVT_VWIDTH_OFFSET_DATA(id) \
           (CVT_SCALING_VALUE_OFFSET(id) \
-           + CVT_DATA->num_used_scripts) \
+           + CVT_DATA->num_used_styles) \
 
-/* vwidth size data of script ID id */
+/* vwidth size data of style ID id */
 #define CVT_VWIDTH_SIZE_DATA(id) \
           (CVT_VWIDTH_OFFSET_DATA(id) \
-           + CVT_DATA->num_used_scripts)
+           + CVT_DATA->num_used_styles)
 
-/* horizontal standard width indices of script i */
+/* horizontal standard width indices of style i */
 #define CVT_HORZ_STANDARD_WIDTH_OFFSET(i) \
           (cvtl_max_runtime \
-           + 3 * CVT_DATA->num_used_scripts \
+           + 3 * CVT_DATA->num_used_styles \
            + CVT_DATA->cvt_offsets[i])
-/* start and size of horizontal stem widths array of script i */
+/* start and size of horizontal stem widths array of style i */
 #define CVT_HORZ_WIDTHS_OFFSET(i) \
           (CVT_HORZ_STANDARD_WIDTH_OFFSET(i) + 1)
 #define CVT_HORZ_WIDTHS_SIZE(i) \
           (CVT_DATA->cvt_horz_width_sizes[i])
 
-/* vertical standard width indices of script i */
+/* vertical standard width indices of style i */
 #define CVT_VERT_STANDARD_WIDTH_OFFSET(i) \
           (CVT_HORZ_WIDTHS_OFFSET(i) + CVT_HORZ_WIDTHS_SIZE(i))
-/* start and size of vertical stem widths array of script i */
+/* start and size of vertical stem widths array of style i */
 #define CVT_VERT_WIDTHS_OFFSET(i) \
           (CVT_VERT_STANDARD_WIDTH_OFFSET(i) + 1)
 #define CVT_VERT_WIDTHS_SIZE(i) \
           (CVT_DATA->cvt_vert_width_sizes[i])
 
-/* number of blue zones (including artificial ones) of script i */
+/* number of blue zones (including artificial ones) of style i */
 #define CVT_BLUES_SIZE(i) \
           (CVT_DATA->cvt_blue_zone_sizes[i])
 
-/* start of blue zone arrays for flat and round edges of script i */
+/* start of blue zone arrays for flat and round edges of style i */
 #define CVT_BLUE_REFS_OFFSET(i) \
           (CVT_VERT_WIDTHS_OFFSET(i) + CVT_VERT_WIDTHS_SIZE(i))
 #define CVT_BLUE_SHOOTS_OFFSET(i) \
           (CVT_BLUE_REFS_OFFSET(i) + CVT_BLUES_SIZE(i))
 
-/* x height blue zone (shoot) index of script i (valid if < 0xFFFF) */
+/* x height blue zone (shoot) index of style i (valid if < 0xFFFF) */
 #define CVT_X_HEIGHT_BLUE_OFFSET(i) \
           (CVT_BLUE_SHOOTS_OFFSET(i) \
            + CVT_DATA->cvt_blue_adjustment_offsets[i])

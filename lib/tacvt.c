@@ -19,7 +19,7 @@
 static FT_Error
 TA_sfnt_compute_global_hints(SFNT* sfnt,
                              FONT* font,
-                             FT_UInt script_idx)
+                             FT_UInt style_idx)
 {
   FT_Error error;
   FT_Face face = sfnt->face;
@@ -44,7 +44,7 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
     idx = 0;
   else
   {
-    /* load standard character to trigger script initializations */
+    /* load standard character to trigger style initializations */
     /* XXX make this configurable to use a different letter */
     idx = FT_Get_Char_Index(face,
                             ta_script_classes[script_idx]->standard_char);
@@ -85,16 +85,16 @@ TA_table_build_cvt(FT_Byte** cvt,
   FT_Error error;
 
 
-  /* checking multiple scripts doesn't make sense for symbol fonts */
-  i_max = font->symbol ? 1 : TA_SCRIPT_MAX;
+  /* checking multiple styles doesn't make sense for symbol fonts */
+  i_max = font->symbol ? 1 : TA_STYLE_MAX;
 
-  /* loop over all scripts and collect the relevant CVT data */
+  /* loop over all styles and collect the relevant CVT data */
   /* to compute the necessary array sizes and meta-information */
   hwidth_count = 0;
   vwidth_count = 0;
   blue_count = 0;
 
-  data->num_used_scripts = 0;
+  data->num_used_styles = 0;
 
   for (i = 0; i < i_max; i++)
   {
@@ -102,20 +102,20 @@ TA_table_build_cvt(FT_Byte** cvt,
     if (error == TA_Err_Missing_Glyph)
     {
       TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
-      FT_Byte* gscripts = globals->glyph_scripts;
+      FT_Byte* gstyles = globals->glyph_styles;
       FT_Int nn;
 
 
-      data->script_ids[i] = 0xFFFFU;
+      data->style_ids[i] = 0xFFFFU;
 
-      /* remove all references to this script; */
+      /* remove all references to this style; */
       /* otherwise blue zones are computed later on, which we don't want */
       for (nn = 0; nn < globals->glyph_count; nn++)
       {
-        if ((gscripts[nn] & ~TA_DIGIT) == i)
+        if ((gstyles[nn] & ~TA_DIGIT) == i)
         {
-          gscripts[nn] &= ~TA_SCRIPT_UNASSIGNED;
-          gscripts[nn] |= globals->font->fallback_script;
+          gstyles[nn] &= ~TA_STYLE_UNASSIGNED;
+          gstyles[nn] |= globals->font->fallback_style;
         }
       }
 
@@ -124,7 +124,7 @@ TA_table_build_cvt(FT_Byte** cvt,
     if (error)
       return error;
 
-    data->script_ids[i] = data->num_used_scripts++;
+    data->style_ids[i] = data->num_used_styles++;
 
     if (font->loader->hints.metrics->script_class->script == TA_SCRIPT_NONE)
       continue;
@@ -142,14 +142,14 @@ TA_table_build_cvt(FT_Byte** cvt,
     }
   }
 
-  /* exit if the font doesn't contain a single supported script */
-  if (!data->num_used_scripts)
+  /* exit if the font doesn't contain a single supported style */
+  if (!data->num_used_styles)
     return TA_Err_Missing_Glyph;
 
   buf_len = cvtl_max_runtime /* runtime values 1 */
-            + data->num_used_scripts /* runtime values 2 (for scaling) */
-            + 2 * data->num_used_scripts /* runtime values 3 (blue data) */
-            + 2 * data->num_used_scripts /* vert. and horiz. std. widths */
+            + data->num_used_styles /* runtime values 2 (for scaling) */
+            + 2 * data->num_used_styles /* runtime values 3 (blue data) */
+            + 2 * data->num_used_styles /* vert. and horiz. std. widths */
             + hwidth_count
             + vwidth_count
             + 2 * blue_count; /* round and flat blue zones */
@@ -172,18 +172,18 @@ TA_table_build_cvt(FT_Byte** cvt,
    * some CVT values are initialized (and modified) at runtime:
    *
    *   (1) the `cvtl_xxx' values (see `tabytecode.h')
-   *   (2) a scaling value for each script
+   *   (2) a scaling value for each style
    *   (3) offset and size of the vertical widths array
-   *       (needed by `bci_{smooth,strong}_stem_width') for each script
+   *       (needed by `bci_{smooth,strong}_stem_width') for each style
    */
   for (i = 0; i < (cvtl_max_runtime
-                   + data->num_used_scripts
-                   + 2 * data->num_used_scripts) * 2; i++)
+                   + data->num_used_styles
+                   + 2 * data->num_used_styles) * 2; i++)
     *(bufp++) = 0;
 
   cvt_offset = bufp - buf;
 
-  /* loop again over all scripts and copy CVT data */
+  /* loop again over all styles and copy CVT data */
   for (i = 0; i < i_max; i++)
   {
     /* collect offsets */

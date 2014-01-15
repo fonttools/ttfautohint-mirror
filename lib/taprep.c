@@ -80,7 +80,7 @@ unsigned char PREP(test_exception_a) [] =
 
 };
 
-/* provide scaling factors for all scripts */
+/* provide scaling factors for all styles */
 
 unsigned char PREP(align_top_a) [] =
 {
@@ -92,11 +92,11 @@ unsigned char PREP(align_top_a) [] =
 
 };
 
-/*  PUSHB (num_used_scripts + 2) */
+/*  PUSHB (num_used_styles + 2) */
 /*    ... */
-/*    %c, script 1's x height blue zone idx */
-/*    %c, script 0's x height blue zone idx */
-/*    %c, num_used_scripts */
+/*    %c, style 1's x height blue zone idx */
+/*    %c, style 0's x height blue zone idx */
+/*    %c, num_used_styles */
 
 unsigned char PREP(align_top_b) [] =
 {
@@ -109,7 +109,7 @@ unsigned char PREP(align_top_b) [] =
 unsigned char PREP(loop_cvt_a) [] =
 {
 
-    /* loop over (almost all) vertical CVT entries of all scripts, part 1 */
+    /* loop over (almost all) vertical CVT entries of all styles, part 1 */
     PUSHB_2,
       sal_i,
       CVT_SCALING_VALUE_OFFSET(0),
@@ -117,15 +117,15 @@ unsigned char PREP(loop_cvt_a) [] =
 
 };
 
-/*  PUSHB (2*num_used_scripts + 2) */
+/*  PUSHB (2*num_used_styles + 2) */
 /*    ... */
-/*    %c, script 1's first vertical index */
-/*    %c, script 1's number of vertical indices */
+/*    %c, style 1's first vertical index */
+/*    %c, style 1's number of vertical indices */
 /*        (std. width, widths, flat blues zones without artifical ones) */
-/*    %c, script 0's first vertical index */
-/*    %c, script 0's number of vertical indices */
+/*    %c, style 0's first vertical index */
+/*    %c, style 0's number of vertical indices */
 /*        (std. width, widths, flat blues zones without artifical ones) */
-/*    %c, num_used_scripts */
+/*    %c, num_used_styles */
 
 unsigned char PREP(loop_cvt_b) [] =
 {
@@ -133,7 +133,7 @@ unsigned char PREP(loop_cvt_b) [] =
       bci_cvt_rescale_range,
     LOOPCALL,
 
-    /* loop over (almost all) vertical CVT entries of all scripts, part 2 */
+    /* loop over (almost all) vertical CVT entries of all styles, part 2 */
     PUSHB_2,
       sal_i,
       CVT_SCALING_VALUE_OFFSET(0),
@@ -141,13 +141,13 @@ unsigned char PREP(loop_cvt_b) [] =
 
 };
 
-/*  PUSHB (2*num_used_scripts + 2) */
+/*  PUSHB (2*num_used_styles + 2) */
 /*    ... */
-/*    %c, script 1's first round blue zone index */
-/*    %c, script 1's number of round blue zones (without artificial ones) */
-/*    %c, script 0's first round blue zone index */
-/*    %c, script 0's number of round blue zones (without artificial ones) */
-/*    %c, num_used_scripts */
+/*    %c, style 1's first round blue zone index */
+/*    %c, style 1's number of round blue zones (without artificial ones) */
+/*    %c, style 0's first round blue zone index */
+/*    %c, style 0's number of round blue zones (without artificial ones) */
+/*    %c, num_used_styles */
 
 unsigned char PREP(loop_cvt_c) [] =
 {
@@ -181,11 +181,11 @@ unsigned char PREP(store_vwidth_data_b) [] =
 
 };
 
-/*PUSHW (num_used_scripts + 2) */
+/*PUSHW (num_used_styles + 2) */
 /*  ... */
-/*  %d, script 1's first vertical width index (in multiples of 64) */
-/*  %d, script 0's first vertical width index (in multiples of 64) */
-/*  %d, num_used_scripts */
+/*  %d, style 1's first vertical width index (in multiples of 64) */
+/*  %d, style 0's first vertical width index (in multiples of 64) */
+/*  %d, num_used_styles */
 
 unsigned char PREP(store_vwidth_data_c) [] =
 {
@@ -208,11 +208,11 @@ unsigned char PREP(store_vwidth_data_d) [] =
 
 };
 
-/*PUSHW (num_used_scripts + 2) */
+/*PUSHW (num_used_styles + 2) */
 /*  ... */
-/*  %d, script 1's number of vertical widths (in multiples of 64) */
-/*  %d, script 0's number of vertical widths (in multiples of 64) */
-/*  %d, num_used_scripts */
+/*  %d, style 1's number of vertical widths (in multiples of 64) */
+/*  %d, style 0's number of vertical widths (in multiples of 64) */
+/*  %d, num_used_styles */
 
 unsigned char PREP(store_vwidth_data_e) [] =
 {
@@ -223,13 +223,13 @@ unsigned char PREP(store_vwidth_data_e) [] =
 
 };
 
-/*PUSHB (2*num_used_scripts + 2) */
+/*PUSHB (2*num_used_styles + 2) */
 /*  ... */
-/*  %c, script 1's first blue ref index */
-/*  %c, script 1's number of blue ref indices */
-/*  %c, script 0's first blue ref index */
-/*  %c, script 0's number of blue ref indices */
-/*  %c, num_used_scripts */
+/*  %c, style 1's first blue ref index */
+/*  %c, style 1's number of blue ref indices */
+/*  %c, style 0's first blue ref index */
+/*  %c, style 0's number of blue ref indices */
+/*  %c, num_used_styles */
 
 unsigned char PREP(round_blues) [] =
 {
@@ -577,18 +577,18 @@ TA_table_build_prep(FT_Byte** prep,
     buf_new_len += sizeof (PREP(test_exception_a));
 
   buf_new_len += sizeof (PREP(align_top_a))
-                 + (data->num_used_scripts > 6
-                      ? data->num_used_scripts + 3
-                      : data->num_used_scripts + 2)
+                 + (data->num_used_styles > 6
+                      ? data->num_used_styles + 3
+                      : data->num_used_styles + 2)
                  + sizeof (PREP(align_top_b));
   buf_new_len += sizeof (PREP(loop_cvt_a))
-                 + (data->num_used_scripts > 3
-                     ? 2 * data->num_used_scripts + 3
-                     : 2 * data->num_used_scripts + 2)
+                 + (data->num_used_styles > 3
+                     ? 2 * data->num_used_styles + 3
+                     : 2 * data->num_used_styles + 2)
                  + sizeof (PREP(loop_cvt_b))
-                 + (data->num_used_scripts > 3
-                     ? 2 * data->num_used_scripts + 3
-                     : 2 * data->num_used_scripts + 2)
+                 + (data->num_used_styles > 3
+                     ? 2 * data->num_used_styles + 3
+                     : 2 * data->num_used_styles + 2)
                  + sizeof (PREP(loop_cvt_c));
 
   if (font->x_height_snapping_exceptions)
@@ -597,19 +597,19 @@ TA_table_build_prep(FT_Byte** prep,
   buf_new_len += sizeof (PREP(store_vwidth_data_a))
                  + 1
                  + sizeof (PREP(store_vwidth_data_b))
-                 + (data->num_used_scripts > 6
-                      ? 2 * (data->num_used_scripts + 1) + 2
-                      : 2 * (data->num_used_scripts + 1) + 1)
+                 + (data->num_used_styles > 6
+                      ? 2 * (data->num_used_styles + 1) + 2
+                      : 2 * (data->num_used_styles + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_c))
                  + 1
                  + sizeof (PREP(store_vwidth_data_d))
-                 + (data->num_used_scripts > 6
-                      ? 2 * (data->num_used_scripts + 1) + 2
-                      : 2 * (data->num_used_scripts + 1) + 1)
+                 + (data->num_used_styles > 6
+                      ? 2 * (data->num_used_styles + 1) + 2
+                      : 2 * (data->num_used_styles + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_e));
-  buf_new_len += (data->num_used_scripts > 3
-                     ? 2 * data->num_used_scripts + 3
-                     : 2 * data->num_used_scripts + 2)
+  buf_new_len += (data->num_used_styles > 3
+                     ? 2 * data->num_used_styles + 3
+                     : 2 * data->num_used_styles + 2)
                  + sizeof (PREP(round_blues));
   buf_new_len += sizeof (PREP(set_stem_width_handling_a))
                  + 1
@@ -654,38 +654,38 @@ TA_table_build_prep(FT_Byte** prep,
     COPY_PREP(test_exception_a);
 
   COPY_PREP(align_top_a);
-  if (data->num_used_scripts > 6)
+  if (data->num_used_styles > 6)
   {
     BCI(NPUSHB);
-    BCI(data->num_used_scripts + 2);
+    BCI(data->num_used_styles + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + data->num_used_scripts + 2);
+    BCI(PUSHB_1 - 1 + data->num_used_styles + 2);
   /* XXX: make this work for offsets > 255 */
-  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
-    if (data->script_ids[i] == 0xFFFFU)
+    if (data->style_ids[i] == 0xFFFFU)
       continue;
 
     *(bufp++) = CVT_X_HEIGHT_BLUE_OFFSET(i) >= 0xFFFFU
                   ? 0
                   : (unsigned char)CVT_X_HEIGHT_BLUE_OFFSET(i);
   }
-  *(bufp++) = data->num_used_scripts;
+  *(bufp++) = data->num_used_styles;
   COPY_PREP(align_top_b);
 
   COPY_PREP(loop_cvt_a);
-  if (data->num_used_scripts > 3)
+  if (data->num_used_styles > 3)
   {
     BCI(NPUSHB);
-    BCI(2 * data->num_used_scripts + 2);
+    BCI(2 * data->num_used_styles + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + 2 * data->num_used_scripts + 2);
+    BCI(PUSHB_1 - 1 + 2 * data->num_used_styles + 2);
   /* XXX: make this work for offsets > 255 */
-  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
-    if (data->script_ids[i] == 0xFFFFU)
+    if (data->style_ids[i] == 0xFFFFU)
       continue;
 
     /* don't loop over artificial blue zones */
@@ -694,26 +694,26 @@ TA_table_build_prep(FT_Byte** prep,
                                 + CVT_VERT_WIDTHS_SIZE(i)
                                 + CVT_BLUES_SIZE(i) - 2);
   }
-  *(bufp++) = data->num_used_scripts;
+  *(bufp++) = data->num_used_styles;
   COPY_PREP(loop_cvt_b);
-  if (data->num_used_scripts > 3)
+  if (data->num_used_styles > 3)
   {
     BCI(NPUSHB);
-    BCI(2 * data->num_used_scripts + 2);
+    BCI(2 * data->num_used_styles + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + 2 * data->num_used_scripts + 2);
+    BCI(PUSHB_1 - 1 + 2 * data->num_used_styles + 2);
   /* XXX: make this work for offsets > 255 */
-  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
-    if (data->script_ids[i] == 0xFFFFU)
+    if (data->style_ids[i] == 0xFFFFU)
       continue;
 
     /* don't loop over artificial blue zones */
     *(bufp++) = (unsigned char)CVT_BLUE_SHOOTS_OFFSET(i);
     *(bufp++) = (unsigned char)(CVT_BLUES_SIZE(i) - 2);
   }
-  *(bufp++) = data->num_used_scripts;
+  *(bufp++) = data->num_used_styles;
   COPY_PREP(loop_cvt_c);
 
   if (font->x_height_snapping_exceptions)
@@ -722,62 +722,62 @@ TA_table_build_prep(FT_Byte** prep,
   COPY_PREP(store_vwidth_data_a);
   *(bufp++) = (unsigned char)CVT_VWIDTH_OFFSET_DATA(0);
   COPY_PREP(store_vwidth_data_b);
-  if (data->num_used_scripts > 6)
+  if (data->num_used_styles > 6)
   {
     BCI(NPUSHW);
-    BCI(data->num_used_scripts + 2);
+    BCI(data->num_used_styles + 2);
   }
   else
-    BCI(PUSHW_1 - 1 + data->num_used_scripts + 2);
-  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+    BCI(PUSHW_1 - 1 + data->num_used_styles + 2);
+  for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
-    if (data->script_ids[i] == 0xFFFFU)
+    if (data->style_ids[i] == 0xFFFFU)
       continue;
 
     *(bufp++) = HIGH(CVT_VERT_WIDTHS_OFFSET(i) * 64);
     *(bufp++) = LOW(CVT_VERT_WIDTHS_OFFSET(i) * 64);
   }
-  *(bufp++) = HIGH(data->num_used_scripts);
-  *(bufp++) = LOW(data->num_used_scripts);
+  *(bufp++) = HIGH(data->num_used_styles);
+  *(bufp++) = LOW(data->num_used_styles);
   COPY_PREP(store_vwidth_data_c);
   *(bufp++) = (unsigned char)CVT_VWIDTH_SIZE_DATA(0);
   COPY_PREP(store_vwidth_data_d);
-  if (data->num_used_scripts > 6)
+  if (data->num_used_styles > 6)
   {
     BCI(NPUSHW);
-    BCI(data->num_used_scripts + 2);
+    BCI(data->num_used_styles + 2);
   }
   else
-    BCI(PUSHW_1 - 1 + data->num_used_scripts + 2);
-  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+    BCI(PUSHW_1 - 1 + data->num_used_styles + 2);
+  for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
-    if (data->script_ids[i] == 0xFFFFU)
+    if (data->style_ids[i] == 0xFFFFU)
       continue;
 
     *(bufp++) = HIGH(CVT_VERT_WIDTHS_SIZE(i) * 64);
     *(bufp++) = LOW(CVT_VERT_WIDTHS_SIZE(i) * 64);
   }
-  *(bufp++) = HIGH(data->num_used_scripts);
-  *(bufp++) = LOW(data->num_used_scripts);
+  *(bufp++) = HIGH(data->num_used_styles);
+  *(bufp++) = LOW(data->num_used_styles);
   COPY_PREP(store_vwidth_data_e);
 
-  if (data->num_used_scripts > 3)
+  if (data->num_used_styles > 3)
   {
     BCI(NPUSHB);
-    BCI(2 * data->num_used_scripts + 2);
+    BCI(2 * data->num_used_styles + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + 2 * data->num_used_scripts + 2);
+    BCI(PUSHB_1 - 1 + 2 * data->num_used_styles + 2);
   /* XXX: make this work for offsets > 255 */
-  for (i = TA_SCRIPT_MAX - 1; i >= 0; i--)
+  for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
-    if (data->script_ids[i] == 0xFFFFU)
+    if (data->style_ids[i] == 0xFFFFU)
       continue;
 
     *(bufp++) = (unsigned char)CVT_BLUE_REFS_OFFSET(i);
     *(bufp++) = (unsigned char)CVT_BLUES_SIZE(i);
   }
-  *(bufp++) = data->num_used_scripts;
+  *(bufp++) = data->num_used_styles;
   COPY_PREP(round_blues);
 
   COPY_PREP(set_stem_width_handling_a);

@@ -26,7 +26,7 @@
 
 
 /* the definition of outline glyph hints; these are shared */
-/* by all script analysis routines (until now) */
+/* by all writing system analysis routines (until now) */
 
 typedef enum TA_Dimension_
 {
@@ -421,8 +421,8 @@ typedef struct TA_GlyphHintsRec_
   TA_AxisHintsRec axis[TA_DIMENSION_MAX];
 
   FT_UInt32 scaler_flags; /* copy of scaler flags */
-  FT_UInt32 other_flags; /* free for script-specific implementations */
-  TA_ScriptMetrics metrics;
+  FT_UInt32 other_flags; /* free for style-specific implementations */
+  TA_StyleMetrics metrics;
 
   FT_Pos xmin_delta; /* used for warping */
   FT_Pos xmax_delta;
@@ -502,7 +502,7 @@ ta_glyph_hints_init(TA_GlyphHints hints);
 
 void
 ta_glyph_hints_rescale(TA_GlyphHints hints,
-                       TA_ScriptMetrics metrics);
+                       TA_StyleMetrics metrics);
 
 FT_Error
 ta_glyph_hints_reload(TA_GlyphHints hints,

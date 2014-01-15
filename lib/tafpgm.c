@@ -157,9 +157,9 @@
  *
  *   This function gets used in the `prep' table.
  *
- * in: blue_idx (CVT index for the script's top of small letters blue zone)
+ * in: blue_idx (CVT index for the style's top of small letters blue zone)
  *
- * sal: sal_i (CVT index of the script's scaling value;
+ * sal: sal_i (CVT index of the style's scaling value;
  *             gets incremented by 1 after execution)
  */
 
@@ -690,7 +690,7 @@ unsigned char FPGM(bci_strong_stem_width_a) [] =
 
 };
 
-/*  %c, number of used scripts */
+/*  %c, number of used styles */
 
 unsigned char FPGM(bci_strong_stem_width_b) [] =
 {
@@ -899,7 +899,7 @@ unsigned char FPGM(bci_cvt_rescale) [] =
  * in: num_cvt
  *     cvt_start_idx
  *
- * sal: sal_i (CVT index of the script's scaling value;
+ * sal: sal_i (CVT index of the style's scaling value;
  *             gets incremented by 1 after execution)
  *      sal_scale
  *
@@ -947,7 +947,7 @@ unsigned char FPGM(bci_cvt_rescale_range) [] =
  *
  * in: value
  *
- * sal: sal_i (CVT index of the script's vwidth data;
+ * sal: sal_i (CVT index of the style's vwidth data;
  *             gets incremented by 1 after execution)
  */
 
@@ -1589,17 +1589,17 @@ unsigned char FPGM(bci_create_segment) [] =
  *   parallel:
  *
  *     CVT(data_offset):
- *       the current script's scaling value (stored in `sal_scale')
+ *       the current style's scaling value (stored in `sal_scale')
  *
- *     data_offset + num_used_scripts:
- *       offset to the current script's vwidth index array (this value gets
+ *     data_offset + num_used_styles:
+ *       offset to the current style's vwidth index array (this value gets
  *       stored in `sal_vwidth_data_offset')
  *
- *     data_offset + 2*num_used_scripts:
- *       offset to the current script's vwidth size
+ *     data_offset + 2*num_used_styles:
+ *       offset to the current style's vwidth size
  *
  *   This addressing scheme ensures that (a) we only need a single argument,
- *   and (b) this argument supports up to (256-cvtl_max_runtime) scripts,
+ *   and (b) this argument supports up to (256-cvtl_max_runtime) styles,
  *   which should be sufficient for a long time.
  *
  * in: num_packed_segments
@@ -1677,13 +1677,13 @@ unsigned char FPGM(bci_create_segments_a) [] =
 
 };
 
-/*  %c, number of used scripts */
+/*  %c, number of used styles */
 
 unsigned char FPGM(bci_create_segments_b) [] =
 {
 
     ADD,
-    WS, /* sal_vwidth_data_offset = data_offset + num_used_scripts */
+    WS, /* sal_vwidth_data_offset = data_offset + num_used_styles */
 
     DUP,
     ADD,
@@ -1948,13 +1948,13 @@ unsigned char FPGM(bci_create_segments_composite_a) [] =
 
 };
 
-/*  %c, number of used scripts */
+/*  %c, number of used styles */
 
 unsigned char FPGM(bci_create_segments_composite_b) [] =
 {
 
     ADD,
-    WS, /* sal_vwidth_data_offset = data_offset + num_used_scripts */
+    WS, /* sal_vwidth_data_offset = data_offset + num_used_styles */
 
     DUP,
     ADD,
@@ -5672,7 +5672,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_smooth_stem_width);
   COPY_FPGM(bci_get_best_width);
   COPY_FPGM(bci_strong_stem_width_a);
-  *(bufp++) = (unsigned char)data->num_used_scripts;
+  *(bufp++) = (unsigned char)data->num_used_styles;
   COPY_FPGM(bci_strong_stem_width_b);
   COPY_FPGM(bci_loop_do);
   COPY_FPGM(bci_loop);
@@ -5689,7 +5689,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
 
   COPY_FPGM(bci_create_segment);
   COPY_FPGM(bci_create_segments_a);
-  *(bufp++) = (unsigned char)data->num_used_scripts;
+  *(bufp++) = (unsigned char)data->num_used_styles;
   COPY_FPGM(bci_create_segments_b);
 
   COPY_FPGM(bci_create_segments_0);
@@ -5704,7 +5704,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_create_segments_9);
 
   COPY_FPGM(bci_create_segments_composite_a);
-  *(bufp++) = (unsigned char)data->num_used_scripts;
+  *(bufp++) = (unsigned char)data->num_used_styles;
   COPY_FPGM(bci_create_segments_composite_b);
 
   COPY_FPGM(bci_create_segments_composite_0);

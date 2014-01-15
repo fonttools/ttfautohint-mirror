@@ -1208,7 +1208,7 @@ TA_sfnt_create_glyf_data(SFNT* sfnt,
 
 
 /* While the auto-hinter is glyph oriented (this is, using `glyf' data), */
-/* it relies on the `cmap' table to get script coverage data. */
+/* it relies on the `cmap' table to get style coverage data. */
 /* In TTCs, subfonts normally share the same `glyf' table */
 /* but use different `cmap's.  Covering the most common situation, */
 /* namely a single `glyf' table and multiple `cmap's, */
@@ -1227,13 +1227,13 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
   FT_Face face = sfnt->face;
   TA_FaceGlobals curr_globals;
 
-  TA_Script saved_fallback_script = font->fallback_script;
+  TA_Style saved_fallback_style = font->fallback_style;
 
 
-  /* using TA_SCRIPT_UNASSIGNED as the fallback script ensures */
+  /* using TA_STYLE_UNASSIGNED as the fallback style ensures */
   /* that uncovered glyphs stay as-is */
-  /* (we handle the fallback script later on) */
-  font->fallback_script = TA_SCRIPT_UNASSIGNED;
+  /* (we handle the fallback style later on) */
+  font->fallback_style = TA_STYLE_UNASSIGNED;
 
   /* trigger computation of coverage */
   error = ta_loader_init(font);
@@ -1244,7 +1244,7 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
     goto Exit;
   ta_loader_done(font);
 
-  font->fallback_script = saved_fallback_script;
+  font->fallback_style = saved_fallback_style;
   curr_globals = (TA_FaceGlobals)face->autohint.data;
 
   if (!data->master_globals)
@@ -1260,20 +1260,20 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
     TA_FaceGlobals master_globals = data->master_globals;
     FT_Long count = master_globals->glyph_count;
 
-    FT_Byte* master = master_globals->glyph_scripts;
-    FT_Byte* curr = curr_globals->glyph_scripts;
+    FT_Byte* master = master_globals->glyph_styles;
+    FT_Byte* curr = curr_globals->glyph_styles;
 
     FT_Byte* limit = master + count;
 
 
     /* we simply copy the data, */
     /* assuming that a given glyph always has the same properties -- */
-    /* as soon as we make the script selection more fine-grained, */
+    /* as soon as we make the style selection more fine-grained, */
     /* it is possible that this assumption doesn't hold: */
     /* for example, glyph `A' can be used for both Cyrillic and Latin */
     while (master < limit)
     {
-      if ((*curr & ~TA_DIGIT) != TA_SCRIPT_UNASSIGNED)
+      if ((*curr & ~TA_DIGIT) != TA_STYLE_UNASSIGNED)
         *master = *curr;
 
       master++;
@@ -1299,19 +1299,19 @@ TA_sfnt_adjust_master_coverage(SFNT* sfnt,
   TA_FaceGlobals curr_globals = (TA_FaceGlobals)face->autohint.data;
 
 
-  /* use fallback script for uncovered glyphs */
+  /* use fallback style for uncovered glyphs */
   if (master_globals == curr_globals)
   {
     FT_Long nn;
-    FT_Byte* gscripts = master_globals->glyph_scripts;
+    FT_Byte* gstyles = master_globals->glyph_styles;
 
 
     for (nn = 0; nn < master_globals->glyph_count; nn++)
     {
-      if ((gscripts[nn] & ~TA_DIGIT) == TA_SCRIPT_UNASSIGNED)
+      if ((gstyles[nn] & ~TA_DIGIT) == TA_STYLE_UNASSIGNED)
       {
-        gscripts[nn] &= ~TA_SCRIPT_UNASSIGNED;
-        gscripts[nn] |= master_globals->font->fallback_script;
+        gstyles[nn] &= ~TA_STYLE_UNASSIGNED;
+        gstyles[nn] |= master_globals->font->fallback_style;
       }
     }
     return 1; /* master coverage adjusted */
@@ -1339,8 +1339,8 @@ TA_sfnt_copy_master_coverage(SFNT* sfnt,
   if (master_globals != curr_globals)
   {
     FT_Long count = master_globals->glyph_count;
-    FT_Byte* master = master_globals->glyph_scripts;
-    FT_Byte* curr = curr_globals->glyph_scripts;
+    FT_Byte* master = master_globals->glyph_styles;
+    FT_Byte* curr = curr_globals->glyph_styles;
 
 
     memcpy(curr, master, count);

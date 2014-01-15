@@ -454,7 +454,7 @@ ta_glyph_hints_done(TA_GlyphHints hints)
 
 void
 ta_glyph_hints_rescale(TA_GlyphHints hints,
-                       TA_ScriptMetrics metrics)
+                       TA_StyleMetrics metrics)
 {
   hints->metrics = metrics;
   hints->scaler_flags = metrics->scaler.flags;

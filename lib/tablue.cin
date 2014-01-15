@@ -25,7 +25,7 @@ const char ta_blue_strings[] =
 };
 
 
-/* stringsets are specific to scripts */
+/* stringsets are specific to styles */
 const TA_Blue_StringRec ta_blue_stringsets[] =
 {
 @TA_BLUE_STRINGSETS_ARRAY@

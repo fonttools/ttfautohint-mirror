@@ -35,7 +35,7 @@ typedef struct TA_LoaderRec_
   /* current glyph data */
   TA_GlyphLoader gloader;
   TA_GlyphHintsRec hints;
-  TA_ScriptMetrics metrics;
+  TA_StyleMetrics metrics;
   FT_Bool transformed;
   FT_Matrix trans_matrix;
   FT_Vector trans_delta;

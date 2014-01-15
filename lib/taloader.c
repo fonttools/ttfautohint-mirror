@@ -120,7 +120,7 @@ ta_loader_load_g(TA_Loader loader,
   FT_Error error;
   FT_Face face = loader->face;
   TA_GlyphLoader gloader = loader->gloader;
-  TA_ScriptMetrics metrics = loader->metrics;
+  TA_StyleMetrics metrics = loader->metrics;
   TA_GlyphHints hints = &loader->hints;
   FT_GlyphSlot slot = face->glyph;
 #if 0
@@ -200,10 +200,10 @@ ta_loader_load_g(TA_Loader loader,
                                 [metrics->script_class->writing_system];
 
 
-      if (writing_system_class->script_hints_apply)
-        writing_system_class->script_hints_apply(hints,
-                                                 &gloader->current.outline,
-                                                 metrics);
+      if (writing_system_class->style_hints_apply)
+        writing_system_class->style_hints_apply(hints,
+                                                &gloader->current.outline,
+                                                metrics);
     }
 
     /* we now need to adjust the metrics according to the change in */
@@ -530,19 +530,19 @@ ta_loader_load_glyph(FONT* font,
   if (load_flags & (1 << 29))
     scaler.flags |= TA_SCALER_FLAG_NO_HORIZONTAL;
 
-  /* note that the fallback script can't be changed anymore */
+  /* note that the fallback style can't be changed anymore */
   /* after the first call of `ta_loader_load_glyph' */
   error = ta_loader_reset(font, face);
   if (!error)
   {
-    TA_ScriptMetrics metrics;
-    FT_UInt options = TA_SCRIPT_NONE;
+    TA_StyleMetrics metrics;
+    FT_UInt options = TA_STYLE_NONE;
 
 
 #ifdef FT_OPTION_AUTOFIT2
     /* XXX: undocumented hook to activate the latin2 hinter */
     if (load_flags & (1UL << 20))
-      options = TA_SCRIPT_LTN2;
+      options = TA_STYLE_LTN2;
 #endif
 
     error = ta_face_globals_get_metrics(loader->globals, gindex,
@@ -556,8 +556,8 @@ ta_loader_load_glyph(FONT* font,
 
       loader->metrics = metrics;
 
-      if (writing_system_class->script_metrics_scale)
-        writing_system_class->script_metrics_scale(metrics, &scaler);
+      if (writing_system_class->style_metrics_scale)
+        writing_system_class->style_metrics_scale(metrics, &scaler);
       else
         metrics->scaler = scaler;
 
@@ -565,10 +565,10 @@ ta_loader_load_glyph(FONT* font,
                     | FT_LOAD_IGNORE_TRANSFORM;
       load_flags &= ~FT_LOAD_RENDER;
 
-      if (writing_system_class->script_hints_init)
+      if (writing_system_class->style_hints_init)
       {
-        error = writing_system_class->script_hints_init(&loader->hints,
-                                                        metrics);
+        error = writing_system_class->style_hints_init(&loader->hints,
+                                                       metrics);
         if (error)
           goto Exit;
       }
