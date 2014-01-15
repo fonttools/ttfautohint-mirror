@@ -398,8 +398,8 @@ No_check:
       char *s;
 
 
-      DUMPVAL("default-script",
-              font->default_script);
+      DUMPSTR("default-script",
+              script_names[font->default_script]);
       DUMPVAL("dw-cleartype-strong-stem-width",
               font->dw_cleartype_strong_stem_width);
       DUMPSTR("fallback-script",
