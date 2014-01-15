@@ -55,48 +55,48 @@ TA_ScriptClass const ta_script_classes[] =
 
 #ifdef TA_DEBUG
 
-#undef SCRIPT
-#define SCRIPT(s, S, d) #s,
+#undef STYLE
+#define STYLE(s, S, d) #s,
 
-const char* ta_script_names[] =
+const char* ta_style_names[] =
 {
 
-#include <ttfautohint-scripts.h>
+#include <tastyles.h>
 
 };
 
 #endif /* TA_DEBUG */
 
 
-/* Compute the script index of each glyph within a given face. */
+/* Compute the style index of each glyph within a given face. */
 
 static FT_Error
-ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
+ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 {
   FT_Error error;
   FT_Face face = globals->face;
   FT_CharMap old_charmap = face->charmap;
-  FT_Byte* gscripts = globals->glyph_scripts;
+  FT_Byte* gstyles = globals->glyph_styles;
   FT_UInt ss;
   FT_UInt i;
 
 
-  /* the value TA_SCRIPT_UNASSIGNED means `uncovered glyph' */
-  memset(globals->glyph_scripts, TA_SCRIPT_UNASSIGNED, globals->glyph_count);
+  /* the value TA_STYLE_UNASSIGNED means `uncovered glyph' */
+  memset(globals->glyph_styles, TA_STYLE_UNASSIGNED, globals->glyph_count);
 
   error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
   if (error)
   {
-    /* ignore this error; we simply use the fallback script */
+    /* ignore this error; we simply use the fallback style */
     /* XXX: Shouldn't we rather disable hinting? */
     error = FT_Err_Ok;
     goto Exit;
   }
 
-  /* scan each script in a Unicode charmap */
-  for (ss = 0; ta_script_classes[ss]; ss++)
+  /* scan each style in a Unicode charmap */
+  for (ss = 0; ta_style_classes[ss]; ss++)
   {
-    TA_ScriptClass script_class = ta_script_classes[ss];
+    TA_StyleClass style_class = ta_style_classes[ss];
     TA_Script_UniRange range;
 
 
@@ -104,7 +104,7 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
       continue;
 
     /* scan all Unicode points in the range and */
-    /* set the corresponding glyph script index */
+    /* set the corresponding glyph style index */
     for (range = script_class->script_uni_ranges; range->first != 0; range++)
     {
       FT_ULong charcode = range->first;
@@ -115,8 +115,8 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
 
       if (gindex != 0
           && gindex < (FT_ULong)globals->glyph_count
-          && gscripts[gindex] == TA_SCRIPT_UNASSIGNED)
-        gscripts[gindex] = (FT_Byte)ss;
+          && gstyles[gindex] == TA_STYLE_UNASSIGNED)
+        gstyles[gindex] = (FT_Byte)ss;
 
       for (;;)
       {
@@ -126,8 +126,8 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
           break;
 
         if (gindex < (FT_ULong)globals->glyph_count
-            && gscripts[gindex] == TA_SCRIPT_UNASSIGNED)
-          gscripts[gindex] = (FT_Byte)ss;
+            && gstyles[gindex] == TA_STYLE_UNASSIGNED)
+          gstyles[gindex] = (FT_Byte)ss;
       }
     }
   }
@@ -140,23 +140,23 @@ ta_face_globals_compute_script_coverage(TA_FaceGlobals globals)
 
     if (gindex != 0
         && gindex < (FT_ULong)globals->glyph_count)
-      gscripts[gindex] |= TA_DIGIT;
+      gstyles[gindex] |= TA_DIGIT;
   }
 
 Exit:
-  /* by default, all uncovered glyphs are set to the fallback script */
+  /* by default, all uncovered glyphs are set to the fallback style */
   /* XXX: Shouldn't we disable hinting or do something similar? */
-  if (globals->font->fallback_script != TA_SCRIPT_UNASSIGNED)
+  if (globals->font->fallback_style != TA_STYLE_UNASSIGNED)
   {
     FT_Long nn;
 
 
     for (nn = 0; nn < globals->glyph_count; nn++)
     {
-      if ((gscripts[nn] & ~TA_DIGIT) == TA_SCRIPT_UNASSIGNED)
+      if ((gstyles[nn] & ~TA_DIGIT) == TA_STYLE_UNASSIGNED)
       {
-        gscripts[nn] &= ~TA_SCRIPT_UNASSIGNED;
-        gscripts[nn] |= globals->font->fallback_script;
+        gstyles[nn] &= ~TA_STYLE_UNASSIGNED;
+        gstyles[nn] |= globals->font->fallback_style;
       }
     }
   }
@@ -185,10 +185,10 @@ ta_face_globals_new(FT_Face face,
 
   globals->face = face;
   globals->glyph_count = face->num_glyphs;
-  globals->glyph_scripts = (FT_Byte*)(globals + 1);
+  globals->glyph_styles = (FT_Byte*)(globals + 1);
   globals->font = font;
 
-  error = ta_face_globals_compute_script_coverage(globals);
+  error = ta_face_globals_compute_style_coverage(globals);
   if (error)
   {
     ta_face_globals_free(globals);
@@ -211,18 +211,18 @@ ta_face_globals_free(TA_FaceGlobals globals)
     FT_UInt nn;
 
 
-    for (nn = 0; nn < TA_SCRIPT_MAX; nn++)
+    for (nn = 0; nn < TA_STYLE_MAX; nn++)
     {
       if (globals->metrics[nn])
       {
-        TA_ScriptClass script_class =
-          ta_script_classes[nn];
+        TA_StyleClass style_class =
+          ta_style_classes[nn];
         TA_WritingSystemClass writing_system_class =
-          ta_writing_system_classes[script_class->writing_system];
+          ta_writing_system_classes[style_class->writing_system];
 
 
-        if (writing_system_class->script_metrics_done)
-          writing_system_class->script_metrics_done(globals->metrics[nn]);
+        if (writing_system_class->style_metrics_done)
+          writing_system_class->style_metrics_done(globals->metrics[nn]);
 
         free(globals->metrics[nn]);
         globals->metrics[nn] = NULL;
@@ -230,7 +230,7 @@ ta_face_globals_free(TA_FaceGlobals globals)
     }
 
     globals->glyph_count = 0;
-    globals->glyph_scripts = NULL; /* no need to free this one! */
+    globals->glyph_styles = NULL; /* no need to free this one! */
     globals->face = NULL;
 
     free(globals);
@@ -243,12 +243,12 @@ FT_Error
 ta_face_globals_get_metrics(TA_FaceGlobals globals,
                             FT_UInt gindex,
                             FT_UInt options,
-                            TA_ScriptMetrics *ametrics)
+                            TA_StyleMetrics *ametrics)
 {
-  TA_ScriptMetrics metrics = NULL;
-  TA_Script script = (TA_Script)(options & 15);
-  TA_ScriptClass script_class;
+  TA_StyleMetrics metrics = NULL;
+  TA_Style style = (TA_Style)(options & 15);
   TA_WritingSystemClass writing_system_class;
+  TA_StyleClass style_class;
   FT_Error error = FT_Err_Ok;
 
 
@@ -258,40 +258,40 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
     goto Exit;
   }
 
-  /* if we have a forced script (via `options'), use it, */
-  /* otherwise look into `glyph_scripts' array */
-  if (script == TA_SCRIPT_NONE || script + 1 >= TA_SCRIPT_MAX)
-    script = (TA_Script)(globals->glyph_scripts[gindex]
-                         & TA_SCRIPT_UNASSIGNED);
+  /* if we have a forced style (via `options'), use it, */
+  /* otherwise look into `glyph_styles' array */
+  if (style == TA_STYLE_NONE || style + 1 >= TA_STYLE_MAX)
+    style = (TA_Style)(globals->glyph_styles[gindex]
+                       & TA_STYLE_UNASSIGNED);
 
-  script_class =
-    ta_script_classes[script];
+  style_class =
+    ta_style_classes[style];
   writing_system_class =
-    ta_writing_system_classes[script_class->writing_system];
+    ta_writing_system_classes[style_class->writing_system];
 
-  metrics = globals->metrics[script];
+  metrics = globals->metrics[style];
   if (metrics == NULL)
   {
     /* create the global metrics object if necessary */
-    metrics = (TA_ScriptMetrics)
-                calloc(1, writing_system_class->script_metrics_size);
+    metrics = (TA_StyleMetrics)
+                calloc(1, writing_system_class->style_metrics_size);
     if (!metrics)
     {
       error = FT_Err_Out_Of_Memory;
       goto Exit;
     }
 
-    metrics->script_class = script_class;
+    metrics->style_class = style_class;
     metrics->globals = globals;
 
-    if (writing_system_class->script_metrics_init)
+    if (writing_system_class->style_metrics_init)
     {
-      error = writing_system_class->script_metrics_init(metrics,
-                                                        globals->face);
+      error = writing_system_class->style_metrics_init(metrics,
+                                                       globals->face);
       if (error)
       {
-        if (writing_system_class->script_metrics_done)
-          writing_system_class->script_metrics_done(metrics);
+        if (writing_system_class->style_metrics_done)
+          writing_system_class->style_metrics_done(metrics);
 
         free(metrics);
         metrics = NULL;
@@ -299,7 +299,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
       }
     }
 
-    globals->metrics[script] = metrics;
+    globals->metrics[style] = metrics;
   }
 
 Exit:
@@ -314,7 +314,7 @@ ta_face_globals_is_digit(TA_FaceGlobals globals,
                          FT_UInt gindex)
 {
   if (gindex < (FT_ULong)globals->glyph_count)
-    return (FT_Bool)(globals->glyph_scripts[gindex] & TA_DIGIT);
+    return (FT_Bool)(globals->glyph_styles[gindex] & TA_DIGIT);
 
   return (FT_Bool)0;
 }

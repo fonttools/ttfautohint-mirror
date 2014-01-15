@@ -93,7 +93,7 @@ typedef struct TA_LatinAxisRec_
 
 typedef struct TA_LatinMetricsRec_
 {
-  TA_ScriptMetricsRec root;
+  TA_StyleMetricsRec root;
   FT_UInt units_per_em;
   TA_LatinAxisRec axis[TA_DIMENSION_MAX];
 } TA_LatinMetricsRec, *TA_LatinMetrics;

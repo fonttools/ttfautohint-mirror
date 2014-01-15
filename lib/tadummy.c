@@ -23,7 +23,7 @@
 
 static FT_Error
 ta_dummy_hints_init(TA_GlyphHints hints,
-                    TA_ScriptMetrics metrics)
+                    TA_StyleMetrics metrics)
 {
   ta_glyph_hints_rescale(hints, metrics);
 
@@ -55,20 +55,20 @@ const TA_WritingSystemClassRec ta_dummy_writing_system_class =
 {
   TA_WRITING_SYSTEM_DUMMY,
 
-  sizeof (TA_ScriptMetricsRec),
+  sizeof (TA_StyleMetricsRec),
 
-  (TA_Script_InitMetricsFunc)NULL,
-  (TA_Script_ScaleMetricsFunc)NULL,
-  (TA_Script_DoneMetricsFunc)NULL,
+  (TA_WritingSystem_InitMetricsFunc)NULL,
+  (TA_WritingSystem_ScaleMetricsFunc)NULL,
+  (TA_WritingSystem_DoneMetricsFunc)NULL,
 
-  (TA_Script_InitHintsFunc)ta_dummy_hints_init,
-  (TA_Script_ApplyHintsFunc)ta_dummy_hints_apply
+  (TA_WritingSystem_InitHintsFunc)ta_dummy_hints_init,
+  (TA_WritingSystem_ApplyHintsFunc)ta_dummy_hints_apply
 };
 
 
-const TA_ScriptClassRec ta_none_script_class =
+const TA_StyleClassRec ta_none_style_class =
 {
-  TA_SCRIPT_NONE,
+  TA_STYLE_NONE,
   (TA_Blue_Stringset)0,
   TA_WRITING_SYSTEM_DUMMY,
 

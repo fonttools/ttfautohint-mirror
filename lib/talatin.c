@@ -47,10 +47,10 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
 
 
   TA_LOG_GLOBAL(("\n"
-                 "latin standard widths computation (script `%s')\n"
+                 "latin standard widths computation (style `%s')\n"
                  "=================================================\n"
                  "\n",
-                 ta_script_names[metrics->root.script_class->script]));
+                 ta_style_names[metrics->root.style_class->style]));
 
   ta_glyph_hints_init(hints);
 
@@ -91,7 +91,7 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     scaler->render_mode = FT_RENDER_MODE_NORMAL;
     scaler->flags = 0;
 
-    ta_glyph_hints_rescale(hints, (TA_ScriptMetrics)dummy);
+    ta_glyph_hints_rescale(hints, (TA_StyleMetrics)dummy);
 
     error = ta_glyph_hints_reload(hints, &face->glyph->outline);
     if (error)
@@ -205,7 +205,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
 
 
   /* we walk over the blue character strings as specified in the  */
-  /* script's entry in the `af_blue_stringset' array */
+  /* style's entry in the `ta_blue_stringset' array */
 
   TA_LOG_GLOBAL(("latin blue zones computation\n"
                  "============================\n"
@@ -898,11 +898,11 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
 
           TA_LOG_GLOBAL((
             "ta_latin_metrics_scale_dim:"
-            " x height alignment (script `%s'):\n"
+            " x height alignment (style `%s'):\n"
             "                           "
             " vertical scaling changed from %.4f to %.4f (by %d%%)\n"
             "\n",
-            ta_script_names[metrics->root.script_class->script],
+            ta_style_names[metrics->root.style_class->style],
             axis->org_scale / 65536.0,
             scale / 65536.0,
             (fitted - scaled) * 100 / scaled));
@@ -925,9 +925,9 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
     metrics->root.scaler.y_delta = delta;
   }
 
-  TA_LOG_GLOBAL(("%s widths (script `%s')\n",
+  TA_LOG_GLOBAL(("%s widths (style `%s')\n",
                  dim == TA_DIMENSION_HORZ ? "horizontal" : "vertical",
-                 ta_script_names[metrics->root.script_class->script]));
+                 ta_style_names[metrics->root.style_class->style]));
 
   /* scale the widths */
   for (nn = 0; nn < axis->width_count; nn++)
@@ -952,15 +952,15 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
 
 #ifdef TA_DEBUG
   if (axis->extra_light)
-    TA_LOG_GLOBAL(("`%s' script is extra light (at current resolution)\n"
+    TA_LOG_GLOBAL(("`%s' style is extra light (at current resolution)\n"
                    "\n",
-                   ta_script_names[metrics->root.script_class->script]));
+                   ta_style_names[metrics->root.style_class->style]));
 #endif
 
   if (dim == TA_DIMENSION_VERT)
   {
-    TA_LOG_GLOBAL(("blue zones (script `%s')\n",
-                   ta_script_names[metrics->root.script_class->script]));
+    TA_LOG_GLOBAL(("blue zones (style `%s')\n",
+                   ta_style_names[metrics->root.style_class->style]));
 
     /* scale the blue zones */
     for (nn = 0; nn < axis->blue_count; nn++)
@@ -1861,7 +1861,7 @@ ta_latin_hints_init(TA_GlyphHints hints,
   FT_Face face = metrics->root.scaler.face;
 
 
-  ta_glyph_hints_rescale(hints, (TA_ScriptMetrics)metrics);
+  ta_glyph_hints_rescale(hints, (TA_StyleMetrics)metrics);
 
   /* correct x_scale and y_scale if needed, since they may have */
   /* been modified by `ta_latin_metrics_scale_dim' above */
@@ -2190,9 +2190,9 @@ ta_latin_hint_edges(TA_GlyphHints hints,
   FT_UInt num_actions = 0;
 #endif
 
-  TA_LOG(("latin %s edge hinting (script `%s')\n",
+  TA_LOG(("latin %s edge hinting (style `%s')\n",
           dim == TA_DIMENSION_VERT ? "horizontal" : "vertical",
-          ta_script_names[hints->metrics->script_class->script]));
+          ta_style_names[hints->metrics->style_class->style]));
 
   /* we begin by aligning all stems relative to the blue zone if needed -- */
   /* that's only for horizontal edges */
@@ -2822,12 +2822,12 @@ const TA_WritingSystemClassRec ta_latin_writing_system_class =
 
   sizeof (TA_LatinMetricsRec),
 
-  (TA_Script_InitMetricsFunc)ta_latin_metrics_init,
-  (TA_Script_ScaleMetricsFunc)ta_latin_metrics_scale,
-  (TA_Script_DoneMetricsFunc)NULL,
+  (TA_WritingSystem_InitMetricsFunc)ta_latin_metrics_init,
+  (TA_WritingSystem_ScaleMetricsFunc)ta_latin_metrics_scale,
+  (TA_WritingSystem_DoneMetricsFunc)NULL,
 
-  (TA_Script_InitHintsFunc)ta_latin_hints_init,
-  (TA_Script_ApplyHintsFunc)ta_latin_hints_apply
+  (TA_WritingSystem_InitHintsFunc)ta_latin_hints_init,
+  (TA_WritingSystem_ApplyHintsFunc)ta_latin_hints_apply
 };
 
 

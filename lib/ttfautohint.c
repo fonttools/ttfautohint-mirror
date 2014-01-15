@@ -299,16 +299,16 @@ TTF_autohint(const char* options,
     int i;
 
 
-    for (i = 0; i < TA_SCRIPT_MAX; i++)
+    for (i = 0; i < TA_STYLE_MAX; i++)
       if (!strcmp(script_names[i], fallback_script_string))
         break;
-    if (i == TA_SCRIPT_MAX)
+    if (i == TA_STYLE_MAX)
     {
       error = FT_Err_Invalid_Argument;
       goto Err1;
     }
 
-    fallback_script = i;
+    fallback_style = i;
   }
 
   if (x_height_snapping_exceptions_string)
@@ -338,7 +338,7 @@ TTF_autohint(const char* options,
   font->ignore_restrictions = ignore_restrictions;
   font->pre_hinting = pre_hinting;
   font->hint_composites = hint_composites;
-  font->fallback_script = fallback_script;
+  font->fallback_style = fallback_style;
   font->symbol = symbol;
 
 No_check:

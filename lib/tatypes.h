@@ -158,56 +158,56 @@ typedef struct TA_ScalerRec_
            && (a)->y_delta == (b)->y_delta)
 
 
-/* This is the main structure which combines writing systems and script */
+/* This is the main structure which combines writing systems and style */
 /* data (for a given face object, see below). */
 
 typedef struct TA_WritingSystemClassRec_ const* TA_WritingSystemClass;
-typedef struct TA_ScriptClassRec_ const* TA_ScriptClass;
+typedef struct TA_StyleClassRec_ const* TA_StyleClass;
 typedef struct TA_FaceGlobalsRec_* TA_FaceGlobals;
 
-typedef struct TA_ScriptMetricsRec_
+typedef struct TA_StyleMetricsRec_
 {
-  TA_ScriptClass script_class;
+  TA_StyleClass style_class;
   TA_ScalerRec scaler;
   FT_Bool digits_have_same_width;
 
   TA_FaceGlobals globals; /* to access properties */
-} TA_ScriptMetricsRec, *TA_ScriptMetrics;
+} TA_StyleMetricsRec, *TA_StyleMetrics;
 
 
 /* this function parses an FT_Face to compute global metrics */
-/* for a specific script */
+/* for a specific style */
 typedef FT_Error
-(*TA_Script_InitMetricsFunc)(TA_ScriptMetrics metrics,
-                             FT_Face face);
+(*TA_WritingSystem_InitMetricsFunc)(TA_StyleMetrics metrics,
+                                    FT_Face face);
 typedef void
-(*TA_Script_ScaleMetricsFunc)(TA_ScriptMetrics metrics,
-                              TA_Scaler scaler);
+(*TA_WritingSystem_ScaleMetricsFunc)(TA_StyleMetrics metrics,
+                                     TA_Scaler scaler);
 typedef void
-(*TA_Script_DoneMetricsFunc)(TA_ScriptMetrics metrics);
+(*TA_WritingSystem_DoneMetricsFunc)(TA_StyleMetrics metrics);
 typedef FT_Error
-(*TA_Script_InitHintsFunc)(TA_GlyphHints hints,
-                           TA_ScriptMetrics metrics);
+(*TA_WritingSystem_InitHintsFunc)(TA_GlyphHints hints,
+                                  TA_StyleMetrics metrics);
 typedef void
-(*TA_Script_ApplyHintsFunc)(TA_GlyphHints hints,
-                            FT_Outline* outline,
-                            TA_ScriptMetrics metrics);
+(*TA_WritingSystem_ApplyHintsFunc)(TA_GlyphHints hints,
+                                   FT_Outline* outline,
+                                   TA_StyleMetrics metrics);
 
 
 /*
- *  In FreeType, a writing system consists of multiple scripts which can
+ *  In FreeType, a writing system consists of multiple styles which can
  *  be handled similarly *in a typographical way*; the relationship is not
  *  based on history.  For example, both the Greek and the unrelated
- *  Armenian scripts share the same features like ascender, descender,
+ *  Armenian styles share the same features like ascender, descender,
  *  x-height, etc.  Essentially, a writing system is covered by a
  *  submodule of the auto-fitter; it contains
  *
  *  - a specific global analyzer which computes global metrics specific to
- *    the script (based on script-specific characters to identify ascender
+ *    the style (based on style-specific characters to identify ascender
  *    height, x-height, etc.),
  *
  *  - a specific glyph analyzer that computes segments and edges for each
- *    glyph covered by the script,
+ *    glyph covered by the style,
  *
  *  - a specific grid-fitting algorithm that distorts the scaled glyph
  *    outline according to the results of the glyph analyzer.
@@ -233,22 +233,22 @@ typedef struct TA_WritingSystemClassRec_
 {
   TA_WritingSystem writing_system;
 
-  FT_Offset script_metrics_size;
-  TA_Script_InitMetricsFunc script_metrics_init;
-  TA_Script_ScaleMetricsFunc script_metrics_scale;
-  TA_Script_DoneMetricsFunc script_metrics_done;
+  FT_Offset style_metrics_size;
+  TA_WritingSystem_InitMetricsFunc style_metrics_init;
+  TA_WritingSystem_ScaleMetricsFunc style_metrics_scale;
+  TA_WritingSystem_DoneMetricsFunc style_metrics_done;
 
-  TA_Script_InitHintsFunc script_hints_init;
-  TA_Script_ApplyHintsFunc script_hints_apply;
+  TA_WritingSystem_InitHintsFunc style_hints_init;
+  TA_WritingSystem_ApplyHintsFunc style_hints_apply;
 } TA_WritingSystemClassRec;
 
 
 /*
- *  Each script is associated with a set of Unicode ranges which gets used
- *  to test whether the font face supports the script.  It also references
+ *  Each style is associated with a set of Unicode ranges which gets used
+ *  to test whether the font face supports the style.  It also references
  *  the writing system it belongs to.
  *
- *  We use four-letter script tags from the OpenType specification.
+ *  We use four-letter style tags from the OpenType specification.
  */
 
 #undef SCRIPT

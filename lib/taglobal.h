@@ -25,10 +25,11 @@
 
 
 extern TA_WritingSystemClass const ta_writing_system_classes[];
-extern TA_ScriptClass const ta_script_classes[];
+extern TA_StyleClass const ta_style_classes[];
+
 
 #ifdef TA_DEBUG
-extern const char* ta_script_names[];
+extern const char* ta_style_names[];
 #endif
 
 
@@ -36,10 +37,10 @@ extern const char* ta_script_names[];
 /* (originally found in AF_ModuleRec, we use FONT instead) */
 /* and face globals (in TA_FaceGlobalsRec). */
 
-/* index of fallback script in `ta_script_classes' */
-#define TA_SCRIPT_FALLBACK TA_SCRIPT_NONE
+/* index of fallback style in `ta_style_classes' */
+#define TA_STYLE_FALLBACK TA_STYLE_NONE
 /* a bit mask indicating an uncovered glyph */
-#define TA_SCRIPT_UNASSIGNED 0x7F
+#define TA_STYLE_UNASSIGNED 0x7F
 /* if this flag is set, we have an ASCII digit */
 #define TA_DIGIT 0x80
 
@@ -48,25 +49,25 @@ extern const char* ta_script_names[];
 #define TA_PROP_INCREASE_X_HEIGHT_MAX 0
 
 
-/* note that glyph_scripts[] maps each glyph to an index into the */
-/* `ta_script_classes' array. */
+/* note that glyph_styles[] maps each glyph to an index into the */
+/* `ta_style_classes' array. */
 typedef struct TA_FaceGlobalsRec_
 {
   FT_Face face;
   FT_Long glyph_count; /* same as face->num_glyphs */
-  FT_Byte* glyph_scripts;
+  FT_Byte* glyph_styles;
 
   /* per-face auto-hinter properties */
   FT_UInt increase_x_height;
 
-  TA_ScriptMetrics metrics[TA_SCRIPT_MAX];
+  TA_StyleMetrics metrics[TA_STYLE_MAX];
 
   FONT* font; /* to access global properties */
 } TA_FaceGlobalsRec;
 
 
 /* this models the global hints data for a given face, */
-/* decomposed into script-specific items */
+/* decomposed into style-specific items */
 
 FT_Error
 ta_face_globals_new(FT_Face face,
@@ -77,7 +78,7 @@ FT_Error
 ta_face_globals_get_metrics(TA_FaceGlobals globals,
                             FT_UInt gindex,
                             FT_UInt options,
-                            TA_ScriptMetrics *ametrics);
+                            TA_StyleMetrics *ametrics);
 
 void
 ta_face_globals_free(TA_FaceGlobals globals);
