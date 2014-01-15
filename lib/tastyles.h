@@ -84,30 +84,30 @@
                       "default", \
                       DEFAULT)
 
-  META_STYLE_LATIN( cyrl, CYRL, "Cyrillic" )
-  META_STYLE_LATIN( grek, GREK, "Greek" )
-  STYLE( hebr_dflt, HEBR_DFLT,
-         "Hebrew default style",
-         TA_WRITING_SYSTEM_LATIN,
-         TA_SCRIPT_HEBR,
-         TA_BLUE_STRINGSET_HEBR,
-         TA_COVERAGE_DEFAULT )
-  META_STYLE_LATIN( latn, LATN, "Latin" )
+META_STYLE_LATIN(cyrl, CYRL, "Cyrillic")
+META_STYLE_LATIN(grek, GREK, "Greek")
+STYLE(hebr_dflt, HEBR_DFLT,
+      "Hebrew default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_HEBR,
+      TA_BLUE_STRINGSET_HEBR,
+      TA_COVERAGE_DEFAULT )
+META_STYLE_LATIN(latn, LATN, "Latin")
 
 #ifdef FT_OPTION_AUTOFIT2
-  STYLE( ltn2_dflt, LTN2_DFLT,
-         "Latin 2 default style",
-         TA_WRITING_SYSTEM_LATIN2,
-         TA_SCRIPT_LATN,
-         TA_BLUE_STRINGSET_LATN,
-         TA_COVERAGE_DEFAULT )
+STYLE(ltn2_dflt, LTN2_DFLT,
+      "Latin 2 default style",
+      TA_WRITING_SYSTEM_LATIN2,
+      TA_SCRIPT_LATN,
+      TA_BLUE_STRINGSET_LATN,
+      TA_COVERAGE_DEFAULT)
 #endif
 
-  STYLE( none_dflt, NONE_DFLT,
-         "no style",
-         TA_WRITING_SYSTEM_DUMMY,
-         TA_SCRIPT_NONE,
-         (TA_Blue_Stringset)0,
-         TA_COVERAGE_DEFAULT )
+STYLE(none_dflt, NONE_DFLT,
+      "no style",
+      TA_WRITING_SYSTEM_DUMMY,
+      TA_SCRIPT_NONE,
+      (TA_Blue_Stringset)0,
+      TA_COVERAGE_DEFAULT)
 
 /* end of tastyles.h */
