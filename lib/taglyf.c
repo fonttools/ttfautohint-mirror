@@ -1307,6 +1307,9 @@ TA_sfnt_adjust_master_coverage(SFNT* sfnt,
   {
     FT_Long nn;
     FT_Byte* gstyles = master_globals->glyph_styles;
+#ifdef TA_DEBUG
+    FT_UInt count;
+#endif
 
 
     for (nn = 0; nn < master_globals->glyph_count; nn++)
@@ -1317,6 +1320,37 @@ TA_sfnt_adjust_master_coverage(SFNT* sfnt,
         gstyles[nn] |= master_globals->font->fallback_style;
       }
     }
+
+#ifdef TA_DEBUG
+
+    TA_LOG_GLOBAL(("\n"
+                   "using fallback style `%s' for unassigned glyphs:\n",
+                   ta_style_names[master_globals->font->fallback_style]));
+
+    count = 0;
+
+    for (nn = 0; nn < master_globals->glyph_count; nn++)
+    {
+      if ((gstyles[nn] & ~TA_DIGIT) == master_globals->font->fallback_style)
+      {
+        if (!(count % 10))
+          TA_LOG_GLOBAL((" "));
+
+        TA_LOG_GLOBAL((" %d", nn));
+        count++;
+
+        if (!(count % 10))
+          TA_LOG_GLOBAL(("\n"));
+      }
+    }
+
+    if (!count)
+      TA_LOG_GLOBAL(("  (none)\n"));
+    if (count % 10)
+      TA_LOG_GLOBAL(("\n"));
+
+#endif /* TA_DEBUG */
+
     return 1; /* master coverage adjusted */
   }
   else
