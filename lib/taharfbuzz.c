@@ -160,9 +160,9 @@ ta_get_coverage(TA_FaceGlobals globals,
                                coverage_tags,
                                gpos_lookups);
 
-  TA_LOG(("GSUB lookups (style `%s'):\n"
-          " ",
-          ta_style_names[style_class->style]));
+  TA_LOG_GLOBAL(("GSUB lookups (style `%s'):\n"
+                 " ",
+                 ta_style_names[style_class->style]));
 
 #ifdef TA_DEBUG
   count = 0;
@@ -171,7 +171,7 @@ ta_get_coverage(TA_FaceGlobals globals,
   for (idx = -1; hb_set_next(gsub_lookups, &idx);)
   {
 #ifdef TA_DEBUG
-    TA_LOG((" %d", idx));
+    TA_LOG_GLOBAL((" %d", idx));
     count++;
 #endif
 
@@ -187,13 +187,13 @@ ta_get_coverage(TA_FaceGlobals globals,
 
 #ifdef TA_DEBUG
   if (!count)
-    TA_LOG((" (none)"));
-  TA_LOG(("\n\n"));
+    TA_LOG_GLOBAL((" (none)"));
+  TA_LOG_GLOBAL(("\n\n"));
 #endif
 
-  TA_LOG(("GPOS lookups (style `%s'):\n"
-          " ",
-          ta_style_names[style_class->style]));
+  TA_LOG_GLOBAL(("GPOS lookups (style `%s'):\n"
+                 " ",
+                 ta_style_names[style_class->style]));
 
 #ifdef TA_DEBUG
   count = 0;
@@ -202,7 +202,7 @@ ta_get_coverage(TA_FaceGlobals globals,
   for (idx = -1; hb_set_next(gpos_lookups, &idx);)
   {
 #ifdef TA_DEBUG
-    TA_LOG((" %d", idx));
+    TA_LOG_GLOBAL((" %d", idx));
     count++;
 #endif
 
@@ -218,8 +218,8 @@ ta_get_coverage(TA_FaceGlobals globals,
 
 #ifdef TA_DEBUG
   if (!count)
-    TA_LOG((" (none)"));
-  TA_LOG(("\n\n"));
+    TA_LOG_GLOBAL((" (none)"));
+  TA_LOG_GLOBAL(("\n\n"));
 #endif
 
   /*
@@ -263,7 +263,7 @@ ta_get_coverage(TA_FaceGlobals globals,
 
     if (!found)
     {
-      TA_LOG(("  no blue characters found; style skipped\n"));
+      TA_LOG_GLOBAL(("  no blue characters found; style skipped\n"));
       return FT_Err_Ok;
     }
   }
@@ -311,7 +311,7 @@ ta_get_coverage(TA_FaceGlobals globals,
   hb_set_subtract(gsub_glyphs, gpos_glyphs);
 
 #ifdef TA_DEBUG
-  TA_LOG(("  glyphs without GPOS data (`*' means already assigned)"));
+  TA_LOG_GLOBAL(("  glyphs without GPOS data (`*' means already assigned)"));
   count = 0;
 #endif
 
@@ -319,10 +319,10 @@ ta_get_coverage(TA_FaceGlobals globals,
   {
 #ifdef TA_DEBUG
     if (!(count % 10))
-      TA_LOG(("\n"
-              "   "));
+      TA_LOG_GLOBAL(("\n"
+                     "   "));
 
-    TA_LOG((" %d", idx));
+    TA_LOG_GLOBAL((" %d", idx));
     count++;
 #endif
 
@@ -330,15 +330,15 @@ ta_get_coverage(TA_FaceGlobals globals,
       gstyles[idx] = (FT_Byte)style_class->style;
 #ifdef TA_DEBUG
     else
-      TA_LOG(("*"));
+      TA_LOG_GLOBAL(("*"));
 #endif
   }
 
 #ifdef TA_DEBUG
     if (!count)
-      TA_LOG(("\n"
-              "    (none)"));
-    TA_LOG(("\n\n"));
+      TA_LOG_GLOBAL(("\n"
+                     "    (none)"));
+    TA_LOG_GLOBAL(("\n\n"));
 #endif
 
   hb_set_destroy(gsub_lookups);
