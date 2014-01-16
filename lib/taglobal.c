@@ -229,6 +229,45 @@ Exit:
     }
   }
 
+#ifdef TA_DEBUG
+
+  TA_LOG_GLOBAL(("\n"
+                 "style coverage\n"
+                 "==============\n"
+                 "\n"));
+
+  for (ss = 0; ta_style_classes[ss]; ss++)
+  {
+    TA_StyleClass style_class = ta_style_classes[ss];
+    FT_UInt count = 0;
+    FT_Long idx;
+
+
+    TA_LOG_GLOBAL(("%s:\n", ta_style_names[style_class->style]));
+
+    for (idx = 0; idx < globals->glyph_count; idx++)
+    {
+      if ((gstyles[idx] & ~TA_DIGIT) == style_class->style)
+      {
+        if (!(count % 10))
+          TA_LOG_GLOBAL((" "));
+
+        TA_LOG_GLOBAL((" %d", idx));
+        count++;
+
+        if (!(count % 10))
+          TA_LOG_GLOBAL(("\n"));
+      }
+    }
+
+    if (!count)
+      TA_LOG_GLOBAL(("  (none)\n"));
+    if (count % 10)
+      TA_LOG_GLOBAL(("\n"));
+  }
+
+#endif /* TA_DEBUG */
+
   FT_Set_Charmap(face, old_charmap);
   return error;
 }
