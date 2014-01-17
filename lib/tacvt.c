@@ -19,7 +19,7 @@
 static FT_Error
 TA_sfnt_compute_global_hints(SFNT* sfnt,
                              FONT* font,
-                             FT_UInt style_idx)
+                             TA_Style style_idx)
 {
   FT_Error error;
   FT_Face face = sfnt->face;
@@ -46,6 +46,8 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
   else
   {
     TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
+    FT_Byte* gstyles = globals->glyph_styles;
+
     TA_StyleClass style_class = ta_style_classes[style_idx];
     TA_ScriptClass script_class = ta_script_classes[style_class->script];
 
@@ -57,14 +59,40 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
     dummy.style_class = style_class;
 
     /* XXX: Extend this with a list of possible standard characters: */
-    /*      Especially in non-default coverages, a single standard   */
-    /*      character may not be available.                          */
+    /*      Especially in non-default coverages, a single standard */
+    /*      character may not be available. */
     ta_get_char_index(&dummy,
                       script_class->standard_char,
                       &glyph_index,
                       &y_offset);
     if (!glyph_index)
       return TA_Err_Missing_Glyph;
+
+    /*
+     * We now know that HarfBuzz can access the standard character in the
+     * current OpenType feature.  However, this doesn't guarantee that there
+     * actually *is* a standard character in the corresponding coverage,
+     * since glyphs shifted with data from the GPOS table are ignored in the
+     * coverage (but neverless used to derive stem widths).  For this
+     * reason, search an arbitrary character from the current coverage to
+     * trigger the coverage's metrics computation.
+     */
+    if (gstyles[glyph_index] != style_idx)
+    {
+      FT_Int i;
+
+
+      for (i = 0; i < globals->glyph_count; i++)
+      {
+        if (gstyles[i] == style_idx)
+          break;
+      }
+
+      if (i == globals->glyph_count)
+        return TA_Err_Missing_Glyph;
+
+      glyph_index = i;
+    }
   }
 
   load_flags = 1 << 29; /* vertical hinting only */
@@ -113,7 +141,7 @@ TA_table_build_cvt(FT_Byte** cvt,
 
   for (i = 0; i < i_max; i++)
   {
-    error = TA_sfnt_compute_global_hints(sfnt, font, i);
+    error = TA_sfnt_compute_global_hints(sfnt, font, (TA_Style)i);
     if (error == TA_Err_Missing_Glyph)
     {
       TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
@@ -141,7 +169,7 @@ TA_table_build_cvt(FT_Byte** cvt,
 
     data->style_ids[i] = data->num_used_styles++;
 
-    if (font->loader->hints.metrics->style_class == &ta_none_dflt_style_class)
+    if (i == TA_STYLE_NONE_DFLT)
       continue;
     else
     {
