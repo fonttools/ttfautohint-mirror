@@ -228,6 +228,15 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 :   The maximum PPEM value (in pixels) at which hint sets are created.  The
     default value for *n* is 50.
 
+### Default Script
+
+`--default-script=`*s*, `-D-`\ *s*
+:   Set default script to tag *s*, which is a string consisting of four
+    lowercase characters like `latn` or `dflt`.  It is needed to specify the
+    OpenType default script: After applying all features that are handled
+    specially (like small caps or superscript), ttfautohint uses this value
+    for the remaining features.  The default value is `latn`.
+
 ### Fallback Script
 
 `--fallback-script=`*s*, `-f`\ *s*

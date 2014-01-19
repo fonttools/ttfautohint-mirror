@@ -50,8 +50,8 @@ public:
            bool, int,
            const char*,
            bool, bool, bool,
-           bool, bool, const char*, bool,
-           bool);
+           bool, bool, const char*, const char*,
+           bool, bool);
   ~Main_GUI();
 
 protected:
@@ -89,6 +89,7 @@ private:
   int pre_hinting;
   int hint_composites;
   int no_info;
+  int default_script_idx;
   int fallback_script_idx;
   int symbol;
   int dehint;
@@ -131,6 +132,8 @@ private:
   QCheckBox* gdi_box;
   QCheckBox* dw_box;
 
+  QLabel* default_label;
+  QComboBox* default_box;
   QLabel* fallback_label;
   QComboBox* fallback_box;
 

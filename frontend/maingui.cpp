@@ -70,6 +70,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
                    bool pre,
                    bool composites,
                    bool no,
+                   const char* dflt,
                    const char* fallback,
                    bool symb,
                    bool dh)
@@ -90,10 +91,22 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   dehint(dh)
 {
   int i;
-  int none_script_idx = 0;
+
+  // map default script tag to an index,
+  // replacing an invalid one with the default value
+  int latn_script_idx = 0;
+  for (i = 0; script_names[i].tag; i++)
+  {
+    if (!strcmp("latn", script_names[i].tag))
+      latn_script_idx = i;
+    if (!strcmp(dflt, script_names[i].tag))
+      break;
+  }
+  default_script_idx = script_names[i].tag ? i : latn_script_idx;
 
   // map fallback script tag to an index,
   // replacing an invalid one with the default value
+  int none_script_idx = 0;
   for (i = 0; script_names[i].tag; i++)
   {
     if (!strcmp("none", script_names[i].tag))
@@ -241,6 +254,8 @@ Main_GUI::check_dehint()
     max_label->setEnabled(false);
     max_box->setEnabled(false);
 
+    default_label->setEnabled(false);
+    default_box->setEnabled(false);
     fallback_label->setEnabled(false);
     fallback_box->setEnabled(false);
 
@@ -273,6 +288,8 @@ Main_GUI::check_dehint()
     max_label->setEnabled(true);
     max_box->setEnabled(true);
 
+    default_label->setEnabled(true);
+    default_box->setEnabled(true);
     fallback_label->setEnabled(true);
     fallback_box->setEnabled(true);
 
@@ -786,6 +803,9 @@ again:
   info_data.symbol = symbol_box->isChecked();
   info_data.dehint = dehint_box->isChecked();
 
+  strncpy(info_data.default_script,
+          script_names[default_box->currentIndex()].tag,
+          sizeof (info_data.default_script));
   strncpy(info_data.fallback_script,
           script_names[fallback_box->currentIndex()].tag,
           sizeof (info_data.fallback_script));
@@ -831,8 +851,8 @@ again:
                  "hint-composites,"
                  "increase-x-height,"
                  "x-height-snapping-exceptions,"
-                 "fallback-script, symbol,"
-                 "dehint",
+                 "default-script, fallback-script,"
+                 "symbol, dehint",
                  input, output,
                  info_data.hinting_range_min, info_data.hinting_range_max,
                  info_data.hinting_limit,
@@ -848,8 +868,8 @@ again:
                  info_data.hint_composites,
                  info_data.increase_x_height,
                  snapping_string.constData(),
-                 info_data.fallback_script, info_data.symbol,
-                 info_data.dehint);
+                 info_data.default_script, info_data.fallback_script,
+                 info_data.symbol, info_data.dehint);
 
   if (info_box->isChecked())
   {
@@ -936,13 +956,33 @@ Main_GUI::create_layout(bool horizontal_layout)
   max_box->setRange(2, 10000);
 
   //
+  // OpenType default script
+  //
+  default_label = new QLabel(tr("Defa&ult Script:"));
+  default_box = new QComboBox;
+  default_label->setBuddy(default_box);
+  default_label->setToolTip(
+    tr("This sets the default script for OpenType features:"
+       "  After applying all features that are handled specially"
+       " (for example small caps or superscript glyphs),"
+       " <b>TTFautohint</b> uses this value for the remaining features."));
+  for (int i = 0; script_names[i].tag; i++)
+  {
+    // XXX: how to provide translations?
+    default_box->insertItem(i,
+                            QString("%1 (%2)")
+                                    .arg(script_names[i].tag)
+                                    .arg(script_names[i].description));
+  }
+
+  //
   // hinting and fallback controls
   //
   fallback_label = new QLabel(tr("Fallback &Script:"));
   fallback_box = new QComboBox;
   fallback_label->setBuddy(fallback_box);
   fallback_label->setToolTip(
-    tr("This sets the fallback script module for glyphs"
+    tr("This sets the fallback script for glyphs"
        " that <b>TTFautohint</b> can't map to a script automatically."));
   for (int i = 0; script_names[i].tag; i++)
   {
@@ -1158,6 +1198,8 @@ Main_GUI::create_vertical_layout()
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
+  gui_layout->addWidget(default_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(default_box, row++, 1, Qt::AlignLeft);
   gui_layout->addWidget(fallback_label, row, 0, Qt::AlignRight);
   gui_layout->addWidget(fallback_box, row++, 1, Qt::AlignLeft);
 
@@ -1254,6 +1296,8 @@ Main_GUI::create_horizontal_layout()
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
+  gui_layout->addWidget(default_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(default_box, row++, 2, Qt::AlignLeft);
   gui_layout->addWidget(fallback_label, row, 1, Qt::AlignRight);
   gui_layout->addWidget(fallback_box, row++, 2, Qt::AlignLeft);
 
@@ -1399,6 +1443,7 @@ Main_GUI::set_defaults()
   min_box->setValue(hinting_range_min);
   max_box->setValue(hinting_range_max);
 
+  default_box->setCurrentIndex(default_script_idx);
   fallback_box->setCurrentIndex(fallback_script_idx);
 
   limit_box->setValue(hinting_limit ? hinting_limit : hinting_range_max);

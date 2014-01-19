@@ -182,6 +182,7 @@ show_help(bool
 #endif
 "  -c, --composites           hint glyph composites also\n"
 "  -d, --dehint               remove all hints\n"
+"  -D, --default-script=S     set default OpenType script (default: latn)\n"
 "  -f, --fallback-script=S    set fallback script (default: none)\n"
 "  -G, --hinting-limit=N      switch off hinting above this PPEM value\n"
 "                             (default: %d); value 0 means no limit\n"
@@ -288,9 +289,10 @@ show_help(bool
 "for all sizes (limited by option -G, which is handled in the bytecode).\n"
 "\n");
   fprintf(handle,
-"Option -f takes a four-letter string that identifies the script\n"
-"to be used as a fallback for glyphs that have character codes\n"
-"outside of known script ranges.  Possible values are\n"
+"Options -f and -D take a four-letter string that identifies a script.\n"
+"Option -f sets the script used as a fallback for glyphs that have\n"
+"character codes outside of known script ranges.  Option -D sets the\n"
+"default script for handling OpenType features.  Possible values are\n"
 "\n");
   const Script_Names* sn = script_names;
   for(;;)
@@ -308,10 +310,6 @@ show_help(bool
   }
   fprintf(handle,
 "\n"
-"If no option -f is given, or if its value is `none',\n"
-"no fallback script is used.\n"
-"\n");
-  fprintf(handle,
 #ifdef BUILD_GUI
 "A command-line version of this program is called `ttfautohint'.\n"
 #else
@@ -371,6 +369,8 @@ main(int argc,
   bool no_info = false;
   bool symbol = false;
 
+  const char* default_script = NULL;
+  bool have_default_script = false;
   const char* fallback_script = NULL;
   bool have_fallback_script = false;
   const char* x_height_snapping_exceptions_string = NULL;
@@ -415,6 +415,7 @@ main(int argc,
 #ifndef BUILD_GUI
       {"debug", no_argument, NULL, DEBUG_OPTION},
 #endif
+      {"default-script", required_argument, NULL, 'D'},
       {"dehint", no_argument, NULL, 'd'},
       {"fallback-script", required_argument, NULL, 'f'},
       {"hinting-limit", required_argument, NULL, 'G'},
@@ -461,7 +462,7 @@ main(int argc,
     };
 
     int option_index;
-    int c = getopt_long_only(argc, argv, "cdf:G:hil:npr:stVvw:Wx:X:",
+    int c = getopt_long_only(argc, argv, "cdD:f:G:hil:npr:stVvw:Wx:X:",
                              long_options, &option_index);
     if (c == -1)
       break;
@@ -474,6 +475,11 @@ main(int argc,
 
     case 'd':
       dehint = true;
+      break;
+
+    case 'D':
+      default_script = optarg;
+      have_default_script = true;
       break;
 
     case 'f':
@@ -585,6 +591,7 @@ main(int argc,
   if (dehint)
   {
     // -d makes ttfautohint ignore all other hinting options
+    have_default_script = false;
     have_fallback_script = false;
     have_hinting_range_min = false;
     have_hinting_range_max = false;
@@ -593,6 +600,8 @@ main(int argc,
     have_x_height_snapping_exceptions_string = false;
   }
 
+  if (!have_default_script)
+    default_script = "latn";
   if (!have_fallback_script)
     fallback_script = "none";
   if (!have_hinting_range_min)
@@ -669,6 +678,20 @@ main(int argc,
                         x_height_snapping_exceptions_string,
                         s - x_height_snapping_exceptions_string + 1, "^");
       }
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  if (have_default_script)
+  {
+    const Script_Names* sn;
+
+    for (sn = script_names; sn->tag; sn++)
+      if (!strcmp(default_script, sn->tag))
+        break;
+    if (!sn->tag)
+    {
+      fprintf(stderr, "Unknown script tag `%s'\n", default_script);
       exit(EXIT_FAILURE);
     }
   }
@@ -766,6 +789,9 @@ main(int argc,
     info_data.x_height_snapping_exceptions = x_height_snapping_exceptions;
     info_data.symbol = symbol;
 
+    strncpy(info_data.default_script,
+            default_script,
+            sizeof (info_data.default_script));
     strncpy(info_data.fallback_script,
             fallback_script,
             sizeof (info_data.fallback_script));
@@ -797,7 +823,7 @@ main(int argc,
                  "ignore-restrictions, windows-compatibility,"
                  "pre-hinting, hint-composites,"
                  "increase-x-height, x-height-snapping-exceptions,"
-                 "fallback-script, symbol,"
+                 "default-script, fallback-script, symbol,"
                  "dehint, debug",
                  in, out,
                  hinting_range_min, hinting_range_max, hinting_limit,
@@ -809,7 +835,7 @@ main(int argc,
                  ignore_restrictions, windows_compatibility,
                  pre_hinting, hint_composites,
                  increase_x_height, x_height_snapping_exceptions_string,
-                 fallback_script, symbol,
+                 default_script, fallback_script, symbol,
                  dehint, debug);
 
   if (!no_info)
@@ -912,8 +938,8 @@ main(int argc,
                    dw_cleartype_strong_stem_width, increase_x_height,
                    x_height_snapping_exceptions_string,
                    ignore_restrictions, windows_compatibility, pre_hinting,
-                   hint_composites, no_info, fallback_script, symbol,
-                   dehint);
+                   hint_composites, no_info, default_script, fallback_script,
+                   symbol, dehint);
 
     dummy.move(-50000, -50000);
     dummy.show();
@@ -931,8 +957,8 @@ main(int argc,
                dw_cleartype_strong_stem_width, increase_x_height,
                x_height_snapping_exceptions_string,
                ignore_restrictions, windows_compatibility, pre_hinting,
-               hint_composites, no_info, fallback_script, symbol,
-               dehint);
+               hint_composites, no_info, default_script, fallback_script,
+               symbol, dehint);
   gui.show();
 
   return app.exec();
