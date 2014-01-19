@@ -165,7 +165,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
         if (gindex != 0
             && gindex < (FT_ULong)globals->glyph_count
             && gstyles[gindex] == TA_STYLE_UNASSIGNED)
-        gstyles[gindex] = (FT_Byte)ss;
+          gstyles[gindex] = (FT_Byte)ss;
 
         for (;;)
         {
