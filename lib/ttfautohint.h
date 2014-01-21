@@ -118,11 +118,11 @@ typedef int
  * *platform_id*, *encoding_id*, *language_id*, and *name_id* are the
  * identifiers of a `name` table entry pointed to by *str* with a length
  * pointed to by *str_len* (in bytes; the string has no trailing NULL byte).
- * Please refer to the [OpenType specification] for a detailed description
- * of the various parameters, in particular which encoding is used for a
- * given platform and encoding ID.
+ * Please refer to the [OpenType specification of the `name` table] for a
+ * detailed description of the various parameters, in particular which
+ * encoding is used for a given platform and encoding ID.
  *
- * [OpenType specification]: http://www.microsoft.com/typography/otspec/name.htm
+ * [OpenType specification of the `name` table]: http://www.microsoft.com/typography/otspec/name.htm
  *
  * The string *str* is allocated with `malloc`; the application should
  * reallocate the data if necessary, ensuring that the string length doesn't

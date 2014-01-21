@@ -22,15 +22,16 @@ Introduction
 **ttfautohint** is a library written in\ C that takes a TrueType font as
 the input, removes its bytecode instructions (if any), and returns a new
 font where all glyphs are bytecode hinted using the information given by
-FreeType's autohinting module.  The idea is to provide the excellent quality
-of the autohinter on platforms that don't use FreeType.
+FreeType's auto-hinting module.  The idea is to provide the excellent
+quality of the auto-hinter on platforms that don't use FreeType.
 
 The library has a single API function, `TTF_autohint`, which is described
 [below](#the-ttfautohint-api).
 
 Bundled with the library there are two front-end programs, [`ttfautohint`
 and `ttfautohintGUI`](#ttfautohint-and-ttfautohintgui), being a command line
-and an application with a Graphics User Interface (GUI), respectively.
+program and an application with a Graphics User Interface (GUI),
+respectively.
 
 
 What exactly are hints?
@@ -137,7 +138,8 @@ with web browsers, for example.
 Across Windows rendering environments today, fonts processed with
 ttfautohint look best with ClearType enabled.  This is the default for
 Windows\ 7.  Good visual results are also seen in recent MacOS\ X versions
-and GNU/Linux systems that use FreeType for rendering.
+and GNU/Linux systems (including Android, ChromeOS, and other mobile
+operating systems) that use FreeType for rendering glyphs.
 
 The goal of the project is to generate a 'first pass' of hinting that font
 developers can refine further for ultimate quality.
@@ -157,10 +159,10 @@ Both the GUI and console version share the same features, to be discussed in
 the next subsection.
 
 **Warning: ttfautohint cannot always process a font a second time.**
-If the font contains composite glyphs, and option `-c` is used,
-reprocessing with ttfautohint will fail.  For this reason it is strongly
-recommended to *not* delete the original, unhinted font so that you can
-always rerun ttfautohint.
+If the font contains composite glyphs, and [option `-c`](#hint-composites)
+is used, reprocessing with ttfautohint will fail.  For this reason it is
+strongly recommended to *not* delete the original, unhinted font so that you
+can always rerun ttfautohint.
 
 
 Calling `ttfautohint`
@@ -235,7 +237,8 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     lowercase characters like `latn` or `dflt`.  It is needed to specify the
     OpenType default script: After applying all features that are handled
     specially (like small caps or superscript), ttfautohint uses this value
-    for the remaining features.  The default value is `latn`.
+    for the remaining features.  The default value is `latn`.  See
+    [below](#opentype-features) for more details.
 
 ### Fallback Script
 
@@ -249,15 +252,16 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 
 `--hinting-limit=`*n*, `-G`\ *n*
 :   The *hinting limit* is the PPEM value (in pixels) where hinting gets
-    switched off (using the `INSTCTRL` bytecode instruction); it has zero
-    impact on the file size.  The default value for *n* is 200, which means
-    that the font is not hinted for PPEM values larger than 200.
+    switched off (using the `INSTCTRL` bytecode instruction, not the `gasp`
+    table data); it has zero impact on the file size.  The default value for
+    *n* is 200, which means that the font is not hinted for PPEM values
+    larger than 200.
 
     Note that hinting in the range 'hinting-range-max' up to 'hinting-limit'
     uses the hinting configuration for 'hinting-range-max'.
 
     To omit a hinting limit, use `--hinting-limit=0` (or check the 'No
-    Hinting Limit' box in the GUI).  Since this will cause internal math
+    Hinting Limit' box in the GUI).  Since this causes internal math
     overflow in the rasterizer for large pixel values (>\ 1500px approx.) it
     is strongly recommended to not use this except for testing purposes.
 
@@ -414,7 +418,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     These two routines are mapped onto three possible rendering targets:
 
     - grayscale rendering, with or without optimization for subpixel
-      positioning (e.g. Mac OS\ X)
+      positioning (e.g. Android)
 
     - 'GDI ClearType' rendering: the rasterizer version, as returned by the
       GETINFO bytecode instruction, is in the range 36\ <= version <\ 38 and
@@ -490,11 +494,11 @@ Background and Technical Details
 Outlines](http://www.tug.org/TUGboat/tb24-3/lemberg.pdf) is a scholarly
 paper that describes FreeType's auto-hinter in some detail.  Regarding the
 described data structures it is slightly out of date, but the algorithm
-itself hasn't changed.
+itself hasn't changed in general.
 
 The next few subsections are mainly based on this article, introducing some
 important concepts.  Note that ttfautohint only does hinting along the
-vertical direction (this is, modifying y\ coordinates).
+vertical direction (modifying y\ coordinates only).
 
 
 Segments and Edges
@@ -521,14 +525,15 @@ that collects one or more segments (allowing for a small threshold).  While
 finding segments is done on the unscaled outline, finding edges is bound to
 the device resolution.  See [below](#hint-sets) for an example.
 
-The analysis to find segments and edges is specific to a script.
+The analysis to find segments and edges is specific to a writing
+system, see [below](#writing-systems).
 
 
 Feature Analysis
 ----------------
 
 The auto-hinter analyzes a font in two steps.  Right now, everything
-described below happens for the horizontal axis only, providing vertical
+described here happens for the horizontal axis only, providing vertical
 hinting.
 
   * Global Analysis
@@ -546,14 +551,14 @@ hinting.
     poor, leading even to severe shape distortions.
 
 
-Table: script-specific standard characters of the 'latin' module
+Table: script-specific standard characters of the 'latin' writing system
 
-  script    standard character
-  --------  --------------------
-  `cyrl`    'о', U+043E, CYRILLIC SMALL LETTER O
-  `grek`    'ο', U+03BF, GREEK SMALL LETTER OMICRON
-  `hebr`    'ם', U+05DD, HEBREW LETTER FINAL MEM
-  `latn`    'o', U+006F, LATIN SMALL LETTER O
+    Script    Standard character
+  ----------  --------------------
+  `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
+  `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
+  `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
+  `latn`      'o', U+006F, LATIN SMALL LETTER O
 
 
   * Glyph Analysis
@@ -580,7 +585,9 @@ concept is the same as with Type\ 1 fonts: All glyph points that lie in
 certain small horizontal zones get aligned vertically.
 
 Here a series of tables that show the blue zone characters of the latin
-module's available scripts; the values are hard-coded in the source code.
+writing system's available scripts; the values are hard-coded in the source
+code.  Since the auto-hinter takes mean values it is not necessary that all
+characters of a zone are present.
 
 
 Table: `latn` blue zones
@@ -642,10 +649,10 @@ Grid Fitting
 
 Aligning outlines along the grid lines is called *grid fitting*.  It doesn't
 necessarily mean that the outlines are positioned *exactly* on the grid,
-however, especially if you want a smooth appearance at different sizes. 
+however, especially if you want a smooth appearance at different sizes.
 This is the central routine of the auto-hinter; its actions are highly
-dependent on the used script.  Currently, only support for scripts that work
-similarly to Latin (e.g. Greek or Cyrillic) is available.
+dependent on the used writing system.  Currently, only one writing system is
+available (latin), providing support for scripts like Latin or Greek.
 
   * Align edges linked to blue zones.
 
@@ -681,10 +688,10 @@ a given PPEM (pixel per EM) value.
 
 In the range given by the `--hinting-range-min` and `--hinting-range-max`
 options, ttfautohint creates hint sets for every PPEM value.  For each
-glyph, ttfautohint automatically determines if a new set should be emitted
-for a PPEM value if it finds that it differs from a previous one.  For some
-glyphs it is possible that one set covers, say, the range 8px-1000px, while
-other glyphs need 10 or more such sets.
+glyph, ttfautohint automatically determines whether a new set should be
+emitted for a PPEM value if it finds that it differs from a previous one.
+For some glyphs it is possible that one set covers, say, the range
+8px-1000px, while other glyphs need 10 or more such sets.
 
 In the PPEM range below `--hinting-range-min`, ttfautohint always uses just
 one set, in the PPEM range between `--hinting-range-max` and
@@ -692,10 +699,8 @@ one set, in the PPEM range between `--hinting-range-max` and
 
 One of the hinting configuration parameters is the decision which segments
 form an edge.  For example, let us assume that two segments get aligned on a
-single horizontal edge at 11px, while two edges are used at 12px.
-This change makes ttfautohint emit a new hint set to accomodate this
-situation.
-
+single horizontal edge at 11px, while two edges are used at 12px.  This
+change makes ttfautohint emit a new hint set to accomodate this situation.
 The next images illustrate this, using a Cyrillic letter (glyph 'afii10108')
 from the 'Ubuntu book' font, processed with ttfautohint.
 
@@ -781,22 +786,29 @@ some test and demo programs like FreeType's `ftview` application or other
 glyph viewers that are able to bypass the `cmap` table might be affected.)
 
 
+Writing Systems
+---------------
+
+In FreeType terminology, a writing system is a set of functions that
+provides auto-hinting for certain scripts.  Right now, only two writing
+systems from FreeType's auto-hinter are available in ttfautohint: 'dummy'
+and 'latin'.  The former handles the 'no-script' case; details to 'latin'
+follow in the next section.
+
+
 Scripts
 -------
 
-ttfautohint checks which auto-hinting module should be used to hint a
-specific glyph.  To do so, it checks a glyph's Unicode character code
-whether it belongs to a given script.  Currently, only FreeType's 'latin'
-autohinting module is implemented, but more are expected to come.  Note,
-however, that this module is capable to hint other scripts too.
+ttfautohint needs to know which script should be used to hint a specific
+glyph.  To do so, it checks a glyph's Unicode character code whether it
+belongs to a given script.
 
-Here is the hardcoded list of character ranges that are hinted by this
-'latin' module.  As you can see, this also covers some non-latin scripts (in
-the Unicode sense) that have similar typographical properties.
+Here is the hardcoded list of character ranges that are used for scripts in
+the 'latin' writing system.  As you can see, this also covers some non-latin
+scripts (in the Unicode sense) that have similar typographical properties.
 
 In ttfautohint, scripts are identified by four-character tags.  The value
-`dflt` indicates 'no script', which gets hinted by 'dummy' auto-hinting
-module.
+`none` indicates 'no script'.
 
 
 Table: `latn` character ranges
@@ -856,11 +868,79 @@ Table: `hebr` character ranges
 If a glyph's character code is not covered by a script range, it is not
 hinted (or rather, it gets hinted by the 'dummy' auto-hinting module that
 essentially does nothing).  This can be changed by specifying a *fallback
-script* with [option `--fallback-script`](#fallback-script).
+script*; see [option `--fallback-script`](#fallback-script).
 
-It is planned to extend ttfautohint so that the `GSUB` OpenType table gets
-analyzed, mapping character codes to all glyph indices that can be reached
-by switching on or off various OpenType features.
+
+OpenType Features
+-----------------
+
+(Please read the [OpenType specification] for details on *features*, `GSUB`,
+and `GPOS` tables, and how they relate to scripts.)
+
+For modern OpenType fonts, character ranges are not sufficient to handle
+scripts.
+
+  * Due to glyph substitution in the font (as specified in a font's `GSUB`
+    table), which handles ligatures and similar typographic features, there
+    is no longer a one-to-one mapping from an input Unicode character to a
+    glyph index.  Some ligatures, like 'fi', actually do have Unicode values
+    for historical reasons, but most of them don't.  While it is possible to
+    map ligature glyphs into Unicode's Private Use Area (PUA), code values
+    from this area are arbitrary by definition and thus unusable for
+    ttfautohint.
+
+  * Some features like `sups` (for handling superscript) completely change
+    the appearance and even vertical position of the affected glyphs.
+    Obviously, the blue zones for 'normal' glyphs no longer fit, thus the
+    auto-hinter puts them into a separate group (called *style* in FreeType
+    speak), having its own set of blue zones.
+
+
+Table: OpenType features handled specially by ttfautohint
+
+    Feature tag    Description
+  ---------------  -------------
+  `c2cp`           petite capitals from capitals
+  `c2sc`           small capitals from capitals
+  `ordn`           ordinals
+  `pcap`           petite capitals
+  `sinf`           scientific inferiors
+  `smcp`           small capitals
+  `subs`           subscript
+  `sups`           superscript
+  `titl`           titling
+
+
+There are two conditions to get a valid style for a feature in a given
+script.
+
+ 1. The script's standard character must be available in the feature.
+
+ 2. The feature must provide characters to form at least one blue zone (see
+    [above](#blue-zones)).
+
+An additional complication is that features from the above table might use
+data not only from the `GSUB` but also from the `GPOS` table, containing
+information for glyph positioning.  For example, the `sups` feature for
+superscripts might use the same glyphs as the `subs` feature for subscripts,
+simply moved up.  ttfautohint skips such vertically shifted glyphs (except
+for accessing the standard character) because glyph positioning happens
+after hinting.  Continuing our example, the `sups` feature wouldn't form a
+style, contrary to `subs`, which holds the unshifted glyphs.
+
+The remaining OpenType features of a script are not handled specially; the
+affected glyphs are simply hinted together with the 'normal' glyphs of the
+script.
+
+Note that a font might still contain some features not covered yet: OpenType
+has the concept of a *default script*; its data gets used for all scripts
+that aren't explicitly handled in a font.  By default, ttfautohint unifies
+all affected glyphs from default script features with the `latn` script.
+This can be changed with [option `--default-script`](#default-script), if
+necessary.
+
+
+ttfautohint uses the [HarfBuzz] library for handling OpenType features.
 
 
 SFNT Tables
@@ -879,9 +959,9 @@ work.
   * `cvt`, `prep`, and `fpgm`: These tables get replaced with data
     necessary for the new hinting bytecode.
 
-  * `gasp`: Set up to always use grayscale rendering with grid-fitting
-    for standard hinting, and symmetric grid-fitting and symmetric
-    smoothing for horizontal subpixel hinting (ClearType).
+  * `gasp`: Set up to always use grayscale rendering, for all sizes, with
+    grid-fitting for standard hinting, and symmetric grid-fitting and
+    symmetric smoothing for horizontal subpixel hinting (ClearType).
 
   * `DSIG`: If it exists, it gets replaced with a dummy version.
     ttfautohint can't digitally sign a font; you have to do that afterwards.
@@ -905,7 +985,30 @@ work.
 Problems
 --------
 
-Diagonals.
+### Interaction With FreeType
+
+Recent versions of FreeType have an experimental extension for handling
+subpixel hinting; it is off by default and can be activated by defining the
+macro `TT_CONFIG_OPTION_SUBPIXEL_HINTING` at compile time.  This code has
+been contributed mainly by [Infinality], being a subset of his original
+patch.  Many GNU/Linux distributions activate this code, or provide packages
+to activate it.
+
+This extension changes the behaviour of many bytecode instructions to get
+better rendering results.  However, not all changes are global; some of them
+are specific to certain fonts.  For example, it contains font-specific
+improvements for the '[DejaVu] Sans' font family.  The list of affected
+fonts is hard-coded; it can be found in FreeType's source code file
+`ttsubpix.c`.
+
+If you are going to process such specially-handled fonts with ttfautohint,
+serious rendering problems might show up.  Since ttfautohint (intentionally)
+doesn't change the font name in the `name` table, the Infinality extension
+has no chance to recognize that the hints are different.  All such problems
+vanish if the font gets renamed in its `name` table (the name of the font
+file itself doesn't matter).
+
+### Diagonals
 
 TODO
 
