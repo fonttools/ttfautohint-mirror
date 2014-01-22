@@ -7,9 +7,6 @@ add features to the GUI
   -> preview similar to ftgrid
   -> autocompletion of file names with tab key
 
-handle OT features
-  -> use HarfBuzz as soon it provides the necessary APIs
-
 control `gasp' table; Adam Twardoch suggest the following:
 
   1. Calculate "gaspstem", i.e. the most common thickness of horizontal
@@ -31,9 +28,6 @@ create a separate blue zone class for `i' and `j':
   . if the values differ more than a given threshold, handle them
     separately
   . otherwise, unify them with `f' and friends.
-
-control the characters used for blue zones
-  -> non-latin scripts
 
 user-defined blue zones?
   -> old-style digits
@@ -90,13 +84,13 @@ reduce output size of option -p:
 make it possible to hint fonts which aren't alphabetic at all, for example,
   icons; to do so, provide means to skip the global feature analysis
 
-better control -i output
+better control of -i output
 
 allow processing of multiple files by using globs as in the Midnight
   Commander?
 
 allow composite fonts already processed by ttfautohint to be processed
-  again (due to option `hint-with-components' this isn't urgent)
+  again (due to option `hint-composites' this isn't urgent)
 
 make ttfautohint remember options:
   1. collect md5 checksums in a `~/.ttfautohint_history' file so that fonts
@@ -111,7 +105,6 @@ later enhancements
 ------------------
 
 add CJK autohinting module
-add Hebrew autohinting module
 
 instead of emitting bytecode, write the hints as a VTT or FontLab script
 
