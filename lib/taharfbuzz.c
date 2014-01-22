@@ -151,7 +151,7 @@ ta_get_coverage(TA_FaceGlobals globals,
                                gsub_lookups);
 
   if (hb_set_is_empty(gsub_lookups))
-    return FT_Err_Ok; /* nothing to do */
+    goto Exit; /* nothing to do */
 
   hb_ot_layout_collect_lookups(face,
                                HB_OT_TAG_GPOS,
@@ -264,7 +264,7 @@ ta_get_coverage(TA_FaceGlobals globals,
     if (!found)
     {
       TA_LOG_GLOBAL(("  no blue characters found; style skipped\n"));
-      return FT_Err_Ok;
+      goto Exit;
     }
   }
 
@@ -341,6 +341,7 @@ ta_get_coverage(TA_FaceGlobals globals,
     TA_LOG_GLOBAL(("\n\n"));
 #endif
 
+Exit:
   hb_set_destroy(gsub_lookups);
   hb_set_destroy(gsub_glyphs);
   hb_set_destroy(gpos_lookups);
