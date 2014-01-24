@@ -571,7 +571,10 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
                     if (TA_ABS(points[next].x - points[first].x) <=
                           20 * dist)
                     {
-                      last--;
+                      if (last > best_contour_first)
+                        last--;
+                      else
+                        last = best_contour_last;
                       break;
                     }
 
