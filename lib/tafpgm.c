@@ -978,7 +978,7 @@ unsigned char FPGM(bci_vwidth_data_store) [] =
 
 
 /*
- * bci_blue_round
+ * bci_smooth_blue_round
  *
  *   Round a blue ref value and adjust its corresponding shoot value.
  *
@@ -1008,11 +1008,11 @@ unsigned char FPGM(bci_vwidth_data_store) [] =
  * uses: bci_round
  */
 
-unsigned char FPGM(bci_blue_round) [] =
+unsigned char FPGM(bci_smooth_blue_round) [] =
 {
 
   PUSHB_1,
-    bci_blue_round,
+    bci_smooth_blue_round,
   FDEF,
 
   DUP,
@@ -1091,6 +1091,108 @@ unsigned char FPGM(bci_blue_round) [] =
 
 
 /*
+ * bci_strong_blue_round
+ *
+ *   Round a blue ref value and adjust its corresponding shoot value.
+ *
+ *   This is the equivalent to the following code:
+ *
+ *     delta = dist;
+ *     if (dist < 0)
+ *       delta = -delta;
+ *
+ *     if (delta < 36)
+ *       delta = 0;
+ *     else
+ *       delta = 64;
+ *
+ *     if (dist < 0)
+ *       delta = -delta;
+ *
+ *   It doesn't have corresponding code in talatin.c; however, some tests
+ *   have shown that the `smooth' code works just fine for this case also.
+ *
+ * in: ref_idx
+ *
+ * sal: sal_i (number of blue zones)
+ *
+ * out: ref_idx+1
+ *
+ * uses: bci_round
+ */
+
+unsigned char FPGM(bci_strong_blue_round) [] =
+{
+
+  PUSHB_1,
+    bci_strong_blue_round,
+  FDEF,
+
+  DUP,
+  DUP,
+  RCVT, /* s: ref_idx ref_idx ref */
+
+  DUP,
+  PUSHB_1,
+    bci_round,
+  CALL,
+  SWAP, /* s: ref_idx ref_idx round(ref) ref */
+
+  PUSHB_1,
+    sal_i,
+  RS,
+  PUSHB_1,
+    4,
+  CINDEX,
+  ADD, /* s: ref_idx ref_idx round(ref) ref shoot_idx */
+  DUP,
+  RCVT, /* s: ref_idx ref_idx round(ref) ref shoot_idx shoot */
+
+  ROLL, /* s: ref_idx ref_idx round(ref) shoot_idx shoot ref */
+  SWAP,
+  SUB, /* s: ref_idx ref_idx round(ref) shoot_idx dist */
+  DUP,
+  ABS, /* s: ref_idx ref_idx round(ref) shoot_idx dist delta */
+
+  PUSHB_1,
+    36,
+  LT, /* delta < 36 */
+  IF,
+    PUSHB_1,
+      0, /* delta = 0 (set overshoot to zero if < 0.56 pixel units) */
+
+  ELSE,
+    PUSHB_1,
+      64, /* delta = 64 (one pixel unit) */
+  EIF,
+
+  SWAP, /* s: ref_idx ref_idx round(ref) shoot_idx delta dist */
+  PUSHB_1,
+    0,
+  LT, /* dist < 0 */
+  IF,
+    NEG, /* delta = -delta */
+  EIF,
+
+  PUSHB_1,
+    3,
+  CINDEX,
+  SWAP,
+  SUB, /* s: ref_idx ref_idx round(ref) shoot_idx (round(ref) - delta) */
+
+  WCVTP,
+  WCVTP,
+
+  PUSHB_1,
+    1,
+  ADD, /* s: (ref_idx + 1) */
+
+  ENDF,
+
+};
+
+
+/*
  * bci_blue_round_range
  *
  *   Round a range of blue zones (both reference and shoot values).
@@ -1100,9 +1202,10 @@ unsigned char FPGM(bci_blue_round) [] =
  * in: num_blue_zones
  *     blue_ref_idx
  *
- * sal: sal_i (holds a copy of `num_blue_zones' for `bci_blue_round')
+ * sal: sal_i (holds a copy of `num_blue_zones' for blue rounding function)
  *
- * uses: bci_blue_round
+ * uses: bci_smooth_blue_round
+ *       bci_strong_blue_round
  */
 
 unsigned char FPGM(bci_blue_round_range) [] =
@@ -1118,8 +1221,20 @@ unsigned char FPGM(bci_blue_round_range) [] =
   SWAP,
   WS,
 
-  PUSHB_1,
-    bci_blue_round,
+  /* select blue rounding function based on flag in CVT */
+  PUSHB_3,
+    bci_strong_blue_round,
+    bci_smooth_blue_round,
+    cvtl_use_strong_functions,
+  RCVT,
+  IF,
+    POP,
+
+  ELSE,
+    SWAP,
+    POP,
+
+  EIF,
   LOOPCALL,
   POP,
 
@@ -5355,7 +5470,7 @@ unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
  *     ...
  *
  * CVT: cvtl_is_subglyph
- *      cvtl_use_strong_stem_width_function
+ *      cvtl_use_strong_functions
  *
  * sal: sal_stem_width_function
  *
@@ -5431,7 +5546,7 @@ unsigned char FPGM(bci_hint_glyph) [] =
     sal_stem_width_function,
     bci_strong_stem_width,
     bci_smooth_stem_width,
-    cvtl_use_strong_stem_width_function,
+    cvtl_use_strong_functions,
   RCVT,
   IF,
     POP,
@@ -5512,7 +5627,8 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_cvt_rescale))
             + sizeof (FPGM(bci_cvt_rescale_range))
             + sizeof (FPGM(bci_vwidth_data_store))
-            + sizeof (FPGM(bci_blue_round))
+            + sizeof (FPGM(bci_smooth_blue_round))
+            + sizeof (FPGM(bci_strong_blue_round))
             + sizeof (FPGM(bci_blue_round_range))
             + sizeof (FPGM(bci_decrement_component_counter))
             + sizeof (FPGM(bci_get_point_extrema))
@@ -5679,7 +5795,8 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_cvt_rescale);
   COPY_FPGM(bci_cvt_rescale_range);
   COPY_FPGM(bci_vwidth_data_store);
-  COPY_FPGM(bci_blue_round);
+  COPY_FPGM(bci_smooth_blue_round);
+  COPY_FPGM(bci_strong_blue_round);
   COPY_FPGM(bci_blue_round_range);
   COPY_FPGM(bci_decrement_component_counter);
   COPY_FPGM(bci_get_point_extrema);

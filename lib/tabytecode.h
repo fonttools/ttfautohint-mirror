@@ -333,19 +333,20 @@
 #define bci_cvt_rescale bci_loop + 1
 #define bci_cvt_rescale_range bci_cvt_rescale + 1
 #define bci_vwidth_data_store bci_cvt_rescale_range + 1
-#define bci_blue_round bci_vwidth_data_store + 1
-#define bci_blue_round_range bci_blue_round + 1
+#define bci_smooth_blue_round bci_vwidth_data_store + 1
+#define bci_strong_blue_round bci_smooth_blue_round + 1
+#define bci_blue_round_range bci_strong_blue_round + 1
 #define bci_decrement_component_counter bci_blue_round_range + 1
 #define bci_get_point_extrema bci_decrement_component_counter + 1
 #define bci_nibbles bci_get_point_extrema + 1
 #define bci_number_set_is_element bci_nibbles + 1
 #define bci_number_set_is_element2 bci_number_set_is_element + 1
 
-/* 17 */
+/* 18 */
 #define bci_create_segment bci_number_set_is_element2 + 1
 #define bci_create_segments bci_create_segment + 1
 
-/* 19 */
+/* 20 */
 /* the next ten entries must stay in this order */
 #define bci_create_segments_0 bci_create_segments + 1
 #define bci_create_segments_1 bci_create_segments_0 + 1
@@ -360,7 +361,7 @@
 
 #define bci_create_segments_composite bci_create_segments_9 + 1
 
-/* 30 */
+/* 31 */
 /* the next ten entries must stay in this order */
 #define bci_create_segments_composite_0 bci_create_segments_composite + 1
 #define bci_create_segments_composite_1 bci_create_segments_composite_0 + 1
@@ -373,25 +374,25 @@
 #define bci_create_segments_composite_8 bci_create_segments_composite_7 + 1
 #define bci_create_segments_composite_9 bci_create_segments_composite_8 + 1
 
-/* 40 */
+/* 41 */
 #define bci_align_point bci_create_segments_composite_9 + 1
 #define bci_align_segment bci_align_point + 1
 #define bci_align_segments bci_align_segment + 1
 
-/* 43 */
+/* 44 */
 #define bci_scale_contour bci_align_segments + 1
 #define bci_scale_glyph bci_scale_contour + 1
 #define bci_scale_composite_glyph bci_scale_glyph + 1
 #define bci_shift_contour bci_scale_composite_glyph + 1
 #define bci_shift_subglyph bci_shift_contour + 1
 
-/* 48 */
+/* 49 */
 #define bci_ip_outer_align_point bci_shift_subglyph + 1
 #define bci_ip_on_align_points bci_ip_outer_align_point + 1
 #define bci_ip_between_align_point bci_ip_on_align_points + 1
 #define bci_ip_between_align_points bci_ip_between_align_point + 1
 
-/* 52 */
+/* 53 */
 #define bci_adjust_common bci_ip_between_align_points + 1
 #define bci_stem_common bci_adjust_common + 1
 #define bci_serif_common bci_stem_common + 1
@@ -399,12 +400,12 @@
 #define bci_serif_link1_common bci_serif_anchor_common + 1
 #define bci_serif_link2_common bci_serif_link1_common + 1
 
-/* 58 */
+/* 59 */
 #define bci_lower_bound bci_serif_link2_common + 1
 #define bci_upper_bound bci_lower_bound + 1
 #define bci_upper_lower_bound bci_upper_bound + 1
 
-/* 61 */
+/* 62 */
 #define bci_adjust_bound bci_upper_lower_bound + 1
 #define bci_stem_bound bci_adjust_bound + 1
 #define bci_link bci_stem_bound + 1
@@ -415,23 +416,23 @@
 /* the order of the `bci_action_*' entries must correspond */
 /* to the order of the TA_Action enumeration entries (in `tahints.h') */
 
-/* 67 */
+/* 68 */
 #define bci_action_ip_before bci_stem + 1
 #define bci_action_ip_after bci_action_ip_before + 1
 #define bci_action_ip_on bci_action_ip_after + 1
 #define bci_action_ip_between bci_action_ip_on + 1
 
-/* 71 */
+/* 72 */
 #define bci_action_blue bci_action_ip_between + 1
 #define bci_action_blue_anchor bci_action_blue + 1
 
-/* 73 */
+/* 74 */
 #define bci_action_anchor bci_action_blue_anchor + 1
 #define bci_action_anchor_serif bci_action_anchor + 1
 #define bci_action_anchor_round bci_action_anchor_serif + 1
 #define bci_action_anchor_round_serif bci_action_anchor_round + 1
 
-/* 77 */
+/* 78 */
 #define bci_action_adjust bci_action_anchor_round_serif + 1
 #define bci_action_adjust_serif bci_action_adjust + 1
 #define bci_action_adjust_round bci_action_adjust_serif + 1
@@ -441,13 +442,13 @@
 #define bci_action_adjust_bound_round bci_action_adjust_bound_serif + 1
 #define bci_action_adjust_bound_round_serif bci_action_adjust_bound_round + 1
 
-/* 85 */
+/* 86 */
 #define bci_action_link bci_action_adjust_bound_round_serif + 1
 #define bci_action_link_serif bci_action_link + 1
 #define bci_action_link_round bci_action_link_serif + 1
 #define bci_action_link_round_serif bci_action_link_round + 1
 
-/* 89 */
+/* 90 */
 #define bci_action_stem bci_action_link_round_serif + 1
 #define bci_action_stem_serif bci_action_stem + 1
 #define bci_action_stem_round bci_action_stem_serif + 1
@@ -457,31 +458,31 @@
 #define bci_action_stem_bound_round bci_action_stem_bound_serif + 1
 #define bci_action_stem_bound_round_serif bci_action_stem_bound_round + 1
 
-/* 97 */
+/* 98 */
 #define bci_action_serif bci_action_stem_bound_round_serif + 1
 #define bci_action_serif_lower_bound bci_action_serif + 1
 #define bci_action_serif_upper_bound bci_action_serif_lower_bound + 1
 #define bci_action_serif_upper_lower_bound bci_action_serif_upper_bound + 1
 
-/* 101 */
+/* 102 */
 #define bci_action_serif_anchor bci_action_serif_upper_lower_bound + 1
 #define bci_action_serif_anchor_lower_bound bci_action_serif_anchor + 1
 #define bci_action_serif_anchor_upper_bound bci_action_serif_anchor_lower_bound + 1
 #define bci_action_serif_anchor_upper_lower_bound bci_action_serif_anchor_upper_bound + 1
 
-/* 105 */
+/* 106 */
 #define bci_action_serif_link1 bci_action_serif_anchor_upper_lower_bound + 1
 #define bci_action_serif_link1_lower_bound bci_action_serif_link1 + 1
 #define bci_action_serif_link1_upper_bound bci_action_serif_link1_lower_bound + 1
 #define bci_action_serif_link1_upper_lower_bound bci_action_serif_link1_upper_bound + 1
 
-/* 109 */
+/* 110 */
 #define bci_action_serif_link2 bci_action_serif_link1_upper_lower_bound + 1
 #define bci_action_serif_link2_lower_bound bci_action_serif_link2 + 1
 #define bci_action_serif_link2_upper_bound bci_action_serif_link2_lower_bound + 1
 #define bci_action_serif_link2_upper_lower_bound bci_action_serif_link2_upper_bound + 1
 
-/* 113 */
+/* 114 */
 #define bci_hint_glyph bci_action_serif_link2_upper_lower_bound + 1
 
 #define NUM_FDEFS bci_hint_glyph + 1 /* must be last */
@@ -496,8 +497,8 @@
 #define cvtl_temp 0 /* used for creating twilight points */
 #define cvtl_funits_to_pixels cvtl_temp + 1
 #define cvtl_is_subglyph cvtl_funits_to_pixels + 1
-#define cvtl_use_strong_stem_width_function cvtl_is_subglyph + 1
-#define cvtl_is_element cvtl_use_strong_stem_width_function + 1
+#define cvtl_use_strong_functions cvtl_is_subglyph + 1
+#define cvtl_is_element cvtl_use_strong_functions + 1
 
 #define cvtl_max_runtime cvtl_is_element + 1 /* must be last */
 

@@ -223,23 +223,7 @@ unsigned char PREP(store_vwidth_data_e) [] =
 
 };
 
-/*PUSHB (2*num_used_styles + 2) */
-/*  ... */
-/*  %c, style 1's first blue ref index */
-/*  %c, style 1's number of blue ref indices */
-/*  %c, style 0's first blue ref index */
-/*  %c, style 0's number of blue ref indices */
-/*  %c, num_used_styles */
-
-unsigned char PREP(round_blues) [] =
-{
-
-    bci_blue_round_range,
-  LOOPCALL,
-
-};
-
-unsigned char PREP(set_stem_width_handling_a) [] =
+unsigned char PREP(set_smooth_or_strong_a) [] =
 {
 
   /*
@@ -254,19 +238,20 @@ unsigned char PREP(set_stem_width_handling_a) [] =
    * this works for TrueType version >= 38), checking whether sub-pixel
    * positioning is available.
    *
-   * If GDI ClearType is active, we use a different stem width function
-   * which snaps to integer pixels as much as possible.
+   * If GDI ClearType is active, we use different functions for stem width
+   * computation and blue zone rounding that snap to integer pixels as much
+   * as possible.
    */
 
-  /* set default positioning */
+  /* set default value */
   PUSHB_2,
-    cvtl_use_strong_stem_width_function,
+    cvtl_use_strong_functions,
 
 };
 
 /*  %c, either 0 or 100 */
 
-unsigned char PREP(set_stem_width_handling_b) [] =
+unsigned char PREP(set_smooth_or_strong_b) [] =
 {
 
   WCVTP,
@@ -287,12 +272,12 @@ unsigned char PREP(set_stem_width_handling_b) [] =
     GETINFO,
     IF,
       PUSHB_2,
-        cvtl_use_strong_stem_width_function,
+        cvtl_use_strong_functions,
 };
 
 /*      %c, either 0 or 100 */
 
-unsigned char PREP(set_stem_width_handling_c) [] =
+unsigned char PREP(set_smooth_or_strong_c) [] =
 {
 
       WCVTP,
@@ -323,13 +308,13 @@ unsigned char PREP(set_stem_width_handling_c) [] =
         EQ,
         IF,
           PUSHB_2,
-            cvtl_use_strong_stem_width_function,
+            cvtl_use_strong_functions,
 
 };
 
 /*          %c, either 0 or 100 */
 
-unsigned char PREP(set_stem_width_handling_d) [] =
+unsigned char PREP(set_smooth_or_strong_d) [] =
 {
 
           WCVTP,
@@ -337,6 +322,22 @@ unsigned char PREP(set_stem_width_handling_d) [] =
       EIF,
     EIF,
   EIF,
+
+};
+
+/*PUSHB (2*num_used_styles + 2) */
+/*  ... */
+/*  %c, style 1's first blue ref index */
+/*  %c, style 1's number of blue ref indices */
+/*  %c, style 0's first blue ref index */
+/*  %c, style 0's number of blue ref indices */
+/*  %c, num_used_styles */
+
+unsigned char PREP(round_blues) [] =
+{
+
+    bci_blue_round_range,
+  LOOPCALL,
 
 };
 
@@ -607,17 +608,17 @@ TA_table_build_prep(FT_Byte** prep,
                       ? 2 * (data->num_used_styles + 1) + 2
                       : 2 * (data->num_used_styles + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_e));
+  buf_new_len += sizeof (PREP(set_smooth_or_strong_a))
+                 + 1
+                 + sizeof (PREP(set_smooth_or_strong_b))
+                 + 1
+                 + sizeof (PREP(set_smooth_or_strong_c))
+                 + 1
+                 + sizeof (PREP(set_smooth_or_strong_d));
   buf_new_len += (data->num_used_styles > 3
                      ? 2 * data->num_used_styles + 3
                      : 2 * data->num_used_styles + 2)
                  + sizeof (PREP(round_blues));
-  buf_new_len += sizeof (PREP(set_stem_width_handling_a))
-                 + 1
-                 + sizeof (PREP(set_stem_width_handling_b))
-                 + 1
-                 + sizeof (PREP(set_stem_width_handling_c))
-                 + 1
-                 + sizeof (PREP(set_stem_width_handling_d));
   buf_new_len += sizeof (PREP(set_dropout_mode));
   buf_new_len += sizeof (PREP(reset_component_counter));
 
@@ -763,6 +764,14 @@ TA_table_build_prep(FT_Byte** prep,
   *(bufp++) = LOW(data->num_used_styles);
   COPY_PREP(store_vwidth_data_e);
 
+  COPY_PREP(set_smooth_or_strong_a);
+  *(bufp++) = font->gray_strong_stem_width ? 100 : 0;
+  COPY_PREP(set_smooth_or_strong_b);
+  *(bufp++) = font->gdi_cleartype_strong_stem_width ? 100 : 0;
+  COPY_PREP(set_smooth_or_strong_c);
+  *(bufp++) = font->dw_cleartype_strong_stem_width ? 100 : 0;
+  COPY_PREP(set_smooth_or_strong_d);
+
   if (data->num_used_styles > 3)
   {
     BCI(NPUSHB);
@@ -782,13 +791,6 @@ TA_table_build_prep(FT_Byte** prep,
   *(bufp++) = data->num_used_styles;
   COPY_PREP(round_blues);
 
-  COPY_PREP(set_stem_width_handling_a);
-  *(bufp++) = font->gray_strong_stem_width ? 100 : 0;
-  COPY_PREP(set_stem_width_handling_b);
-  *(bufp++) = font->gdi_cleartype_strong_stem_width ? 100 : 0;
-  COPY_PREP(set_stem_width_handling_c);
-  *(bufp++) = font->dw_cleartype_strong_stem_width ? 100 : 0;
-  COPY_PREP(set_stem_width_handling_d);
   COPY_PREP(set_dropout_mode);
   COPY_PREP(reset_component_counter);
 
