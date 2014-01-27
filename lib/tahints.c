@@ -377,7 +377,7 @@ ta_direction_compute(FT_Pos dx,
       ll = -dx;
       ss = dy;
     }
-    }
+  }
   else /* dy < dx */
   {
     if (dy >= -dx)
