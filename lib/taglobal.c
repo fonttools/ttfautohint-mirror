@@ -25,12 +25,12 @@
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, dc) \
+#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
           const TA_ScriptClassRec ta_ ## s ## _script_class = \
           { \
             TA_SCRIPT_ ## S, \
             ta_ ## s ## _uniranges, \
-            dc \
+            sc1, sc2, sc3 \
           };
 
 #include <ttfautohint-scripts.h>
@@ -70,7 +70,7 @@ TA_WritingSystemClass const ta_writing_system_classes[] =
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, dc) \
+#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
           &ta_ ## s ## _script_class,
 
 TA_ScriptClass const ta_script_classes[] =

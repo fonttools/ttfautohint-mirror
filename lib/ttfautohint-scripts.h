@@ -31,26 +31,26 @@
 SCRIPT(cyrl, CYRL,
        "Cyrillic",
        HB_SCRIPT_CYRILLIC,
-       0x43E) /* о */
+       0x43E, 0x41E, 0x0) /* оО */
 
 SCRIPT(grek, GREK,
        "Greek",
        HB_SCRIPT_GREEK,
-       0x3BF) /* ο */
+       0x3BF, 0x39F, 0x0) /* οΟ */
 
 SCRIPT(hebr, HEBR,
        "Hebrew",
        HB_SCRIPT_HEBREW,
-       0x5DD) /* ם */
+       0x5DD, 0x0, 0x0) /* ם */
 
 SCRIPT(latn, LATN,
        "Latin",
        HB_SCRIPT_LATIN,
-       'o')
+       'o', 'O', '0')
 
 SCRIPT(none, NONE,
        "no script",
        HB_SCRIPT_INVALID,
-       '\0')
+       0x0, 0x0, 0x0)
 
 /* end of ttfautohint-scripts.h */

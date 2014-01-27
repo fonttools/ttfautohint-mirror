@@ -102,7 +102,7 @@ TTF_autohint(const char* options,
   const char* op;
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, dc) #s,
+#define SCRIPT(s, S, d, h, sc1, sc2, sc3) #s,
 
   const char* script_names[] =
   {

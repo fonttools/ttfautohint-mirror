@@ -58,13 +58,35 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
     dummy.globals = globals;
     dummy.style_class = style_class;
 
-    /* XXX: Extend this with a list of possible standard characters: */
-    /*      Especially in non-default coverages, a single standard */
-    /*      character may not be available. */
+    /*
+     * We check more than a single standard character to catch features
+     * like `c2sc' (small caps from caps) that don't contain lowercase
+     * letters by definition, or other features that mainly operate on
+     * numerals.
+     */
     ta_get_char_index(&dummy,
-                      script_class->standard_char,
+                      script_class->standard_char1,
                       &glyph_index,
                       &y_offset);
+    if (!glyph_index)
+    {
+      if (script_class->standard_char2)
+      {
+        ta_get_char_index(&dummy,
+                          script_class->standard_char2,
+                          &glyph_index,
+                          &y_offset);
+        if (!glyph_index)
+        {
+          if (script_class->standard_char3)
+            ta_get_char_index(&dummy,
+                              script_class->standard_char3,
+                              &glyph_index,
+                              &y_offset);
+        }
+      }
+    }
+
     if (!glyph_index)
       return TA_Err_Missing_Glyph;
 
