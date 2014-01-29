@@ -41,7 +41,9 @@ $if(fancy-enums)$
 $endif$
 
 $if(tables)$
-\usepackage{longtable}
+% We use a patched version of longtable until a serious clash with
+% floats get fixed.
+\usepackage{longtable-patched}
 \usepackage{booktabs}
 
 % pandoc inserts \addlinespace after each line...
