@@ -83,13 +83,15 @@ if WITH_DOC
 	             $(top_builddir)/frontend/ttfautohintGUI$(EXEEXT) $@
 
   ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) \
-                    ttfautohint-css.html template.html $(top_srcdir)/.version
+                    ttfautohint-css.html ttfautohint-js.html \
+                    template.html $(top_srcdir)/.version
 	  $(PANDOC) --smart \
 	            --template=$(srcdir)/template.html \
 	            --default-image-extension=".svg" \
 	            --variable="version:$(VERSION)" \
 	            --toc \
 	            --include-in-header=$(srcdir)/ttfautohint-css.html \
+	            --include-in-header=$(srcdir)/ttfautohint-js.html \
 	            --standalone \
 	            --output=$@ $<
 

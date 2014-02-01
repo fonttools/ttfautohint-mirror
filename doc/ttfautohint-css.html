@@ -36,6 +36,18 @@
   #TOC a {
     color: black; }
 
+  /* pop-up window for a footnote */
+  #footnotediv {
+    background-color: white;
+    padding: 3px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border: 1px solid #CDBBB5;
+    box-shadow: #555555 0 0 10px;
+    -webkit-box-shadow: #555555 0 0 10px;
+    -moz-box-shadow: 0 0 10px #555555;
+  }
+
   /* column container */
   .colmask {
     /* this fixes the IE7 overflow hidden bug */
@@ -60,7 +72,7 @@
     width: 50%;
     position: relative;
     right: 15em; /* pad2_l + wd2 + pad2_r */
-    padding-bottom: 1em; }
+    padding-bottom: 1ex; }
   .leftmenu .col1 {
     margin: 0 1em   /* pad2_r */
             0 15em; /* pad2_l + wd2 + pad2_r + pad1_l */
@@ -85,6 +97,9 @@
   pre code {
     white-space: pre; }
 
+  /* avoid line height distortions */
+  sub, sup {
+    line-height: 0.1ex; }
 
   /* no underline for links */
   a {
@@ -130,7 +145,7 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 5ex;
-    margin-bottom: 5ex; } 
+    margin-bottom: 5ex; }
   td {
     padding-left: 0.8em;
     padding-right: 0.8em; }
