@@ -19,29 +19,43 @@ Please read the files
 [`INSTALL`](http://repo.or.cz/w/ttfautohint.git/blob_plain/HEAD:/INSTALL)
 and
 [`INSTALL.git`](http://repo.or.cz/w/ttfautohint.git/blob_plain/HEAD:/INSTALL.git)
-(part of the source code bundle) for instructions how to compile the
-ttfautohint library together with its front-ends.
+(part of the source code bundle) for generic instructions how to compile the
+ttfautohint library together with its front-ends using a POSIX compatible
+shell and compiler.
 
-TODO
+Unix-like Platforms
+-------------------
 
-
-Unix Platforms
---------------
-
-TODO
+The generic instructions should work just fine.  Since ttfautohint depends
+on [Qt] version\ 4 and [FreeType] version\ 2, you should install the
+libraries (called 'libfreetype6'^[The number\ '6' indicates the version of
+the shared library of FreeType, which is not directly related to the source
+code version of FreeType.] and 'libqt4' or similar) together with its
+development packages (called 'freetype2-devel' and 'libqt4-devel' or
+similar) using the package manager of your OS distribution before running
+ttfautohint's `configure` script.
 
 
 MS Windows
 ----------
 
-TODO
+Precompiled binaries `ttfautohint.exe` and `ttfautohintGUI.exe` are
+available, being statically linked to [Qt] and [FreeType].  This means that
+the two programs are not dependent on any other program-specific DLL, and
+you can move them to any place you like.
+
+Hints for compilation with the [MinGW] environment are given in
+`README.git`.
 
 
 Mac OS X
 --------
 
-TODO
+Right now, only a precompiled binary `ttfautohint` is offered; a
+ready-to-run app bundle for the GUI version is not yet available.
 
+Detailed instructions to compile both `ttfautohint` and `ttfautohintGUI` can
+be found [here](http://freetype.org/ttfautohint/osx.html).
 
 
 Authors
@@ -64,8 +78,10 @@ the ttfautohint library.
 [Dalton Maag Ltd]: http://daltonmaag.com
 [DejaVu]: http://dejavu-fonts.org
 [FontForge]: http://fontforge.sf.net
+[FreeType]: http://freetype.org
 [HarfBuzz]: http://harfbuzz.org
 [Infinality]: http://infinality.net
+[MinGW]: http://mingw.org
 [OpenType specification]: http://www.microsoft.com/typography/otspec
 [Qt]: http://qt-project.org
 [Vernon Adams]: http://code.newtypography.co.uk

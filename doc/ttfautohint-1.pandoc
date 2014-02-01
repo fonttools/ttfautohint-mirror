@@ -382,11 +382,11 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 
 `--symbol`, `-s`
 :   Apply default values for standard (horizontal) stem width and height
-    instead of deriving them from a script-specific, hard-coded default
-    character (which usually resembles the shape of a lowercase 'o').  Use
+    instead of deriving them from script-specific, hard-coded default
+    characters (which usually resemble the shape of a lowercase 'o').  Use
     this option (usually in combination with option `--fallback-script`) to
-    hint symbol or dingbat fonts or math glyphs, for example, that lack a
-    default character, at the expense of possibly poor hinting results at
+    hint symbol or dingbat fonts or math glyphs, for example, that lack
+    default characters, at the expense of possibly poor hinting results at
     small sizes.
 
 ### Dehint
@@ -542,23 +542,27 @@ hinting.
     appearance.
 
       + Compute standard stem widths and heights of the font.  The values
-        are normally taken from a glyph that resembles letter 'o'.
+        are normally taken from glyphs that resemble letter 'o'.
 
       + Compute blue zones, see [below](#blue-zones).
 
     If stem widths and heights of single glyphs differ by a large value, or
     if ttfautohint fails to find proper blue zones, hinting becomes quite
-    poor, leading even to severe shape distortions.
+    poor, possibly leading even to severe shape distortions.
 
 
 Table: script-specific standard characters of the 'latin' writing system
 
-    Script    Standard character
-  ----------  --------------------
+    Script    Standard characters
+  ----------  ---------------------
   `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
+              'О', U+041E, CYRILLIC CAPITAL LETTER O
   `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
+              'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
   `latn`      'o', U+006F, LATIN SMALL LETTER O
+              'O', U+004F, LATIN CAPITAL LETTER O
+              '0', U+0030, DIGIT ZERO
 
 
   * Glyph Analysis
@@ -914,7 +918,7 @@ Table: OpenType features handled specially by ttfautohint
 There are two conditions to get a valid style for a feature in a given
 script.
 
- 1. The script's standard character must be available in the feature.
+ 1. On of the script's standard characters must be available in the feature.
 
  2. The feature must provide characters to form at least one blue zone (see
     [above](#blue-zones)).
@@ -924,9 +928,9 @@ data not only from the `GSUB` but also from the `GPOS` table, containing
 information for glyph positioning.  For example, the `sups` feature for
 superscripts might use the same glyphs as the `subs` feature for subscripts,
 simply moved up.  ttfautohint skips such vertically shifted glyphs (except
-for accessing the standard character) because glyph positioning happens
-after hinting.  Continuing our example, the `sups` feature wouldn't form a
-style, contrary to `subs`, which holds the unshifted glyphs.
+for accessing standard characters) because glyph positioning happens after
+hinting.  Continuing our example, the `sups` feature wouldn't form a style,
+contrary to `subs`, which holds the unshifted glyphs.
 
 The remaining OpenType features of a script are not handled specially; the
 affected glyphs are simply hinted together with the 'normal' glyphs of the
@@ -1008,7 +1012,44 @@ has no chance to recognize that the hints are different.  All such problems
 vanish if the font gets renamed in its `name` table (the name of the font
 file itself doesn't matter).
 
+### Incorrect Unicode Character Map
+
+Fonts with an incorrect Unicode `cmap` table will not be properly hinted by
+ttfautohint.  Especially older fonts do cheat; for example, there exist
+Hebrew fonts that map its glyphs to character codes 'A', 'B', etc., to make
+them work with non-localized versions of Windows\ 98, say.
+
+Since ttfautohint needs to find both standard and blue zone characters, it
+relies on correct Unicode values.  If you want to handle such fonts, please
+fix their `cmap` tables accordingly.
+
+### Irregular Glyph Heights
+
+The central concept of ttfautohint's hinting algorithm, as discussed
+[above](#segments-and-edges), is to identify horizontal segments at extremum
+positions, especially for blue zones.  If such a segment is missing, it
+cannot be associated with a blue zone, possibly leading to irregular heights
+for the particular glyph.
+
+If a font designer is able to adjust the outlines, such problems can be
+remedied by adding tiny horizontal segments at the problematic extremum
+positions.  Such segments should have a horizontal length of at least
+20\ font units (assuming 2048 units per EM).^[To be more precise, the sum of
+the height and width of a segment must be at least 20 font units, and the
+height multiplied by\ 14 must not exceed the length.  Thus (19,1) is also a
+valid minimum (length,height) pair, while (18,2) isn't.  The value\ 20 is
+heuristic and hard-coded, as is the value\ 14 (corresponding to a slope of
+approx. 4.1°).]
+
 ### Diagonals
 
-TODO
-
+ttfautohint doesn't handle diagonal lines specially.  For thin outlines,
+this might lead to strokes that look too thick at smaller sizes.  A font
+designer might compensate this to a certain amount by slightly reducing the
+stroke width of diagonal lines.  However, in many cases the sub-optimal
+appearance of a stroke with borders that don't exactly fit the pixel grid is
+not the outline itself but an incorrect gamma value of the monitor: People
+tend to not properly adjust it, and the default values of most operating
+systems are too low, causing too much darkening of such strokes.  It is thus
+of vital importance to compare ttfautohint's results with similar fonts to
+exclude any systematic effect not related to the outlines themselves.
