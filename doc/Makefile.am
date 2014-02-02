@@ -52,7 +52,10 @@ EXTRA_DIST = c2pandoc.sed \
              ttfautohint-3.pandoc \
              template.html \
              template.tex \
-             ttfautohint-css.html
+             ttfautohint-css.html \
+             ttfautohint-js.html \
+             footnote-popup.js \
+             jquery-1.11.0.min.js
 
 if WITH_DOC
   nobase_dist_doc_DATA = $(DOC)
