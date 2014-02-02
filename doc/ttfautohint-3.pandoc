@@ -27,25 +27,26 @@ Unix-like Platforms
 -------------------
 
 The generic instructions should work just fine.  Since ttfautohint depends
-on [Qt] version\ 4 and [FreeType] version\ 2, you should install the
-libraries (called 'libfreetype6'^[The number\ '6' indicates the version of
+on [Qt] version 4.x.x, [FreeType] version 2.4.5 or newer, and [HarfBuzz]
+version 0.9.19 or newer, you should install packages for these libraries
+(called 'libqt4', 'libfreetype6',^[The number\ '6' indicates the version of
 the shared library of FreeType, which is not directly related to the source
-code version of FreeType.] and 'libqt4' or similar) together with its
-development packages (called 'freetype2-devel' and 'libqt4-devel' or
-similar) using the package manager of your OS distribution before running
-ttfautohint's `configure` script.
+code version of FreeType.] and 'libharfbuzz0' or similar) together with its
+development bundles (called 'libqt4-devel', 'freetype2-devel', and
+'harfbuzz-devel' or similar) before running ttfautohint's `configure`
+script.
 
 
 MS Windows
 ----------
 
 Precompiled binaries `ttfautohint.exe` and `ttfautohintGUI.exe` are
-available, being statically linked to [Qt] and [FreeType].  This means that
-the two programs are not dependent on any other program-specific DLL, and
-you can move them to any place you like.
+available, being statically linked to [Qt], [FreeType], and [HarfBuzz].
+This means that the two programs are not dependent on any other
+program-specific DLL, and you can move them to any place you like.
 
 Hints for compilation with the [MinGW] environment are given in
-`README.git`.
+`INSTALL.git`.
 
 
 Mac OS X
@@ -55,7 +56,8 @@ Right now, only a precompiled binary `ttfautohint` is offered; a
 ready-to-run app bundle for the GUI version is not yet available.
 
 Detailed instructions to compile both `ttfautohint` and `ttfautohintGUI` can
-be found [here](http://freetype.org/ttfautohint/osx.html).
+be found on [ttfautohint's
+homepage](http://freetype.org/ttfautohint/osx.html).
 
 
 Authors
