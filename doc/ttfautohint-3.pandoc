@@ -29,9 +29,9 @@ Unix-like Platforms
 The generic instructions should work just fine.  Since ttfautohint depends
 on [Qt] version 4.x.x, [FreeType] version 2.4.5 or newer, and [HarfBuzz]
 version 0.9.19 or newer, you should install packages for these libraries
-(called 'libqt4', 'libfreetype6',^[The number\ '6' indicates the version of
+(called 'libqt4', 'libfreetype6'^[The number\ '6' indicates the version of
 the shared library of FreeType, which is not directly related to the source
-code version of FreeType.] and 'libharfbuzz0' or similar) together with its
+code version of FreeType.], and 'libharfbuzz0' or similar) together with its
 development bundles (called 'libqt4-devel', 'freetype2-devel', and
 'harfbuzz-devel' or similar) before running ttfautohint's `configure`
 script.

@@ -1034,12 +1034,12 @@ for the particular glyph.
 If a font designer is able to adjust the outlines, such problems can be
 remedied by adding tiny horizontal segments at the problematic extremum
 positions.  Such segments should have a horizontal length of at least
-20\ font units (assuming 2048 units per EM).^[To be more precise, the sum of
+20\ font units (assuming 2048 units per EM)^[To be more precise, the sum of
 the height and width of a segment must be at least 20 font units, and the
 height multiplied by\ 14 must not exceed the length.  Thus (19,1) is also a
 valid minimum (length,height) pair, while (18,2) isn't.  The value\ 20 is
 heuristic and hard-coded, as is the value\ 14 (corresponding to a slope of
-approx. 4.1°).]
+approx. 4.1°).].
 
 ### Diagonals
 
