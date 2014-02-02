@@ -64,7 +64,7 @@ var Footnotes = {
     div.css({
       position: 'absolute',
       width: '20em',
-      opacity: 0.9
+      opacity: 0.95
     });
     $(document.body).append(div);
 
@@ -102,6 +102,6 @@ var Footnotes = {
     /* as soon as the mouse cursor is over the diversion (again), stop a
        previous animation and make it immediately visible */
     $('#footnotediv').stop();
-    $('#footnotediv').css({ opacity: 0.9 });
+    $('#footnotediv').css({ opacity: 0.95 });
   }
 }
