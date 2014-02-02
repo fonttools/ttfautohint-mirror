@@ -97,13 +97,20 @@
   pre code {
     white-space: pre; }
 
-  /* avoid line height distortions */
-  sub, sup {
-    line-height: 0.1ex; }
-
   /* no underline for links */
   a {
     text-decoration: none; }
+
+  /* pandoc uses superscripts for footnote numbers, */
+  /* however, we want a number in brackets */
+  /* (which is easier to select with the mouse) */
+  a.footnoteRef > sup:before {
+    content: "["; }
+  a.footnoteRef > sup {
+    vertical-align: baseline;
+    font-size: 100%; }
+  a.footnoteRef > sup:after {
+    content: "]"; }
 
   h1 {
     margin-top: 3.5ex; }
