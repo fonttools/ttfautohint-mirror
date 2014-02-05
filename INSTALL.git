@@ -19,7 +19,7 @@ distributed with the release package), the following is necessary:
   inkscape (0.48.2)
   X11
   ImageMagick (6.7.4)
-  lualatex or xelatex(TeXLive 2013)
+  lualatex or xelatex (TeXLive 2013)
 
 The version numbers in parentheses are known to work.  Newer versions should
 work also.
@@ -43,36 +43,46 @@ Some additional remarks for compilation within the MinGW environment.
 
     to avoid any line ending conversion.
 
-  o At the time of this writing (January 2012), compilation of FreeType with
-    gcc bundles 4.6.1-2 or 4.6.2-1 fail.  Instead, you should use version
-    4.5.2-1.  Unfortunately, mingw-get is not able yet to download and
-    install a particular version; it always installs the newest one.  Some
-    manual work is necessary to overcome this restriction, as described by
-    Keith Marshall (in
-    http://sourceforge.net/mailarchive/message.php?msg_id=28753845):
+  o At the time of this writing (February 2014), the current MinGW bundle
+    (in particular mingwrt-4.0.3; the gcc version is 4.8.1) contains a
+    number of bugs that need work-arounds.  For this reason, you should use
+    FreeType version 2.5.3 (or the git repository) and HarfBuzz version
+    0.9.27.  The configuration scripts work just fine in an MSYS shell.
 
-      > So what's the trick to access a specific release in a meta data
-      > file?
-
-      At present, the only way is to manually edit the XML manifest file,
-      (it is $MINGW_GET_ROOT/var/lib/mingw-get/data/mingw32-gcc4.xml), to
-      remove all of the <release ... /> references for any versions which
-      are newer, (i.e.  have a greater version number), than the particular
-      one you want to install.
-
-      If you would also like to preserve such changes, so that they will not
-      be reverted by a subsequent 'mingw-get update', then you may wish to
-      change the issue attribute, in the <software-distribution ...  /> tag,
-      from issue="2011122200" to something like issue="ZZZZZZZZZZ".
-
-  o To compile a stand-alone version of ttfautohint, first compile a static
-    version of Qt.  I've successfully followed these instructions:
+  o To compile a stand-alone version of ttfautohintGUI we must compile a
+    static version of Qt 4 first.  I've successfully followed these
+    instructions with version 4.8.5
 
       http://www.formortals.com/build-qt-static-small-microsoft-intel-gcc-compiler/
 
-    Now configure and compile ttfautohint using
+    together with the following minor patch to MinGW
 
-      configure --with-qt=DIR
+      https://sourceforge.net/p/mingw/mingw-org-wsl/ci/928ddb53a9623fc38de3997a3acce4a8730f4dc6/
+
+    Note that these build instructions should be executed in a normal
+    cmd.exe shell, *not* MSYS.
+
+    An alternative is given at
+
+      http://qt-project.org/wiki/How-to-build-a-static-Qt-for-Windows-MinGW
+
+    using a PowerShell script.  However, you still need the small MinGW
+    patch.
+
+    It's not necessary to invoke `make install' for Qt.  For ttfautohint's
+    `--with-qt' configure script argument in the next build step, use the
+    `bin' subdirectory of the just built Qt library, for example
+
+      --with-qt=/path/to/qt-4.8.5/bin
+
+  o Now configure and compile ttfautohint (within an MSYS shell) using
+
+      configure \
+        --with-qt=<DIR> \
+        --with-doc=no \
+        ac_cv_func__set_invalid_parameter_handler=no
       make LDFLAGS=-all-static
+
+    (The `ac_cv_func...' argument is another work-around for a MinGW bug).
 
 EOF
