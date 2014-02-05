@@ -17,7 +17,7 @@
 use strict;
 use warnings;
 use English '-no_match_vars';
-use open ':std', ':locale';
+use open ':std', ':encoding(UTF-8)';
 
 
 my $prog = $PROGRAM_NAME;
@@ -71,7 +71,7 @@ my $whitespace_only_re = qr/ ^ \s* $ /x;
 
 # [<ws>] '"' <string> '"' [<ws>] '\n'  (<string> doesn't contain newlines)
 my $string_re = qr/ ^ \s*
-                       " ( (?: [^"\\]++ | \\. )*+ ) "
+                       " ( (?> (?: (?> [^"\\]+ ) | \\. )* ) ) "
                        \s* $ /x;
 
 # [<ws>] '{' <block> '}' [<ws>] '\n'  (<block> can contain newlines)
