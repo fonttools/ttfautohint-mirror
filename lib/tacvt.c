@@ -254,7 +254,7 @@ TA_table_build_cvt(FT_Byte** cvt,
     /* collect offsets */
     data->cvt_offsets[i] = ((FT_UInt)(bufp - buf) - cvt_offset) >> 1;
 
-    error = TA_sfnt_compute_global_hints(sfnt, font, i);
+    error = TA_sfnt_compute_global_hints(sfnt, font, (TA_Style)i);
     if (error == TA_Err_Missing_Glyph)
       continue;
     if (error)

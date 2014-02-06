@@ -13,8 +13,10 @@
  */
 
 
-#include "ta.h"
 #include <string.h>
+
+#include "ta.h"
+#include "tahints.h"
 
 
 #undef MISSING
@@ -1855,9 +1857,9 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
       {
         have_dumps = 1;
 
-        ta_glyph_hints_dump_edges(_ta_debug_hints);
-        ta_glyph_hints_dump_segments(_ta_debug_hints);
-        ta_glyph_hints_dump_points(_ta_debug_hints);
+        ta_glyph_hints_dump_edges((TA_GlyphHints)_ta_debug_hints);
+        ta_glyph_hints_dump_segments((TA_GlyphHints)_ta_debug_hints);
+        ta_glyph_hints_dump_points((TA_GlyphHints)_ta_debug_hints);
 
         fprintf(stderr, "action hints record:\n");
         if (ins_buf == recorder.hints_record.buf)
@@ -1903,9 +1905,9 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
             putc('-', stderr);
           fprintf(stderr, "\n\n");
 
-          ta_glyph_hints_dump_edges(_ta_debug_hints);
-          ta_glyph_hints_dump_segments(_ta_debug_hints);
-          ta_glyph_hints_dump_points(_ta_debug_hints);
+          ta_glyph_hints_dump_edges((TA_GlyphHints)_ta_debug_hints);
+          ta_glyph_hints_dump_segments((TA_GlyphHints)_ta_debug_hints);
+          ta_glyph_hints_dump_points((TA_GlyphHints)_ta_debug_hints);
         }
 
         fprintf(stderr, "point hints record:\n");

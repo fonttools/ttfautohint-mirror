@@ -39,6 +39,11 @@ gl_INIT
 
 AC_TYPE_UINT64_T
 
+if test x"$ac_cv_c_uint64_t" = x"yes"; then
+  AC_DEFINE([HAVE_UINT64_T], [1],
+    [Define if compiler accepts uint64_t data type.])
+fi
+
 PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 0.9.19])
 
 AT_WITH_QT

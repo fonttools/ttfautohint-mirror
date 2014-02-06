@@ -319,7 +319,7 @@ TTF_autohint(const char* options,
       goto Err1;
     }
 
-    fallback_style = i;
+    fallback_style = (TA_Style)i;
   }
 
   if (default_script_string)
@@ -338,7 +338,7 @@ TTF_autohint(const char* options,
       goto Err1;
     }
 
-    default_script = i;
+    default_script = (TA_Script)i;
   }
 
   if (x_height_snapping_exceptions_string)
@@ -478,7 +478,7 @@ No_check:
 
     /* assure that the font hasn't been already processed by ttfautohint; */
     /* another, more thorough check is done in TA_glyph_parse_simple */
-    idx = FT_Get_Name_Index(sfnt->face, TTFAUTOHINT_GLYPH);
+    idx = FT_Get_Name_Index(sfnt->face, (FT_String*)TTFAUTOHINT_GLYPH);
     if (idx)
     {
       error = TA_Err_Already_Processed;

@@ -1236,7 +1236,7 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
   /* using TA_STYLE_UNASSIGNED as the fallback style ensures */
   /* that uncovered glyphs stay as-is */
   /* (we handle the fallback style later on) */
-  font->fallback_style = TA_STYLE_UNASSIGNED;
+  font->fallback_style = (TA_Style)TA_STYLE_UNASSIGNED;
 
   /* trigger computation of coverage */
   error = ta_loader_init(font);

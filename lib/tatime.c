@@ -27,7 +27,8 @@
 #  include <stdint.h>
 #endif
 
-#if defined UINT64_MAX || defined uint64_t
+
+#if defined UINT64_MAX || defined uint64_t || HAVE_UINT64_T
 typedef uint64_t TA_ULongLong;
 #else
 #  error "No unsigned 64bit wide data type found."

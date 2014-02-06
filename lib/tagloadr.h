@@ -24,6 +24,10 @@
 #include FT_FREETYPE_H
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct TA_SubGlyphRec_
 {
   FT_Int index;
@@ -123,6 +127,10 @@ TA_GlyphLoader_Add(TA_GlyphLoader loader);
 FT_Error
 TA_GlyphLoader_CopyPoints(TA_GlyphLoader target,
                           TA_GlyphLoader source);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __TAGLOADR_H__ */
 

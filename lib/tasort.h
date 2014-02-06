@@ -22,6 +22,10 @@
 
 #include "tatypes.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 void
 ta_sort_pos(FT_UInt count,
@@ -31,6 +35,10 @@ void
 ta_sort_and_quantize_widths(FT_UInt* count,
                             TA_Width widths,
                             FT_Pos threshold);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __TASORT_H__ */
 

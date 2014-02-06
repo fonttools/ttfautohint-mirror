@@ -22,6 +22,10 @@
 
 #include "tatypes.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define xxTA_SORT_SEGMENTS
 
 
@@ -543,6 +547,11 @@ ta_glyph_hints_done(TA_GlyphHints hints);
           (((seg1)->pos > (seg2)->pos) ? (seg1)->pos - (seg2)->pos \
                                        : (seg2)->pos - (seg1)->pos)
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
 #endif /* __TAHINTS_H__ */
+
 
 /* end of tahints.h */

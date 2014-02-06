@@ -70,7 +70,7 @@ static const hb_tag_t* coverages[] =
 #undef SCRIPT
 #define SCRIPT(s, S, d, h, sc1, sc2, sc3) h,
 
-static const hb_tag_t scripts[] =
+static const hb_script_t scripts[] =
 {
 #include "ttfautohint-scripts.h"
 };
@@ -88,7 +88,7 @@ ta_get_coverage(TA_FaceGlobals globals,
   hb_set_t* gpos_lookups; /* GPOS lookups for a given script */
   hb_set_t* gpos_glyphs; /* glyphs covered by GPOS lookups */
 
-  hb_tag_t script;
+  hb_script_t script;
   const hb_tag_t*  coverage_tags;
   hb_tag_t script_tags[] = { HB_TAG_NONE,
                              HB_TAG_NONE,
@@ -359,7 +359,7 @@ Exit:
           { \
             { \
               HB_TAG(tag1, tag2, tag3, tag4), \
-              1, 0, -1 \
+              1, 0, (unsigned int)-1 \
             } \
           };
 
