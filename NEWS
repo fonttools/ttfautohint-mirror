@@ -1,3 +1,25 @@
+New in 1.00rc0:
+
+* OpenType feature support.  ttfautohint now uses the HarfBuzz library to
+  analyze data from the `GSUB' table.  This allows the hinting of glyphs
+  that don't have an entry in a font's `cmap' table, for example
+  superscripts or small caps.
+
+  Related to this, the new option `--default-script' controls the default
+  (fallback) script used for OpenType features.
+
+* More than a single standard character is used.  For example, the `latin'
+  script uses characters `o', `O', and digit `0'.  This improves the hinting
+  of fonts (and features) that have only a partial coverage of a script's
+  character repertoire.
+
+* Much better GDI ClearType hinting in the range 30-80ppem (approx.),
+  avoiding overly flat tops and bottoms of round glyphs.
+
+* Better handling of non-square pixels (this is, horizontal and vertical
+  resolutions differ) in the created TrueType bytecode.
+
+
 New in 0.97:
 
 * Improved script support.  Besides Cyrillic and Greek, which are now

@@ -232,7 +232,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 
 ### Default Script
 
-`--default-script=`*s*, `-D-`\ *s*
+`--default-script=`*s*, `-D`\ *s*
 :   Set default script to tag *s*, which is a string consisting of four
     lowercase characters like `latn` or `dflt`.  It is needed to specify the
     OpenType default script: After applying all features that are handled
