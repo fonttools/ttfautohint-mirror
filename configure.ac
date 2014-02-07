@@ -14,9 +14,13 @@ AC_INIT([ttfautohint],
         m4_esyscmd([gnulib/git-version-gen VERSION]),
         [freetype-devel@nongnu.org])
 AC_CONFIG_AUX_DIR([gnulib])
+
+# the last `gnu' string should be `gnits',
+# but this is temporarily changed for release candidates
 AM_INIT_AUTOMAKE([-Wall -Werror]
-                 m4_bmatch(m4_defn([AC_PACKAGE_VERSION]), [-],
-                           [gnu], [gnits]))
+                 m4_bmatch(m4_defn([AC_PACKAGE_VERSION]),
+                           [-], [gnu],
+                           [gnu]))
 
 AC_CONFIG_MACRO_DIRS([gnulib/m4
                       m4])

@@ -1,4 +1,4 @@
-New in 1.00rc0:
+New in 1.00rc1:
 
 * OpenType feature support.  ttfautohint now uses the HarfBuzz library to
   analyze data from the `GSUB' table.  This allows the hinting of glyphs
