@@ -27,7 +27,7 @@ to read its manual page.
 
 A GUI to the library is `ttfautohintGUI'; it uses the Qt4 framework.  The
 compilation of this application can be disabled with the `--without-qt'
-configuration option.
+option of the `configure' script.
 
 -----------------------------------------------------------------------------
 
