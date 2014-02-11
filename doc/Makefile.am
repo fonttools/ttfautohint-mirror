@@ -42,7 +42,9 @@ DOC = ttfautohint.html \
       ttfautohint.txt \
       $(DOCIMGPNG) \
       $(DOCIMGSVG) \
-      $(DOCIMGPDF)
+      $(DOCIMGPDF) \
+      footnote-popup.js \
+      jquery-1.11.0.min.js
 
 EXTRA_DIST = c2pandoc.sed \
              make-snapshot.sh \
@@ -53,9 +55,7 @@ EXTRA_DIST = c2pandoc.sed \
              template.html \
              template.tex \
              ttfautohint-css.html \
-             ttfautohint-js.html \
-             footnote-popup.js \
-             jquery-1.11.0.min.js
+             ttfautohint-js.html
 
 if WITH_DOC
   nobase_dist_doc_DATA = $(DOC)
