@@ -710,12 +710,12 @@ Main_GUI::handle_error(TA_Error error,
     QMessageBox::warning(
       this,
       "TTFautohint",
-      tr("No glyph for the key character"
-         " to derive standard stem width and height.\n"
-         "For the latin script, this key character is %1 (U+006F).\n"
+      tr("No glyph for a standard character"
+         " to derive standard width and height.\n"
+         "Please check the documentation for a list of"
+         " script-specific standard characters.\n"
          "\n"
-         "Set the %2 checkbox if you want to circumvent this test.")
-         .arg(QUOTE_STRING_LITERAL("o"))
+         "Set the %1 checkbox if you want to circumvent this test.")
          .arg(QUOTE_STRING_LITERAL("symbol")),
       QMessageBox::Ok,
       QMessageBox::Ok);

@@ -56,7 +56,7 @@ TA_ERRORDEF_(Invalid_Stream_Write,     0x5F, \
 TA_ERRORDEF_(Hinter_Overflow,          0xF0, \
              "hinter overflow")
 TA_ERRORDEF_(Missing_Glyph,            0xF1, \
-             "missing key character glyph")
+             "missing standard character glyph")
 TA_ERRORDEF_(Missing_Unicode_CMap,     0xF2, \
              "missing Unicode character map")
 TA_ERRORDEF_(Missing_Symbol_CMap,      0xF3, \

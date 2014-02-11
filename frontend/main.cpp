@@ -875,9 +875,11 @@ main(int argc,
               "No symbol character map.\n");
     else if (error == TA_Err_Missing_Glyph)
       fprintf(stderr,
-              "No glyph for the key character"
+              "No glyph for a standard character"
               " to derive standard width and height.\n"
-              "For the latin script, this key character is `o' (U+006F).\n");
+              "Please check the documentation for a list of"
+              " script-specific standard characters,\n"
+              "or use option `--symbol'.\n");
     else
       fprintf(stderr,
               "Error code `0x%02x' while autohinting font:\n"

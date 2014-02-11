@@ -352,11 +352,11 @@ typedef int
  *
  * `symbol`
  * :   Set this integer to\ 1 if you want to process a font that lacks the
- *     characters of a supported script, for example, a symbol font.
+ *     characters of a supported script, for example, a symbol font. 
  *     ttfautohint then uses default values for the standard stem width and
- *     height instead of deriving these values from a script's key character
- *     (for the latin script, it is character 'o').  The default value
- *     is\ 0.
+ *     height instead of deriving these values from a script's standard
+ *     characters (for the latin script, one of them is character 'o').  The
+ *     default value is\ 0.
  *
  *
  * ### Miscellaneous
