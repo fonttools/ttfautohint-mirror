@@ -41,9 +41,6 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
       return TA_Err_Missing_Unicode_CMap;
   }
 
-  if (font->symbol)
-    glyph_index = 0;
-  else
   {
     TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
     FT_Byte* gstyles = globals->glyph_styles;
@@ -140,7 +137,7 @@ TA_table_build_cvt(FT_Byte** cvt,
   FT_UInt vwidth_count;
   FT_UInt blue_count;
 
-  FT_UInt i, j, i_max;
+  FT_UInt i, j;
   FT_UInt buf_len;
   FT_UInt len;
   FT_Byte* buf;
@@ -150,9 +147,6 @@ TA_table_build_cvt(FT_Byte** cvt,
   FT_Error error;
 
 
-  /* checking multiple styles doesn't make sense for symbol fonts */
-  i_max = font->symbol ? 1 : TA_STYLE_MAX;
-
   /* loop over all styles and collect the relevant CVT data */
   /* to compute the necessary array sizes and meta-information */
   hwidth_count = 0;
@@ -161,7 +155,7 @@ TA_table_build_cvt(FT_Byte** cvt,
 
   data->num_used_styles = 0;
 
-  for (i = 0; i < i_max; i++)
+  for (i = 0; i < TA_STYLE_MAX; i++)
   {
     error = TA_sfnt_compute_global_hints(sfnt, font, (TA_Style)i);
     if (error == TA_Err_Missing_Glyph)
@@ -207,8 +201,9 @@ TA_table_build_cvt(FT_Byte** cvt,
     }
   }
 
-  /* exit if the font doesn't contain a single supported style */
-  if (!data->num_used_styles)
+  /* exit if the font doesn't contain a single supported style, */
+  /* and we don't have a symbol font */
+  if (!data->num_used_styles && !font->symbol)
     return TA_Err_Missing_Glyph;
 
   buf_len = cvtl_max_runtime /* runtime values 1 */
@@ -249,7 +244,7 @@ TA_table_build_cvt(FT_Byte** cvt,
   cvt_offset = bufp - buf;
 
   /* loop again over all styles and copy CVT data */
-  for (i = 0; i < i_max; i++)
+  for (i = 0; i < TA_STYLE_MAX; i++)
   {
     /* collect offsets */
     data->cvt_offsets[i] = ((FT_UInt)(bufp - buf) - cvt_offset) >> 1;
