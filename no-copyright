@@ -40,5 +40,6 @@ doc/template.tex
 doc/ttfautohint-css.html
 #
 lib/afblue.pl
+lib/llrb.h
 #
 # EOF

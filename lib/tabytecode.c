@@ -14,13 +14,12 @@
 
 
 #include <string.h>
+#include <stdbool.h> /* for llrb.h */
+
+#include "llrb.h" /* a red-black tree implementation */
 
 #include "ta.h"
 #include "tahints.h"
-
-
-#undef MISSING
-#define MISSING (FT_UShort)~0
 
 
 #define DEBUGGING
@@ -34,6 +33,99 @@ int _ta_debug_disable_vert_hints;
 int _ta_debug_disable_blue_hints;
 void* _ta_debug_hints;
 #endif
+
+
+/* node structures for point hints */
+
+typedef struct Node1 Node1;
+struct Node1
+{
+  LLRB_ENTRY(Node1) entry1;
+  FT_UShort point;
+};
+
+typedef struct Node2 Node2;
+struct Node2
+{
+  LLRB_ENTRY(Node2) entry2;
+  FT_UShort edge;
+  FT_UShort point;
+};
+
+typedef struct Node3 Node3;
+struct Node3
+{
+  LLRB_ENTRY(Node3) entry3;
+  FT_UShort before_edge;
+  FT_UShort after_edge;
+  FT_UShort point;
+};
+
+
+/* comparison functions for our red-black trees */
+
+static int
+node1cmp(Node1* e1,
+         Node1* e2)
+{
+  /* sort by points */
+  return e1->point - e2->point;
+}
+
+static int
+node2cmp(Node2* e1,
+         Node2* e2)
+{
+  FT_Int  delta;
+
+
+  /* sort by edges ... */
+  delta = (FT_Int)e1->edge - (FT_Int)e2->edge;
+  if (delta)
+    return delta;
+
+  /* ... then by points */
+  return (FT_Int)e1->point - (FT_Int)e2->point;
+}
+
+static int
+node3cmp(Node3* e1,
+         Node3* e2)
+{
+  FT_Int  delta;
+
+
+  /* sort by `before' edges ... */
+  delta = (FT_Int)e1->before_edge - (FT_Int)e2->before_edge;
+  if (delta)
+    return delta;
+
+  /* ... then by `after' edges ... */
+  delta = (FT_Int)e1->after_edge - (FT_Int)e2->after_edge;
+  if (delta)
+    return delta;
+
+  /* ... then by points */
+  return (FT_Int)e1->point - (FT_Int)e2->point;
+}
+
+
+/* the red-black tree function bodies */
+typedef struct ip_before_points ip_before_points;
+typedef struct ip_after_points ip_after_points;
+typedef struct ip_on_points ip_on_points;
+typedef struct ip_between_points ip_between_points;
+
+LLRB_HEAD(ip_before_points, Node1);
+LLRB_HEAD(ip_after_points, Node1);
+LLRB_HEAD(ip_on_points, Node2);
+LLRB_HEAD(ip_between_points, Node3);
+
+/* no trailing semicolon in the next four lines */
+LLRB_GENERATE_STATIC(ip_before_points, Node1, entry1, node1cmp)
+LLRB_GENERATE_STATIC(ip_after_points, Node1, entry1, node1cmp)
+LLRB_GENERATE_STATIC(ip_on_points, Node2, entry2, node2cmp)
+LLRB_GENERATE_STATIC(ip_between_points, Node3, entry3, node3cmp)
 
 
 typedef struct Hints_Record_
@@ -62,10 +154,10 @@ typedef struct Recorder_
   FT_UShort num_stack_elements; /* the necessary stack depth so far */
 
   /* data necessary for strong point interpolation */
-  FT_UShort* ip_before_points;
-  FT_UShort* ip_after_points;
-  FT_UShort* ip_on_point_array;
-  FT_UShort* ip_between_point_array;
+  ip_before_points ip_before_points_head;
+  ip_after_points ip_after_points_head;
+  ip_on_points ip_on_points_head;
+  ip_between_points ip_between_points_head;
 
   FT_UShort num_strong_points;
   FT_UShort num_segments;
@@ -596,22 +688,19 @@ TA_build_point_hints(Recorder* recorder,
   TA_Segment segments = axis->segments;
   TA_Edge edges = axis->edges;
 
-  TA_Edge edge;
-
   FT_Byte* p = recorder->hints_record.buf;
-  FT_UShort num_edges = axis->num_edges;
-  FT_UShort num_strong_points = recorder->num_strong_points;
 
   FT_UShort i;
   FT_UShort j;
-  FT_UShort k;
 
-  FT_UShort* ip;
-  FT_UShort* iq;
-  FT_UShort* ir;
-  FT_UShort* ip_limit;
-  FT_UShort* iq_limit;
-  FT_UShort* ir_limit;
+  FT_UShort prev_edge;
+  FT_UShort prev_before_edge;
+  FT_UShort prev_after_edge;
+
+  Node1* before_node;
+  Node1* after_node;
+  Node2* on_node;
+  Node3* between_node;
 
 
   /* we store everything as 16bit numbers; */
@@ -621,18 +710,22 @@ TA_build_point_hints(Recorder* recorder,
   /* ip_before_points */
 
   i = 0;
-  ip = recorder->ip_before_points;
-  ip_limit = ip + num_strong_points;
-  for (; ip < ip_limit; ip++)
+  for (before_node = LLRB_MIN(ip_before_points,
+                              &recorder->ip_before_points_head);
+       before_node;
+       before_node = LLRB_NEXT(ip_before_points,
+                               &recorder->ip_before_points_head,
+                               before_node))
   {
-    if (*ip != MISSING)
-      i++;
-    else
-      break;
+    /* count points */
+    i++;
   }
 
   if (i)
   {
+    TA_Edge edge;
+
+
     recorder->hints_record.num_actions++;
 
     edge = edges;
@@ -644,13 +737,17 @@ TA_build_point_hints(Recorder* recorder,
     *(p++) = HIGH(i);
     *(p++) = LOW(i);
 
-    ip = recorder->ip_before_points;
-    ip_limit = ip + i;
-    for (; ip < ip_limit; ip++)
+    for (before_node = LLRB_MIN(ip_before_points,
+                                &recorder->ip_before_points_head);
+         before_node;
+         before_node = LLRB_NEXT(ip_before_points,
+                                 &recorder->ip_before_points_head,
+                                 before_node))
     {
-      FT_UInt point = TA_adjust_point_index(recorder, *ip);
+      FT_UInt point;
 
 
+      point = TA_adjust_point_index(recorder, before_node->point);
       *(p++) = HIGH(point);
       *(p++) = LOW(point);
     }
@@ -659,18 +756,22 @@ TA_build_point_hints(Recorder* recorder,
   /* ip_after_points */
 
   i = 0;
-  ip = recorder->ip_after_points;
-  ip_limit = ip + num_strong_points;
-  for (; ip < ip_limit; ip++)
+  for (after_node = LLRB_MIN(ip_after_points,
+                             &recorder->ip_after_points_head);
+       after_node;
+       after_node = LLRB_NEXT(ip_after_points,
+                              &recorder->ip_after_points_head,
+                              after_node))
   {
-    if (*ip != MISSING)
-      i++;
-    else
-      break;
+    /* count points */
+    i++;
   }
 
   if (i)
   {
+    TA_Edge edge;
+
+
     recorder->hints_record.num_actions++;
 
     edge = edges + axis->num_edges - 1;
@@ -682,13 +783,17 @@ TA_build_point_hints(Recorder* recorder,
     *(p++) = HIGH(i);
     *(p++) = LOW(i);
 
-    ip = recorder->ip_after_points;
-    ip_limit = ip + i;
-    for (; ip < ip_limit; ip++)
+    for (after_node = LLRB_MIN(ip_after_points,
+                               &recorder->ip_after_points_head);
+         after_node;
+         after_node = LLRB_NEXT(ip_after_points,
+                                &recorder->ip_after_points_head,
+                                after_node))
     {
-      FT_UInt point = TA_adjust_point_index(recorder, *ip);
+      FT_UInt point;
 
 
+      point = TA_adjust_point_index(recorder, after_node->point);
       *(p++) = HIGH(point);
       *(p++) = LOW(point);
     }
@@ -696,12 +801,22 @@ TA_build_point_hints(Recorder* recorder,
 
   /* ip_on_point_array */
 
+  prev_edge = 0xFFFF;
   i = 0;
-  ip = recorder->ip_on_point_array;
-  ip_limit = ip + num_edges * num_strong_points;
-  for (; ip < ip_limit; ip += num_strong_points)
-    if (*ip != MISSING)
+  for (on_node = LLRB_MIN(ip_on_points,
+                          &recorder->ip_on_points_head);
+       on_node;
+       on_node = LLRB_NEXT(ip_on_points,
+                           &recorder->ip_on_points_head,
+                           on_node))
+  {
+    /* count edges */
+    if (on_node->edge != prev_edge)
+    {
       i++;
+      prev_edge = on_node->edge;
+    }
+  }
 
   if (i)
   {
@@ -712,54 +827,88 @@ TA_build_point_hints(Recorder* recorder,
     *(p++) = HIGH(i);
     *(p++) = LOW(i);
 
-    i = 0;
-    ip = recorder->ip_on_point_array;
-    ip_limit = ip + num_edges * num_strong_points;
-    for (; ip < ip_limit; ip += num_strong_points, i++)
+    for (on_node = LLRB_MIN(ip_on_points,
+                            &recorder->ip_on_points_head);
+         on_node;
+         on_node = LLRB_NEXT(ip_on_points,
+                             &recorder->ip_on_points_head,
+                             on_node))
     {
-      if (*ip == MISSING)
-        continue;
+      Node2* edge_node;
+      TA_Edge edge;
 
-      edge = edges + i;
+
+      edge = edges + on_node->edge;
 
       *(p++) = HIGH(edge->first - segments);
       *(p++) = LOW(edge->first - segments);
 
+      /* save current position */
+      edge_node = on_node;
       j = 0;
-      iq = ip;
-      iq_limit = iq + num_strong_points;
-      for (; iq < iq_limit; iq++)
+      for (;
+           on_node;
+           on_node = LLRB_NEXT(ip_on_points,
+                               &recorder->ip_on_points_head,
+                               on_node))
       {
-        if (*iq != MISSING)
-          j++;
-        else
+        /* count points on current edge */
+        if (on_node->edge != edge_node->edge)
           break;
+        j++;
       }
 
       *(p++) = HIGH(j);
       *(p++) = LOW(j);
 
-      iq = ip;
-      iq_limit = iq + j;
-      for (; iq < iq_limit; iq++)
+      /* restore current position */
+      on_node = edge_node;
+      for (;
+           on_node;
+           on_node = LLRB_NEXT(ip_on_points,
+                               &recorder->ip_on_points_head,
+                               on_node))
       {
-        FT_UInt point = TA_adjust_point_index(recorder, *iq);
+        FT_UInt point;
 
 
+        if (on_node->edge != edge_node->edge)
+          break;
+
+        point = TA_adjust_point_index(recorder, on_node->point);
         *(p++) = HIGH(point);
         *(p++) = LOW(point);
+
+        /* keep track of previous node */
+        edge_node = on_node;
       }
+
+      /* reset loop iterator by one element, then continue */
+      on_node = edge_node;
     }
   }
 
   /* ip_between_point_array */
 
+  prev_before_edge = 0xFFFF;
+  prev_after_edge = 0xFFFF;
   i = 0;
-  ip = recorder->ip_between_point_array;
-  ip_limit = ip + num_edges * num_edges * num_strong_points;
-  for (; ip < ip_limit; ip += num_strong_points)
-    if (*ip != MISSING)
+  for (between_node = LLRB_MIN(ip_between_points,
+                               &recorder->ip_between_points_head);
+       between_node;
+       between_node = LLRB_NEXT(ip_between_points,
+                                &recorder->ip_between_points_head,
+                                between_node))
+  {
+    /* count `(before,after)' edge pairs */
+    if (between_node->before_edge != prev_before_edge
+        || between_node->after_edge != prev_after_edge)
+    {
       i++;
+      prev_before_edge = between_node->before_edge;
+      prev_after_edge = between_node->after_edge;
+    }
+  }
 
   if (i)
   {
@@ -770,59 +919,70 @@ TA_build_point_hints(Recorder* recorder,
     *(p++) = HIGH(i);
     *(p++) = LOW(i);
 
-    i = 0;
-    ip = recorder->ip_between_point_array;
-    ip_limit = ip + num_edges * num_edges * num_strong_points;
-    for (;
-         ip < ip_limit;
-         ip += num_edges * num_strong_points, i++)
+    for (between_node = LLRB_MIN(ip_between_points,
+                                 &recorder->ip_between_points_head);
+         between_node;
+         between_node = LLRB_NEXT(ip_between_points,
+                                  &recorder->ip_between_points_head,
+                                  between_node))
     {
+      Node3* edge_pair_node;
       TA_Edge before;
       TA_Edge after;
 
 
-      before = edges + i;
+      before = edges + between_node->before_edge;
+      after = edges + between_node->after_edge;
 
+      *(p++) = HIGH(after->first - segments);
+      *(p++) = LOW(after->first - segments);
+      *(p++) = HIGH(before->first - segments);
+      *(p++) = LOW(before->first - segments);
+
+      /* save current position */
+      edge_pair_node = between_node;
       j = 0;
-      iq = ip;
-      iq_limit = iq + num_edges * num_strong_points;
-      for (; iq < iq_limit; iq += num_strong_points, j++)
+      for (;
+           between_node;
+           between_node = LLRB_NEXT(ip_between_points,
+                                    &recorder->ip_between_points_head,
+                                    between_node))
       {
-        if (*iq == MISSING)
-          continue;
-
-        after = edges + j;
-
-        *(p++) = HIGH(after->first - segments);
-        *(p++) = LOW(after->first - segments);
-        *(p++) = HIGH(before->first - segments);
-        *(p++) = LOW(before->first - segments);
-
-        k = 0;
-        ir = iq;
-        ir_limit = ir + num_strong_points;
-        for (; ir < ir_limit; ir++)
-        {
-          if (*ir != MISSING)
-            k++;
-          else
-            break;
-        }
-
-        *(p++) = HIGH(k);
-        *(p++) = LOW(k);
-
-        ir = iq;
-        ir_limit = ir + k;
-        for (; ir < ir_limit; ir++)
-        {
-          FT_UInt point = TA_adjust_point_index(recorder, *ir);
-
-
-          *(p++) = HIGH(point);
-          *(p++) = LOW(point);
-        }
+        /* count points associated with current edge pair */
+        if (between_node->before_edge != edge_pair_node->before_edge
+            || between_node->after_edge != edge_pair_node->after_edge)
+          break;
+        j++;
       }
+
+      *(p++) = HIGH(j);
+      *(p++) = LOW(j);
+
+      /* restore current position */
+      between_node = edge_pair_node;
+      for (;
+           between_node;
+           between_node = LLRB_NEXT(ip_between_points,
+                                    &recorder->ip_between_points_head,
+                                    between_node))
+      {
+        FT_UInt point;
+
+
+        if (between_node->before_edge != edge_pair_node->before_edge
+            || between_node->after_edge != edge_pair_node->after_edge)
+          break;
+
+        point = TA_adjust_point_index(recorder, between_node->point);
+        *(p++) = HIGH(point);
+        *(p++) = LOW(point);
+
+        /* keep track of previous node */
+        edge_pair_node = between_node;
+      }
+
+      /* reset loop iterator by one element, then continue */
+      between_node = edge_pair_node;
     }
   }
 
@@ -1145,9 +1305,6 @@ TA_hints_recorder(TA_Action action,
 
   FT_UInt style = font->loader->metrics->style_class->style;
 
-  FT_UShort* ip;
-  FT_UShort* limit;
-
 
   if (dim == TA_DIMENSION_HORZ)
     return;
@@ -1157,84 +1314,75 @@ TA_hints_recorder(TA_Action action,
   {
   case ta_ip_before:
     {
+      Node1* before_node;
       TA_Point point = (TA_Point)arg1;
 
 
-      ip = recorder->ip_before_points;
-      limit = ip + recorder->num_strong_points;
-      for (; ip < limit; ip++)
-      {
-        if (*ip == MISSING)
-        {
-          *ip = point - points;
-          break;
-        }
-      }
+      before_node = (Node1*)malloc(sizeof (Node1));
+      if (!before_node)
+        return;
+      before_node->point = point - points;
+
+      LLRB_INSERT(ip_before_points,
+                  &recorder->ip_before_points_head,
+                  before_node);
     }
     return;
 
   case ta_ip_after:
     {
+      Node1* after_node;
       TA_Point point = (TA_Point)arg1;
 
 
-      ip = recorder->ip_after_points;
-      limit = ip + recorder->num_strong_points;
-      for (; ip < limit; ip++)
-      {
-        if (*ip == MISSING)
-        {
-          *ip = point - points;
-          break;
-        }
-      }
+      after_node = (Node1*)malloc(sizeof (Node1));
+      if (!after_node)
+        return;
+      after_node->point = point - points;
+
+      LLRB_INSERT(ip_after_points,
+                  &recorder->ip_after_points_head,
+                  after_node);
     }
     return;
 
   case ta_ip_on:
     {
+      Node2* on_node;
       TA_Point point = (TA_Point)arg1;
       TA_Edge edge = arg2;
 
 
-      ip = recorder->ip_on_point_array
-           + recorder->num_strong_points
-             * (edge - edges);
-      limit = ip + recorder->num_strong_points;
-      for (; ip < limit; ip++)
-      {
-        if (*ip == MISSING)
-        {
-          *ip = point - points;
-          break;
-        }
-      }
+      on_node = (Node2*)malloc(sizeof (Node2));
+      if (!on_node)
+        return;
+      on_node->edge = edge - edges;
+      on_node->point = point - points;
+
+      LLRB_INSERT(ip_on_points,
+                  &recorder->ip_on_points_head,
+                  on_node);
     }
     return;
 
   case ta_ip_between:
     {
+      Node3* between_node;
       TA_Point point = (TA_Point)arg1;
       TA_Edge before = arg2;
       TA_Edge after = arg3;
 
 
-      /* note that `recorder->num_segments' has been used for allocation, */
-      /* but `axis->num_edges' is used for accessing this array */
-      ip = recorder->ip_between_point_array
-           + recorder->num_strong_points * axis->num_edges
-             * (before - edges)
-           + recorder->num_strong_points
-             * (after - edges);
-      limit = ip + recorder->num_strong_points;
-      for (; ip < limit; ip++)
-      {
-        if (*ip == MISSING)
-        {
-          *ip = point - points;
-          break;
-        }
-      }
+      between_node = (Node3*)malloc(sizeof (Node3));
+      if (!between_node)
+        return;
+      between_node->before_edge = before - edges;
+      between_node->after_edge = after - edges;
+      between_node->point = point - points;
+
+      LLRB_INSERT(ip_between_points,
+                  &recorder->ip_between_points_head,
+                  between_node);
     }
     return;
 
@@ -1535,10 +1683,10 @@ TA_init_recorder(Recorder* recorder,
   recorder->glyph = glyph;
   recorder->num_segments = axis->num_segments;
 
-  recorder->ip_before_points = NULL;
-  recorder->ip_after_points = NULL;
-  recorder->ip_on_point_array = NULL;
-  recorder->ip_between_point_array = NULL;
+  LLRB_INIT(&recorder->ip_before_points_head);
+  LLRB_INIT(&recorder->ip_after_points_head);
+  LLRB_INIT(&recorder->ip_on_points_head);
+  LLRB_INIT(&recorder->ip_between_points_head);
 
   recorder->num_stack_elements = 0;
 
@@ -1575,31 +1723,6 @@ TA_init_recorder(Recorder* recorder,
 
   recorder->num_strong_points = num_strong_points;
 
-  recorder->ip_before_points =
-    (FT_UShort*)malloc(num_strong_points * sizeof (FT_UShort));
-  if (!recorder->ip_before_points)
-    return FT_Err_Out_Of_Memory;
-
-  recorder->ip_after_points =
-    (FT_UShort*)malloc(num_strong_points * sizeof (FT_UShort));
-  if (!recorder->ip_after_points)
-    return FT_Err_Out_Of_Memory;
-
-  /* actually, we need `hints->num_edges' for the array sizes; */
-  /* however, this value isn't known yet */
-  /* (or rather, it can vary between different pixel sizes) */
-  recorder->ip_on_point_array =
-    (FT_UShort*)malloc(axis->num_segments
-                       * num_strong_points * sizeof (FT_UShort));
-  if (!recorder->ip_on_point_array)
-    return FT_Err_Out_Of_Memory;
-
-  recorder->ip_between_point_array =
-    (FT_UShort*)malloc(axis->num_segments * axis->num_segments
-                       * num_strong_points * sizeof (FT_UShort));
-  if (!recorder->ip_between_point_array)
-    return FT_Err_Out_Of_Memory;
-
   return FT_Err_Ok;
 }
 
@@ -1618,23 +1741,78 @@ TA_rewind_recorder(Recorder* recorder,
                    FT_Byte* bufp,
                    FT_UInt size)
 {
+  Node1* before_node;
+  Node1* after_node;
+  Node2* on_node;
+  Node3* between_node;
+
+  Node1* next_before_node;
+  Node1* next_after_node;
+  Node2* next_on_node;
+  Node3* next_between_node;
+
+
   TA_reset_recorder(recorder, bufp);
 
   recorder->hints_record.size = size;
 
-  /* We later check with MISSING (which expands to 0xFF bytes) */
+  /* deallocate our red-black trees */
 
-  memset(recorder->ip_before_points, 0xFF,
-         recorder->num_strong_points * sizeof (FT_UShort));
-  memset(recorder->ip_after_points, 0xFF,
-         recorder->num_strong_points * sizeof (FT_UShort));
+  for (before_node = LLRB_MIN(ip_before_points,
+                              &recorder->ip_before_points_head);
+       before_node;
+       before_node = next_before_node)
+  {
+    next_before_node = LLRB_NEXT(ip_before_points,
+                                 &recorder->ip_before_points_head,
+                                 before_node);
+    LLRB_REMOVE(ip_before_points,
+                &recorder->ip_before_points_head,
+                before_node);
+    free(before_node);
+  }
 
-  memset(recorder->ip_on_point_array, 0xFF,
-         recorder->num_segments
-         * recorder->num_strong_points * sizeof (FT_UShort));
-  memset(recorder->ip_between_point_array, 0xFF,
-         recorder->num_segments * recorder->num_segments
-         * recorder->num_strong_points * sizeof (FT_UShort));
+  for (after_node = LLRB_MIN(ip_after_points,
+                             &recorder->ip_after_points_head);
+       after_node;
+       after_node = next_after_node)
+  {
+    next_after_node = LLRB_NEXT(ip_after_points,
+                                &recorder->ip_after_points_head,
+                                after_node);
+    LLRB_REMOVE(ip_after_points,
+                &recorder->ip_after_points_head,
+                after_node);
+    free(after_node);
+  }
+
+  for (on_node = LLRB_MIN(ip_on_points,
+                          &recorder->ip_on_points_head);
+       on_node;
+       on_node = next_on_node)
+  {
+    next_on_node = LLRB_NEXT(ip_on_points,
+                             &recorder->ip_on_points_head,
+                             on_node);
+    LLRB_REMOVE(ip_on_points,
+                &recorder->ip_on_points_head,
+                on_node);
+    free(on_node);
+  }
+
+  for (between_node = LLRB_MIN(ip_between_points,
+                               &recorder->ip_between_points_head);
+       between_node;
+       between_node = next_between_node)
+  {
+    next_between_node = LLRB_NEXT(ip_between_points,
+                                  &recorder->ip_between_points_head,
+                                  between_node);
+    LLRB_REMOVE(ip_between_points,
+                &recorder->ip_between_points_head,
+                between_node);
+    free(between_node);
+  }
 }
 
 
@@ -1643,10 +1821,7 @@ TA_free_recorder(Recorder* recorder)
 {
   free(recorder->wrap_around_segments);
 
-  free(recorder->ip_before_points);
-  free(recorder->ip_after_points);
-  free(recorder->ip_on_point_array);
-  free(recorder->ip_between_point_array);
+  TA_rewind_recorder(recorder, NULL, 0);
 }
 
 
