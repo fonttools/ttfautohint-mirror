@@ -14,25 +14,11 @@
 
 
 #include <time.h>
+#include <stdint.h>
 
 #include "ta.h"
 
-/* we need an unsigned 64bit data type */
-
-/* make `stdint.h' define `uintXX_t' for C++ */
-#undef __STDC_LIMIT_MACROS
-#define __STDC_LIMIT_MACROS
-
-#if HAVE_STDINT_H
-#  include <stdint.h>
-#endif
-
-
-#if defined UINT64_MAX || defined uint64_t || HAVE_UINT64_T
 typedef uint64_t TA_ULongLong;
-#else
-#  error "No unsigned 64bit wide data type found."
-#endif
 
 
 void
