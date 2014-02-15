@@ -27,6 +27,10 @@
 
 #include "tablue.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 /* enable one of the following three definitions for debugging */
 /* #define TA_DEBUG */
@@ -369,6 +373,10 @@ typedef struct  TA_StyleMetricsRec_
 
   TA_FaceGlobals globals; /* to access properties */
 } TA_StyleMetricsRec;
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* __TATYPES_H__ */
 
