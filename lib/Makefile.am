@@ -21,6 +21,7 @@ libnumberset_la_SOURCES = \
   numberset.c numberset.h
 
 libttfautohint_la_SOURCES = \
+  llrb.h \
   ta.h \
   tablue.c tablue.h \
   tabytecode.c tabytecode.h \
