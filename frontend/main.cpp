@@ -676,7 +676,8 @@ main(int argc,
                         "  \"%s\"\n"
                         "   %*s\n",
                         x_height_snapping_exceptions_string,
-                        s - x_height_snapping_exceptions_string + 1, "^");
+                        int(s - x_height_snapping_exceptions_string + 1),
+                        "^");
       }
       exit(EXIT_FAILURE);
     }
