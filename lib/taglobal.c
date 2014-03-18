@@ -302,8 +302,8 @@ ta_face_globals_new(FT_Face face,
     ta_face_globals_free(globals);
     globals = NULL;
   }
-
-  globals->increase_x_height = TA_PROP_INCREASE_X_HEIGHT_MAX;
+  else
+    globals->increase_x_height = TA_PROP_INCREASE_X_HEIGHT_MAX;
 
 Err:
   *aglobals = globals;

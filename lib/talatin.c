@@ -532,7 +532,8 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
             {
               FT_Bool l2r;
               FT_Pos d;
-              FT_Int p_first, p_last;
+              FT_Int p_first = 0; /* pacify clang compiler */
+              FT_Int p_last = 0;
 
 
               if (!hit)

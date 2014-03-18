@@ -326,12 +326,7 @@ ta_loader_load_g(TA_Loader loader,
         /* recompute subglyph pointer */
         subglyph = gloader->base.subglyphs + num_base_subgs + nn;
 
-        if (subglyph->flags & FT_SUBGLYPH_FLAG_USE_MY_METRICS)
-        {
-          pp1 = loader->pp1;
-          pp2 = loader->pp2;
-        }
-        else
+        if (!(subglyph->flags & FT_SUBGLYPH_FLAG_USE_MY_METRICS))
         {
           loader->pp1 = pp1;
           loader->pp2 = pp2;

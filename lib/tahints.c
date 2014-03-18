@@ -785,7 +785,6 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
 
         in_x = out_x;
         in_y = out_y;
-        prev = point;
       }
     }
   }
@@ -1227,8 +1226,6 @@ ta_glyph_hints_align_weak_points(TA_GlyphHints hints,
     }
   }
 
-  point = points;
-
   for (; contour < contour_limit; contour++)
   {
     TA_Point first_touched, last_touched;
@@ -1251,7 +1248,6 @@ ta_glyph_hints_align_weak_points(TA_GlyphHints hints,
     }
 
     first_touched = point;
-    last_touched = point;
 
     for (;;)
     {

@@ -326,6 +326,11 @@ ta_get_coverage(TA_FaceGlobals globals,
     count++;
 #endif
 
+    /* HarfBuzz 0.9.26 and older doesn't validate glyph indices */
+    /* returned by `hb_ot_layout_lookup_collect_glyphs'...      */
+    if (idx >= (hb_codepoint_t)globals->glyph_count)
+      continue;
+
     if (gstyles[idx] == TA_STYLE_UNASSIGNED)
       gstyles[idx] = (FT_Byte)style_class->style;
 #ifdef TA_DEBUG
