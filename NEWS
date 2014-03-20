@@ -1,3 +1,10 @@
+New in 1.00:
+
+* Much less memory consumption while handling fonts with complicated glyphs.
+
+* Option `-s' was partially broken.
+
+
 New in 1.00rc1:
 
 * OpenType feature support.  ttfautohint now uses the HarfBuzz library to
