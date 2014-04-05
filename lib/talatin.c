@@ -150,7 +150,13 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
       if (error)
         goto Exit;
 
-      ta_latin_hints_link_segments(hints, (TA_Dimension)dim);
+      /*
+       * We assume that the glyphs selected for the stem width
+       * computation are `featureless' enough so that the linking
+       * algorithm works fine without adjustments of its scoring
+       * function.
+       */
+      ta_latin_hints_link_segments(hints, 0, NULL, (TA_Dimension)dim);
 
       seg = axhints->segments;
       limit = seg + axhints->num_segments;
@@ -1383,10 +1389,13 @@ Exit:
 }
 
 
-/* link segments to form stems and serifs */
+/* link segments to form stems and serifs; if `width_count' and */
+/* `widths' are non-zero, use them to fine-tune the scoring function */
 
 void
 ta_latin_hints_link_segments(TA_GlyphHints hints,
+                             FT_UInt width_count,
+                             TA_WidthRec* widths,
                              TA_Dimension dim)
 {
   TA_AxisHints axis = &hints->axis[dim];
@@ -1394,15 +1403,27 @@ ta_latin_hints_link_segments(TA_GlyphHints hints,
   TA_Segment segments = axis->segments;
   TA_Segment segment_limit = segments + axis->num_segments;
 
-  FT_Pos len_threshold, len_score;
+  FT_Pos len_threshold, len_score, dist_score, max_width;
   TA_Segment seg1, seg2;
 
 
+  if (width_count)
+    max_width = widths[width_count - 1].org;
+  else
+    max_width = 0;
+
+  /* a heuristic value to set up a minimum value for overlapping */
   len_threshold = TA_LATIN_CONSTANT(hints->metrics, 8);
   if (len_threshold == 0)
     len_threshold = 1;
 
+  /* a heuristic value to weight lengths */
   len_score = TA_LATIN_CONSTANT(hints->metrics, 6000);
+
+  /* a heuristic value to weight distances (no call to */
+  /* AF_LATIN_CONSTANT needed, since we work on multiples */
+  /* of the stem width) */
+  dist_score = 3000;
 
   /* now compare each segment to the others */
   for (seg1 = segments; seg1 < segment_limit; seg1++)
@@ -1425,10 +1446,9 @@ ta_latin_hints_link_segments(TA_GlyphHints hints,
           && pos2 > pos1)
       {
         /* compute distance between the two segments */
-        FT_Pos dist = pos2 - pos1;
         FT_Pos min = seg1->min_coord;
         FT_Pos max = seg1->max_coord;
-        FT_Pos len, score;
+        FT_Pos len;
 
 
         if (min < seg2->min_coord)
@@ -1437,15 +1457,49 @@ ta_latin_hints_link_segments(TA_GlyphHints hints,
           max = seg2->max_coord;
 
         /* compute maximum coordinate difference of the two segments */
+        /* (this is, how much they overlap) */
         len = max - min;
         if (len >= len_threshold)
         {
-          /* small coordinate differences cause a higher score, and */
-          /* segments with a greater distance cause a higher score also */
-          score = dist + len_score / len;
+          /*
+           * The score is the sum of two demerits indicating the
+           * `badness' of a fit, measured along the segments' main axis
+           * and orthogonal to it, respectively.
+           *
+           * o The less overlapping along the main axis, the worse it
+           *   is, causing a larger demerit.
+           *
+           * o The nearer the orthogonal distance to a stem width, the
+           *   better it is, causing a smaller demerit.  For simplicity,
+           *   however, we only increase the demerit for values that
+           *   exceed the largest stem width.
+           */
+
+          FT_Pos dist = pos2 - pos1;
+
+          FT_Pos dist_demerit, score;
+
+
+          if (max_width)
+          {
+            /* distance demerits are based on multiples of `max_width'; */
+            /* we scale by 1024 for getting more precision */
+            FT_Pos delta = (dist << 10) / max_width - (1 << 10);
+
+
+            if (delta > 10000)
+              dist_demerit = 32000;
+            else if (delta > 0)
+              dist_demerit = delta * delta / dist_score;
+            else
+              dist_demerit = 0;
+          }
+          else
+            dist_demerit = dist; /* default if no widths available */
+
+          score = dist_demerit + len_score / len;
 
           /* and we search for the smallest score */
-          /* of the sum of the two values */
           if (score < seg1->score)
           {
             seg1->score = score;
@@ -1768,6 +1822,8 @@ Exit:
 
 FT_Error
 ta_latin_hints_detect_features(TA_GlyphHints hints,
+                               FT_UInt width_count,
+                               TA_WidthRec* widths,
                                TA_Dimension dim)
 {
   FT_Error error;
@@ -1776,7 +1832,7 @@ ta_latin_hints_detect_features(TA_GlyphHints hints,
   error = ta_latin_hints_compute_segments(hints, dim);
   if (!error)
   {
-    ta_latin_hints_link_segments(hints, dim);
+    ta_latin_hints_link_segments(hints, width_count, widths, dim);
 
     error = ta_latin_hints_compute_edges(hints, dim);
   }
@@ -2809,6 +2865,8 @@ ta_latin_hints_apply(TA_GlyphHints hints,
   FT_Error error;
   int dim;
 
+  TA_LatinAxis  axis;
+
 
   error = ta_glyph_hints_reload(hints, outline);
   if (error)
@@ -2822,14 +2880,22 @@ ta_latin_hints_apply(TA_GlyphHints hints,
   if (TA_HINTS_DO_HORIZONTAL(hints))
 #endif
   {
-    error = ta_latin_hints_detect_features(hints, TA_DIMENSION_HORZ);
+    axis = &metrics->axis[TA_DIMENSION_HORZ];
+    error = ta_latin_hints_detect_features(hints,
+                                           axis->width_count,
+                                           axis->widths,
+                                           TA_DIMENSION_HORZ);
     if (error)
       goto Exit;
   }
 
   if (TA_HINTS_DO_VERTICAL(hints))
   {
-    error = ta_latin_hints_detect_features(hints, TA_DIMENSION_VERT);
+    axis = &metrics->axis[TA_DIMENSION_VERT];
+    error = ta_latin_hints_detect_features(hints,
+                                           axis->width_count,
+                                           axis->widths,
+                                           TA_DIMENSION_VERT);
     if (error)
       goto Exit;
 

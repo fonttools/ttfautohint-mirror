@@ -131,12 +131,16 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
                                 TA_Dimension dim);
 void
 ta_latin_hints_link_segments(TA_GlyphHints hints,
+                             FT_UInt width_count,
+                             TA_WidthRec* widths,
                              TA_Dimension dim);
 FT_Error
 ta_latin_hints_compute_edges(TA_GlyphHints hints,
                              TA_Dimension dim);
 FT_Error
 ta_latin_hints_detect_features(TA_GlyphHints hints,
+                               FT_UInt width_count,
+                               TA_WidthRec* widths,
                                TA_Dimension dim);
 
 #endif /* __TALATIN_H__ */
