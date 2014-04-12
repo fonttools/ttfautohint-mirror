@@ -359,7 +359,7 @@ TA_Direction
 ta_direction_compute(FT_Pos dx,
                      FT_Pos dy)
 {
-  FT_Pos ll, ss;  /* long and short arm lengths */
+  FT_Pos ll, ss; /* long and short arm lengths */
   TA_Direction dir; /* candidate direction */
 
 
@@ -551,7 +551,7 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
   old_max = hints->max_points;
   if (new_max > old_max)
   {
-    TA_Point  points_new;
+    TA_Point points_new;
 
 
     new_max = (new_max + 2 + 7) & ~7; /* round up to a multiple of 8 */
@@ -659,93 +659,165 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
       }
     }
 
-    /* compute directions of in & out vectors */
     {
-      TA_Point first = points;
-      TA_Point prev = NULL;
+      /*
+       *  Compute directions of `in' and `out' vectors.
+       *
+       *  Note that distances between points that are very near to each
+       *  other are accumulated.  In other words, the auto-hinter
+       *  prepends the small vectors between near points to the first
+       *  non-near vector.  All intermediate points are tagged as
+       *  weak; the directions are adjusted also to be equal to the
+       *  accumulated one.
+       */
 
-      FT_Pos in_x = 0;
-      FT_Pos in_y = 0;
-
-      TA_Direction in_dir = TA_DIR_NONE;
-
-      FT_Pos last_good_in_x = 0;
-      FT_Pos last_good_in_y = 0;
-
+      /* value 20 in `near_limit' is heuristic */
       FT_UInt units_per_em = hints->metrics->scaler.face->units_per_EM;
       FT_Int near_limit = 20 * units_per_em / 2048;
 
+      TA_Point* contour;
+      TA_Point* contour_limit = hints->contours + hints->num_contours;
+
+
+      for (contour = hints->contours; contour < contour_limit; contour++)
+      {
+        TA_Point first = *contour;
+        TA_Point next, prev, curr;
+
+        FT_Pos out_x, out_y;
+
+        FT_Bool is_first;
+
+
+        /* since the first point of a contour could be part of a */
+        /* series of near points, go backwards to find the first */
+        /* non-near point and adjust `first' */
+
+        point = first;
+        prev = first->prev;
+
+        while (prev != first)
+        {
+          out_x = point->fx - prev->fx;
+          out_y = point->fy - prev->fy;
+
+          /* we use Taxicab metrics to measure the vector length */
+          if (TA_ABS(out_x) + TA_ABS(out_y) >= near_limit)
+            break;
+
+          point = prev;
+          prev = prev->prev;
+        }
+
+        /* adjust first point */
+        first = point;
+
+        /* now loop over all points of the contour to get */
+        /* `in' and `out' vector directions */
+
+        curr = first;
+        out_x = 0;
+        out_y = 0;
+
+        is_first = 1;
+
+        for (point = first;
+             point != first || is_first;
+             point = point->next)
+        {
+          TA_Direction out_dir;
+
+
+          is_first = 0;
+
+          next = point->next;
+
+          out_x += next->fx - point->fx;
+          out_y += next->fy - point->fy;
+
+          if (TA_ABS(out_x) + TA_ABS(out_y) < near_limit)
+          {
+            next->flags |= TA_FLAG_WEAK_INTERPOLATION;
+            continue;
+          }
+
+          /* we abuse the `u' and `v' fields to store index deltas */
+          /* to the next and previous non-near point, respectively */
+          curr->u = (FT_Pos)(next - curr);
+          next->v = -curr->u;
+
+          out_dir = ta_direction_compute(out_x, out_y);
+
+          /* adjust directions for all points inbetween; */
+          /* the loop also updates position of `curr' */
+          curr->out_dir = (FT_Char)out_dir;
+          for (curr = curr->next; curr != next; curr = curr->next)
+          {
+            curr->in_dir = (FT_Char)out_dir;
+            curr->out_dir = (FT_Char)out_dir;
+          }
+          next->in_dir = (FT_Char)out_dir;
+
+          out_x = 0;
+          out_y = 0;
+        }
+      }
+
+      /*
+       *  The next step is to `simplify' an outline's topology so that we
+       *  can identify local extrema more reliably: A series of
+       *  non-horizontal or non-vertical vectors pointing into the same
+       *  quadrant are handled as a single, long vector.  From a
+       *  topological point of the view, the intermediate points are of no
+       *  interest and thus tagged as weak.
+       */
 
       for (point = points; point < point_limit; point++)
       {
-        TA_Point next;
-        FT_Pos out_x, out_y;
+        if (point->flags & TA_FLAG_WEAK_INTERPOLATION)
+          continue;
 
-
-        if (point == first)
+        if (point->in_dir == TA_DIR_NONE
+            && point->out_dir == TA_DIR_NONE)
         {
-          prev = first->prev;
+          /* check whether both vectors point into the same quadrant */
 
-          in_x = first->fx - prev->fx;
-          in_y = first->fy - prev->fy;
+          FT_Pos in_x, in_y;
+          FT_Pos out_x, out_y;
 
-          last_good_in_x = in_x;
-          last_good_in_y = in_y;
+          TA_Point next_u = point + point->u;
+          TA_Point prev_v = point + point->v;
 
-          if (TA_ABS(in_x) + TA_ABS(in_y) < near_limit)
+
+          in_x = point->fx - prev_v->fx;
+          in_y = point->fy - prev_v->fy;
+
+          out_x = next_u->fx - point->fx;
+          out_y = next_u->fy - point->fy;
+
+          if ((in_x ^ out_x) >= 0 && (in_y ^ out_y) >= 0)
           {
-            /* search first non-near point to get a good `in_dir' value */
+            /* yes, so tag current point as weak */
+            /* and update index deltas */
 
-            TA_Point point_ = prev;
+            point->flags |= TA_FLAG_WEAK_INTERPOLATION;
 
-
-            while (point_ != first)
-            {
-              TA_Point prev_ = point_->prev;
-
-              FT_Pos in_x_ = point_->fx - prev_->fx;
-              FT_Pos in_y_ = point_->fy - prev_->fy;
-
-
-              if (TA_ABS(in_x_) + TA_ABS(in_y_) >= near_limit)
-              {
-                last_good_in_x = in_x_;
-                last_good_in_y = in_y_;
-
-                break;
-              }
-
-              point_ = prev_;
-            }
+            prev_v->u = (FT_Pos)(next_u - prev_v);
+            next_u->v = -prev_v->u;
           }
-
-          in_dir = ta_direction_compute(in_x, in_y);
-          first = prev + 1;
         }
+      }
 
-        point->in_dir = (FT_Char)in_dir;
+      /*
+       *  Finally, check for remaining weak points.  Everything else not
+       *  collected in edges so far is then implicitly classified as strong
+       *  points.
+       */
 
-        /* check whether the current point is near to the previous one */
-        /* (value 20 in `near_limit' is heuristic; we use Taxicab */
-        /* metrics for the test) */
-
-        if (TA_ABS(in_x) + TA_ABS(in_y) < near_limit)
-          point->flags |= TA_FLAG_NEAR;
-        else
-        {
-          last_good_in_x = in_x;
-          last_good_in_y = in_y;
-        }
-
-        next = point->next;
-        out_x = next->fx - point->fx;
-        out_y = next->fy - point->fy;
-
-        in_dir = ta_direction_compute(out_x, out_y);
-        point->out_dir = (FT_Char)in_dir;
-
-        /* Check for weak points.  The remaining points not collected */
-        /* in edges are then implicitly classified as strong points. */
+      for (point = points; point < point_limit; point++)
+      {
+        if (point->flags & TA_FLAG_WEAK_INTERPOLATION)
+          continue;
 
         if (point->flags & TA_FLAG_CONTROL)
         {
@@ -757,24 +829,30 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
         {
           if (point->out_dir != TA_DIR_NONE)
           {
-            /* current point lies on a horizontal or          */
+            /* current point lies on a horizontal or */
             /* vertical segment (but doesn't start or end it) */
             goto Is_Weak_Point;
           }
 
-          /* test whether `in' and `out' direction is approximately */
-          /* the same (and use the last good `in' vector in case    */
-          /* the current point is near to the previous one)         */
-          if (ta_corner_is_flat(point->flags & TA_FLAG_NEAR ? last_good_in_x
-                                                            : in_x,
-                                point->flags & TA_FLAG_NEAR ? last_good_in_y
-                                                            : in_y,
-                                out_x,
-                                out_y))
           {
-            /* current point lies on a straight, diagonal line */
-            /* (more or less)                                  */
-            goto Is_Weak_Point;
+            TA_Point next_u = point + point->u;
+            TA_Point prev_v = point + point->v;
+
+
+            if (ta_corner_is_flat(point->fx - prev_v->fx,
+                                  point->fy - prev_v->fy,
+                                  next_u->fx - point->fx,
+                                  next_u->fy - point->fy))
+            {
+              /* either the `in' or the `out' vector is much more */
+              /* dominant than the other one, so tag current point */
+              /* as weak and update index deltas */
+
+              prev_v->u = (FT_Pos)(next_u - prev_v);
+              next_u->v = -prev_v->u;
+
+              goto Is_Weak_Point;
+            }
           }
         }
         else if (point->in_dir == -point->out_dir)
@@ -782,9 +860,6 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
           /* current point forms a spike */
           goto Is_Weak_Point;
         }
-
-        in_x = out_x;
-        in_y = out_y;
       }
     }
   }
@@ -935,7 +1010,7 @@ ta_glyph_hints_align_strong_points(TA_GlyphHints hints,
 
     for (point = points; point < point_limit; point++)
     {
-      FT_Pos u, ou, fu;  /* point position */
+      FT_Pos u, ou, fu; /* point position */
       FT_Pos delta;
 
 
@@ -1111,7 +1186,7 @@ ta_iup_shift(TA_Point p1,
 
 /* interpolate the original coordinates of all points between `p1' and */
 /* `p2' to get hinted coordinates, using `ref1' and `ref2' as the */
-/* reference points;  the `u' and `v' members are the current and */
+/* reference points; the `u' and `v' members are the current and */
 /* original coordinate values, respectively. */
 
 /* details can be found in the TrueType bytecode specification */
