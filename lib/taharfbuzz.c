@@ -307,8 +307,15 @@ ta_get_coverage(TA_FaceGlobals globals,
    * possible solution might be to directly parse the GPOS table to find
    * out whether a glyph gets shifted vertically, but this is something I
    * would like to avoid if not really necessary.
+   *
+   * Note that we don't follow this logic for the default coverage. 
+   * Complex scripts like Devanagari have mandatory GPOS features to
+   * position many glyph elements, using mark-to-base or mark-to-ligature
+   * tables; the number of glyphs missed due to condition (b) would be far
+   * too large.
    */
-  hb_set_subtract(gsub_glyphs, gpos_glyphs);
+  if (style_class->coverage != TA_COVERAGE_DEFAULT)
+    hb_set_subtract(gsub_glyphs, gpos_glyphs);
 
 #ifdef TA_DEBUG
   TA_LOG_GLOBAL(("  glyphs without GPOS data (`*' means already assigned)"));
