@@ -110,6 +110,97 @@ const char* ta_style_names[] =
 #endif /* TA_DEBUG */
 
 
+/* Recursively assign a style to all components of a composite glyph. */
+
+static FT_Error
+ta_face_globals_scan_composite(FT_Face face,
+                               FT_Long gindex,
+                               FT_Byte gstyle,
+                               FT_Byte* gstyles,
+                               FT_Int nesting_level)
+{
+  FT_Error error;
+  FT_UInt i;
+
+  FT_GlyphSlot glyph;
+
+  FT_Int* subglyph_indices = NULL;
+  FT_UInt used_subglyphs;
+
+  FT_Int p_index;
+  FT_UInt p_flags;
+  FT_Int p_arg1;
+  FT_Int p_arg2;
+  FT_Matrix p_transform;
+
+
+  /* limit recursion arbitrarily */
+  if (nesting_level > 100)
+    return FT_Err_Invalid_Table;
+
+  error = FT_Load_Glyph(face, gindex, FT_LOAD_NO_RECURSE);
+  if (error)
+    return error;
+
+  glyph = face->glyph;
+
+  /* in FreeType < 2.5.4, FT_Get_SubGlyph_Info always returns an error */
+  /* due to a bug even if the call was successful; */
+  /* for this reason we do the argument checking by ourselves */
+  /* and ignore the returned error code of FT_Get_SubGlyph_Info */
+  if (!glyph->subglyphs
+      || glyph->format != FT_GLYPH_FORMAT_COMPOSITE)
+    return FT_Err_Ok;
+
+  /* since a call to FT_Load_Glyph changes `glyph', */
+  /* we have to first store the subglyph indices, then do the recursion */
+  subglyph_indices = (FT_Int*)malloc(sizeof (FT_Int) * glyph->num_subglyphs);
+  if (!subglyph_indices)
+    return FT_Err_Out_Of_Memory;
+
+  used_subglyphs = 0;
+  for (i = 0; i < glyph->num_subglyphs; i++)
+  {
+    (void)FT_Get_SubGlyph_Info(glyph,
+                               i,
+                               &p_index,
+                               &p_flags,
+                               &p_arg1,
+                               &p_arg2,
+                               &p_transform);
+
+    if (p_index >= face->num_glyphs
+        || (gstyles[p_index] & ~TA_DIGIT) != TA_STYLE_UNASSIGNED)
+      continue;
+
+    /* only take subglyphs that are not shifted vertically; */
+    /* otherwise blue zones don't fit */
+    if (p_flags & ARGS_ARE_XY_VALUES
+        && p_arg2 == 0)
+    {
+      gstyles[p_index] = gstyle;
+      subglyph_indices[used_subglyphs++] = p_index;
+    }
+  }
+
+  /* recurse */
+  for (i = 0; i < used_subglyphs; i++)
+  {
+    error = ta_face_globals_scan_composite(face,
+                                           subglyph_indices[i],
+                                           gstyle,
+                                           gstyles,
+                                           nesting_level + 1);
+    if (error)
+      break;
+  }
+
+  free(subglyph_indices);
+
+  return error;
+}
+
+
 /* Compute the style index of each glyph within a given face. */
 
 static FT_Error
@@ -209,6 +300,28 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
     if (gindex != 0
         && gindex < (FT_ULong)globals->glyph_count)
       gstyles[gindex] |= TA_DIGIT;
+  }
+
+  /* now walk over all glyphs and check for composites: */
+  /* since subglyphs are hinted separately if option `hint-composites' */
+  /* isn't set, we have to tag them with style indices, too */
+  {
+    FT_Long nn;
+
+
+    for (nn = 0; nn < globals->glyph_count; nn++)
+    {
+      if ((gstyles[nn] & ~TA_DIGIT) == TA_STYLE_UNASSIGNED)
+        continue;
+
+      error = ta_face_globals_scan_composite(globals->face,
+                                             nn,
+                                             gstyles[nn],
+                                             gstyles,
+                                             0);
+      if (error)
+        return error;
+    }
   }
 
 Exit:
