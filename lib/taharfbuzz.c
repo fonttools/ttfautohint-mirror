@@ -84,7 +84,9 @@ ta_get_coverage(TA_FaceGlobals globals,
   hb_face_t* face;
 
   hb_set_t* gsub_lookups; /* GSUB lookups for a given script */
-  hb_set_t* gsub_glyphs; /* glyphs covered by GSUB lookups */
+  hb_set_t* gsub_glyphs_in; /* glyphs covered by GSUB lookups */
+  hb_set_t* gsub_glyphs_out;
+
   hb_set_t* gpos_lookups; /* GPOS lookups for a given script */
   hb_set_t* gpos_glyphs; /* glyphs covered by GPOS lookups */
 
@@ -107,7 +109,8 @@ ta_get_coverage(TA_FaceGlobals globals,
   face = hb_font_get_face(globals->hb_font);
 
   gsub_lookups = hb_set_create();
-  gsub_glyphs = hb_set_create();
+  gsub_glyphs_in = hb_set_create();
+  gsub_glyphs_out = hb_set_create();
   gpos_lookups = hb_set_create();
   gpos_glyphs = hb_set_create();
 
@@ -180,9 +183,9 @@ ta_get_coverage(TA_FaceGlobals globals,
                                        HB_OT_TAG_GSUB,
                                        idx,
                                        NULL,
+                                       gsub_glyphs_in,
                                        NULL,
-                                       NULL,
-                                       gsub_glyphs);
+                                       gsub_glyphs_out);
   }
 
 #ifdef TA_DEBUG
@@ -227,6 +230,7 @@ ta_get_coverage(TA_FaceGlobals globals,
    * covered by the feature only -- in case there is not a single zone
    * (this is, not a single character is covered), we skip this coverage
    */
+  if (style_class->coverage != TA_COVERAGE_DEFAULT)
   {
     TA_Blue_Stringset bss = style_class->blue_stringset;
     const TA_Blue_StringRec* bs = &ta_blue_stringsets[bss];
@@ -267,6 +271,9 @@ ta_get_coverage(TA_FaceGlobals globals,
       goto Exit;
     }
   }
+
+  /* merge in and out glyphs */
+  hb_set_union(gsub_glyphs_out, gsub_glyphs_in);
 
   /*
    * Various OpenType features might use the same glyphs at different
@@ -315,14 +322,14 @@ ta_get_coverage(TA_FaceGlobals globals,
    * too large.
    */
   if (style_class->coverage != TA_COVERAGE_DEFAULT)
-    hb_set_subtract(gsub_glyphs, gpos_glyphs);
+    hb_set_subtract(gsub_glyphs_out, gpos_glyphs);
 
 #ifdef TA_DEBUG
   TA_LOG_GLOBAL(("  glyphs without GPOS data (`*' means already assigned)"));
   count = 0;
 #endif
 
-  for (idx = -1; hb_set_next(gsub_glyphs, &idx);)
+  for (idx = -1; hb_set_next(gsub_glyphs_out, &idx);)
   {
 #ifdef TA_DEBUG
     if (!(count % 10))
@@ -355,7 +362,8 @@ ta_get_coverage(TA_FaceGlobals globals,
 
 Exit:
   hb_set_destroy(gsub_lookups);
-  hb_set_destroy(gsub_glyphs);
+  hb_set_destroy(gsub_glyphs_in);
+  hb_set_destroy(gsub_glyphs_out);
   hb_set_destroy(gpos_lookups);
   hb_set_destroy(gpos_glyphs);
 
