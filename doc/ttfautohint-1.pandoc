@@ -743,6 +743,28 @@ hint set covering 81-100ppem is used.  For ppem values larger than 250, no
 hinting gets applied.
 
 
+Composite Glyphs
+----------------
+
+The ttfautohint library (and programs) supports two solutions for handling
+composite glyphs, to be controlled with [option
+`--composites`](#hint-composites).  This section contains some general
+information, then covers the case where the option if off, while the next
+section describes how ttfautohint behaves if this option is activated.
+
+Regardless of the `--composites` option, ttfautohint performs a scan over
+all composite glyphs to assure that components of a composite glyph inherit
+its style, as described [later](#opentype-features).  However, components
+that are shifted vertically will be skipped.  For example, if the glyph
+'Agrave' uses a shifted 'grave' accent glyph, the accent is ignored.  On the
+other hand, if there is a glyph 'agrave' that uses the same 'grave' glyph
+vertically unshifted, 'grave' does inherit the style.
+
+If `--composites` is off, components are hinted separately, then added
+together.  Separate hinting implies that the current style's blue zones are
+applied to all subglyphs in its original, unshifted positions.
+
+
 The '\.ttfautohint' Glyph
 -------------------------
 
@@ -920,8 +942,8 @@ script.
 
  1. On of the script's standard characters must be available in the feature.
 
- 2. The feature must provide characters to form at least one blue zone (see
-    [above](#blue-zones)).
+ 2. The feature must provide characters to form at least one blue zone; see
+    [above](#blue-zones).
 
 An additional complication is that features from the above table might use
 data not only from the `GSUB` but also from the `GPOS` table, containing
