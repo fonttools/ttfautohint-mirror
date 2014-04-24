@@ -327,7 +327,7 @@ unsigned char FPGM(bci_round) [] =
  *         || std_width < 40:
  *        return width
  *      else if base_is_round:
- *        if dist < 80
+ *        if dist < 80:
  *          dist = 64
  *      else if dist < 56:
  *        dist = 56
@@ -336,7 +336,7 @@ unsigned char FPGM(bci_round) [] =
  *
  *      if delta < 40:
  *        dist = std_width
- *        if dist < 48
+ *        if dist < 48:
  *          dist = 48
  *        goto End
  *
@@ -351,9 +351,9 @@ unsigned char FPGM(bci_round) [] =
  *          dist = dist + 10
  *        else if delta < 54:
  *          dist = dist + 54
- *        else
+ *        else:
  *          dist = dist + delta
- *      else
+ *      else:
  *        dist = ROUND(dist)
  *
  *    End:
@@ -607,7 +607,7 @@ unsigned char FPGM(bci_get_best_width) [] =
  *   `ta_latin_snap_width' and some lines from
  *   `ta_latin_compute_stem_width'):
  *
- *     best = 64 + 32 + 2;
+ *     best = 64 + 32 + 2
  *     reference = width
  *     dist = ABS(width)
  *
@@ -617,18 +617,18 @@ unsigned char FPGM(bci_get_best_width) [] =
  *
  *       if d < best:
  *         best = d
- *         reference = w;
+ *         reference = w
  *
  *     if dist >= reference:
  *       if dist < ROUND(reference) + 48:
  *         dist = reference
- *     else
+ *     else:
  *       if dist > ROUND(reference) - 48:
  *         dist = reference
  *
  *     if dist >= 64:
  *       dist = ROUND(dist)
- *     else
+ *     else:
  *       dist = 64
  *
  *     if width < 0:
@@ -985,19 +985,19 @@ unsigned char FPGM(bci_vwidth_data_store) [] =
  *   This is the equivalent to the following code (function
  *   `ta_latin_metrics_scale_dim':
  *
- *     delta = dist;
- *     if (dist < 0)
- *       delta = -delta;
+ *     delta = dist
+ *     if dist < 0:
+ *       delta = -delta
  *
- *     if (delta < 32)
- *       delta = 0;
- *     else if (delta < 48)
- *       delta = 32;
- *     else
- *       delta = 64;
+ *     if delta < 32:
+ *       delta = 0
+ *     else if delta < 48:
+ *       delta = 32
+ *     else:
+ *       delta = 64
  *
- *     if (dist < 0)
- *       delta = -delta;
+ *     if dist < 0:
+ *       delta = -delta
  *
  * in: ref_idx
  *
@@ -1097,17 +1097,17 @@ unsigned char FPGM(bci_smooth_blue_round) [] =
  *
  *   This is the equivalent to the following code:
  *
- *     delta = dist;
- *     if (dist < 0)
- *       delta = -delta;
+ *     delta = dist
+ *     if dist < 0:
+ *       delta = -delta
  *
- *     if (delta < 36)
- *       delta = 0;
- *     else
- *       delta = 64;
+ *     if delta < 36:
+ *       delta = 0
+ *     else:
+ *       delta = 64
  *
- *     if (dist < 0)
- *       delta = -delta;
+ *     if dist < 0:
+ *       delta = -delta
  *
  *   It doesn't have corresponding code in talatin.c; however, some tests
  *   have shown that the `smooth' code works just fine for this case also.
@@ -3645,8 +3645,8 @@ unsigned char FPGM(bci_stem_common) [] =
  *          u_off = 38
  *          d_off = 26
  *
- *        org_pos = anchor + (edge_orig - anchor_orig);
- *        org_center = org_pos + org_len / 2;
+ *        org_pos = anchor + (edge_orig - anchor_orig)
+ *        org_center = org_pos + org_len / 2
  *
  *        cur_pos1 = ROUND(org_center)
  *        delta1 = ABS(org_center - (cur_pos1 - u_off))
@@ -3660,7 +3660,7 @@ unsigned char FPGM(bci_stem_common) [] =
  *
  *      else:
  *        org_pos = anchor + (edge_orig - anchor_orig)
- *        org_center = org_pos + org_len / 2;
+ *        org_center = org_pos + org_len / 2
  *
  *        cur_pos1 = ROUND(org_pos)
  *        delta1 = ABS(cur_pos1 + cur_len / 2 - org_center)
