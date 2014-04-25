@@ -683,7 +683,8 @@ unsigned char FPGM(bci_strong_stem_width_a) [] =
   RCVT,
   MUL, /* divide by 64; first index of vertical widths */
 
-  PUSHB_1,
+  PUSHB_2,
+    1,
     sal_vwidth_data_offset,
   RS,
   PUSHB_1,
@@ -697,6 +698,7 @@ unsigned char FPGM(bci_strong_stem_width_b) [] =
 
   ADD,
   RCVT, /* number of vertical widths */
+  MUL, /* divide by 64 */
 
   PUSHB_1,
     bci_get_best_width,
