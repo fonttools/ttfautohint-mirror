@@ -2078,7 +2078,7 @@ ta_latin_snap_width(TA_Width widths,
 /* compute the snapped width of a given stem, ignoring very thin ones */
 
 /* there is a lot of voodoo in this function; changing the hard-coded */
-/* parameters influence the whole hinting process */
+/* parameters influences the whole hinting process */
 
 static FT_Pos
 ta_latin_compute_stem_width(TA_GlyphHints hints,
