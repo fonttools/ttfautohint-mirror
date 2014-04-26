@@ -305,11 +305,13 @@ typedef int
  *     also.
  *
  * `increase-x-height`
- * :   An integer.  For PPEM values in the range 6\ <= PPEM
- *     <=\ `increase-x-height`, round up the font's x\ height much more often
- *     than normally.  If it is set to\ 0, this feature is switched off.  If
- *     this field is not set, it defaults to `TA_INCREASE_X_HEIGHT`.  Use
- *     this flag to improve the legibility of small font sizes if necessary.
+ * :   An integer.  For PPEM values in the range 6\ <= PPEM <=\
+ *     `increase-x-height`, round up the font's x\ height much more often
+ *     than normally (to use the terminology of TrueType's 'Super Round'
+ *     bytecode instruction, the threshold gets increased from 5/8 to
+ *     13/16).  If it is set to\ 0, this feature is switched off.  If this
+ *     field is not set, it defaults to `TA_INCREASE_X_HEIGHT`.  Use this
+ *     flag to improve the legibility of small font sizes if necessary.
  *
  * `x-height-snapping-exceptions`
  * :   A pointer of type `const char*` to a null-terminated string that
