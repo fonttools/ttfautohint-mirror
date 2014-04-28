@@ -37,11 +37,11 @@
 //   using C syntax.  There can be only one string per line, thus the
 //   starting and ending double quote must be the first and last character
 //   in the line, respectively, ignoring whitespace before and after the
-//   string.  If there are multiple strings (in multiple lines), they are
-//   concatenated to a single string.  In the output, a string gets
-//   represented as a series of singles bytes, followed by a zero byte.  The
-//   enumeration values simply hold byte offsets to the start of the
-//   corresponding strings.
+//   string.  Space characters within the string are ignored too.  If there
+//   are multiple strings (in multiple lines), they are concatenated to a
+//   single string.  In the output, a string gets represented as a series of
+//   singles bytes, followed by a zero byte.  The enumeration values simply
+//   hold byte offsets to the start of the corresponding strings.
 //
 // - Data blocks enclosed in balanced braces, which get copied verbatim and
 //   which can span multiple lines.  The opening brace of a block must be
@@ -65,6 +65,8 @@
 // not counted.  Note also that the count holds the number of UTF-8 encoded
 // characters, not bytes.
 
+
+// The blue zone string data, to be used in the blue stringsets below.
 
 TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
 
@@ -105,6 +107,71 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "בטכםסצ"
   TA_BLUE_STRING_HEBREW_DESCENDER
     "קךןףץ"
+
+
+// The blue zone stringsets, as used in the script styles, cf. `tastyles.h'.
+//
+// The TA_BLUE_PROPERTY_XXX flags are defined in `tablue.h'; here some
+// explanations.
+//
+// A blue zone in general is defined by a reference and an overshoot line.
+// During the hinting process, all coordinate values between those two lines
+// are set equal to the reference value, provided that the blue zone is not
+// wider than 0.75 pixels (otherwise the blue zone gets ignored).  All
+// entries must have `TA_BLUE_STRING_MAX' as the final line.
+//
+// During the glyph analysis, edges are sorted from bottom to top, and then
+// sequentially checked, edge by edge, against the blue zones in the order
+// given below.
+//
+//
+// latin auto-hinter
+// -----------------
+//
+// Characters in a blue string are automatically classified as having a flat
+// (reference) or a round (overshoot) extremum.  The blue zone is then set
+// up by the mean values of all flat extrema and all round extrema,
+// respectively.  Only horizontal blue zones (i.e., adjusting vertical
+// coordinate values) are supported.
+//
+// For the latin auto-hinter, the overshoot should be larger than the
+// reference for top zones, and vice versa for bottom zones.
+//
+//   LATIN_TOP
+//     Take the maximum flat and round coordinate values of the blue string
+//     characters for computing the blue zone's reference and overshoot
+//     values.
+//
+//     If not set, take the minimum values.
+//
+//   LATIN_NEUTRAL
+//     Ignore round extrema and define the blue zone with flat values only.
+//     Both top and bottom of contours can match.  This is useful for
+//     scripts like Devanagari where vowel signs attach to the base
+//     character and are implemented as components of composite glyphs.
+//
+//     If not set, both round and flat extrema are taken into account.
+//     Additionally, only the top or the bottom of a contour can match,
+//     depending on the LATIN_TOP flag.
+//
+//     Neutral blue zones should always follow non-neutral blue zones.
+//
+//   LATIN_X_HEIGHT
+//     Scale all glyphs vertically from the corresponding script to make the
+//     reference line of this blue zone align on the grid.  The scaling
+//     takes place before all other blue zones get aligned to the grid.
+//     Only one blue character string of a script style can have this flag.
+//
+//   LATIN_LONG
+//     Apply an additional constraint for blue zone values: Don't
+//     necessarily use the extremum as-is but a segment of the topmost (or
+//     bottommost) contour that is longer than a heuristic threshold, and
+//     which is not too far away vertically from the real extremum.  This
+//     ensures that small bumps in the outline are ignored (for example, the
+//     `vertical serifs' found in many Hebrew glyph designs).
+//
+//     The segment must be at least EM/25 font units long, and the distance
+//     to the extremum must be smaller than EM/4.
 
 
 TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:

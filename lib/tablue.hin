@@ -87,14 +87,10 @@ extern const char ta_blue_strings[];
 /* Properties are specific to a writing system.  We assume that a given */
 /* blue string can't be used in more than a single writing system, which */
 /* is a safe bet. */
-#define TA_BLUE_PROPERTY_LATIN_TOP (1 << 0)
-#define TA_BLUE_PROPERTY_LATIN_X_HEIGHT (1 << 1)
-#define TA_BLUE_PROPERTY_LATIN_LONG (1 << 2)
-
-#define TA_BLUE_PROPERTY_CJK_HORIZ (1 << 0)
-#define TA_BLUE_PROPERTY_CJK_TOP (1 << 1)
-#define TA_BLUE_PROPERTY_CJK_FILL (1 << 2)
-#define TA_BLUE_PROPERTY_CJK_RIGHT TA_BLUE_PROPERTY_CJK_TOP
+#define TA_BLUE_PROPERTY_LATIN_TOP (1 << 0) /* must have value 1 */
+#define TA_BLUE_PROPERTY_LATIN_NEUTRAL (1 << 1)
+#define TA_BLUE_PROPERTY_LATIN_X_HEIGHT (1 << 2)
+#define TA_BLUE_PROPERTY_LATIN_LONG (1 << 3)
 
 
 #define TA_BLUE_STRINGSET_MAX_LEN @TA_BLUE_STRINGSET_MAX_LEN@

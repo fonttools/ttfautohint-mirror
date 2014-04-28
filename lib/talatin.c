@@ -283,6 +283,14 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
           have_flag = 1;
         }
 
+        if (TA_LATIN_IS_NEUTRAL_BLUE(bs))
+        {
+          if (have_flag)
+            TA_LOG_GLOBAL((", "));
+          TA_LOG_GLOBAL(("neutral"));
+          have_flag = 1;
+        }
+
         if (TA_LATIN_IS_X_HEIGHT_BLUE(bs))
         {
           if (have_flag)
@@ -673,6 +681,13 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
                           || FT_CURVE_TAG(outline.tags[best_segment_last])
                                != FT_CURVE_TAG_ON);
 
+        if (round && TA_LATIN_IS_NEUTRAL_BLUE(bs))
+        {
+          /* only use flat segments for a neutral blue zone */
+          TA_LOG_GLOBAL((" (round, skipped)\n"));
+          continue;
+        }
+
         TA_LOG_GLOBAL((" (%s)\n", round ? "round" : "flat"));
       }
 
@@ -741,6 +756,8 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     blue->flags = 0;
     if (TA_LATIN_IS_TOP_BLUE(bs))
       blue->flags |= TA_LATIN_BLUE_TOP;
+    if (TA_LATIN_IS_NEUTRAL_BLUE(bs))
+      blue->flags |= TA_LATIN_BLUE_NEUTRAL;
 
     /* the following flag is used later to adjust the y and x scales */
     /* in order to optimize the pixel grid alignment */
@@ -1894,15 +1911,15 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
       if (!(blue->flags & TA_LATIN_BLUE_ACTIVE))
         continue;
 
-      /* if it is a top zone, check for right edges -- */
-      /* if it is a bottom zone, check for left edges */
+      /* if it is a top zone, check for right edges (against the major */
+      /* direction); if it is a bottom zone, check for left edges (in */
+      /* the major direction) */
       is_top_blue = (FT_Byte)((blue->flags & TA_LATIN_BLUE_TOP) != 0);
       is_major_dir = FT_BOOL(edge->dir == axis->major_dir);
 
-      /* if it is a top zone, the edge must be against the major */
-      /* direction; if it is a bottom zone, it must be in the major */
-      /* direction */
-      if (is_top_blue ^ is_major_dir)
+      /* neutral blue zones are handled for both directions */
+      if (is_top_blue ^ is_major_dir
+          || blue->flags & TA_LATIN_BLUE_NEUTRAL)
       {
         FT_Pos dist;
 
@@ -1925,9 +1942,11 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
         /* now compare it to the overshoot position and check whether */
         /* the edge is rounded, and whether the edge is over the */
         /* reference position of a top zone, or under the reference */
-        /* position of a bottom zone */
+        /* position of a bottom zone (provided we don't have a */
+        /* neutral blue zone) */
         if (edge->flags & TA_EDGE_ROUND
-            && dist != 0)
+            && dist != 0
+            && !(blue->flags & TA_LATIN_BLUE_NEUTRAL))
         {
           FT_Bool is_under_ref = FT_BOOL(edge->fpos < blue->ref.org);
 

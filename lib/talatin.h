@@ -38,6 +38,8 @@ extern const TA_WritingSystemClassRec ta_latin_writing_system_class;
 
 #define TA_LATIN_IS_TOP_BLUE(b) \
           ((b)->properties & TA_BLUE_PROPERTY_LATIN_TOP)
+#define TA_LATIN_IS_NEUTRAL_BLUE(b) \
+          ((b)->properties & TA_BLUE_PROPERTY_LATIN_NEUTRAL)
 #define TA_LATIN_IS_X_HEIGHT_BLUE(b) \
           ((b)->properties & TA_BLUE_PROPERTY_LATIN_X_HEIGHT)
 #define TA_LATIN_IS_LONG_BLUE(b) \
@@ -46,9 +48,10 @@ extern const TA_WritingSystemClassRec ta_latin_writing_system_class;
 #define TA_LATIN_MAX_WIDTHS 16
 
 
-#define TA_LATIN_BLUE_ACTIVE  (1 << 0) /* set if zone height is <= 3/4px */
-#define TA_LATIN_BLUE_TOP (1 << 1) /* result of TA_LATIN_IS_TOP_BLUE */
-#define TA_LATIN_BLUE_ADJUSTMENT (1 << 2) /* used for scale adjustment */
+#define TA_LATIN_BLUE_ACTIVE (1 << 0) /* set if zone height is <= 3/4px */
+#define TA_LATIN_BLUE_TOP (1 << 1) /* set if we have a top blue zone */
+#define TA_LATIN_BLUE_NEUTRAL (1 << 2) /* set if we have neutral blue zone */
+#define TA_LATIN_BLUE_ADJUSTMENT (1 << 3) /* used for scale adjustment */
                                           /* optimization */
 
 
