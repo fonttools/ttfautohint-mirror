@@ -719,8 +719,10 @@ unsigned char FPGM(bci_strong_stem_width_b) [] =
   PUSHB_2,
     48,
     5,
-  CINDEX,
-  ROLL, /* s: width dist reference dist ROUND(reference) 48 reference dist */
+  CINDEX, /* s: width dist reference dist dist ROUND(reference) 48 reference */
+  PUSHB_1,
+    4,
+  MINDEX, /* s: width dist reference dist ROUND(reference) 48 reference dist */
 
   LTEQ, /* dist >= reference */
   IF, /* s: width dist reference dist ROUND(reference) 48 */
