@@ -1916,11 +1916,11 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
       /* direction); if it is a bottom zone, check for left edges (in */
       /* the major direction) */
       is_top_blue = (FT_Byte)((blue->flags & TA_LATIN_BLUE_TOP) != 0);
-      is_top_neutral = (FT_Byte)((blue->flags & TA_LATIN_BLUE_NEUTRAL) != 0);
+      is_neutral_blue = (FT_Byte)((blue->flags & TA_LATIN_BLUE_NEUTRAL) != 0);
       is_major_dir = FT_BOOL(edge->dir == axis->major_dir);
 
       /* neutral blue zones are handled for both directions */
-      if (is_top_blue ^ is_major_dir || is_top_neutral)
+      if (is_top_blue ^ is_major_dir || is_neutral_blue)
       {
         FT_Pos dist;
 
