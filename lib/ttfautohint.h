@@ -308,8 +308,8 @@ typedef int
  * :   An integer.  For PPEM values in the range 6\ <= PPEM <=\
  *     `increase-x-height`, round up the font's x\ height much more often
  *     than normally (to use the terminology of TrueType's 'Super Round'
- *     bytecode instruction, the threshold gets increased from 5/8 to
- *     13/16).  If it is set to\ 0, this feature is switched off.  If this
+ *     bytecode instruction, the threshold gets increased from 5/8px to
+ *     13/16px).  If it is set to\ 0, this feature is switched off.  If this
  *     field is not set, it defaults to `TA_INCREASE_X_HEIGHT`.  Use this
  *     flag to improve the legibility of small font sizes if necessary.
  *
@@ -354,7 +354,7 @@ typedef int
  *
  * `symbol`
  * :   Set this integer to\ 1 if you want to process a font that lacks the
- *     characters of a supported script, for example, a symbol font. 
+ *     characters of a supported script, for example, a symbol font.
  *     ttfautohint then uses default values for the standard stem width and
  *     height instead of deriving these values from a script's standard
  *     characters (for the latin script, one of them is character 'o').  The

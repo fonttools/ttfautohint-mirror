@@ -270,11 +270,11 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 `--increase-x-height=`*n*, `-x`\ *n*
 :   Normally, ttfautohint rounds the x\ height to the pixel grid, with a
     slight preference for rounding up (to use the terminology of TrueType's
-    'Super Round' bytecode instruction, the threshold is 5/8).  If this flag
-    is set, values in the range 6\ PPEM to *n*\ PPEM are much more often
-    rounded up (setting the threshold to 13/16).  The default value for *n*
-    is 14.  Use this flag to increase the legibility of small sizes if
-    necessary; you might get weird rendering results otherwise for glyphs
+    'Super Round' bytecode instruction, the threshold is 5/8px).  If this
+    flag is set, values in the range 6\ PPEM to *n*\ PPEM are much more
+    often rounded up (setting the threshold to 13/16px).  The default value
+    for *n* is 14.  Use this flag to increase the legibility of small sizes
+    if necessary; you might get weird rendering results otherwise for glyphs
     like 'a' or 'e', depending on the font design.
 
     To switch off this feature, use `--increase-x-height=0` (or check the
@@ -762,7 +762,7 @@ that are shifted vertically will be skipped.  For example, if the glyph
 other hand, if there is a glyph 'agrave' that uses the same 'grave' glyph
 vertically unshifted, 'grave' does inherit the style.
 
-If `--composites` is off, components are hinted separately, then added
+If `--composites` is off, components are hinted separately, then put
 together.  Separate hinting implies that the current style's blue zones are
 applied to all subglyphs in its original, unshifted positions.
 
