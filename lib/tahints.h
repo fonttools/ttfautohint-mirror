@@ -240,6 +240,7 @@ typedef enum TA_Direction_
 #define TA_EDGE_ROUND (1 << 0)
 #define TA_EDGE_SERIF (1 << 1)
 #define TA_EDGE_DONE (1 << 2)
+#define TA_EDGE_NEUTRAL (1 << 3)
 
 
 typedef struct TA_PointRec_* TA_Point;

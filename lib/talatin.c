@@ -1438,7 +1438,7 @@ ta_latin_hints_link_segments(TA_GlyphHints hints,
   len_score = TA_LATIN_CONSTANT(hints->metrics, 6000);
 
   /* a heuristic value to weight distances (no call to */
-  /* AF_LATIN_CONSTANT needed, since we work on multiples */
+  /* TA_LATIN_CONSTANT needed, since we work on multiples */
   /* of the stem width) */
   dist_score = 3000;
 
@@ -1881,6 +1881,7 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
   {
     FT_UInt bb;
     TA_Width best_blue = NULL;
+    FT_Bool best_blue_is_neutral = 0;
     FT_Pos best_dist; /* initial threshold */
 
     FT_UInt best_blue_idx = 0;
@@ -1904,7 +1905,7 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
          bb++)
     {
       TA_LatinBlue blue = latin->blues + bb;
-      FT_Bool is_top_blue, is_major_dir;
+      FT_Bool is_top_blue, is_neutral_blue, is_major_dir;
 
 
       /* skip inactive blue zones (i.e., those that are too large) */
@@ -1915,11 +1916,11 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
       /* direction); if it is a bottom zone, check for left edges (in */
       /* the major direction) */
       is_top_blue = (FT_Byte)((blue->flags & TA_LATIN_BLUE_TOP) != 0);
+      is_top_neutral = (FT_Byte)((blue->flags & TA_LATIN_BLUE_NEUTRAL) != 0);
       is_major_dir = FT_BOOL(edge->dir == axis->major_dir);
 
       /* neutral blue zones are handled for both directions */
-      if (is_top_blue ^ is_major_dir
-          || blue->flags & TA_LATIN_BLUE_NEUTRAL)
+      if (is_top_blue ^ is_major_dir || is_top_neutral)
       {
         FT_Pos dist;
 
@@ -1934,6 +1935,7 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
         {
           best_dist = dist;
           best_blue = &blue->ref;
+          best_blue_is_neutral = is_neutral_blue;
 
           best_blue_idx = bb;
           best_blue_is_shoot = 0;
@@ -1946,7 +1948,7 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
         /* neutral blue zone) */
         if (edge->flags & TA_EDGE_ROUND
             && dist != 0
-            && !(blue->flags & TA_LATIN_BLUE_NEUTRAL))
+            && !is_neutral_blue)
         {
           FT_Bool is_under_ref = FT_BOOL(edge->fpos < blue->ref.org);
 
@@ -1962,6 +1964,7 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
             {
               best_dist = dist;
               best_blue = &blue->shoot;
+              best_blue_is_neutral = is_neutral_blue;
 
               best_blue_idx = bb;
               best_blue_is_shoot = 1;
@@ -1976,6 +1979,8 @@ ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
       edge->blue_edge = best_blue;
       edge->best_blue_idx = best_blue_idx;
       edge->best_blue_is_shoot = best_blue_is_shoot;
+      if (best_blue_is_neutral)
+        edge->flags |= TA_EDGE_NEUTRAL;
     }
   }
 }
@@ -2340,14 +2345,40 @@ ta_latin_hint_edges(TA_GlyphHints hints,
       if (edge->flags & TA_EDGE_DONE)
         continue;
 
-      blue = edge->blue_edge;
       edge1 = NULL;
       edge2 = edge->link;
 
+      /*
+       * If a stem contains both a neutral and a non-neutral blue zone,
+       * skip the neutral one.  Otherwise, outlines with different
+       * directions might be incorrectly aligned at the same vertical
+       * position.
+       *
+       * If we have two neutral blue zones, skip one of them.
+       */
+      if (edge->blue_edge && edge2 && edge2->blue_edge)
+      {
+        FT_Byte neutral = edge->flags & TA_EDGE_NEUTRAL;
+        FT_Byte neutral2 = edge2->flags & TA_EDGE_NEUTRAL;
+
+
+        if ((neutral && neutral2) || neutral2)
+        {
+          edge2->blue_edge = NULL;
+          edge2->flags &= ~TA_EDGE_NEUTRAL;
+        }
+        else if (neutral)
+        {
+          edge->blue_edge = NULL;
+          edge->flags &= ~TA_EDGE_NEUTRAL;
+        }
+      }
+
+      blue = edge->blue_edge;
       if (blue)
         edge1 = edge;
 
-      /* flip edges if the other stem is aligned to a blue zone */
+      /* flip edges if the other edge is aligned to a blue zone */
       else if (edge2 && edge2->blue_edge)
       {
         blue = edge2->blue_edge;
@@ -2423,7 +2454,7 @@ ta_latin_hint_edges(TA_GlyphHints hints,
     /* this should not happen, but it's better to be safe */
     if (edge2->blue_edge)
     {
-      TA_LOG(("  ASSERTION FAILED for edge %d\n", edge2-edges));
+      TA_LOG(("  ASSERTION FAILED for edge %d\n", edge2 - edges));
 
       ta_latin_align_linked_edge(hints, dim, edge2, edge);
       edge->flags |= TA_EDGE_DONE;
