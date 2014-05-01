@@ -85,13 +85,23 @@
                       DEFAULT)
 
 META_STYLE_LATIN(cyrl, CYRL, "Cyrillic")
+
+STYLE(deva_dflt, DEVA_DFLT,
+      "Devanagari default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_DEVA,
+      TA_BLUE_STRINGSET_DEVA,
+      TA_COVERAGE_DEFAULT)
+
 META_STYLE_LATIN(grek, GREK, "Greek")
+
 STYLE(hebr_dflt, HEBR_DFLT,
       "Hebrew default style",
       TA_WRITING_SYSTEM_LATIN,
       TA_SCRIPT_HEBR,
       TA_BLUE_STRINGSET_HEBR,
-      TA_COVERAGE_DEFAULT )
+      TA_COVERAGE_DEFAULT)
+
 META_STYLE_LATIN(latn, LATN, "Latin")
 
 #ifdef FT_OPTION_AUTOFIT2

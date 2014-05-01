@@ -29,6 +29,13 @@ const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
+const TA_Script_UniRangeRec ta_deva_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0900UL, 0x097FUL), /* Devanagari */
+  TA_UNIRANGE_REC(0x20B9UL, 0x20B9UL), /* (new) Rupee sign */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
 const TA_Script_UniRangeRec ta_grek_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0370UL, 0x03FFUL), /* Greek and Coptic */
@@ -58,7 +65,8 @@ const TA_Script_UniRangeRec ta_latn_uniranges[] =
   TA_UNIRANGE_REC( 0x1E00UL,  0x1EFFUL), /* Latin Extended Additional */
   TA_UNIRANGE_REC( 0x2000UL,  0x206FUL), /* General Punctuation */
   TA_UNIRANGE_REC( 0x2070UL,  0x209FUL), /* Superscripts and Subscripts */
-  TA_UNIRANGE_REC( 0x20A0UL,  0x20CFUL), /* Currency Symbols */
+  TA_UNIRANGE_REC( 0x20A0UL,  0x20B8UL), /* Currency Symbols ... */
+  TA_UNIRANGE_REC( 0x20BAUL,  0x20CFUL), /* ... except new Rupee sign */
   TA_UNIRANGE_REC( 0x2150UL,  0x218FUL), /* Number Forms */
   TA_UNIRANGE_REC( 0x2460UL,  0x24FFUL), /* Enclosed Alphanumerics */
   TA_UNIRANGE_REC( 0x2C60UL,  0x2C7FUL), /* Latin Extended-C */

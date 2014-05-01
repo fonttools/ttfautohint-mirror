@@ -33,6 +33,11 @@ SCRIPT(cyrl, CYRL,
        HB_SCRIPT_CYRILLIC,
        0x43E, 0x41E, 0x0) /* оО */
 
+SCRIPT(deva, DEVA,
+       "Devanagari",
+       HB_SCRIPT_DEVANAGARI,
+       0x920, 0x935, 0x91F) /* ठ व ट */
+
 SCRIPT(grek, GREK,
        "Greek",
        HB_SCRIPT_GREEK,
