@@ -51,6 +51,10 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
       offset += 2;
   }
 
+  /* to make the short format of the `loca' table always work, */
+  /* the `glyf' table's length is adjusted to an even value */
+  offset = (offset + 1) & ~1;
+
   if (offset > 0xFFFF * 2)
     loca_format = 1;
   else
@@ -85,6 +89,7 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
     }
 
     /* last element holds the size of the `glyf' table */
+    offset = (offset + 1) & ~1;
     *(p++) = BYTE1(offset);
     *(p++) = BYTE2(offset);
     *(p++) = BYTE3(offset);
@@ -117,6 +122,7 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
     }
 
     /* last element holds the size of the `glyf' table */
+    offset = (offset + 1) & ~1;
     *(p++) = HIGH(offset);
     *(p++) = LOW(offset);
 
