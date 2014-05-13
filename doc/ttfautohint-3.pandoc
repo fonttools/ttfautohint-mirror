@@ -76,7 +76,6 @@ The file `COPYING` mentioned in the previous paragraph is distributed with
 the ttfautohint library.
 
 
-
 [Dalton Maag Ltd]: http://daltonmaag.com
 [DejaVu]: http://dejavu-fonts.org
 [FontForge]: http://fontforge.sf.net
@@ -87,3 +86,7 @@ the ttfautohint library.
 [OpenType specification]: http://www.microsoft.com/typography/otspec
 [Qt]: http://qt-project.org
 [Vernon Adams]: http://code.newtypography.co.uk
+
+
+History
+=======

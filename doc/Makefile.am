@@ -12,7 +12,8 @@
 
 DOCSRC = ttfautohint-1.pandoc \
          ttfautohint-2.pandoc \
-         ttfautohint-3.pandoc
+         ttfautohint-3.pandoc \
+         ../NEWS
 
 DOCIMGSVG = img/blue-zones.svg \
             img/glyph-terms.svg \
