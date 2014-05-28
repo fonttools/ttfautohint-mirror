@@ -942,7 +942,8 @@ Table: OpenType features handled specially by ttfautohint
 There are two conditions to get a valid style for a feature in a given
 script.
 
- 1. On of the script's standard characters must be available in the feature.
+ 1. One of the script's standard characters must be available in the
+    feature.
 
  2. The feature must provide characters to form at least one blue zone; see
     [above](#blue-zones).
