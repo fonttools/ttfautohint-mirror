@@ -1081,11 +1081,10 @@ Main_GUI::create_layout(bool horizontal_layout)
 
   symbol_box = new QCheckBox(tr("S&ymbol Font"), this);
   symbol_box->setToolTip(
-    tr("If switched on, <b>TTFautohint</b> uses default values"
-       " for standard stem width and height"
-       " instead of deriving these values from the input font.<br>"
-       "Use this for fonts that don't contain glyphs"
-       " of a (supported) script."));
+    tr("If switched on, <b>TTFautohint</b> accepts fonts"
+       " that don't contain a single standard character"
+       " for any of the supported scripts.<br>"
+       "Use this for symbol or dingbat fonts, for example."));
 
   dehint_box = new QCheckBox(tr("&Dehint"), this);
   dehint_box->setToolTip(

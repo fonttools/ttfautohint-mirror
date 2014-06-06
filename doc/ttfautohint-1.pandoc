@@ -300,7 +300,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 
 `--x-height-snapping-exceptions=`*string*, `-X`\ *string*
 :   A list of comma separated PPEM values or value ranges at which no
-    x-height snapping shall be applied.  A value range has the form
+    x\ height snapping shall be applied.  A value range has the form
     *value1*`-`*value2*, meaning *value1*\ <= PPEM <=\ *value2*.  *value1*
     or *value2* (or both) can be missing; a missing value is replaced by the
     beginning or end of the whole interval of valid PPEM values,
@@ -308,10 +308,10 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     commas are ignored, and ranges must be specified in increasing order.
     For example, the string `"7-9, 11, 13-"` means the values 7, 8, 9, 11,
     13, 14, 15, etc.  Consequently, if the supplied argument is `"-"`, no
-    x-height snapping takes place at all.  The default is the empty string
+    x\ height snapping takes place at all.  The default is the empty string
     (`""`), meaning no snapping exceptions.
 
-    Normally, x-height snapping means a slight increase in the overall
+    Normally, x\ height snapping means a slight increase in the overall
     vertical glyph size so that the height of lowercase glyphs gets aligned
     to the pixel grid (this is a global feature, affecting *all* glyphs of a
     font).  However, having larger vertical glyph sizes is not always
@@ -383,13 +383,17 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 ### Symbol Font
 
 `--symbol`, `-s`
-:   Apply default values for standard (horizontal) stem width and height
-    instead of deriving them from script-specific, hard-coded default
-    characters (which usually resemble the shape of a lowercase 'o').  Use
-    this option (usually in combination with option `--fallback-script`) to
-    hint symbol or dingbat fonts or math glyphs, for example, that lack
-    default characters, at the expense of possibly poor hinting results at
-    small sizes.
+:   Process a font that ttfautohint would refuse otherwise because it can't
+    find a single standard character for any of the supported scripts.
+
+    For all scripts that lack proper standard characters, ttfautohint uses a
+    default (hinting) value for the standard stem width instead of deriving
+    it from a script's set of standard characters (for the latin script, one
+    of them is character 'o').
+
+    Use this option (usually in combination with option `--fallback-script`)
+    to hint symbol or dingbat fonts or math glyphs, for example, at the
+    expense of possibly poor hinting results at small sizes.
 
 ### Dehint
 
@@ -543,14 +547,14 @@ hinting.
     This affects the hinting of all glyphs, trying to give them a uniform
     appearance.
 
-      + Compute standard stem widths and heights of the font.  The values
-        are normally taken from glyphs that resemble letter 'o'.
+      + Compute standard horizontal stem width of the font.  The value
+        is normally taken from glyphs that resemble letter 'o'.
 
       + Compute blue zones, see [below](#blue-zones).
 
-    If stem widths and heights of single glyphs differ by a large value, or
-    if ttfautohint fails to find proper blue zones, hinting becomes quite
-    poor, possibly leading even to severe shape distortions.
+    If the stem widths of single glyphs differ by a large value, or if
+    ttfautohint fails to find proper blue zones, hinting becomes quite poor,
+    possibly leading even to severe shape distortions.
 
 
 Table: script-specific standard characters of the 'latin' writing system

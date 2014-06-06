@@ -316,7 +316,7 @@ typedef int
  * `x-height-snapping-exceptions`
  * :   A pointer of type `const char*` to a null-terminated string that
  *     gives a list of comma separated PPEM values or value ranges at which
- *     no x-height snapping shall be applied.  A value range has the form
+ *     no x\ height snapping shall be applied.  A value range has the form
  *     *value1*`-`*value2*, meaning *value1* <= PPEM <= *value2*.  *value1*
  *     or *value2* (or both) can be missing; a missing value is replaced by
  *     the beginning or end of the whole interval of valid PPEM values,
@@ -324,7 +324,7 @@ typedef int
  *     ignored, and ranges must be specified in increasing order.  For
  *     example, the string `"3, 5-7, 9-"` means the values 3, 5, 6, 7, 9,
  *     10, 11, 12, etc.  Consequently, if the supplied argument is `"-"`, no
- *     x-height snapping takes place at all.  The default is the empty
+ *     x\ height snapping takes place at all.  The default is the empty
  *     string (`""`), meaning no snapping exceptions.
  *
  * `windows-compatibility`
@@ -353,12 +353,13 @@ typedef int
  *     `ttfautohint-scripts.h`.
  *
  * `symbol`
- * :   Set this integer to\ 1 if you want to process a font that lacks the
- *     characters of a supported script, for example, a symbol font.
- *     ttfautohint then uses default values for the standard stem width and
- *     height instead of deriving these values from a script's standard
- *     characters (for the latin script, one of them is character 'o').  The
- *     default value is\ 0.
+ * :   Set this integer to\ 1 if you want to process a font that ttfautohint
+ *     would refuse otherwise because it can't find a single standard
+ *     character for any of the supported scripts.  ttfautohint then uses a
+ *     default (hinting) value for the standard stem width instead of
+ *     deriving it from a script's set of standard characters (for the latin
+ *     script, one of them is character 'o').  The default value of this
+ *     option is\ 0.
  *
  *
  * ### Miscellaneous

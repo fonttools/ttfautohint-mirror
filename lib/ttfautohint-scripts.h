@@ -25,7 +25,7 @@
  * script name in lowercase and uppercase, respectively, followed
  * by a description string.  Then comes the corresponding HarfBuzz
  * script name tag, followed by the default character (to derive
- * the standard width and height of stems).
+ * the standard width of stems).
  */
 
 SCRIPT(cyrl, CYRL,
