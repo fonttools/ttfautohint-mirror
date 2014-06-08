@@ -121,8 +121,8 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
         offset += 1;
     }
 
-    /* last element holds the size of the `glyf' table */
-    offset = (offset + 1) & ~1;
+    /* last element holds the size of the `glyf' table -- */
+    /* this value must *not* be aligned to a multiple of 4 */
     *(p++) = HIGH(offset);
     *(p++) = LOW(offset);
 
