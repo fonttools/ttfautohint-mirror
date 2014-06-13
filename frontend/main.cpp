@@ -722,10 +722,11 @@ main(int argc,
     in = fopen(argv[optind], "rb");
     if (!in)
     {
-      fprintf(stderr, "The following error occurred while opening font `%s':\n"
-                      "\n"
-                      "  %s\n",
-                      argv[optind], strerror(errno));
+      fprintf(stderr,
+              "The following error occurred while opening font `%s':\n"
+              "\n"
+              "  %s\n",
+              argv[optind], strerror(errno));
       exit(EXIT_FAILURE);
     }
   }
@@ -748,10 +749,11 @@ main(int argc,
     out = fopen(argv[optind + 1], "wb");
     if (!out)
     {
-      fprintf(stderr, "The following error occurred while opening font `%s':\n"
-                      "\n"
-                      "  %s\n",
-                      argv[optind + 1], strerror(errno));
+      fprintf(stderr,
+              "The following error occurred while opening font `%s':\n"
+              "\n"
+              "  %s\n",
+              argv[optind + 1], strerror(errno));
       exit(EXIT_FAILURE);
     }
   }
