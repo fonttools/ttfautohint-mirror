@@ -40,7 +40,8 @@
 
 void
 ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
-                             FT_Face face)
+                             FT_Face face,
+                             FT_Bool use_cmap)
 {
   /* scan the array of segments in each direction */
   TA_GlyphHintsRec hints[1];
@@ -70,6 +71,9 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
 
     FT_UInt32 standard_char;
 
+
+    if (!use_cmap)
+      goto Exit;
 
     /*
      * We check more than a single standard character to catch features
@@ -192,12 +196,29 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
   Exit:
     for (dim = 0; dim < TA_DIMENSION_MAX; dim++)
     {
+      FONT* font = metrics->root.globals->font;
       TA_LatinAxis axis = &metrics->axis[dim];
       FT_Pos stdw;
 
 
-      stdw = (axis->width_count > 0) ? axis->widths[0].org
-                                     : TA_LATIN_CONSTANT(metrics, 50);
+      if (!axis->width_count)
+      {
+        /* if we have no standard characters, */
+        /* use `fallback-stem-width', if available, */
+        /* or a default width (value 50 is heuristic) */
+        stdw = (dim == TA_DIMENSION_VERT && font->fallback_stem_width)
+                 ? (FT_Pos)font->fallback_stem_width
+                 : TA_LATIN_CONSTANT(metrics, 50);
+
+        /* set one width value if we do hinting */
+        if (style_class->style != TA_STYLE_NONE_DFLT)
+        {
+          axis->width_count++;
+          axis->widths[0].org = stdw;
+        }
+      }
+
+      stdw = axis->widths[0].org;
 
       /* let's try 20% of the smallest width */
       axis->edge_distance_threshold = stdw / 5;
@@ -882,9 +903,14 @@ ta_latin_metrics_init(TA_LatinMetrics metrics,
 
   if (!FT_Select_Charmap(face, FT_ENCODING_UNICODE))
   {
-    ta_latin_metrics_init_widths(metrics, face);
+    ta_latin_metrics_init_widths(metrics, face, 1);
     ta_latin_metrics_init_blues(metrics, face);
     ta_latin_metrics_check_digits(metrics, face);
+  }
+  else
+  {
+    /* we only have a symbol font encoding */
+    ta_latin_metrics_init_widths(metrics, face, 0);
   }
 
   FT_Set_Charmap(face, oldmap);

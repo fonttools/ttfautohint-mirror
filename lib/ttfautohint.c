@@ -75,6 +75,8 @@ TTF_autohint(const char* options,
   const char* x_height_snapping_exceptions_string = NULL;
   number_range* x_height_snapping_exceptions = NULL;
 
+  FT_Long fallback_stem_width = 0;
+
   FT_Bool gray_strong_stem_width = 0;
   FT_Bool gdi_cleartype_strong_stem_width = 1;
   FT_Bool dw_cleartype_strong_stem_width = 0;
@@ -160,6 +162,8 @@ TTF_autohint(const char* options,
       error_stringp = va_arg(ap, const unsigned char**);
     else if (COMPARE("fallback-script"))
       fallback_script_string = va_arg(ap, const char*);
+    else if (COMPARE("fallback-stem-width"))
+      fallback_stem_width = (FT_Long)va_arg(ap, FT_UInt);
     else if (COMPARE("gdi-cleartype-strong-stem-width"))
       gdi_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("gray-strong-stem-width"))
@@ -359,6 +363,7 @@ TTF_autohint(const char* options,
   font->hinting_limit = (FT_UInt)hinting_limit;
   font->increase_x_height = increase_x_height;
   font->x_height_snapping_exceptions = x_height_snapping_exceptions;
+  font->fallback_stem_width = (FT_UInt)fallback_stem_width;
 
   font->gray_strong_stem_width = gray_strong_stem_width;
   font->gdi_cleartype_strong_stem_width = gdi_cleartype_strong_stem_width;
@@ -404,6 +409,8 @@ No_check:
               font->dw_cleartype_strong_stem_width);
       DUMPSTR("fallback-script",
               script_names[ta_style_classes[font->fallback_style]->script]);
+      DUMPVAL("fallback-stem-width",
+              font->fallback_stem_width);
       DUMPVAL("gdi-cleartype-strong-stem-width",
               font->gdi_cleartype_strong_stem_width);
       DUMPVAL("gray-strong-stem-width",

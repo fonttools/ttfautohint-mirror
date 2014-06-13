@@ -361,6 +361,18 @@ typedef int
  *     script, one of them is character 'o').  The default value of this
  *     option is\ 0.
  *
+ * `fallback-stem-width`
+ * :   Set the horizontal stem width (hinting) value for all scripts that
+ *     lack proper standard characters.  The value is given in font units
+ *     and must be a positive integer.  If not set, or the value is zero,
+ *     ttfautohint uses a hard-coded default (50\ units at 2048 units per
+ *     EM, and linearly scaled for other UPEM values, for example 24\ units
+ *     at 1000 UPEM).
+ *
+ *     For symbol fonts (i.e., option `symbol` is given),
+ *     `fallback-stem-width` has an effect only if `fallback-script` is set
+ *     also.
+ *
  *
  * ### Miscellaneous
  *

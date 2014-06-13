@@ -85,7 +85,15 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
     }
 
     if (!glyph_index)
+    {
+      /* in case of a symbol font, */
+      /* we only proceed if a fallback style is set */
+      if (font->symbol
+          && font->fallback_style != TA_STYLE_NONE_DFLT
+          && font->fallback_style == style_idx)
+        goto Symbol;
       return TA_Err_Missing_Glyph;
+    }
 
     /*
      * We now know that HarfBuzz can access the standard character in the
@@ -114,6 +122,7 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
     }
   }
 
+Symbol:
   load_flags = 1 << 29; /* vertical hinting only */
   error = ta_loader_load_glyph(font, face, glyph_index, load_flags);
 

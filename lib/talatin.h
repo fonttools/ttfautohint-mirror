@@ -102,7 +102,8 @@ ta_latin_metrics_scale(TA_LatinMetrics metrics,
 
 void
 ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
-                             FT_Face face);
+                             FT_Face face,
+                             FT_Bool use_cmap);
 
 void
 ta_latin_metrics_check_digits(TA_LatinMetrics metrics,
