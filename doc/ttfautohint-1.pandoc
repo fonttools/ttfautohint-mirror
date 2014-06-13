@@ -332,8 +332,8 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     For symbol fonts, you need option `--fallback-script` too (to set up a
     script at all).
 
-    In the GUI, uncheck the 'Default Symbol Stem Width' box to activate this
-    feature.
+    In the GUI, uncheck the 'Default Fallback Stem Width' box to activate
+    this feature.
 
 ### Windows Compatibility
 
