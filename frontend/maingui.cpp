@@ -65,6 +65,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
                    bool dw,
                    int increase,
                    const char* exceptions,
+                   int stem_width,
                    bool ignore,
                    bool wincomp,
                    bool pre,
@@ -82,6 +83,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   dw_cleartype_strong_stem_width(dw),
   increase_x_height(increase),
   x_height_snapping_exceptions_string(exceptions),
+  fallback_stem_width(stem_width),
   ignore_restrictions(ignore),
   windows_compatibility(wincomp),
   pre_hinting(pre),
@@ -270,6 +272,10 @@ Main_GUI::check_dehint()
     snapping_label->setEnabled(false);
     snapping_line->setEnabled(false);
 
+    default_stem_width_box->setEnabled(false);
+    stem_width_label->setEnabled(false);
+    stem_width_box->setEnabled(false);
+
     wincomp_box->setEnabled(false);
     pre_box->setEnabled(false);
     hint_box->setEnabled(false);
@@ -301,6 +307,9 @@ Main_GUI::check_dehint()
 
     snapping_label->setEnabled(true);
     snapping_line->setEnabled(true);
+
+    default_stem_width_box->setEnabled(true);
+    check_default_stem_width();
 
     wincomp_box->setEnabled(true);
     pre_box->setEnabled(true);
@@ -343,6 +352,22 @@ Main_GUI::check_no_increase()
   {
     increase_label->setEnabled(true);
     increase_box->setEnabled(true);
+  }
+}
+
+
+void
+Main_GUI::check_default_stem_width()
+{
+  if (default_stem_width_box->isChecked())
+  {
+    stem_width_label->setEnabled(false);
+    stem_width_box->setEnabled(false);
+  }
+  else
+  {
+    stem_width_label->setEnabled(true);
+    stem_width_box->setEnabled(true);
   }
 }
 
@@ -799,6 +824,9 @@ again:
                                 ? 0
                                 : increase_box->value();
   info_data.x_height_snapping_exceptions = x_height_snapping_exceptions;
+  info_data.fallback_stem_width = default_stem_width_box->isChecked()
+                                  ? 0
+                                  : stem_width_box->value();
 
   info_data.windows_compatibility = wincomp_box->isChecked();
   info_data.pre_hinting = pre_box->isChecked();
@@ -836,6 +864,18 @@ again:
   else
     info_func = NULL;
 
+  if (info_data.symbol
+      && info_data.fallback_stem_width
+      && !strcmp(info_data.fallback_script, "none"))
+    QMessageBox::information(
+      this,
+      "TTFautohint",
+      tr("Setting a fallback stem width for a symbol font"
+         " without setting a fallback script has no effect."),
+      QMessageBox::Ok,
+      QMessageBox::Ok);
+
+
   QByteArray snapping_string = snapping_line->text().toLocal8Bit();
 
   TA_Error error =
@@ -853,7 +893,7 @@ again:
                  "pre-hinting,"
                  "hint-composites,"
                  "increase-x-height,"
-                 "x-height-snapping-exceptions,"
+                 "x-height-snapping-exceptions, fallback-stem-width,"
                  "default-script, fallback-script,"
                  "symbol, dehint",
                  input, output,
@@ -870,7 +910,7 @@ again:
                  info_data.pre_hinting,
                  info_data.hint_composites,
                  info_data.increase_x_height,
-                 snapping_string.constData(),
+                 snapping_string.constData(), info_data.fallback_stem_width,
                  info_data.default_script, info_data.fallback_script,
                  info_data.symbol, info_data.dehint);
 
@@ -1053,6 +1093,25 @@ Main_GUI::create_layout(bool horizontal_layout)
        "&nbsp;&nbsp;<tt>-</tt> (meaning all possible PPEM values)"));
 
   //
+  // fallback stem width
+  //
+  stem_width_label = new QLabel(tr("Fall&back Stem Width:"));
+  stem_width_box = new QSpinBox;
+  stem_width_label->setBuddy(stem_width_box);
+  stem_width_label->setToolTip(
+    tr("Set horizontal stem width (in font units) for all scripts"
+       " that lack proper standard characters in the font.<br>"
+       "If not set, <b>TTFautohint</b> uses a hard-coded default value."));
+  stem_width_box->setKeyboardTracking(false);
+  stem_width_box->setRange(1, 10000);
+
+  default_stem_width_box = new QCheckBox(tr("Default Fallback Stem Width"),
+                                         this);
+  default_stem_width_box->setToolTip(
+    tr("If switched on, <b>TTFautohint</b> uses a default value"
+       " for the fallback stem width (50 font units at 2048 UPEM)."));
+
+  //
   // flags
   //
   wincomp_box = new QCheckBox(tr("Windows Com&patibility"), this);
@@ -1219,6 +1278,10 @@ Main_GUI::create_vertical_layout()
   gui_layout->addWidget(snapping_label, row, 0, Qt::AlignRight);
   gui_layout->addWidget(snapping_line, row++, 1, Qt::AlignLeft);
 
+  gui_layout->addWidget(stem_width_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(stem_width_box, row++, 1, Qt::AlignLeft);
+  gui_layout->addWidget(default_stem_width_box, row++, 1);
+
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
@@ -1317,6 +1380,10 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(snapping_label, row, 1, Qt::AlignRight);
   gui_layout->addWidget(snapping_line, row++, 2, Qt::AlignLeft);
 
+  gui_layout->addWidget(stem_width_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(stem_width_box, row++, 2, Qt::AlignLeft);
+  gui_layout->addWidget(default_stem_width_box, row++, 2);
+
   // column separator
   gui_layout->setColumnMinimumWidth(3, 20); // XXX urgh, pixels...
   gui_layout->setColumnStretch(3, 1);
@@ -1347,6 +1414,7 @@ Main_GUI::create_horizontal_layout()
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
+  row += 1;
   gui_layout->addWidget(run_button, row++, 4, Qt::AlignRight);
 
   // margin
@@ -1396,6 +1464,9 @@ Main_GUI::create_connections()
           SLOT(check_number_set()));
   connect(snapping_line, SIGNAL(textEdited(QString)), this,
           SLOT(clear_status_bar()));
+
+  connect(default_stem_width_box, SIGNAL(clicked()), this,
+          SLOT(check_default_stem_width()));
 
   connect(dehint_box, SIGNAL(clicked()), this,
           SLOT(check_dehint()));
@@ -1466,6 +1537,14 @@ Main_GUI::set_defaults()
   }
 
   snapping_line->setText(x_height_snapping_exceptions_string);
+
+  if (fallback_stem_width)
+    stem_width_box->setValue(fallback_stem_width);
+  else
+  {
+    stem_width_box->setValue(50);
+    default_stem_width_box->setChecked(true);
+  }
 
   if (windows_compatibility)
     wincomp_box->setChecked(true);

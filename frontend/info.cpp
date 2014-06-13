@@ -63,6 +63,8 @@ build_version_string(Info_Data* idata)
   d += sprintf(d, " -r %d", idata->hinting_range_max);
   d += sprintf(d, " -G %d", idata->hinting_limit);
   d += sprintf(d, " -x %d", idata->increase_x_height);
+  if (idata->fallback_stem_width)
+    d += sprintf(d, " -H %d", idata->fallback_stem_width);
   d += sprintf(d, " -D %s", idata->default_script);
   d += sprintf(d, " -f %s", idata->fallback_script);
 

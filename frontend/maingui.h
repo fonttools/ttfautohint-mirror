@@ -48,7 +48,7 @@ public:
            int, int, int,
            bool, bool,
            bool, int,
-           const char*,
+           const char*, int,
            bool, bool, bool,
            bool, bool, const char*, const char*,
            bool, bool);
@@ -67,6 +67,7 @@ private slots:
   void check_dehint();
   void check_no_limit();
   void check_no_increase();
+  void check_default_stem_width();
   void absolute_input();
   void absolute_output();
   void check_number_set();
@@ -84,6 +85,7 @@ private:
   int increase_x_height;
   QString x_height_snapping_exceptions_string;
   number_range* x_height_snapping_exceptions;
+  int fallback_stem_width;
   int ignore_restrictions;
   int windows_compatibility;
   int pre_hinting;
@@ -147,6 +149,10 @@ private:
 
   QLabel* snapping_label;
   Tooltip_Line_Edit* snapping_line;
+
+  QLabel* stem_width_label;
+  QSpinBox* stem_width_box;
+  QCheckBox* default_stem_width_box;
 
   QCheckBox* wincomp_box;
   QCheckBox* pre_box;

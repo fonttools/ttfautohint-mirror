@@ -187,6 +187,9 @@ show_help(bool
 "  -G, --hinting-limit=N      switch off hinting above this PPEM value\n"
 "                             (default: %d); value 0 means no limit\n"
 "  -h, --help                 display this help and exit\n"
+"  -H, --fallback-stem-width=N\n"
+"                             set fallback stem width\n"
+"                             (default: 50 font units at 2048 UPEM)\n"
 #ifdef BUILD_GUI
 "      --help-all             show Qt and X11 specific options also\n"
 #endif
@@ -353,10 +356,13 @@ main(int argc,
   int hinting_range_max = 0;
   int hinting_limit = 0;
   int increase_x_height = 0;
+  int fallback_stem_width = 0;
+
   bool have_hinting_range_min = false;
   bool have_hinting_range_max = false;
   bool have_hinting_limit = false;
   bool have_increase_x_height = false;
+  bool have_fallback_stem_width = false;
 
   bool gray_strong_stem_width = false;
   bool gdi_cleartype_strong_stem_width = true;
@@ -427,6 +433,7 @@ main(int argc,
       {"pre-hinting", no_argument, NULL, 'p'},
       {"strong-stem-width", required_argument, NULL, 'w'},
       {"symbol", no_argument, NULL, 's'},
+      {"fallback-stem-width", required_argument, NULL, 'H'},
       {"verbose", no_argument, NULL, 'v'},
       {"version", no_argument, NULL, 'V'},
       {"windows-compatibility", no_argument, NULL, 'W'},
@@ -462,7 +469,7 @@ main(int argc,
     };
 
     int option_index;
-    int c = getopt_long_only(argc, argv, "cdD:f:G:hil:npr:stVvw:Wx:X:",
+    int c = getopt_long_only(argc, argv, "cdD:f:G:hH:il:npr:stVvw:Wx:X:",
                              long_options, &option_index);
     if (c == -1)
       break;
@@ -496,6 +503,11 @@ main(int argc,
 #ifdef CONSOLE_OUTPUT
       show_help(false, false);
 #endif
+      break;
+
+    case 'H':
+      fallback_stem_width = atoi(optarg);
+      have_fallback_stem_width = true;
       break;
 
     case 'i':
@@ -614,6 +626,8 @@ main(int argc,
     increase_x_height = TA_INCREASE_X_HEIGHT;
   if (!have_x_height_snapping_exceptions_string)
     x_height_snapping_exceptions_string = "";
+  if (!have_fallback_stem_width)
+    fallback_stem_width = 0; /* redundant, but avoids a compiler warning */
 
 #ifndef BUILD_GUI
 
@@ -643,6 +657,12 @@ main(int argc,
   {
     fprintf(stderr, "A non-zero x height increase limit"
                     " must be larger than or equal to 6\n");
+    exit(EXIT_FAILURE);
+  }
+  if (have_fallback_stem_width && fallback_stem_width <= 0)
+  {
+    fprintf(stderr, "The fallback stem width"
+                    " must be a positive integer\n");
     exit(EXIT_FAILURE);
   }
 
@@ -710,6 +730,13 @@ main(int argc,
       exit(EXIT_FAILURE);
     }
   }
+
+  if (symbol
+      && have_fallback_stem_width
+      && !strcmp(fallback_script, "none"))
+    fprintf(stderr,
+            "Warning: Setting a fallback stem width for a symbol font\n"
+            "         without setting a fallback script has no effect\n");
 
   int num_args = argc - optind;
 
@@ -790,6 +817,7 @@ main(int argc,
     info_data.hint_composites = hint_composites;
     info_data.increase_x_height = increase_x_height;
     info_data.x_height_snapping_exceptions = x_height_snapping_exceptions;
+    info_data.fallback_stem_width = fallback_stem_width;
     info_data.symbol = symbol;
 
     strncpy(info_data.default_script,
@@ -826,8 +854,8 @@ main(int argc,
                  "ignore-restrictions, windows-compatibility,"
                  "pre-hinting, hint-composites,"
                  "increase-x-height, x-height-snapping-exceptions,"
-                 "default-script, fallback-script, symbol,"
-                 "dehint, debug",
+                 "fallback-stem-width, default-script, fallback-script,"
+                 "symbol, dehint, debug",
                  in, out,
                  hinting_range_min, hinting_range_max, hinting_limit,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
@@ -838,8 +866,8 @@ main(int argc,
                  ignore_restrictions, windows_compatibility,
                  pre_hinting, hint_composites,
                  increase_x_height, x_height_snapping_exceptions_string,
-                 default_script, fallback_script, symbol,
-                 dehint, debug);
+                 fallback_stem_width, default_script, fallback_script,
+                 symbol, dehint, debug);
 
   if (!no_info)
   {
@@ -941,7 +969,7 @@ main(int argc,
                    hinting_range_min, hinting_range_max, hinting_limit,
                    gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                    dw_cleartype_strong_stem_width, increase_x_height,
-                   x_height_snapping_exceptions_string,
+                   x_height_snapping_exceptions_string, fallback_stem_width,
                    ignore_restrictions, windows_compatibility, pre_hinting,
                    hint_composites, no_info, default_script, fallback_script,
                    symbol, dehint);
@@ -960,7 +988,7 @@ main(int argc,
                hinting_range_min, hinting_range_max, hinting_limit,
                gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                dw_cleartype_strong_stem_width, increase_x_height,
-               x_height_snapping_exceptions_string,
+               x_height_snapping_exceptions_string, fallback_stem_width,
                ignore_restrictions, windows_compatibility, pre_hinting,
                hint_composites, no_info, default_script, fallback_script,
                symbol, dehint);

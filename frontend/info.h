@@ -36,6 +36,7 @@ typedef struct Info_Data_
 
   int increase_x_height;
   number_range* x_height_snapping_exceptions;
+  int fallback_stem_width;
 
   bool windows_compatibility;
   bool pre_hinting;
