@@ -330,12 +330,16 @@ Main_GUI::check_no_limit()
   if (no_limit_box->isChecked())
   {
     limit_label->setEnabled(false);
+    limit_label->setText(limit_label_text);
     limit_box->setEnabled(false);
+    no_limit_box->setText(no_limit_box_text_with_key);
   }
   else
   {
     limit_label->setEnabled(true);
+    limit_label->setText(limit_label_text_with_key);
     limit_box->setEnabled(true);
+    no_limit_box->setText(no_limit_box_text);
   }
 }
 
@@ -346,12 +350,16 @@ Main_GUI::check_no_increase()
   if (no_increase_box->isChecked())
   {
     increase_label->setEnabled(false);
+    increase_label->setText(increase_label_text);
     increase_box->setEnabled(false);
+    no_increase_box->setText(no_increase_box_text_with_key);
   }
   else
   {
     increase_label->setEnabled(true);
+    increase_label->setText(increase_label_text_with_key);
     increase_box->setEnabled(true);
+    no_increase_box->setText(no_increase_box_text);
   }
 }
 
@@ -362,12 +370,16 @@ Main_GUI::check_default_stem_width()
   if (default_stem_width_box->isChecked())
   {
     stem_width_label->setEnabled(false);
+    stem_width_label->setText(stem_width_label_text);
     stem_width_box->setEnabled(false);
+    default_stem_width_box->setText(default_stem_width_box_text_with_key);
   }
   else
   {
     stem_width_label->setEnabled(true);
+    stem_width_label->setText(stem_width_label_text_with_key);
     stem_width_box->setEnabled(true);
+    default_stem_width_box->setText(default_stem_width_box_text);
   }
 }
 
@@ -1039,7 +1051,9 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // hinting limit
   //
-  limit_label = new QLabel(tr("Hinting &Limit:"));
+  limit_label_text_with_key = tr("Hinting &Limit:");
+  limit_label_text = tr("Hinting Limit:");
+  limit_label = new QLabel(limit_label_text_with_key);
   limit_box = new QSpinBox;
   limit_label->setBuddy(limit_box);
   limit_label->setToolTip(
@@ -1049,7 +1063,9 @@ Main_GUI::create_layout(bool horizontal_layout)
   limit_box->setKeyboardTracking(false);
   limit_box->setRange(2, 10000);
 
-  no_limit_box = new QCheckBox(tr("No Hinting Limit"), this);
+  no_limit_box_text_with_key = tr("No Hinting &Limit");
+  no_limit_box_text = tr("No Hinting Limit");
+  no_limit_box = new QCheckBox(no_limit_box_text, this);
   no_limit_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> adds no hinting limit"
        " to the bytecode."));
@@ -1057,7 +1073,9 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // x height increase limit
   //
-  increase_label = new QLabel(tr("x Height In&crease Limit:"));
+  increase_label_text_with_key = tr("x Height In&crease Limit:");
+  increase_label_text = tr("x Height Increase Limit:");
+  increase_label = new QLabel(increase_label_text_with_key);
   increase_box = new QSpinBox;
   increase_label->setBuddy(increase_box);
   increase_label->setToolTip(
@@ -1069,7 +1087,9 @@ Main_GUI::create_layout(bool horizontal_layout)
   increase_box->setKeyboardTracking(false);
   increase_box->setRange(6, 10000);
 
-  no_increase_box = new QCheckBox(tr("No x Height Increase"), this);
+  no_increase_box_text_with_key = tr("No x Height In&crease");
+  no_increase_box_text = tr("No x Height Increase");
+  no_increase_box = new QCheckBox(no_increase_box_text, this);
   no_increase_box->setToolTip(
     tr("If switched on,"
        " <b>TTFautohint</b> does not increase the x&nbsp;height."));
@@ -1095,7 +1115,9 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // fallback stem width
   //
-  stem_width_label = new QLabel(tr("Fall&back Stem Width:"));
+  stem_width_label_text_with_key = tr("Fall&back Stem Width:");
+  stem_width_label_text = tr("Fallback Stem Width:");
+  stem_width_label = new QLabel(stem_width_label_text_with_key);
   stem_width_box = new QSpinBox;
   stem_width_label->setBuddy(stem_width_box);
   stem_width_label->setToolTip(
@@ -1105,8 +1127,9 @@ Main_GUI::create_layout(bool horizontal_layout)
   stem_width_box->setKeyboardTracking(false);
   stem_width_box->setRange(1, 10000);
 
-  default_stem_width_box = new QCheckBox(tr("Default Fallback Stem Width"),
-                                         this);
+  default_stem_width_box_text_with_key = tr("Default Fall&back Stem Width");
+  default_stem_width_box_text = tr("Default Fallback Stem Width");
+  default_stem_width_box = new QCheckBox(default_stem_width_box_text, this);
   default_stem_width_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> uses a default value"
        " for the fallback stem width (50 font units at 2048 UPEM)."));

@@ -140,19 +140,31 @@ private:
   QComboBox* fallback_box;
 
   QLabel* limit_label;
+  QString limit_label_text_with_key;
+  QString limit_label_text;
   QSpinBox* limit_box;
   QCheckBox* no_limit_box;
+  QString no_limit_box_text_with_key;
+  QString no_limit_box_text;
 
   QLabel* increase_label;
+  QString increase_label_text_with_key;
+  QString increase_label_text;
   QSpinBox* increase_box;
   QCheckBox* no_increase_box;
+  QString no_increase_box_text_with_key;
+  QString no_increase_box_text;
 
   QLabel* snapping_label;
   Tooltip_Line_Edit* snapping_line;
 
   QLabel* stem_width_label;
+  QString stem_width_label_text_with_key;
+  QString stem_width_label_text;
   QSpinBox* stem_width_box;
   QCheckBox* default_stem_width_box;
+  QString default_stem_width_box_text_with_key;
+  QString default_stem_width_box_text;
 
   QCheckBox* wincomp_box;
   QCheckBox* pre_box;
