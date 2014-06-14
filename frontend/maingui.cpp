@@ -1184,7 +1184,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // stem width and positioning
   //
-  stem_label = new QLabel(tr("Strong Stem &Width and Positioning:"));
+  stem_label = new QLabel(tr("Stron&g Stem Width and Positioning:"));
   stem_label->setToolTip(
     tr("<b>TTFautohint</b> provides two different hinting algorithms"
        " that can be selected for various hinting modes."
