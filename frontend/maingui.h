@@ -72,6 +72,8 @@ private slots:
   void absolute_output();
   void check_number_set();
   void clear_status_bar();
+  void check_watch();
+  void watch_files();
   void check_run();
   void run();
 
@@ -100,6 +102,9 @@ private:
   void create_horizontal_layout();
   void create_vertical_layout();
 
+  QTimer* timer;
+  QFileInfo fileinfo_input_file;
+  QDateTime datetime_input_file;
 
   void create_connections();
   void create_actions();
@@ -173,6 +178,7 @@ private:
   QCheckBox* dehint_box;
   QCheckBox* info_box;
 
+  QCheckBox* watch_box;
   QPushButton* run_button;
 
   QAction* exit_act;

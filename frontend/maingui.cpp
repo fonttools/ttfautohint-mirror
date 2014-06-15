@@ -120,6 +120,11 @@ Main_GUI::Main_GUI(bool horizontal_layout,
 
   x_height_snapping_exceptions = NULL;
 
+  // if file watching is active, we regularly poll the file status
+  timer = new QTimer(this);
+  timer->setInterval(1000);
+  fileinfo_input_file.setCaching(false);
+
   create_layout(horizontal_layout);
   create_connections();
   create_actions();
@@ -547,7 +552,8 @@ Main_GUI::check_filenames(const QString& input_name,
     return 0;
   }
 
-  if (QFile::exists(output_name))
+  // silently overwrite if watching is active
+  if (QFile::exists(output_name) && !timer->isActive())
   {
     int ret = QMessageBox::warning(
                 this,
@@ -605,6 +611,30 @@ Main_GUI::open_files(const QString& input_name,
   }
 
   return 1;
+}
+
+
+void
+Main_GUI::check_watch()
+{
+  if (!watch_box->isChecked())
+    timer->stop();
+  // the timer gets started in the `run' function
+}
+
+
+void
+Main_GUI::watch_files()
+{
+  if (fileinfo_input_file.exists()
+      && fileinfo_input_file.isReadable())
+  {
+    QDateTime modified = fileinfo_input_file.lastModified();
+    if (modified > datetime_input_file)
+      run(); // this function sets `datetime_input_file'
+  }
+  else
+    run(); // let this routine handle all errors
 }
 
 
@@ -797,7 +827,10 @@ Main_GUI::run()
   QString input_name = QDir::fromNativeSeparators(input_line->text());
   QString output_name = QDir::fromNativeSeparators(output_line->text());
   if (!check_filenames(input_name, output_name))
+  {
+    timer->stop();
     return;
+  }
 
   // we need C file descriptors for communication with TTF_autohint
   FILE* input;
@@ -805,7 +838,10 @@ Main_GUI::run()
 
 again:
   if (!open_files(input_name, &input, output_name, &output))
+  {
+    timer->stop();
     return;
+  }
 
   QProgressDialog dialog;
   dialog.setCancelButtonText(tr("Cancel"));
@@ -887,6 +923,8 @@ again:
       QMessageBox::Ok,
       QMessageBox::Ok);
 
+  fileinfo_input_file.setFile(input_name);
+  datetime_input_file = fileinfo_input_file.lastModified();
 
   QByteArray snapping_string = snapping_line->text().toLocal8Bit();
 
@@ -939,9 +977,23 @@ again:
   {
     if (handle_error(error, error_string, output_name))
       goto again;
+
+    // there was an error, and the user requested not to proceed
+    timer->stop();
   }
   else
-    statusBar()->showMessage(tr("Auto-hinting finished."));
+  {
+    statusBar()->showMessage(tr("Auto-hinting finished")
+                             + " ("
+                             + QDateTime::currentDateTime()
+                               .toString(Qt::TextDate)
+                             + ").");
+
+    // we have successfully processed a file;
+    // start file watching now if requested
+    if (watch_box->isChecked())
+      timer->start();
+  }
 }
 
 
@@ -1225,6 +1277,15 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // running
   //
+  watch_box = new QCheckBox(tr("&Watch Input File"), this);
+  watch_box->setToolTip(
+    tr("If switched on, <b>TTFautohint</b> automatically re-runs"
+       " the hinting process as soon as the input file is modified.<br>"
+       "Pressing the %1 button starts watching.<br>"
+       "If an error occurs, watching stops and must be restarted"
+       " with the %1 button.")
+       .arg(QUOTE_STRING_LITERAL(tr("Run"))));
+
   run_button = new QPushButton("    "
                                + tr("&Run")
                                + "    "); // make label wider
@@ -1253,6 +1314,14 @@ Main_GUI::create_vertical_layout()
   file_layout->addWidget(output_label, 2, 0, Qt::AlignRight);
   file_layout->addWidget(output_line, 2, 1);
   file_layout->addWidget(output_button, 2, 2);
+
+  // bottom area
+  QGridLayout* run_layout = new QGridLayout;
+
+  run_layout->addWidget(watch_box, 0, 1);
+  run_layout->addWidget(run_button, 0, 3, Qt::AlignRight);
+  run_layout->setColumnStretch(0, 1);
+  run_layout->setColumnStretch(2, 2);
 
   //
   // the whole gui
@@ -1323,10 +1392,10 @@ Main_GUI::create_vertical_layout()
   gui_layout->addWidget(gdi_box, row++, 1);
   gui_layout->addWidget(dw_box, row++, 1);
 
-  gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
+  gui_layout->setRowMinimumHeight(row, 30); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
-  gui_layout->addWidget(run_button, row++, 1, Qt::AlignRight);
+  gui_layout->addLayout(run_layout, row, 0, row, -1);
 
   // create dummy widget to register layout
   QWidget* main_widget = new QWidget;
@@ -1354,6 +1423,18 @@ Main_GUI::create_horizontal_layout()
   file_layout->addWidget(output_line, 2, 1);
   file_layout->addWidget(output_button, 2, 2);
 
+  // bottom area
+  QGridLayout* run_layout = new QGridLayout;
+
+  run_layout->addWidget(watch_box, 0, 1);
+  run_layout->addWidget(run_button, 0, 3, Qt::AlignRight);
+  run_layout->setColumnStretch(0, 2);
+  run_layout->setColumnStretch(2, 3);
+  run_layout->setColumnStretch(4, 1);
+
+  //
+  // the whole gui
+  //
   QGridLayout* gui_layout = new QGridLayout;
   QFrame* hline = new QFrame;
   hline->setFrameShape(QFrame::HLine);
@@ -1407,6 +1488,11 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(stem_width_box, row++, 2, Qt::AlignLeft);
   gui_layout->addWidget(default_stem_width_box, row++, 2);
 
+  gui_layout->setRowMinimumHeight(row, 30); // XXX urgh, pixels...
+  gui_layout->setRowStretch(row++, 1);
+
+  gui_layout->addLayout(run_layout, row, 0, row, -1);
+
   // column separator
   gui_layout->setColumnMinimumWidth(3, 20); // XXX urgh, pixels...
   gui_layout->setColumnStretch(3, 1);
@@ -1433,12 +1519,6 @@ Main_GUI::create_horizontal_layout()
 
   gui_layout->addLayout(stem_layout, row, 4, 3, 1);
   row += 3;
-
-  gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
-  gui_layout->setRowStretch(row++, 1);
-
-  row += 1;
-  gui_layout->addWidget(run_button, row++, 4, Qt::AlignRight);
 
   // margin
   gui_layout->setColumnMinimumWidth(5, 10); // XXX urgh, pixels...
@@ -1493,6 +1573,12 @@ Main_GUI::create_connections()
 
   connect(dehint_box, SIGNAL(clicked()), this,
           SLOT(check_dehint()));
+
+  connect(timer, SIGNAL(timeout()), this,
+          SLOT(watch_files()));
+
+  connect(watch_box, SIGNAL(clicked()), this,
+          SLOT(check_watch()));
 
   connect(run_button, SIGNAL(clicked()), this,
           SLOT(run()));
