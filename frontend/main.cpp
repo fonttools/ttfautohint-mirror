@@ -942,7 +942,7 @@ main(int argc,
   app.setOrganizationName("FreeType");
   app.setOrganizationDomain("freetype.org");
 
-  bool alternative_layout = true;
+  bool alternative_layout = false;
   {
     // Display the window off the screen -- to get proper window dimensions
     // including the frame, the window manager must have a chance to
