@@ -1,3 +1,20 @@
+New in Version 1.2 (2014-XXX-XX)
+--------------------------------
+
+* Support for input file watching in ttfautohintGUI: If the 'Watch Input
+  File' box is checked, the program automatically regenerates the output
+  file as soon as the input file gets modified.
+
+* With the new option `--fallback-stem-width` it is now possible to set a
+  default stem width for all scripts that lack proper standard characters in
+  the font.
+
+* A harmless buglet was fixed that made the `glyf` table too large by one
+  byte under some circumstances.
+
+* A bug fix taken from FreeType, correcting a crash for unusual outlines.
+
+
 New in Version 1.1 (2014-May-05)
 --------------------------------
 

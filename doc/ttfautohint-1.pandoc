@@ -211,9 +211,9 @@ equal sign between option and argument.  This means that the following forms
 are acceptable: `-foo=`*bar*, `--foo=`*bar*, `-foo`\ *bar*, and
 `--foo`\ *bar*.
 
-Below, the section title refers to the command's label in the GUI, then
-comes the name of the corresponding long command line option and its short
-equivalent, followed by a description.
+Below, the section title refers to the command's label in the GUI (if
+applicable), then comes the name of the corresponding long command line
+option and its short equivalent, followed by a description.
 
 Background and technical details on the meaning of the various options are
 given [afterwards](#background-and-technical-details).
@@ -481,7 +481,14 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
      algorithm.  Note how the stems are aligned to the pixel
      grid.](img/ff-g-26px-wD.png)
 
-### Font License Restrictions
+### Miscellaneous
+
+Watch input file (GUI only)
+:   If this checkbox is set, automatically regenerate the output file as
+    soon as the input file gets modified.
+
+    Pressing the 'Run' button starts watching.  If an error occurs, watching
+    stops and must be restarted with the 'Run' button.
 
 `--ignore-restrictions`, `-i`
 :   By default, fonts that have bit\ 1 set in the 'fsType' field of the
@@ -490,8 +497,6 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 
     If this option is not set, `ttfautohintGUI` shows a dialogue to handle
     such fonts if necessary.
-
-### Miscellaneous
 
 `--help`, `-h`
 :   On the console, print a brief documentation on standard output and exit.
