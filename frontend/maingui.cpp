@@ -735,7 +735,7 @@ Main_GUI::handle_error(TA_Error error,
       "TTFautohint",
       tr("The input font doesn't contain a Unicode character map.\n"
          "Maybe you haven't set the %1 checkbox?")
-         .arg(QUOTE_STRING_LITERAL("Symbol Font")),
+         .arg(QUOTE_STRING_LITERAL(tr("Symbol Font"))),
       QMessageBox::Ok,
       QMessageBox::Ok);
   else if (error == TA_Err_Missing_Symbol_CMap)
@@ -756,7 +756,7 @@ Main_GUI::handle_error(TA_Error error,
          " script-specific standard characters.\n"
          "\n"
          "Set the %1 checkbox if you want to circumvent this test.")
-         .arg(QUOTE_STRING_LITERAL("Symbol Font")),
+         .arg(QUOTE_STRING_LITERAL(tr("Symbol Font"))),
       QMessageBox::Ok,
       QMessageBox::Ok);
   else
