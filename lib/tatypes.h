@@ -277,7 +277,7 @@ typedef struct TA_ScriptClassRec_
   FT_UInt32 standard_char3; /* ditto */
 } TA_ScriptClassRec;
 
-typedef const TA_ScriptClassRec*  TA_ScriptClass;
+typedef const TA_ScriptClassRec* TA_ScriptClass;
 
 
 /*
@@ -338,7 +338,7 @@ typedef enum TA_Coverage_
           TA_STYLE_ ## S,
 
 /* The list of known styles. */
-typedef enum  TA_Style_
+typedef enum TA_Style_
 {
 #include "tastyles.h"
 
@@ -359,13 +359,13 @@ typedef struct TA_StyleClassRec_
 typedef const TA_StyleClassRec* TA_StyleClass;
 
 
-typedef struct TA_FaceGlobalsRec_*  TA_FaceGlobals;
+typedef struct TA_FaceGlobalsRec_* TA_FaceGlobals;
 
 /* This is the main structure that combines everything.  Autofit modules */
 /* specific to writing systems derive their structures from it, for      */
 /* example `TA_LatinMetrics'.                                            */
 
-typedef struct  TA_StyleMetricsRec_
+typedef struct TA_StyleMetricsRec_
 {
   TA_StyleClass style_class;
   TA_ScalerRec scaler;

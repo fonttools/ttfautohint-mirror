@@ -89,7 +89,7 @@ ta_get_coverage(TA_FaceGlobals globals,
   hb_set_t* gpos_glyphs; /* glyphs covered by GPOS lookups */
 
   hb_script_t script;
-  const hb_tag_t*  coverage_tags;
+  const hb_tag_t* coverage_tags;
   hb_tag_t script_tags[] = { HB_TAG_NONE,
                              HB_TAG_NONE,
                              HB_TAG_NONE,
@@ -398,7 +398,7 @@ FT_Error
 ta_get_char_index(TA_StyleMetrics metrics,
                   FT_ULong charcode,
                   FT_ULong *codepoint,
-                  FT_Long  *y_offset)
+                  FT_Long *y_offset)
 {
   TA_StyleClass style_class;
 

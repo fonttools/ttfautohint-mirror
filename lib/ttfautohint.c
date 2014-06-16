@@ -40,7 +40,7 @@ void
 TA_sfnt_set_properties(SFNT* sfnt,
                        FONT* font)
 {
-  TA_FaceGlobals  globals = (TA_FaceGlobals)sfnt->face->autohint.data;
+  TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
 
 
   globals->increase_x_height = font->increase_x_height;

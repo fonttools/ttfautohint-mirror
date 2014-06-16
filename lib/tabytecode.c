@@ -76,7 +76,7 @@ static int
 node2cmp(Node2* e1,
          Node2* e2)
 {
-  FT_Int  delta;
+  FT_Int delta;
 
 
   /* sort by edges ... */
@@ -92,7 +92,7 @@ static int
 node3cmp(Node3* e1,
          Node3* e2)
 {
-  FT_Int  delta;
+  FT_Int delta;
 
 
   /* sort by `before' edges ... */

@@ -2941,7 +2941,7 @@ ta_latin_hints_apply(TA_GlyphHints hints,
   FT_Error error;
   int dim;
 
-  TA_LatinAxis  axis;
+  TA_LatinAxis axis;
 
 
   error = ta_glyph_hints_reload(hints, outline);
