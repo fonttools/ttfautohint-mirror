@@ -75,7 +75,7 @@ AC_ARG_WITH([freetype-config],
             [freetype_config=yes])
 
 if test "$freetype_config" = "yes"; then
-  AC_PATH_PROG(ft_config,
+  AC_PATH_TOOL(ft_config,
                freetype-config,
                no)
   if test "$ft_config" = "no"; then
