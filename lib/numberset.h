@@ -22,7 +22,7 @@ extern "C" {
 
 /*
  * A structure defining an integer range, to be used as a linked list.  It
- * gets allocated by a successful call to `parse_number_set'.  Use
+ * gets allocated by a successful call to `number_set_parse'.  Use
  * `number_set_free' to deallocate it.
  */
 
