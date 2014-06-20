@@ -88,7 +88,7 @@ TTF_autohint(const char* options,
 
   FT_Bool windows_compatibility = 0;
   FT_Bool ignore_restrictions = 0;
-  FT_Bool pre_hinting = 0;
+  FT_Bool adjust_subglyphs = 0;
   FT_Bool hint_composites = 0;
   FT_Bool symbol = 0;
 
@@ -150,7 +150,9 @@ TTF_autohint(const char* options,
     /* the `COMPARE' macro uses `len' and `start' */
 
     /* handle options -- don't forget to update parameter dump below! */
-    if (COMPARE("debug"))
+    if (COMPARE("adjust-subglyphs"))
+      adjust_subglyphs = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("debug"))
       debug = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("default-script"))
       default_script_string = va_arg(ap, const char*);
@@ -217,7 +219,7 @@ TTF_autohint(const char* options,
       out_lenp = NULL;
     }
     else if (COMPARE("pre-hinting"))
-      pre_hinting = (FT_Bool)va_arg(ap, FT_Int);
+      adjust_subglyphs = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("progress-callback"))
       progress = va_arg(ap, TA_Progress_Func);
     else if (COMPARE("progress-callback-data"))
@@ -371,7 +373,7 @@ TTF_autohint(const char* options,
 
   font->windows_compatibility = windows_compatibility;
   font->ignore_restrictions = ignore_restrictions;
-  font->pre_hinting = pre_hinting;
+  font->adjust_subglyphs = adjust_subglyphs;
   font->hint_composites = hint_composites;
   font->fallback_style = fallback_style;
   font->default_script = default_script;
@@ -427,8 +429,8 @@ No_check:
               font->ignore_restrictions);
       DUMPVAL("increase-x-height",
               font->increase_x_height);
-      DUMPVAL("pre-hinting",
-              font->pre_hinting);
+      DUMPVAL("adjust-subglyphs",
+              font->adjust_subglyphs);
       DUMPVAL("symbol",
               font->symbol);
       DUMPVAL("windows-compatibility",
@@ -522,7 +524,7 @@ No_check:
     }
     else
     {
-      if (font->pre_hinting)
+      if (font->adjust_subglyphs)
         error = TA_sfnt_create_glyf_data(sfnt, font);
       else
         error = TA_sfnt_split_glyf_table(sfnt, font);
@@ -618,7 +620,7 @@ No_check:
     {
       /* we add one glyph for composites */
       if (sfnt->max_components
-          && !font->pre_hinting
+          && !font->adjust_subglyphs
           && font->hint_composites)
       {
         error = TA_sfnt_update_hmtx_table(sfnt, font);

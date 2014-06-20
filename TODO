@@ -51,7 +51,7 @@ try to `embolden' fonts at small sizes to avoid drop-outs; cf. Infinality
 make switching between smooth and strong hinting dependent on user-defined
   ranges
 
-improve `pre-hinting' by making the used PPEM value configurable
+improve `adjust-subglyphs' by making the used PPEM value configurable
 
 allow hinting of single glyphs, using a config file which holds the global
   settings
@@ -81,7 +81,8 @@ warn against overwrite of output file in TTY mode?
 
 reduce output size of option -p:
   1. compare outline rendered at EM value with unhinted outline
-  2. pre-hint only if 1. differs more than given threshold (default 0.5%?)
+  2. adjust subglyphs only if result of item 1 differs more than given
+     threshold (default 0.5%?)
 
 make it possible to hint fonts which aren't alphabetic at all, for example,
   icons; to do so, provide means to skip the global feature analysis

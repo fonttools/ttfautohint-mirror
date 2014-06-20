@@ -373,15 +373,16 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
     with '`-X "-"`' to suppress any vertical enlargement should prevent
     almost all clipping.
 
-### Pre-Hinting
+### Adjust Subglyphs
 
-`--pre-hinting`, `-p`
-:   *Pre-hinting* means that a font's original bytecode is applied to all
-    glyphs before it is replaced with bytecode created by ttfautohint.
-    This makes only sense if your font already has some hints in it that
-    modify the shape even at EM size (normally 2048px); for example, some
-    CJK fonts need this because the bytecode is used to scale and shift
-    subglyphs.  For most fonts, however, this is not the case.
+`--adjust-subglyphs`, `-p`
+:   *Adjusting subglyphs* makes a font's original bytecode be applied to all
+    glyphs before it is replaced with bytecode created by ttfautohint.  This
+    makes only sense if your font already has some hints in it that modify
+    the shape even at EM size (normally 2048px); in particular, some CJK
+    fonts need this because the bytecode is used to scale and shift
+    subglyphs (hence the option's long name).  For most fonts, however, this
+    is not the case.
 
 ### Hint Composites
 

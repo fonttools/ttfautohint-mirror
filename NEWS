@@ -9,6 +9,9 @@ New in Version 1.2 (2014-XXX-XX)
   default stem width for all scripts that lack proper standard characters in
   the font.
 
+* Add alias `--adjust-subglyphs` for option `--pre-hinting` to better
+  describe its functionality.  The short form `-p` stays unchanged.
+
 * A harmless buglet was fixed that made the `glyf` table too large by one
   byte under some circumstances.
 

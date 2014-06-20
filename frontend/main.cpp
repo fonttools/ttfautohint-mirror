@@ -198,7 +198,7 @@ show_help(bool
 "                             (default: %d)\n"
 "  -n, --no-info              don't add ttfautohint info\n"
 "                             to the version string(s) in the `name' table\n"
-"  -p, --pre-hinting          apply original hints in advance\n",
+"  -p, --adjust-subglyphs     handle subglyph adjustments in exotic fonts\n",
           TA_HINTING_LIMIT, TA_HINTING_RANGE_MIN);
   fprintf(handle,
 "  -r, --hinting-range-max=N  the maximum PPEM value for hint sets\n"
@@ -370,7 +370,7 @@ main(int argc,
 
   bool ignore_restrictions = false;
   bool windows_compatibility = false;
-  bool pre_hinting = false;
+  bool adjust_subglyphs = false;
   bool hint_composites = false;
   bool no_info = false;
   bool symbol = false;
@@ -417,6 +417,7 @@ main(int argc,
 #endif
 
       // ttfautohint options
+      {"adjust-subglyphs", no_argument, NULL, 'p'},
       {"composites", no_argument, NULL, 'c'},
 #ifndef BUILD_GUI
       {"debug", no_argument, NULL, DEBUG_OPTION},
@@ -524,7 +525,7 @@ main(int argc,
       break;
 
     case 'p':
-      pre_hinting = true;
+      adjust_subglyphs = true;
       break;
 
     case 'r':
@@ -813,7 +814,7 @@ main(int argc,
     info_data.dw_cleartype_strong_stem_width = dw_cleartype_strong_stem_width;
 
     info_data.windows_compatibility = windows_compatibility;
-    info_data.pre_hinting = pre_hinting;
+    info_data.adjust_subglyphs = adjust_subglyphs;
     info_data.hint_composites = hint_composites;
     info_data.increase_x_height = increase_x_height;
     info_data.x_height_snapping_exceptions = x_height_snapping_exceptions;
@@ -852,7 +853,7 @@ main(int argc,
                  "progress-callback, progress-callback-data,"
                  "info-callback, info-callback-data,"
                  "ignore-restrictions, windows-compatibility,"
-                 "pre-hinting, hint-composites,"
+                 "adjust-subglyphs, hint-composites,"
                  "increase-x-height, x-height-snapping-exceptions,"
                  "fallback-stem-width, default-script, fallback-script,"
                  "symbol, dehint, debug",
@@ -864,7 +865,7 @@ main(int argc,
                  progress_func, &progress_data,
                  info_func, &info_data,
                  ignore_restrictions, windows_compatibility,
-                 pre_hinting, hint_composites,
+                 adjust_subglyphs, hint_composites,
                  increase_x_height, x_height_snapping_exceptions_string,
                  fallback_stem_width, default_script, fallback_script,
                  symbol, dehint, debug);
@@ -970,7 +971,7 @@ main(int argc,
                    gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                    dw_cleartype_strong_stem_width, increase_x_height,
                    x_height_snapping_exceptions_string, fallback_stem_width,
-                   ignore_restrictions, windows_compatibility, pre_hinting,
+                   ignore_restrictions, windows_compatibility, adjust_subglyphs,
                    hint_composites, no_info, default_script, fallback_script,
                    symbol, dehint);
 
@@ -989,7 +990,7 @@ main(int argc,
                gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                dw_cleartype_strong_stem_width, increase_x_height,
                x_height_snapping_exceptions_string, fallback_stem_width,
-               ignore_restrictions, windows_compatibility, pre_hinting,
+               ignore_restrictions, windows_compatibility, adjust_subglyphs,
                hint_composites, no_info, default_script, fallback_script,
                symbol, dehint);
   gui.show();

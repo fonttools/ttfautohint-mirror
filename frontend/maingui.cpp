@@ -68,7 +68,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
                    int stem_width,
                    bool ignore,
                    bool wincomp,
-                   bool pre,
+                   bool adjust,
                    bool composites,
                    bool no,
                    const char* dflt,
@@ -86,7 +86,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   fallback_stem_width(stem_width),
   ignore_restrictions(ignore),
   windows_compatibility(wincomp),
-  pre_hinting(pre),
+  adjust_subglyphs(adjust),
   hint_composites(composites),
   no_info(no),
   symbol(symb),
@@ -282,7 +282,7 @@ Main_GUI::check_dehint()
     stem_width_box->setEnabled(false);
 
     wincomp_box->setEnabled(false);
-    pre_box->setEnabled(false);
+    adjust_box->setEnabled(false);
     hint_box->setEnabled(false);
     symbol_box->setEnabled(false);
 
@@ -317,7 +317,7 @@ Main_GUI::check_dehint()
     check_default_stem_width();
 
     wincomp_box->setEnabled(true);
-    pre_box->setEnabled(true);
+    adjust_box->setEnabled(true);
     hint_box->setEnabled(true);
     symbol_box->setEnabled(true);
 
@@ -877,7 +877,7 @@ again:
                                   : stem_width_box->value();
 
   info_data.windows_compatibility = wincomp_box->isChecked();
-  info_data.pre_hinting = pre_box->isChecked();
+  info_data.adjust_subglyphs = adjust_box->isChecked();
   info_data.hint_composites = hint_box->isChecked();
   info_data.symbol = symbol_box->isChecked();
   info_data.dehint = dehint_box->isChecked();
@@ -940,7 +940,7 @@ again:
                  "info-callback, info-callback-data,"
                  "ignore-restrictions,"
                  "windows-compatibility,"
-                 "pre-hinting,"
+                 "adjust-subglyphs,"
                  "hint-composites,"
                  "increase-x-height,"
                  "x-height-snapping-exceptions, fallback-stem-width,"
@@ -957,7 +957,7 @@ again:
                  info_func, &info_data,
                  ignore_restrictions,
                  info_data.windows_compatibility,
-                 info_data.pre_hinting,
+                 info_data.adjust_subglyphs,
                  info_data.hint_composites,
                  info_data.increase_x_height,
                  snapping_string.constData(), info_data.fallback_stem_width,
@@ -1200,12 +1200,14 @@ Main_GUI::create_layout(bool horizontal_layout)
        " should be used if those two <i>OS/2</i> values are tight,"
        " and you are experiencing clipping during rendering."));
 
-  pre_box = new QCheckBox(tr("Pr&e-hinting"), this);
-  pre_box->setToolTip(
+  adjust_box = new QCheckBox(tr("Ad&just Subglyphs"), this);
+  adjust_box->setToolTip(
     tr("If switched on, the original bytecode of the input font"
        " gets applied (at EM size, usually 2048ppem)"
-       " to derive the glyph outlines for <b>TTFautohint</b>."
-       "  Note that the original bytecode will always be discarded."));
+       " to derive the glyph outlines for <b>TTFautohint</b>.<br>"
+       "Use this option only if subglyphs"
+       " are incorrectly scaled and shifted.<br>"
+       "Note that the original bytecode will always be discarded."));
 
   hint_box = new QCheckBox(tr("Hint Co&mposites")
                            + "                ", this); // make label wider
@@ -1378,7 +1380,7 @@ Main_GUI::create_vertical_layout()
   gui_layout->setRowStretch(row++, 1);
 
   gui_layout->addWidget(wincomp_box, row++, 1);
-  gui_layout->addWidget(pre_box, row++, 1);
+  gui_layout->addWidget(adjust_box, row++, 1);
   gui_layout->addWidget(hint_box, row++, 1);
   gui_layout->addWidget(symbol_box, row++, 1);
   gui_layout->addWidget(dehint_box, row++, 1);
@@ -1500,7 +1502,7 @@ Main_GUI::create_horizontal_layout()
   // right
   row = 4;
   gui_layout->addWidget(wincomp_box, row++, 4);
-  gui_layout->addWidget(pre_box, row++, 4);
+  gui_layout->addWidget(adjust_box, row++, 4);
   gui_layout->addWidget(hint_box, row++, 4);
   gui_layout->addWidget(symbol_box, row++, 4);
   gui_layout->addWidget(dehint_box, row++, 4);
@@ -1657,8 +1659,8 @@ Main_GUI::set_defaults()
 
   if (windows_compatibility)
     wincomp_box->setChecked(true);
-  if (pre_hinting)
-    pre_box->setChecked(true);
+  if (adjust_subglyphs)
+    adjust_box->setChecked(true);
   if (hint_composites)
     hint_box->setChecked(true);
   if (symbol)

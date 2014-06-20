@@ -90,7 +90,7 @@ private:
   int fallback_stem_width;
   int ignore_restrictions;
   int windows_compatibility;
-  int pre_hinting;
+  int adjust_subglyphs;
   int hint_composites;
   int no_info;
   int default_script_idx;
@@ -172,7 +172,7 @@ private:
   QString default_stem_width_box_text;
 
   QCheckBox* wincomp_box;
-  QCheckBox* pre_box;
+  QCheckBox* adjust_box;
   QCheckBox* hint_box;
   QCheckBox* symbol_box;
   QCheckBox* dehint_box;

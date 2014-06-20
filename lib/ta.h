@@ -235,7 +235,7 @@ struct FONT_
   FT_Bool gdi_cleartype_strong_stem_width;
   FT_Bool dw_cleartype_strong_stem_width;
   FT_Bool windows_compatibility;
-  FT_Bool pre_hinting;
+  FT_Bool adjust_subglyphs;
   FT_Bool hint_composites;
   FT_Bool ignore_restrictions;
   TA_Style fallback_style;

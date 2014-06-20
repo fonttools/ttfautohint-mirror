@@ -86,7 +86,7 @@ build_version_string(Info_Data* idata)
 
   if (idata->windows_compatibility)
     d += sprintf(d, " -W");
-  if (idata->pre_hinting)
+  if (idata->adjust_subglyphs)
     d += sprintf(d, " -p");
   if (idata->hint_composites)
     d += sprintf(d, " -c");

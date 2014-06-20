@@ -39,7 +39,7 @@ typedef struct Info_Data_
   int fallback_stem_width;
 
   bool windows_compatibility;
-  bool pre_hinting;
+  bool adjust_subglyphs;
   bool hint_composites;
   char default_script[5];
   char fallback_script[5];

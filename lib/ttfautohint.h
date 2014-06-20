@@ -273,13 +273,16 @@ typedef int
  *     results.  However, this depends on the processed font and must be
  *     checked by inspection.
  *
- * `pre-hinting`
+ * `adjust-subglyphs`
  * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) to
- *     specify whether native TrueType hinting shall be applied to all
- *     glyphs before passing them to the (internal) autohinter.  The used
- *     resolution is the em-size in font units; for most fonts this is
- *     2048ppem.  Use this if the hints move or scale subglyphs
- *     independently of the output resolution.
+ *     specify whether native TrueType hinting of the *input font* shall be
+ *     applied to all glyphs before passing them to the (internal)
+ *     autohinter.  The used resolution is the em-size in font units; for
+ *     most fonts this is 2048ppem.  Use this only if the old hints move or
+ *     scale subglyphs independently of the output resolution, for example
+ *     some exotic CJK fonts.
+ *
+ *     `pre-hinting` is a deprecated alias name for this option.
  *
  *
  * ### Hinting Algorithms

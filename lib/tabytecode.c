@@ -1867,7 +1867,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   /* XXX: right now, we abuse this flag to control */
   /*      the global behaviour of the auto-hinter */
   load_flags = 1 << 29; /* vertical hinting only */
-  if (!font->pre_hinting)
+  if (!font->adjust_subglyphs)
   {
     if (font->hint_composites)
       load_flags |= FT_LOAD_NO_SCALE;
