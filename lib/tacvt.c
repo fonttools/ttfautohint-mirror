@@ -255,6 +255,9 @@ TA_table_build_cvt(FT_Byte** cvt,
   /* loop again over all styles and copy CVT data */
   for (i = 0; i < TA_STYLE_MAX; i++)
   {
+    FT_UInt default_width = 50 * sfnt->face->units_per_EM / 2048;
+
+
     /* collect offsets */
     data->cvt_offsets[i] = ((FT_UInt)(bufp - buf) - cvt_offset) >> 1;
 
@@ -291,8 +294,8 @@ TA_table_build_cvt(FT_Byte** cvt,
     }
     else
     {
-      *(bufp++) = 0;
-      *(bufp++) = 50;
+      *(bufp++) = HIGH(default_width);
+      *(bufp++) = LOW(default_width);
     }
 
     for (j = 0; j < hwidth_count; j++)
@@ -311,8 +314,8 @@ TA_table_build_cvt(FT_Byte** cvt,
     }
     else
     {
-      *(bufp++) = 0;
-      *(bufp++) = 50;
+      *(bufp++) = HIGH(default_width);
+      *(bufp++) = LOW(default_width);
     }
 
     for (j = 0; j < vwidth_count; j++)
