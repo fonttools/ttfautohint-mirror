@@ -44,30 +44,30 @@
   TA_ERROR_START_LIST
 #endif
 
-TA_NOERRORDEF_(Ok, 0x00, \
+TA_NOERRORDEF_(Ok, 0x00,
                "no error")
 
-TA_ERRORDEF_(Invalid_FreeType_Version, 0x0E, \
+TA_ERRORDEF_(Invalid_FreeType_Version, 0x0E,
              "invalid FreeType version (need 2.4.5 or higher)")
-TA_ERRORDEF_(Missing_Legal_Permission, 0x0F, \
+TA_ERRORDEF_(Missing_Legal_Permission, 0x0F,
              "legal permission bit in `OS/2' font table is set")
-TA_ERRORDEF_(Invalid_Stream_Write,     0x5F, \
+TA_ERRORDEF_(Invalid_Stream_Write,     0x5F,
              "invalid stream write")
-TA_ERRORDEF_(Hinter_Overflow,          0xF0, \
+TA_ERRORDEF_(Hinter_Overflow,          0xF0,
              "hinter overflow")
-TA_ERRORDEF_(Missing_Glyph,            0xF1, \
+TA_ERRORDEF_(Missing_Glyph,            0xF1,
              "missing standard character glyph")
-TA_ERRORDEF_(Missing_Unicode_CMap,     0xF2, \
+TA_ERRORDEF_(Missing_Unicode_CMap,     0xF2,
              "missing Unicode character map")
-TA_ERRORDEF_(Missing_Symbol_CMap,      0xF3, \
+TA_ERRORDEF_(Missing_Symbol_CMap,      0xF3,
              "missing symbol character map")
-TA_ERRORDEF_(Canceled,                 0xF4, \
+TA_ERRORDEF_(Canceled,                 0xF4,
              "execution canceled")
-TA_ERRORDEF_(Already_Processed,        0xF5, \
+TA_ERRORDEF_(Already_Processed,        0xF5,
              "font already processed by ttfautohint")
-TA_ERRORDEF_(Invalid_Font_Type,        0xF6, \
+TA_ERRORDEF_(Invalid_Font_Type,        0xF6,
              "not a font with TrueType outlines in SFNT format")
-TA_ERRORDEF_(Unknown_Argument,         0xF7, \
+TA_ERRORDEF_(Unknown_Argument,         0xF7,
              "unknown argument")
 
 #ifdef TA_ERROR_END_LIST
