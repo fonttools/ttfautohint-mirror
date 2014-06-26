@@ -37,6 +37,10 @@
 #endif
 
 
+// Shorthand for `tr' using a local `TRDOMAIN'.
+#define Tr(text) QCoreApplication::translate(TRDOMAIN, text)
+
+
 // the available script tags and its descriptions are directly extracted
 // from `ttfautohint-scripts.h'
 typedef struct Script_Names_
@@ -648,6 +652,8 @@ struct GUI_Progress_Data
 };
 
 
+#define TRDOMAIN "GuiProgress"
+
 int
 gui_progress(long curr_idx,
              long num_glyphs,
@@ -659,10 +665,8 @@ gui_progress(long curr_idx,
 
   if (num_sfnts > 1 && curr_sfnt != data->last_sfnt)
   {
-    data->dialog->setLabelText(QCoreApplication::translate(
-                                 "GuiProgress",
-                                 "Auto-hinting subfont %1 of %2"
-                                 " with %3 glyphs...")
+    data->dialog->setLabelText(Tr("Auto-hinting subfont %1 of %2"
+                                  " with %3 glyphs...")
                                .arg(curr_sfnt + 1)
                                .arg(num_sfnts)
                                .arg(num_glyphs));
@@ -685,9 +689,7 @@ gui_progress(long curr_idx,
   if (data->begin)
   {
     if (num_sfnts == 1)
-      data->dialog->setLabelText(QCoreApplication::translate(
-                                   "GuiProgress",
-                                   "Auto-hinting %1 glyphs...")
+      data->dialog->setLabelText(Tr("Auto-hinting %1 glyphs...")
                                  .arg(num_glyphs));
     data->dialog->setMaximum(num_glyphs - 1);
 
