@@ -17,6 +17,7 @@
 #include <stdlib.h>
 
 #include "info.h"
+#include <numberset.h>
 
 
 #define TTFAUTOHINT_STRING "; ttfautohint"
@@ -92,15 +93,32 @@ build_version_string(Info_Data* idata)
     d += sprintf(d, " -c");
   if (idata->symbol)
     d += sprintf(d, " -s");
-  if (idata->x_height_snapping_exceptions)
+  if (idata->x_height_snapping_exceptions_string)
     d += sprintf(d, " -X \"\""); // fill in data later
 
 Dehint_only:
   idata->data_len = d - (char*)idata->data;
 
-  if (idata->x_height_snapping_exceptions)
+  if (idata->x_height_snapping_exceptions_string)
   {
-    s = number_set_show(idata->x_height_snapping_exceptions, 6, 0x7FFF);
+    number_range* x_height_snapping_exceptions;
+    const char* pos;
+
+    // only set specific value of `ret' for an allocation error,
+    // since syntax errors are handled in TTF_autohint
+    pos = number_set_parse(idata->x_height_snapping_exceptions_string,
+                           &x_height_snapping_exceptions,
+                           6, 0x7FFF);
+    if (*pos)
+    {
+      if (x_height_snapping_exceptions == NUMBERSET_ALLOCATION_ERROR)
+        ret = 1;
+      goto Fail;
+    }
+
+    s = number_set_show(x_height_snapping_exceptions, 6, 0x7FFF);
+    number_set_free(x_height_snapping_exceptions);
+
     if (!s)
     {
       ret = 1;
@@ -128,7 +146,7 @@ Dehint_only:
     goto Fail;
   }
 
-  if (idata->x_height_snapping_exceptions)
+  if (idata->x_height_snapping_exceptions_string)
   {
     // overwrite second doublequote and append it instead
     d = (char*)(data_new + idata->data_len - 1);

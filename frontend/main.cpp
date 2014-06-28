@@ -131,6 +131,72 @@ progress(long curr_idx,
   return 0;
 }
 
+
+void
+err(TA_Error error,
+    const char* error_string,
+    unsigned int linenum,
+    const char* line,
+    const char* errpos,
+    void* error_data)
+{
+  if (!error)
+    return;
+
+  // We replace some terse error strings with more user-friendly versions.
+  if (error == TA_Err_Invalid_FreeType_Version)
+    fprintf(stderr,
+            "FreeType version 2.4.5 or higher is needed.\n"
+            "Perhaps using a wrong FreeType DLL?\n");
+  else if (error == TA_Err_Invalid_Font_Type)
+    fprintf(stderr,
+            "This font is not a valid font"
+              " in SFNT format with TrueType outlines.\n"
+            "In particular, CFF outlines are not supported.\n");
+  else if (error == TA_Err_Already_Processed)
+    fprintf(stderr,
+            "This font has already been processed with ttfautohint.\n");
+  else if (error == TA_Err_Missing_Legal_Permission)
+    fprintf(stderr,
+            "Bit 1 in the `fsType' field of the `OS/2' table is set:\n"
+            "This font must not be modified"
+              " without permission of the legal owner.\n"
+            "Use command line option `-i' to continue"
+              " if you have such a permission.\n");
+  else if (error == TA_Err_Missing_Unicode_CMap)
+    fprintf(stderr,
+            "No Unicode character map.\n");
+  else if (error == TA_Err_Missing_Symbol_CMap)
+    fprintf(stderr,
+            "No symbol character map.\n");
+  else if (error == TA_Err_Missing_Glyph)
+    fprintf(stderr,
+            "No glyph for a standard character"
+              " to derive standard width and height.\n"
+            "Please check the documentation for a list of"
+              " script-specific standard characters,\n"
+            "or use option `--symbol'.\n");
+  else
+  {
+    if (error < 0x100)
+      fprintf(stderr, "An error with code 0x%02x occurred"
+                        " while autohinting fonts",
+                      error);
+    else if (error >= 0x100 && error < 0x200)
+      fprintf(stderr, "An error with code 0x%03x occurred"
+                        " while parsing the argument of option `-X'",
+                      error);
+    fprintf(stderr, (error_string || line) ? ":\n" : ".\n");
+    if (error_string)
+      fprintf(stderr, "  %s\n", error_string);
+    if (line)
+      fprintf(stderr, "  %s\n", line);
+    if (errpos && line)
+      fprintf(stderr, "  %*s\n", int(errpos - line + 1), "^");
+  }
+}
+
+
 } // extern "C"
 #endif // !BUILD_GUI
 
@@ -388,6 +454,7 @@ main(int argc,
   bool debug = false;
 
   TA_Progress_Func progress_func = NULL;
+  TA_Error_Func err_func = err;
   TA_Info_Func info_func = info;
 #endif
 
@@ -667,43 +734,6 @@ main(int argc,
     exit(EXIT_FAILURE);
   }
 
-  number_range* x_height_snapping_exceptions = NULL;
-
-  if (have_x_height_snapping_exceptions_string)
-  {
-    const char* s;
-
-
-    s = number_set_parse(x_height_snapping_exceptions_string,
-                         &x_height_snapping_exceptions,
-                         6, 0x7FFF);
-    if (*s)
-    {
-      if (x_height_snapping_exceptions == NUMBERSET_ALLOCATION_ERROR)
-        fprintf(stderr, "Allocation error while scanning"
-                        " x height snapping exceptions\n");
-      else {
-        if (x_height_snapping_exceptions == NUMBERSET_INVALID_CHARACTER)
-          fprintf(stderr, "Invalid character");
-        else if (x_height_snapping_exceptions == NUMBERSET_OVERFLOW)
-          fprintf(stderr, "Overflow");
-        else if (x_height_snapping_exceptions == NUMBERSET_INVALID_RANGE)
-          fprintf(stderr, "Invalid range");
-        else if (x_height_snapping_exceptions == NUMBERSET_OVERLAPPING_RANGES)
-          fprintf(stderr, "Overlapping ranges");
-        else if (x_height_snapping_exceptions == NUMBERSET_NOT_ASCENDING)
-          fprintf(stderr, "Values und ranges must be ascending");
-        fprintf(stderr, " in x height snapping exceptions:\n"
-                        "  \"%s\"\n"
-                        "   %*s\n",
-                        x_height_snapping_exceptions_string,
-                        int(s - x_height_snapping_exceptions_string + 1),
-                        "^");
-      }
-      exit(EXIT_FAILURE);
-    }
-  }
-
   if (have_default_script)
   {
     const Script_Names* sn;
@@ -792,7 +822,6 @@ main(int argc,
     out = stdout;
   }
 
-  const unsigned char* error_string;
   Progress_Data progress_data = {-1, 1, 0};
   Info_Data info_data;
 
@@ -817,7 +846,7 @@ main(int argc,
     info_data.adjust_subglyphs = adjust_subglyphs;
     info_data.hint_composites = hint_composites;
     info_data.increase_x_height = increase_x_height;
-    info_data.x_height_snapping_exceptions = x_height_snapping_exceptions;
+    info_data.x_height_snapping_exceptions_string = x_height_snapping_exceptions_string;
     info_data.fallback_stem_width = fallback_stem_width;
     info_data.symbol = symbol;
 
@@ -849,8 +878,8 @@ main(int argc,
                  "hinting-range-min, hinting-range-max, hinting-limit,"
                  "gray-strong-stem-width, gdi-cleartype-strong-stem-width,"
                  "dw-cleartype-strong-stem-width,"
-                 "error-string,"
                  "progress-callback, progress-callback-data,"
+                 "error-callback,"
                  "info-callback, info-callback-data,"
                  "ignore-restrictions, windows-compatibility,"
                  "adjust-subglyphs, hint-composites,"
@@ -861,8 +890,8 @@ main(int argc,
                  hinting_range_min, hinting_range_max, hinting_limit,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                  dw_cleartype_strong_stem_width,
-                 &error_string,
                  progress_func, &progress_data,
+                 err_func,
                  info_func, &info_data,
                  ignore_restrictions, windows_compatibility,
                  adjust_subglyphs, hint_composites,
@@ -876,55 +905,12 @@ main(int argc,
     free(info_data.data_wide);
   }
 
-  number_set_free(x_height_snapping_exceptions);
-
-  if (error)
-  {
-    if (error == TA_Err_Invalid_FreeType_Version)
-      fprintf(stderr,
-              "FreeType version 2.4.5 or higher is needed.\n"
-              "Perhaps using a wrong FreeType DLL?\n");
-    else if (error == TA_Err_Invalid_Font_Type)
-      fprintf(stderr,
-              "This font is not a valid font"
-                " in SFNT format with TrueType outlines.\n"
-              "In particular, CFF outlines are not supported.\n");
-    else if (error == TA_Err_Already_Processed)
-      fprintf(stderr,
-              "This font has already been processed with ttfautohint.\n");
-    else if (error == TA_Err_Missing_Legal_Permission)
-      fprintf(stderr,
-              "Bit 1 in the `fsType' field of the `OS/2' table is set:\n"
-              "This font must not be modified"
-                " without permission of the legal owner.\n"
-              "Use command line option `-i' to continue"
-                " if you have such a permission.\n");
-    else if (error == TA_Err_Missing_Unicode_CMap)
-      fprintf(stderr,
-              "No Unicode character map.\n");
-    else if (error == TA_Err_Missing_Symbol_CMap)
-      fprintf(stderr,
-              "No symbol character map.\n");
-    else if (error == TA_Err_Missing_Glyph)
-      fprintf(stderr,
-              "No glyph for a standard character"
-              " to derive standard width and height.\n"
-              "Please check the documentation for a list of"
-              " script-specific standard characters,\n"
-              "or use option `--symbol'.\n");
-    else
-      fprintf(stderr,
-              "Error code `0x%02x' while autohinting font:\n"
-              "  %s\n", error, error_string);
-    exit(EXIT_FAILURE);
-  }
-
   if (in != stdin)
     fclose(in);
   if (out != stdout)
     fclose(out);
 
-  exit(EXIT_SUCCESS);
+  exit(error ? EXIT_FAILURE : EXIT_SUCCESS);
 
   return 0; // never reached
 

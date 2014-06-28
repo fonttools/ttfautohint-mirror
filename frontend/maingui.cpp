@@ -652,6 +652,7 @@ struct GUI_Progress_Data
 };
 
 
+#undef TRDOMAIN
 #define TRDOMAIN "GuiProgress"
 
 int
@@ -704,50 +705,66 @@ gui_progress(long curr_idx,
   return 0;
 }
 
-} // extern "C"
 
-
-// return value 1 indicates a retry
-
-int
-Main_GUI::handle_error(TA_Error error,
-                       const unsigned char* error_string,
-                       QString output_name)
+struct GUI_Error_Data
 {
-  int ret = 0;
+  Main_GUI* gui;
+  QLocale* locale;
+  QString output_name;
+  int* ignore_restrictions_p;
+  bool retry;
+};
+
+
+#undef TRDOMAIN
+#define TRDOMAIN "GuiError"
+
+void
+gui_error(TA_Error error,
+          const char* error_string,
+          unsigned int linenum,
+          const char* line,
+          const char* errpos,
+          void* user)
+{
+  GUI_Error_Data* data = static_cast<GUI_Error_Data*>(user);
+  QLocale* locale = data->locale; // for QUOTE_STRING_LITERAL
+
+  if (!error)
+    return;
 
   if (error == TA_Err_Canceled)
-     ;
+    ;
   else if (error == TA_Err_Invalid_FreeType_Version)
     QMessageBox::critical(
-      this,
+      data->gui,
       "TTFautohint",
-      tr("FreeType version 2.4.5 or higher is needed.\n"
+      Tr("FreeType version 2.4.5 or higher is needed.\n"
          "Are you perhaps using a wrong FreeType DLL?"),
       QMessageBox::Ok,
       QMessageBox::Ok);
   else if (error == TA_Err_Invalid_Font_Type)
     QMessageBox::warning(
-      this,
+      data->gui,
       "TTFautohint",
-      tr("This font is not a valid font"
+      Tr("This font is not a valid font"
          " in SFNT format with TrueType outlines.\n"
          "In particular, CFF outlines are not supported."),
       QMessageBox::Ok,
       QMessageBox::Ok);
   else if (error == TA_Err_Already_Processed)
     QMessageBox::warning(
-      this,
+      data->gui,
       "TTFautohint",
-      tr("This font has already been processed by TTFautohint."),
+      Tr("This font has already been processed by TTFautohint."),
       QMessageBox::Ok,
       QMessageBox::Ok);
   else if (error == TA_Err_Missing_Legal_Permission)
   {
     int yesno = QMessageBox::warning(
-                  this,
+                  data->gui,
                   "TTFautohint",
-                  tr("Bit 1 in the %1 field of the %2 table is set:"
+                  Tr("Bit 1 in the %1 field of the %2 table is set:"
                      " This font must not be modified"
                      " without permission of the legal owner.\n"
                      "Do you have such a permission?")
@@ -757,68 +774,69 @@ Main_GUI::handle_error(TA_Error error,
                   QMessageBox::No);
     if (yesno == QMessageBox::Yes)
     {
-      ignore_restrictions = true;
-      ret = 1;
+      *data->ignore_restrictions_p = true;
+      data->retry = true;
     }
   }
   else if (error == TA_Err_Missing_Unicode_CMap)
     QMessageBox::warning(
-      this,
+      data->gui,
       "TTFautohint",
-      tr("The input font doesn't contain a Unicode character map.\n"
+      Tr("The input font doesn't contain a Unicode character map.\n"
          "Maybe you haven't set the %1 checkbox?")
-         .arg(QUOTE_STRING_LITERAL(tr("Symbol Font"))),
+         .arg(QUOTE_STRING_LITERAL(Tr("Symbol Font"))),
       QMessageBox::Ok,
       QMessageBox::Ok);
   else if (error == TA_Err_Missing_Symbol_CMap)
     QMessageBox::warning(
-      this,
+      data->gui,
       "TTFautohint",
-      tr("The input font does neither contain a symbol"
+      Tr("The input font does neither contain a symbol"
          " nor a character map."),
       QMessageBox::Ok,
       QMessageBox::Ok);
   else if (error == TA_Err_Missing_Glyph)
     QMessageBox::warning(
-      this,
+      data->gui,
       "TTFautohint",
-      tr("No glyph for a standard character"
+      Tr("No glyph for a standard character"
          " to derive standard width and height.\n"
          "Please check the documentation for a list of"
          " script-specific standard characters.\n"
          "\n"
          "Set the %1 checkbox if you want to circumvent this test.")
-         .arg(QUOTE_STRING_LITERAL(tr("Symbol Font"))),
+         .arg(QUOTE_STRING_LITERAL(Tr("Symbol Font"))),
       QMessageBox::Ok,
       QMessageBox::Ok);
   else
     QMessageBox::warning(
-      this,
+      data->gui,
       "TTFautohint",
-      tr("Error code 0x%1 while autohinting font:\n")
+      Tr("Error code 0x%1 while autohinting font:\n")
          .arg(error, 2, 16, QLatin1Char('0'))
         + QString::fromLocal8Bit((const char*)error_string),
       QMessageBox::Ok,
       QMessageBox::Ok);
 
-  if (QFile::exists(output_name) && remove(qPrintable(output_name)))
+  if (QFile::exists(data->output_name)
+      && remove(qPrintable(data->output_name)))
   {
     const int buf_len = 1024;
     char buf[buf_len];
 
     strerror_r(errno, buf, buf_len);
     QMessageBox::warning(
-      this,
+      data->gui,
       "TTFautohint",
-      tr("The following error occurred while removing output file %1:\n")
-         .arg(QUOTE_STRING(QDir::toNativeSeparators(output_name)))
+      Tr("The following error occurred while removing output file %1:\n")
+         .arg(QUOTE_STRING(QDir::toNativeSeparators(data->output_name)))
         + QString::fromLocal8Bit(buf),
       QMessageBox::Ok,
       QMessageBox::Ok);
   }
-
-  return ret;
 }
+
+} // extern "C"
 
 
 void
@@ -850,9 +868,10 @@ again:
   dialog.setMinimumDuration(1000);
   dialog.setWindowModality(Qt::WindowModal);
 
-  const unsigned char* error_string;
   TA_Info_Func info_func = info;
   GUI_Progress_Data gui_progress_data = {-1, true, &dialog};
+  GUI_Error_Data gui_error_data = { this, locale, output_name,
+                                    &ignore_restrictions, false };
   Info_Data info_data;
 
   info_data.data = NULL; // must be deallocated after use
@@ -873,7 +892,8 @@ again:
   info_data.increase_x_height = no_increase_box->isChecked()
                                 ? 0
                                 : increase_box->value();
-  info_data.x_height_snapping_exceptions = x_height_snapping_exceptions;
+  info_data.x_height_snapping_exceptions_string =
+    qPrintable(x_height_snapping_exceptions_string);
   info_data.fallback_stem_width = default_stem_width_box->isChecked()
                                   ? 0
                                   : stem_width_box->value();
@@ -937,8 +957,8 @@ again:
                  "gray-strong-stem-width,"
                  "gdi-cleartype-strong-stem-width,"
                  "dw-cleartype-strong-stem-width,"
-                 "error-string,"
                  "progress-callback, progress-callback-data,"
+                 "error-callback, error-callback-data,"
                  "info-callback, info-callback-data,"
                  "ignore-restrictions,"
                  "windows-compatibility,"
@@ -954,8 +974,8 @@ again:
                  info_data.gray_strong_stem_width,
                  info_data.gdi_cleartype_strong_stem_width,
                  info_data.dw_cleartype_strong_stem_width,
-                 &error_string,
                  gui_progress, &gui_progress_data,
+                 gui_error, &gui_error_data,
                  info_func, &info_data,
                  ignore_restrictions,
                  info_data.windows_compatibility,
@@ -977,10 +997,10 @@ again:
 
   if (error)
   {
-    if (handle_error(error, error_string, output_name))
+    // retry if there is a user request to do so (handled in `gui_error')
+    if (gui_error_data.retry)
       goto again;
 
-    // there was an error, and the user requested not to proceed
     timer->stop();
   }
   else
