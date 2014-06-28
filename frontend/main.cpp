@@ -352,10 +352,11 @@ show_help(bool
 "\n");
   fprintf(handle,
 "A hint set contains the optimal hinting for a certain PPEM value;\n"
-"the larger the hint set range, the more hint sets get computed,\n"
-"usually increasing the output font size.  Note, however,\n"
-"that the `gasp' table of the output file enables grayscale hinting\n"
+"the larger the hint set range (as given by options -l and -r),\n"
+"the more hint sets get computed, usually increasing the output font size.\n"
+"The `gasp' table of the output file always enables grayscale hinting\n"
 "for all sizes (limited by option -G, which is handled in the bytecode).\n"
+"Increasing the value of -G does not increase the output font size.\n"
 "\n");
   fprintf(handle,
 "Options -f and -D take a four-letter string that identifies a script.\n"

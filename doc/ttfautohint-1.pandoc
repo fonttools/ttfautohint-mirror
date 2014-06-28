@@ -230,6 +230,9 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 :   The maximum PPEM value (in pixels) at which hint sets are created.  The
     default value for *n* is 50.
 
+Increasing the range given by `-l` and `-r` normally makes the font's
+bytecode larger.
+
 ### Default Script
 
 `--default-script=`*s*, `-D`\ *s*
@@ -253,7 +256,7 @@ See ['Hint Sets'](#hint-sets) for a definition and explanation.
 `--hinting-limit=`*n*, `-G`\ *n*
 :   The *hinting limit* is the PPEM value (in pixels) where hinting gets
     switched off (using the `INSTCTRL` bytecode instruction, not the `gasp`
-    table data); it has zero impact on the file size.  The default value for
+    table data); it does not influence the file size.  The default value for
     *n* is 200, which means that the font is not hinted for PPEM values
     larger than 200.
 

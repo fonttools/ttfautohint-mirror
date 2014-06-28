@@ -1131,9 +1131,10 @@ Main_GUI::create_layout(bool horizontal_layout)
   limit_box = new QSpinBox;
   limit_label->setBuddy(limit_box);
   limit_label->setToolTip(
-    tr("Make <b>TTFautohint</b> add bytecode to the output font so that"
-       " sizes larger than this PPEM value are not hinted"
-       " (regardless of the values in the <i>gasp</i> table)."));
+    tr("Switch off hinting for PPEM values exceeding this limit."
+       " Changing this value does not influence the size of the bytecode.<br>"
+       "Note that <b>TTFautohint</b> handles this feature"
+       " in the output font's bytecode and not in the <i>gasp</i> table."));
   limit_box->setKeyboardTracking(false);
   limit_box->setRange(2, 10000);
 
@@ -1142,7 +1143,8 @@ Main_GUI::create_layout(bool horizontal_layout)
   no_limit_box = new QCheckBox(no_limit_box_text, this);
   no_limit_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> adds no hinting limit"
-       " to the bytecode."));
+       " to the bytecode.<br>"
+       "For testing only."));
 
   //
   // x height increase limit
@@ -1249,7 +1251,8 @@ Main_GUI::create_layout(bool horizontal_layout)
 
   dehint_box = new QCheckBox(tr("&Dehint"), this);
   dehint_box->setToolTip(
-    tr("<b></b>If set, remove all hints from the font."));
+    tr("If set, remove all hints from the font.<br>"
+       "For testing only."));
 
   info_box = new QCheckBox(tr("Add ttf&autohint Info"), this);
   info_box->setToolTip(
