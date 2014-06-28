@@ -135,10 +135,10 @@ progress(long curr_idx,
 void
 err(TA_Error error,
     const char* error_string,
-    unsigned int linenum,
+    unsigned int /* linenum */,
     const char* line,
     const char* errpos,
-    void* error_data)
+    void* /* error_data */)
 {
   if (!error)
     return;

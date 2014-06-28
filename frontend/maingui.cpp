@@ -722,9 +722,9 @@ struct GUI_Error_Data
 void
 gui_error(TA_Error error,
           const char* error_string,
-          unsigned int linenum,
-          const char* line,
-          const char* errpos,
+          unsigned int /* linenum */,
+          const char* /* line */,
+          const char* /* errpos */,
           void* user)
 {
   GUI_Error_Data* data = static_cast<GUI_Error_Data*>(user);
