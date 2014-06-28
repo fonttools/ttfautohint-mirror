@@ -111,6 +111,45 @@ typedef int
 
 
 /*
+ * Callback: `TA_Error_Func`
+ * -------------------------
+ *
+ * A callback function to get error information.
+ *
+ * *error* is the value `TTF_autohint` returns.  See file
+ * `ttfautohint-errors.h` for a list.  Error codes not in this list are
+ * directly taken from FreeType; see the FreeType header file `fterrdef.h`
+ * for more.
+ *
+ * *error_string*, if non-NULL, is a pointer to an error message that
+ * represents *error*.
+ *
+ * The next three parameters help identify the origin of text string parsing
+ * errors.  *linenum*, if non-zero, contains the line number.  *line*, if
+ * non-NULL, is a pointer to the input line that can't be processed.
+ * *errpos*, if non-NULL, holds a pointer to the position in *line* where
+ * the problem occurs.
+ *
+ * *error_data* is a void pointer to user-supplied data.
+ *
+ * ```C
+ */
+
+typedef void
+(*TA_Error_Func)(TA_Error error,
+                 const char* error_string,
+                 unsigned int linenum,
+                 const char* line,
+                 const char* errpos,
+                 void* error_data);
+
+/*
+ * ```
+ *
+ */
+
+
+/*
  * Callback: `TA_Info_Func`
  * ------------------------
  *
@@ -227,6 +266,18 @@ typedef int
  * :   A pointer of type `unsigned char**` to a string (in UTF-8 encoding)
  *     that verbally describes the error code.  You must not change the
  *     returned value.
+ *
+ * `error-callback`
+ * :   A pointer of type [`TA_Error_Func`](#callback-ta_error_func),
+ *     specifying a callback function for error messages.  This function
+ *     gets called right before `TTF_autohint` exits.  If this field is not
+ *     set or set to NULL, no error callback function is used.
+ *
+ *     Use it as a more sophisticated alternative to `error-string`.
+ *
+ * `error-callback-data`
+ * :   A point of type `void*` to user data that is passed to the error
+ *     callback function.
  *
  * `info-callback`
  * :   A pointer of type [`TA_Info_Func`](#callback-ta_info_func),

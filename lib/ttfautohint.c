@@ -54,8 +54,13 @@ TTF_autohint(const char* options,
   va_list ap;
 
   FONT* font;
-  FT_Error error;
   FT_Long i;
+
+  FT_Error error;
+  const char* error_string = NULL;
+  unsigned int linenum = 0;
+  const char* line = NULL;
+  const char* errpos = NULL;
 
   FILE* in_file = NULL;
   FILE* out_file = NULL;
@@ -81,10 +86,12 @@ TTF_autohint(const char* options,
   FT_Bool gdi_cleartype_strong_stem_width = 1;
   FT_Bool dw_cleartype_strong_stem_width = 0;
 
-  TA_Progress_Func progress;
-  void* progress_data;
-  TA_Info_Func info;
-  void* info_data;
+  TA_Progress_Func progress = NULL;
+  void* progress_data = NULL;
+  TA_Error_Func err = NULL;
+  void* err_data = NULL;
+  TA_Info_Func info = NULL;
+  void* info_data = NULL;
 
   FT_Bool windows_compatibility = 0;
   FT_Bool ignore_restrictions = 0;
@@ -98,7 +105,6 @@ TTF_autohint(const char* options,
   TA_Script default_script = TA_SCRIPT_LATN;
 
   FT_Bool dehint = 0;
-
   FT_Bool debug = 0;
 
   const char* op;
@@ -160,6 +166,10 @@ TTF_autohint(const char* options,
       dehint = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("dw-cleartype-strong-stem-width"))
       dw_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("error-callback"))
+      err = va_arg(ap, TA_Error_Func);
+    else if (COMPARE("error-callback-data"))
+      err_data = va_arg(ap, void*);
     else if (COMPARE("error-string"))
       error_stringp = va_arg(ap, const unsigned char**);
     else if (COMPARE("fallback-script"))
@@ -355,7 +365,12 @@ TTF_autohint(const char* options,
                                      0x7FFF);
     if (*s)
     {
-      error = FT_Err_Invalid_Argument;
+      /* we map numberset.h's error codes to values starting with 0x100 */
+      error = 0x100 - (FT_Error)x_height_snapping_exceptions;
+      line = x_height_snapping_exceptions_string;
+      linenum = 0;
+      errpos = s;
+
       goto Err1;
     }
   }
@@ -669,8 +684,18 @@ Err:
   TA_font_unload(font, in_buf, out_bufp);
 
 Err1:
+  error_string = TA_get_error_message(error);
+
   if (error_stringp)
-    *error_stringp = (const unsigned char*)TA_get_error_message(error);
+    *error_stringp = (const unsigned char*)error_string;
+
+  if (err)
+    err(error,
+        error_string,
+        linenum,
+        line,
+        errpos,
+        err_data);
 
   return error;
 }

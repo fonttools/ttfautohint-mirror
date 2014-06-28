@@ -70,6 +70,19 @@ TA_ERRORDEF_(Invalid_Font_Type,        0xF6,
 TA_ERRORDEF_(Unknown_Argument,         0xF7,
              "unknown argument")
 
+TA_ERRORDEF_(XHeightSnapping_Invalid_Character,  0x101,
+             "invalid character")
+TA_ERRORDEF_(XHeightSnapping_Overflow,           0x102,
+             "numerical overflow")
+TA_ERRORDEF_(XHeightSnapping_Invalid_Range,      0x103,
+             "invalid range")
+TA_ERRORDEF_(XHeightSnapping_Overlapping_Ranges, 0x104,
+             "overlapping ranges")
+TA_ERRORDEF_(XHeightSnapping_Not_Ascending,      0x105,
+             "not ascending ranges or values")
+TA_ERRORDEF_(XHeightSnapping_Allocation_Error,   0x106,
+             "allocation error")
+
 #ifdef TA_ERROR_END_LIST
   TA_ERROR_END_LIST
 #endif
