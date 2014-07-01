@@ -192,13 +192,7 @@ number_set_parse(const char* s,
 
   if (error_code)
   {
-    /* deallocate data */
-    while (cur)
-    {
-      tmp = cur;
-      cur = cur->next;
-      free(tmp);
-    }
+    number_set_free(cur);
 
     s = last_pos;
     if (number_set)
