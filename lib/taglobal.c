@@ -212,7 +212,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
   FT_Byte* gstyles = globals->glyph_styles;
   FT_UInt ss;
   FT_UInt i;
-  FT_UInt dflt = -1;
+  FT_UInt dflt = ~0U; /* a non-valid value */
 
 
   /* the value TA_STYLE_UNASSIGNED means `uncovered glyph' */
@@ -242,7 +242,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
     /* set the corresponding glyph style index */
     if (style_class->coverage == TA_COVERAGE_DEFAULT)
     {
-      if (style_class->script == globals->font->default_script)
+      if ((FT_UInt)style_class->script == globals->font->default_script)
         dflt = ss;
 
       for (range = script_class->script_uni_ranges; range->first != 0; range++)
