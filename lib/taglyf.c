@@ -1212,10 +1212,8 @@ TA_sfnt_create_glyf_data(SFNT* sfnt,
  * relies on the `cmap' table and OpenType features to get style coverage
  * data.  In TTCs, subfonts normally share the same `glyf' table but use
  * different `cmap's and OpenType features (in `GSUB' and `GPOS' tables).
- * Covering the most common situation, namely a single `glyf' table and
- * multiple `cmap's and OpenType features, ttfautohint merges coverage data
- * for the first subfont's `glyf' table with all other subfonts that also
- * use this very `glyf' table.
+ * To handle this gracefully, ttfautohint collects (and merges) the coverage
+ * information in the `glyf_Data' structure.
  */
 
 FT_Error
@@ -1289,21 +1287,18 @@ Exit:
 }
 
 
-FT_Bool
-TA_sfnt_adjust_master_coverage(SFNT* sfnt,
-                               FONT* font)
+void
+TA_sfnt_adjust_coverage(SFNT* sfnt,
+                        FONT* font)
 {
   SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
   glyf_Data* data = (glyf_Data*)glyf_table->data;
 
-  FT_Face face = sfnt->face;
-
   TA_FaceGlobals master_globals = data->master_globals;
-  TA_FaceGlobals curr_globals = (TA_FaceGlobals)face->autohint.data;
 
 
   /* use fallback style for uncovered glyphs */
-  if (master_globals == curr_globals)
+  if (!data->adjusted)
   {
     FT_Long nn;
     FT_Byte* gstyles = master_globals->glyph_styles;
@@ -1323,9 +1318,16 @@ TA_sfnt_adjust_master_coverage(SFNT* sfnt,
 
 #ifdef TA_DEBUG
 
-    TA_LOG_GLOBAL(("\n"
-                   "using fallback style `%s' for unassigned glyphs:\n",
-                   ta_style_names[master_globals->font->fallback_style]));
+    if (sfnt->face->num_faces > 1)
+      TA_LOG_GLOBAL(("\n"
+                     "using fallback style `%s' for unassigned glyphs"
+                     " (glyf table index %d):\n",
+                     ta_style_names[master_globals->font->fallback_style],
+                     sfnt->glyf_idx));
+    else
+      TA_LOG_GLOBAL(("\n"
+                     "using fallback style `%s' for unassigned glyphs:\n",
+                     ta_style_names[master_globals->font->fallback_style]));
 
     count = 0;
 
@@ -1351,10 +1353,8 @@ TA_sfnt_adjust_master_coverage(SFNT* sfnt,
 
 #endif /* TA_DEBUG */
 
-    return 1; /* master coverage adjusted */
+    data->adjusted = 1;
   }
-  else
-    return 0;
 }
 
 

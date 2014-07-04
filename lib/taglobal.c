@@ -344,10 +344,18 @@ Exit:
 
 #ifdef TA_DEBUG
 
-  TA_LOG_GLOBAL(("\n"
-                 "style coverage\n"
-                 "==============\n"
-                 "\n"));
+  if (face->num_faces > 1)
+    TA_LOG_GLOBAL(("\n"
+                   "style coverage (subfont %d, glyf table index %d)\n"
+                   "================================================\n"
+                   "\n",
+                   face->face_index,
+                   globals->font->sfnts[face->face_index].glyf_idx));
+  else
+    TA_LOG_GLOBAL(("\n"
+                   "style coverage\n"
+                   "==============\n"
+                   "\n"));
 
   for (ss = 0; ta_style_classes[ss]; ss++)
   {
