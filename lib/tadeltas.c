@@ -254,7 +254,7 @@ get_shift(const char** string_p,
           int min,
           int max)
 {
-  const char*s = *string_p;
+  const char* s = *string_p;
   char* endptr;
   double shift;
 
@@ -283,7 +283,7 @@ get_shift(const char** string_p,
   }
 
   /* we round the value to a multiple of 1/(2^DELTA_SHIFT) */
-  shift = floor(shift * DELTA_FACTOR + DELTA_FACTOR / 2) / DELTA_FACTOR;
+  shift = floor(shift * DELTA_FACTOR + 0.5) / DELTA_FACTOR;
 
   *string_p = endptr;
   *shift_p = shift;
@@ -411,7 +411,10 @@ TA_deltas_parse(FONT* font,
     case HAD_GLYPH_IDX:
       /* `p' */
       if (c == 'p' && next_is_space)
+      {
         state = HAD_P;
+        pos += 2;
+      }
       break;
 
     case HAD_P:
@@ -440,12 +443,15 @@ TA_deltas_parse(FONT* font,
       /* `x' or `y' or `@' */
       if (next_is_space)
       {
+        pos += 2;
         if (c == 'x')
           state = HAD_X;
         else if (c == 'y')
           state = HAD_Y;
         else if (c == '@')
           state = HAD_AT;
+        else
+          pos -= 2;
       }
       break;
 
@@ -459,10 +465,13 @@ TA_deltas_parse(FONT* font,
       /* 'y' or '@' */
       if (next_is_space)
       {
+        pos += 2;
         if (c == 'y')
           state = HAD_Y;
         else if (c == '@')
           state = HAD_AT;
+        else
+          pos -= 2;
       }
       break;
 
@@ -477,7 +486,10 @@ TA_deltas_parse(FONT* font,
     case HAD_Y_SHIFT:
       /* '@' */
       if (c == '@' && next_is_space)
+      {
         state = HAD_AT;
+        pos += 2;
+      }
       break;
 
     case HAD_AT:
@@ -501,23 +513,25 @@ TA_deltas_parse(FONT* font,
   if (state == HAD_PPEMS)
   {
     /* success */
-
     *deltas_p = deltas;
-    return NULL;
   }
   else
   {
     TA_deltas_free(deltas);
 
     *deltas_p = error;
-    return pos;
   }
+
+  return pos;
 }
 
 
 void
 TA_deltas_free(Deltas* deltas)
 {
+  if (!deltas)
+    return;
+
   number_set_free(deltas->points);
   number_set_free(deltas->ppems);
 

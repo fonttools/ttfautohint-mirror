@@ -75,6 +75,8 @@ typedef struct Deltas_
  * for `x' and `y' are optional; if missing, the corresponding value is set
  * to zero.
  *
+ * A comment starts with character `#'; the rest of the line is ignored.
+ *
  * In case of success (this is, the delta exceptions description in `s' is
  * valid) the return value is a pointer to the final zero byte in string
  * `s'.  In case of an error, the return value is a pointer to the beginning
