@@ -1033,7 +1033,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   completer->setModel(model);
 
   input_label = new QLabel(tr("&Input File:"));
-  input_line = new Drag_Drop_Line_Edit;
+  input_line = new Drag_Drop_Line_Edit(DRAG_DROP_TRUETYPE);
   input_button = new QPushButton(tr("Browse..."));
   input_label->setBuddy(input_line);
   // enforce rich text to get nice word wrapping
@@ -1043,7 +1043,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   input_line->setCompleter(completer);
 
   output_label = new QLabel(tr("&Output File:"));
-  output_line = new Drag_Drop_Line_Edit;
+  output_line = new Drag_Drop_Line_Edit(DRAG_DROP_TRUETYPE);
   output_button = new QPushButton(tr("Browse..."));
   output_label->setBuddy(output_line);
   output_label->setToolTip(

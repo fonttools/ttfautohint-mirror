@@ -19,13 +19,23 @@
 
 #include <QtGui>
 
+enum Drag_Drop_File_Type
+{
+  DRAG_DROP_TRUETYPE,
+  DRAG_DROP_ANY
+};
+
+
 class Drag_Drop_Line_Edit
 : public Tooltip_Line_Edit
 {
   Q_OBJECT
 
+  Drag_Drop_File_Type file_type;
+
 public:
-  Drag_Drop_Line_Edit(QWidget* = 0);
+  Drag_Drop_Line_Edit(Drag_Drop_File_Type,
+                      QWidget* = 0);
 
   void dragEnterEvent(QDragEnterEvent*);
   void dropEvent(QDropEvent*);

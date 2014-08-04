@@ -18,8 +18,10 @@
 
 #include "ddlineedit.h"
 
-Drag_Drop_Line_Edit::Drag_Drop_Line_Edit(QWidget* parent)
-: Tooltip_Line_Edit(parent)
+Drag_Drop_Line_Edit::Drag_Drop_Line_Edit(Drag_Drop_File_Type ft,
+                                         QWidget* parent)
+: Tooltip_Line_Edit(parent),
+  file_type(ft)
 {
   // empty
 }
@@ -43,11 +45,20 @@ Drag_Drop_Line_Edit::dragEnterEvent(QDragEnterEvent* event)
     {
       file_name = url_list[0].toLocalFile();
 
-      if (file_name.endsWith(".ttf")
-          || file_name.endsWith(".TTF")
-          || file_name.endsWith(".ttc")
-          || file_name.endsWith(".TTC"))
+      switch (file_type)
+      {
+      case DRAG_DROP_TRUETYPE:
+        if (file_name.endsWith(".ttf")
+            || file_name.endsWith(".TTF")
+            || file_name.endsWith(".ttc")
+            || file_name.endsWith(".TTC"))
+          event->acceptProposedAction();
+        break;
+
+      case DRAG_DROP_ANY:
         event->acceptProposedAction();
+        break;
+      }
     }
   }
 }
