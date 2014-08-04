@@ -674,8 +674,9 @@ main(int argc,
     // -d makes ttfautohint ignore all other hinting options
     have_default_script = false;
     have_fallback_script = false;
-    have_hinting_range_min = false;
+    have_fallback_stem_width = false;
     have_hinting_range_max = false;
+    have_hinting_range_min = false;
     have_hinting_limit = false;
     have_increase_x_height = false;
     have_x_height_snapping_exceptions_string = false;
