@@ -51,7 +51,7 @@ get_token(const char** string_p)
 /* in the following functions, `*string_p' is never '\0'; */
 /* in case of error, `*string_p' should be set to a meaningful position */
 
-static Deltas*
+TA_Error
 get_font_idx(FONT* font,
              const char** string_p,
              long* font_idx_p)
@@ -67,14 +67,14 @@ get_font_idx(FONT* font,
   if (errno == ERANGE)
   {
     /* *string_p = s; */
-    return TA_DELTAS_INVALID_FONT_INDEX;
+    return TA_Err_Deltas_Invalid_Font_Index;
   }
 
   /* there must be a whitespace character after the number */
   if (errno || !isspace(*endptr))
   {
     *string_p = endptr;
-    return TA_DELTAS_SYNTAX_ERROR;
+    return TA_Err_Deltas_Syntax_Error;
   }
 
   /* we have already tested that the first character in `s' is a digit, */
@@ -82,17 +82,17 @@ get_font_idx(FONT* font,
   if (font_idx >= font->num_sfnts)
   {
     /* *string_p = s; */
-    return TA_DELTAS_INVALID_FONT_INDEX;
+    return TA_Err_Deltas_Invalid_Font_Index;
   }
 
   *string_p = endptr;
   *font_idx_p = font_idx;
 
-  return 0;
+  return TA_Err_Ok;
 }
 
 
-static Deltas*
+TA_Error
 get_glyph_idx(FONT* font,
               long font_idx,
               const char** string_p,
@@ -115,14 +115,14 @@ get_glyph_idx(FONT* font,
     if (errno == ERANGE)
     {
       /* *string_p = s; */
-      return TA_DELTAS_INVALID_GLYPH_INDEX;
+      return TA_Err_Deltas_Invalid_Glyph_Index;
     }
 
     /* there must be a whitespace character after the number */
     if (errno || !isspace(*endptr))
     {
       *string_p = endptr;
-      return TA_DELTAS_SYNTAX_ERROR;
+      return TA_Err_Deltas_Syntax_Error;
     }
 
     /* we have already tested that the first character in `s' is a digit, */
@@ -130,7 +130,7 @@ get_glyph_idx(FONT* font,
     if (glyph_idx >= face->num_glyphs)
     {
       /* *string_p = s; */
-      return TA_DELTAS_INVALID_GLYPH_INDEX;
+      return TA_Err_Deltas_Invalid_Glyph_Index;
     }
   }
   else if (isnamestart(*s))
@@ -147,7 +147,7 @@ get_glyph_idx(FONT* font,
     if (!token)
     {
       /* *string_p = s; */
-      return TA_DELTAS_ALLOCATION_ERROR;
+      return TA_Err_Deltas_Allocation_Error;
     }
 
     /* explicitly compare with `.notdef' */
@@ -167,7 +167,7 @@ get_glyph_idx(FONT* font,
     if (glyph_idx < 0)
     {
       /* *string_p = s; */
-      return TA_DELTAS_INVALID_GLYPH_NAME;
+      return TA_Err_Deltas_Invalid_Glyph_Name;
     }
   }
   else
@@ -175,17 +175,17 @@ get_glyph_idx(FONT* font,
     /* invalid */
 
     /* *string_p = s; */
-    return TA_DELTAS_SYNTAX_ERROR;
+    return TA_Err_Deltas_Syntax_Error;
   }
 
   *string_p = endptr;
   *glyph_idx_p = glyph_idx;
 
-  return 0;
+  return TA_Err_Ok;
 }
 
 
-static Deltas*
+TA_Error
 get_range(const char** string_p,
           number_range** number_set_p,
           int min,
@@ -206,14 +206,14 @@ get_range(const char** string_p,
       && (!s_len || !isspace(s[s_len - 1])))
   {
     *string_p = s + s_len;
-    return TA_DELTAS_SYNTAX_ERROR;
+    return TA_Err_Deltas_Syntax_Error;
   }
 
   token = strndup(s, s_len);
   if (!token)
   {
     /* *string_p = s; */
-    return TA_DELTAS_ALLOCATION_ERROR;
+    return TA_Err_Deltas_Allocation_Error;
   }
 
   endptr = (char*)number_set_parse(token, &number_set, min, max);
@@ -225,30 +225,30 @@ get_range(const char** string_p,
   if (number_set == NUMBERSET_ALLOCATION_ERROR)
   {
     /* *string_p = s; */
-    return TA_DELTAS_ALLOCATION_ERROR;
+    return TA_Err_Deltas_Allocation_Error;
   }
 
   *string_p = endptr;
 
   if (number_set == NUMBERSET_INVALID_CHARACTER)
-    return TA_DELTAS_INVALID_CHARACTER;
+    return TA_Err_Deltas_Invalid_Character;
   else if (number_set == NUMBERSET_OVERFLOW)
-    return TA_DELTAS_OVERFLOW;
+    return TA_Err_Deltas_Overflow;
   else if (number_set == NUMBERSET_INVALID_RANGE)
     /* this error code should be adjusted by the caller if necessary */
-    return TA_DELTAS_INVALID_POINT_RANGE;
+    return TA_Err_Deltas_Invalid_Point_Range;
   else if (number_set == NUMBERSET_OVERLAPPING_RANGES)
-    return TA_DELTAS_OVERLAPPING_RANGES;
+    return TA_Err_Deltas_Overlapping_Ranges;
   else if (number_set == NUMBERSET_NOT_ASCENDING)
-    return TA_DELTAS_NOT_ASCENDING;
+    return TA_Err_Deltas_Ranges_Not_Ascending;
 
   *number_set_p = number_set;
 
-  return 0;
+  return TA_Err_Ok;
 }
 
 
-static Deltas*
+TA_Error
 get_shift(const char** string_p,
           double* shift_p,
           int min,
@@ -266,20 +266,20 @@ get_shift(const char** string_p,
   {
     /* *string_p = s; */
     /* this error code should be adjusted by the caller if necessary */
-    return TA_DELTAS_INVALID_X_RANGE;
+    return TA_Err_Deltas_Invalid_X_Range;
   }
 
   /* there must be a whitespace character after the number */
   if (errno || !isspace(*endptr))
   {
     *string_p = endptr;
-    return TA_DELTAS_SYNTAX_ERROR;
+    return TA_Err_Deltas_Syntax_Error;
   }
 
   if (shift < min || shift > max)
   {
     /* *string_p = s; */
-    return TA_DELTAS_INVALID_X_RANGE;
+    return TA_Err_Deltas_Invalid_X_Range;
   }
 
   /* we round the value to a multiple of 1/(2^DELTA_SHIFT) */
@@ -288,18 +288,21 @@ get_shift(const char** string_p,
   *string_p = endptr;
   *shift_p = shift;
 
-  return 0;
+  return TA_Err_Ok;
 }
 
 
-const char*
+TA_Error
 TA_deltas_parse(FONT* font,
                 const char* s,
+                const char** err_pos,
                 Deltas** deltas_p,
                 int x_min, int x_max,
                 int y_min, int y_max,
                 int ppem_min, int ppem_max)
 {
+  TA_Error error;
+
   typedef enum State_
   { START,
     HAD_TOKEN1,
@@ -319,7 +322,6 @@ TA_deltas_parse(FONT* font,
   State state = START;
 
   Deltas* deltas = NULL;
-  Deltas* error;
   const char* pos = s;
 
   const char* token1;
@@ -327,14 +329,17 @@ TA_deltas_parse(FONT* font,
 
 
   if (!s)
-    return NULL;
+  {
+    *err_pos = NULL;
+    return TA_Err_Ok;
+  }
 
   deltas = (Deltas*)malloc(sizeof (Deltas));
   if (!deltas)
   {
-    if (deltas_p)
-      *deltas_p = TA_DELTAS_ALLOCATION_ERROR;
-    return s;
+    *err_pos = s;
+
+    return TA_Err_Deltas_Allocation_Error;
   }
 
   deltas->font_idx = 0;
@@ -351,7 +356,7 @@ TA_deltas_parse(FONT* font,
     State old_state = state;
 
 
-    error = 0;
+    error = TA_Err_Ok;
 
     while (isspace(*pos))
       pos++;
@@ -381,12 +386,13 @@ TA_deltas_parse(FONT* font,
       break;
 
     case HAD_TOKEN2:
+      pos = token1;
+
       /* possibility 1: <font idx> <glyph name> `p' */
       if (isdigit(*token1)
           && (isdigit(*token2) || isnamestart(*token2))
           && (c == 'p' && next_is_space))
       {
-        pos = token1;
         if (!(error = get_font_idx(font, &pos, &deltas->font_idx)))
           state = HAD_FONT_IDX;
       }
@@ -394,7 +400,6 @@ TA_deltas_parse(FONT* font,
       else if ((isdigit(*token1) || isnamestart(*token1))
                && (c == 'p' && next_is_space))
       {
-        pos = token1;
         if (!(error = get_glyph_idx(font, deltas->font_idx,
                                     &pos, &deltas->glyph_idx)))
           state = HAD_GLYPH_IDX;
@@ -428,7 +433,7 @@ TA_deltas_parse(FONT* font,
         ft_error = FT_Load_Glyph(face, deltas->glyph_idx, FT_LOAD_NO_SCALE);
         if (ft_error)
         {
-          error = TA_DELTAS_INVALID_GLYPH;
+          error = TA_Err_Deltas_Invalid_Glyph;
           break;
         }
 
@@ -479,8 +484,8 @@ TA_deltas_parse(FONT* font,
       /* <y shift> */
       if (!(error = get_shift(&pos, &deltas->y_shift, y_min, y_max)))
         state = HAD_Y_SHIFT;
-      if (error == TA_DELTAS_INVALID_X_RANGE)
-        error = TA_DELTAS_INVALID_Y_RANGE;
+      if (error == TA_Err_Deltas_Invalid_X_Range)
+        error = TA_Err_Deltas_Invalid_Y_Range;
       break;
 
     case HAD_Y_SHIFT:
@@ -497,8 +502,8 @@ TA_deltas_parse(FONT* font,
       if (!(error = get_range(&pos, &deltas->ppems,
                               ppem_min, ppem_max, "")))
         state = HAD_PPEMS;
-      if (error == TA_DELTAS_INVALID_POINT_RANGE)
-        error = TA_DELTAS_INVALID_PPEM_RANGE;
+      if (error == TA_Err_Deltas_Invalid_Point_Range)
+        error = TA_Err_Deltas_Invalid_Ppem_Range;
       break;
 
     case HAD_PPEMS:
@@ -513,16 +518,22 @@ TA_deltas_parse(FONT* font,
   if (state == HAD_PPEMS)
   {
     /* success */
-    *deltas_p = deltas;
+    if (deltas_p)
+      *deltas_p = deltas;
+    else
+      TA_deltas_free(deltas);
   }
   else
   {
     TA_deltas_free(deltas);
 
-    *deltas_p = error;
+    if (!error)
+      error = TA_Err_Deltas_Syntax_Error;
   }
 
-  return pos;
+  *err_pos = pos;
+
+  return error;
 }
 
 
@@ -536,6 +547,66 @@ TA_deltas_free(Deltas* deltas)
   number_set_free(deltas->ppems);
 
   free(deltas);
+}
+
+
+char*
+TA_deltas_show(FONT* font,
+               Deltas* deltas)
+{
+  int ret;
+  char glyph_name_buf[64];
+  char* points_buf = NULL;
+  char* ppems_buf = NULL;
+  char* deltas_buf = NULL;
+
+  FT_Face face;
+
+
+  if (!deltas)
+    return NULL;
+
+  if (deltas->font_idx >= font->num_sfnts)
+    return NULL;
+
+  face = font->sfnts[deltas->font_idx].face;
+  glyph_name_buf[0] = '\0';
+  if (FT_HAS_GLYPH_NAMES(face))
+    FT_Get_Glyph_Name(face, deltas->glyph_idx, glyph_name_buf, 64);
+
+  points_buf = number_set_show(deltas->points, -1, -1);
+  if (!points_buf)
+    goto Exit;
+  ppems_buf = number_set_show(deltas->ppems, -1, -1);
+  if (!ppems_buf)
+    goto Exit;
+
+  /* display glyph index if we don't have a glyph name */
+  if (*glyph_name_buf)
+    ret = asprintf(&deltas_buf, "%ld %s p %s x %f y %f @ %s",
+                   deltas->font_idx,
+                   glyph_name_buf,
+                   points_buf,
+                   deltas->x_shift,
+                   deltas->y_shift,
+                   ppems_buf);
+  else
+    ret = asprintf(&deltas_buf, "%ld %ld p %s x %f y %f @ %s",
+                   deltas->font_idx,
+                   deltas->glyph_idx,
+                   points_buf,
+                   deltas->x_shift,
+                   deltas->y_shift,
+                   ppems_buf);
+
+Exit:
+  free(points_buf);
+  free(ppems_buf);
+
+  if (ret == -1)
+    return NULL;
+
+  return deltas_buf;
 }
 
 /* end of tadeltas.c */

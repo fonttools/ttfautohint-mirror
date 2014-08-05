@@ -83,6 +83,35 @@ TA_ERRORDEF_(XHeightSnapping_Not_Ascending,      0x105,
 TA_ERRORDEF_(XHeightSnapping_Allocation_Error,   0x106,
              "allocation error")
 
+TA_ERRORDEF_(Deltas_Syntax_Error,         0x201,
+             "syntax error")
+TA_ERRORDEF_(Deltas_Invalid_Font_Index,   0x202,
+             "invalid font index")
+TA_ERRORDEF_(Deltas_Invalid_Glyph_Index,  0x203,
+             "invalid glyph index")
+TA_ERRORDEF_(Deltas_Invalid_Glyph_Name,   0x204,
+             "invalid glyph name")
+TA_ERRORDEF_(Deltas_Invalid_Character,    0x205,
+             "invalid character")
+TA_ERRORDEF_(Deltas_Invalid_X_Range,      0x206,
+             "invalid x range")
+TA_ERRORDEF_(Deltas_Invalid_Y_Range,      0x207,
+             "invalid y range")
+TA_ERRORDEF_(Deltas_Invalid_Point_Range,  0x208,
+             "invalid point range")
+TA_ERRORDEF_(Deltas_Invalid_Glyph,        0x209,
+             "invalid glyph")
+TA_ERRORDEF_(Deltas_Invalid_Ppem_Range,   0x20A,
+             "invalid ppem range")
+TA_ERRORDEF_(Deltas_Overflow,             0x20B,
+             "overflow")
+TA_ERRORDEF_(Deltas_Overlapping_Ranges,   0x20C,
+             "overlapping ranges")
+TA_ERRORDEF_(Deltas_Ranges_Not_Ascending, 0x20D,
+             "ranges not ascending")
+TA_ERRORDEF_(Deltas_Allocation_Error,     0x20E,
+             "allocation error")
+
 #ifdef TA_ERROR_END_LIST
   TA_ERROR_END_LIST
 #endif
