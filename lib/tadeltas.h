@@ -33,6 +33,8 @@ extern "C" {
  * A structure to hold delta exceptions for a glyph.  It gets allocated by a
  * successful call to `TA_deltas_parse'.  Use `TA_deltas_free' to deallocate
  * it.
+ *
+ * `x_shift' and `y_shift' are always in the range [-8;8].
  */
 
 typedef struct Deltas_
@@ -40,8 +42,8 @@ typedef struct Deltas_
   long font_idx;
   long glyph_idx;
   number_range* points;
-  double x_shift;
-  double y_shift;
+  char x_shift;
+  char y_shift;
   number_range* ppems;
 } Deltas;
 
@@ -101,8 +103,8 @@ TA_deltas_parse(FONT* font,
                 const char* s,
                 const char** err_pos,
                 Deltas** deltas,
-                int x_min, int x_max,
-                int y_min, int y_max,
+                double x_min, double x_max,
+                double y_min, double y_max,
                 int ppem_min, int ppem_max);
 
 

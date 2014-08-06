@@ -250,7 +250,7 @@ get_range(const char** string_p,
 
 TA_Error
 get_shift(const char** string_p,
-          double* shift_p,
+          char* shift_p,
           int min,
           int max)
 {
@@ -282,11 +282,10 @@ get_shift(const char** string_p,
     return TA_Err_Deltas_Invalid_X_Range;
   }
 
-  /* we round the value to a multiple of 1/(2^DELTA_SHIFT) */
-  shift = floor(shift * DELTA_FACTOR + 0.5) / DELTA_FACTOR;
-
   *string_p = endptr;
-  *shift_p = shift;
+
+  /* we round the value to a multiple of 1/(2^DELTA_SHIFT) */
+  *shift_p = (char)(shift * DELTA_FACTOR + (shift > 0 ? 0.5 : -0.5));
 
   return TA_Err_Ok;
 }
@@ -297,8 +296,8 @@ TA_deltas_parse(FONT* font,
                 const char* s,
                 const char** err_pos,
                 Deltas** deltas_p,
-                int x_min, int x_max,
-                int y_min, int y_max,
+                double x_min, double x_max,
+                double y_min, double y_max,
                 int ppem_min, int ppem_max)
 {
   TA_Error error;
@@ -345,8 +344,8 @@ TA_deltas_parse(FONT* font,
   deltas->font_idx = 0;
   deltas->glyph_idx = -1;
   deltas->points = NULL;
-  deltas->x_shift = 0.0;
-  deltas->y_shift = 0.0;
+  deltas->x_shift = 0;
+  deltas->y_shift = 0;
   deltas->ppems = NULL;
 
   for (;;)
@@ -587,16 +586,16 @@ TA_deltas_show(FONT* font,
                    deltas->font_idx,
                    glyph_name_buf,
                    points_buf,
-                   deltas->x_shift,
-                   deltas->y_shift,
+                   (double)deltas->x_shift / DELTA_FACTOR,
+                   (double)deltas->y_shift / DELTA_FACTOR,
                    ppems_buf);
   else
     ret = asprintf(&deltas_buf, "%ld %ld p %s x %f y %f @ %s",
                    deltas->font_idx,
                    deltas->glyph_idx,
                    points_buf,
-                   deltas->x_shift,
-                   deltas->y_shift,
+                   (double)deltas->x_shift / DELTA_FACTOR,
+                   (double)deltas->y_shift / DELTA_FACTOR,
                    ppems_buf);
 
 Exit:
