@@ -250,9 +250,7 @@ get_range(const char** string_p,
 
 TA_Error
 get_shift(const char** string_p,
-          char* shift_p,
-          int min,
-          int max)
+          char* shift_p)
 {
   const char* s = *string_p;
   char* endptr;
@@ -276,7 +274,7 @@ get_shift(const char** string_p,
     return TA_Err_Deltas_Syntax_Error;
   }
 
-  if (shift < min || shift > max)
+  if (shift < DELTA_SHIFT_MIN || shift > DELTA_SHIFT_MAX)
   {
     /* *string_p = s; */
     return TA_Err_Deltas_Invalid_X_Range;
@@ -296,8 +294,6 @@ TA_deltas_parse(FONT* font,
                 const char* s,
                 const char** err_pos,
                 Deltas** deltas_p,
-                double x_min, double x_max,
-                double y_min, double y_max,
                 int ppem_min, int ppem_max)
 {
   TA_Error error;
@@ -461,7 +457,7 @@ TA_deltas_parse(FONT* font,
 
     case HAD_X:
       /* <x_shift> */
-      if (!(error = get_shift(&pos, &deltas->x_shift, x_min, x_max)))
+      if (!(error = get_shift(&pos, &deltas->x_shift)))
         state = HAD_X_SHIFT;
       break;
 
@@ -481,7 +477,7 @@ TA_deltas_parse(FONT* font,
 
     case HAD_Y:
       /* <y shift> */
-      if (!(error = get_shift(&pos, &deltas->y_shift, y_min, y_max)))
+      if (!(error = get_shift(&pos, &deltas->y_shift)))
         state = HAD_Y_SHIFT;
       if (error == TA_Err_Deltas_Invalid_X_Range)
         error = TA_Err_Deltas_Invalid_Y_Range;

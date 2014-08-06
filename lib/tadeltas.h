@@ -28,6 +28,9 @@ extern "C" {
 #define DELTA_SHIFT 3 /* 1/8px */
 #define DELTA_FACTOR (1 << DELTA_SHIFT)
 
+#define DELTA_SHIFT_MAX ((1.0 / DELTA_FACTOR) * 8)
+#define DELTA_SHIFT_MIN -DELTA_SHIFT_MAX
+
 
 /*
  * A structure to hold delta exceptions for a glyph.  It gets allocated by a
@@ -74,10 +77,10 @@ typedef struct Deltas_
  * to multiples of 1/8 pixels.  The entries for `x' and `y' are optional; if
  * missing, the corresponding value is set to zero.
  *
- * Values for <x shift>, <y shift>, and <ppems> must be in the ranges given
- * by `x_min' and `x_max', `y_min' and `y_max', and `ppem_min' and
- * `ppem_max', respectively.  Values for <points> are limited by the number
- * of points in the glyph.
+ * Values for <x shift>, <y shift> must be in the range
+ * [DELTA_SHIFT_MIN;DELTA_SHIFT_MAX].  Values for <ppems> must be in the
+ * range given by `ppem_min' and `ppem_max'.  Values for <points> are
+ * limited by the number of points in the glyph.
  *
  * A comment starts with character `#'; the rest of the line is ignored.  An
  * empty line is ignored also.
@@ -103,8 +106,6 @@ TA_deltas_parse(FONT* font,
                 const char* s,
                 const char** err_pos,
                 Deltas** deltas,
-                double x_min, double x_max,
-                double y_min, double y_max,
                 int ppem_min, int ppem_max);
 
 
