@@ -33,8 +33,8 @@ isnamestart(int c)
 }
 
 
-static const char*
-get_token(const char** string_p)
+static char*
+get_token(char** string_p)
 {
   const char* s = *string_p;
   const char* p = *string_p;
@@ -43,17 +43,17 @@ get_token(const char** string_p)
   while (*p && !isspace(*p))
     p++;
 
-  *string_p = p;
-  return s;
+  *string_p = (char*)p;
+  return (char*)s;
 }
 
 
 /* in the following functions, `*string_p' is never '\0'; */
 /* in case of error, `*string_p' should be set to a meaningful position */
 
-TA_Error
+static TA_Error
 get_font_idx(FONT* font,
-             const char** string_p,
+             char** string_p,
              long* font_idx_p)
 {
   const char* s = *string_p;
@@ -92,10 +92,10 @@ get_font_idx(FONT* font,
 }
 
 
-TA_Error
+static TA_Error
 get_glyph_idx(FONT* font,
               long font_idx,
-              const char** string_p,
+              char** string_p,
               long* glyph_idx_p)
 {
   const char* s = *string_p;
@@ -141,7 +141,7 @@ get_glyph_idx(FONT* font,
 
 
     endptr = (char*)s;
-    s = get_token((const char**)&endptr);
+    s = get_token(&endptr);
 
     token = strndup(s, endptr - s);
     if (!token)
@@ -185,8 +185,8 @@ get_glyph_idx(FONT* font,
 }
 
 
-TA_Error
-get_range(const char** string_p,
+static TA_Error
+get_range(char** string_p,
           number_range** number_set_p,
           int min,
           int max,
@@ -205,7 +205,7 @@ get_range(const char** string_p,
   if (*delims
       && (!s_len || !isspace(s[s_len - 1])))
   {
-    *string_p = s + s_len;
+    *string_p = (char*)(s + s_len);
     return TA_Err_Deltas_Syntax_Error;
   }
 
@@ -248,8 +248,8 @@ get_range(const char** string_p,
 }
 
 
-TA_Error
-get_shift(const char** string_p,
+static TA_Error
+get_shift(char** string_p,
           char* shift_p)
 {
   const char* s = *string_p;
@@ -292,7 +292,7 @@ get_shift(const char** string_p,
 TA_Error
 TA_deltas_parse(FONT* font,
                 const char* s,
-                const char** err_pos,
+                char** err_pos,
                 Deltas** deltas_p,
                 int ppem_min, int ppem_max)
 {
@@ -317,7 +317,7 @@ TA_deltas_parse(FONT* font,
   State state = START;
 
   Deltas* deltas = NULL;
-  const char* pos = s;
+  char* pos = (char*)s;
 
   const char* token1;
   const char* token2;
@@ -332,7 +332,7 @@ TA_deltas_parse(FONT* font,
   deltas = (Deltas*)malloc(sizeof (Deltas));
   if (!deltas)
   {
-    *err_pos = s;
+    *err_pos = (char*)s;
 
     return TA_Err_Deltas_Allocation_Error;
   }
@@ -381,7 +381,7 @@ TA_deltas_parse(FONT* font,
       break;
 
     case HAD_TOKEN2:
-      pos = token1;
+      pos = (char*)token1;
 
       /* possibility 1: <font idx> <glyph name> `p' */
       if (isdigit(*token1)
@@ -521,8 +521,9 @@ TA_deltas_parse(FONT* font,
   else
   {
     TA_deltas_free(deltas);
+    *deltas_p = NULL;
 
-    if (!error)
+    if (!error && state != START)
       error = TA_Err_Deltas_Syntax_Error;
   }
 

@@ -104,7 +104,7 @@ typedef struct Deltas_
 TA_Error
 TA_deltas_parse(FONT* font,
                 const char* s,
-                const char** err_pos,
+                char** err_pos,
                 Deltas** deltas,
                 int ppem_min, int ppem_max);
 
