@@ -579,7 +579,7 @@ TA_deltas_show(FONT* font,
 
   /* display glyph index if we don't have a glyph name */
   if (*glyph_name_buf)
-    ret = asprintf(&deltas_buf, "%ld %s p %s x %f y %f @ %s",
+    ret = asprintf(&deltas_buf, "%ld %s p %s x %.20g y %.20g @ %s",
                    deltas->font_idx,
                    glyph_name_buf,
                    points_buf,
@@ -587,7 +587,7 @@ TA_deltas_show(FONT* font,
                    (double)deltas->y_shift / DELTA_FACTOR,
                    ppems_buf);
   else
-    ret = asprintf(&deltas_buf, "%ld %ld p %s x %f y %f @ %s",
+    ret = asprintf(&deltas_buf, "%ld %ld p %s x %.20g y %.20g @ %s",
                    deltas->font_idx,
                    deltas->glyph_idx,
                    points_buf,

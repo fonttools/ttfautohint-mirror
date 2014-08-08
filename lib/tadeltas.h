@@ -119,7 +119,7 @@ TA_deltas_free(Deltas* deltas);
 
 /*
  * Return a string representation of `deltas'.  After use, the string should
- * be deallocated with a call to `free'.  In case of an allocationn error,
+ * be deallocated with a call to `free'.  In case of an allocation error,
  * the return value is NULL.
  */
 

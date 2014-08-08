@@ -668,9 +668,9 @@ gui_progress(long curr_idx,
   {
     data->dialog->setLabelText(Tr("Auto-hinting subfont %1 of %2"
                                   " with %3 glyphs...")
-                               .arg(curr_sfnt + 1)
-                               .arg(num_sfnts)
-                               .arg(num_glyphs));
+                                  .arg(curr_sfnt + 1)
+                                  .arg(num_sfnts)
+                                  .arg(num_glyphs));
 
     if (curr_sfnt + 1 == num_sfnts)
     {
@@ -691,7 +691,7 @@ gui_progress(long curr_idx,
   {
     if (num_sfnts == 1)
       data->dialog->setLabelText(Tr("Auto-hinting %1 glyphs...")
-                                 .arg(num_glyphs));
+                                    .arg(num_glyphs));
     data->dialog->setMaximum(num_glyphs - 1);
 
     data->begin = false;

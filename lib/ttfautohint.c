@@ -23,16 +23,22 @@
 #include "ta.h"
 
 
+#define DUMP_COLUMN "33"
+
 #define COMPARE(str) \
           (len == (sizeof (str) - 1) \
            && !strncmp(start, str, sizeof (str) - 1))
 #define DUMPVAL(str, arg) \
-          fprintf(stderr, "%33s = %ld\n", \
+          fprintf(stderr, "%" DUMP_COLUMN "s = %ld\n", \
                           (str), \
                           (FT_Long)(arg))
 #define DUMPSTR(str, arg) \
-          fprintf(stderr, "%33s = %s\n", \
+          fprintf(stderr, "%" DUMP_COLUMN "s = %s\n", \
                           (str), \
+                          (arg))
+#define DUMPSTRX(arg) \
+          fprintf(stderr, "%" DUMP_COLUMN "s   %s\n", \
+                          "", \
                           (arg))
 
 
