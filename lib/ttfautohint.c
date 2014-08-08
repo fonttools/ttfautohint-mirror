@@ -411,62 +411,7 @@ No_check:
 
   font->gasp_idx = MISSING;
 
-  /* dump parameters */
-  if (debug)
-  {
-    fprintf(stderr, "TTF_autohint parameters\n"
-                    "=======================\n"
-                    "\n");
-
-    if (dehint)
-      DUMPVAL("dehint",
-              font->dehint);
-    else
-    {
-      char *s;
-
-
-      DUMPSTR("default-script",
-              script_names[font->default_script]);
-      DUMPVAL("dw-cleartype-strong-stem-width",
-              font->dw_cleartype_strong_stem_width);
-      DUMPSTR("fallback-script",
-              script_names[ta_style_classes[font->fallback_style]->script]);
-      DUMPVAL("fallback-stem-width",
-              font->fallback_stem_width);
-      DUMPVAL("gdi-cleartype-strong-stem-width",
-              font->gdi_cleartype_strong_stem_width);
-      DUMPVAL("gray-strong-stem-width",
-              font->gray_strong_stem_width);
-      DUMPVAL("hinting-limit",
-              font->hinting_limit);
-      DUMPVAL("hinting-range-max",
-              font->hinting_range_max);
-      DUMPVAL("hinting-range-min",
-              font->hinting_range_min);
-      DUMPVAL("hint-composites",
-              font->hint_composites);
-      DUMPVAL("ignore-restrictions",
-              font->ignore_restrictions);
-      DUMPVAL("increase-x-height",
-              font->increase_x_height);
-      DUMPVAL("adjust-subglyphs",
-              font->adjust_subglyphs);
-      DUMPVAL("symbol",
-              font->symbol);
-      DUMPVAL("windows-compatibility",
-              font->windows_compatibility);
-
-      s = number_set_show(font->x_height_snapping_exceptions,
-                          TA_PROP_INCREASE_X_HEIGHT_MIN, 0x7FFF);
-      DUMPSTR("x-height-snapping-exceptions", s);
-      free(s);
-    }
-
-    fprintf(stderr, "\n");
-  }
-
-  /* now start with processing the data */
+  /* start with processing the data */
 
   if (in_file)
   {
@@ -517,6 +462,72 @@ No_check:
 
     if (error)
       goto Err;
+  }
+
+  /* dump parameters */
+  if (debug)
+  {
+    fprintf(stderr, "TTF_autohint parameters\n"
+                    "=======================\n"
+                    "\n");
+
+    if (dehint)
+      DUMPVAL("dehint",
+              font->dehint);
+    else
+    {
+      char *s;
+
+
+      DUMPSTR("default-script",
+              script_names[font->default_script]);
+      DUMPVAL("dw-cleartype-strong-stem-width",
+              font->dw_cleartype_strong_stem_width);
+      DUMPSTR("fallback-script",
+              script_names[ta_style_classes[font->fallback_style]->script]);
+      DUMPVAL("fallback-stem-width",
+              font->fallback_stem_width);
+      DUMPVAL("gdi-cleartype-strong-stem-width",
+              font->gdi_cleartype_strong_stem_width);
+      DUMPVAL("gray-strong-stem-width",
+              font->gray_strong_stem_width);
+      DUMPVAL("hinting-limit",
+              font->hinting_limit);
+      DUMPVAL("hinting-range-max",
+              font->hinting_range_max);
+      DUMPVAL("hinting-range-min",
+              font->hinting_range_min);
+      DUMPVAL("hint-composites",
+              font->hint_composites);
+      DUMPVAL("ignore-restrictions",
+              font->ignore_restrictions);
+      DUMPVAL("increase-x-height",
+              font->increase_x_height);
+      DUMPVAL("adjust-subglyphs",
+              font->adjust_subglyphs);
+      DUMPVAL("symbol",
+              font->symbol);
+      DUMPVAL("windows-compatibility",
+              font->windows_compatibility);
+
+      s = number_set_show(font->x_height_snapping_exceptions,
+                          TA_PROP_INCREASE_X_HEIGHT_MIN, 0x7FFF);
+      if (s)
+      {
+        DUMPSTR("x-height-snapping-exceptions", s);
+        free(s);
+      }
+      else
+        return FT_Err_Out_Of_Memory;
+    }
+
+    fprintf(stderr, "\n");
+  }
+
+  for (i = 0; i < font->num_sfnts; i++)
+  {
+    SFNT* sfnt = &font->sfnts[i];
+
 
     error = TA_sfnt_split_into_SFNT_tables(sfnt, font);
     if (error)
