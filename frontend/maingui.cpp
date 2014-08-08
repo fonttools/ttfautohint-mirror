@@ -722,8 +722,8 @@ struct GUI_Error_Data
 void
 gui_error(TA_Error error,
           const char* error_string,
-          unsigned int /* linenum */,
-          const char* /* line */,
+          unsigned int /* errlinenum */,
+          const char* /* errline */,
           const char* /* errpos */,
           void* user)
 {

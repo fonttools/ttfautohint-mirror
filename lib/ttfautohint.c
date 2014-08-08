@@ -64,9 +64,9 @@ TTF_autohint(const char* options,
 
   FT_Error error;
   const char* error_string = NULL;
-  unsigned int linenum = 0;
-  const char* line = NULL;
-  const char* errpos = NULL;
+  unsigned int errlinenum = 0;
+  char* errline = NULL;
+  char* errpos = NULL;
 
   FILE* in_file = NULL;
   FILE* out_file = NULL;
@@ -373,9 +373,9 @@ TTF_autohint(const char* options,
     {
       /* we map numberset.h's error codes to values starting with 0x100 */
       error = 0x100 - (FT_Error)x_height_snapping_exceptions;
-      line = x_height_snapping_exceptions_string;
-      linenum = 0;
-      errpos = s;
+      errlinenum = 0;
+      errline = (char*)x_height_snapping_exceptions_string;
+      errpos = (char*)s;
 
       goto Err1;
     }
@@ -697,8 +697,8 @@ Err1:
   if (err)
     err(error,
         error_string,
-        linenum,
-        line,
+        errlinenum,
+        errline,
         errpos,
         err_data);
 
