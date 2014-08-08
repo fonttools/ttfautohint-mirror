@@ -316,11 +316,17 @@ TA_deltas_parse(FONT* font,
 
   State state = START;
 
-  Deltas* deltas = NULL;
   char* pos = (char*)s;
 
   const char* token1;
   const char* token2;
+
+  long font_idx = 0;
+  long glyph_idx = -1;
+  number_range* points = NULL;
+  char x_shift = 0;
+  char y_shift = 0;
+  number_range* ppems = NULL;
 
 
   if (!s)
@@ -328,21 +334,6 @@ TA_deltas_parse(FONT* font,
     *err_pos = NULL;
     return TA_Err_Ok;
   }
-
-  deltas = (Deltas*)malloc(sizeof (Deltas));
-  if (!deltas)
-  {
-    *err_pos = (char*)s;
-
-    return TA_Err_Deltas_Allocation_Error;
-  }
-
-  deltas->font_idx = 0;
-  deltas->glyph_idx = -1;
-  deltas->points = NULL;
-  deltas->x_shift = 0;
-  deltas->y_shift = 0;
-  deltas->ppems = NULL;
 
   for (;;)
   {
@@ -388,23 +379,23 @@ TA_deltas_parse(FONT* font,
           && (isdigit(*token2) || isnamestart(*token2))
           && (c == 'p' && next_is_space))
       {
-        if (!(error = get_font_idx(font, &pos, &deltas->font_idx)))
+        if (!(error = get_font_idx(font, &pos, &font_idx)))
           state = HAD_FONT_IDX;
       }
       /* possibility 2: <glyph name> `p' */
       else if ((isdigit(*token1) || isnamestart(*token1))
                && (c == 'p' && next_is_space))
       {
-        if (!(error = get_glyph_idx(font, deltas->font_idx,
-                                    &pos, &deltas->glyph_idx)))
+        if (!(error = get_glyph_idx(font, font_idx,
+                                    &pos, &glyph_idx)))
           state = HAD_GLYPH_IDX;
       }
       break;
 
     case HAD_FONT_IDX:
       /* <glyph idx> */
-      if (!(error = get_glyph_idx(font, deltas->font_idx,
-                                  &pos, &deltas->glyph_idx)))
+      if (!(error = get_glyph_idx(font, font_idx,
+                                  &pos, &glyph_idx)))
         state = HAD_GLYPH_IDX;
       break;
 
@@ -421,11 +412,11 @@ TA_deltas_parse(FONT* font,
       /* <points> */
       {
         FT_Error ft_error;
-        FT_Face face = font->sfnts[deltas->font_idx].face;
+        FT_Face face = font->sfnts[font_idx].face;
         int num_points;
 
 
-        ft_error = FT_Load_Glyph(face, deltas->glyph_idx, FT_LOAD_NO_SCALE);
+        ft_error = FT_Load_Glyph(face, glyph_idx, FT_LOAD_NO_SCALE);
         if (ft_error)
         {
           error = TA_Err_Deltas_Invalid_Glyph;
@@ -433,7 +424,7 @@ TA_deltas_parse(FONT* font,
         }
 
         num_points = face->glyph->outline.n_points;
-        if (!(error = get_range(&pos, &deltas->points,
+        if (!(error = get_range(&pos, deltas_p ? &points : NULL,
                                 0, num_points - 1, "xy@")))
           state = HAD_POINTS;
       }
@@ -457,7 +448,7 @@ TA_deltas_parse(FONT* font,
 
     case HAD_X:
       /* <x_shift> */
-      if (!(error = get_shift(&pos, &deltas->x_shift)))
+      if (!(error = get_shift(&pos, &x_shift)))
         state = HAD_X_SHIFT;
       break;
 
@@ -477,7 +468,7 @@ TA_deltas_parse(FONT* font,
 
     case HAD_Y:
       /* <y shift> */
-      if (!(error = get_shift(&pos, &deltas->y_shift)))
+      if (!(error = get_shift(&pos, &y_shift)))
         state = HAD_Y_SHIFT;
       if (error == TA_Err_Deltas_Invalid_X_Range)
         error = TA_Err_Deltas_Invalid_Y_Range;
@@ -494,7 +485,7 @@ TA_deltas_parse(FONT* font,
 
     case HAD_AT:
       /* <ppems> */
-      if (!(error = get_range(&pos, &deltas->ppems,
+      if (!(error = get_range(&pos, deltas_p ? &ppems : NULL,
                               ppem_min, ppem_max, "")))
         state = HAD_PPEMS;
       if (error == TA_Err_Deltas_Invalid_Point_Range)
@@ -514,14 +505,40 @@ TA_deltas_parse(FONT* font,
   {
     /* success */
     if (deltas_p)
+    {
+      Deltas* deltas = (Deltas*)malloc(sizeof (Deltas));
+
+
+      if (!deltas)
+      {
+        number_set_free(points);
+        number_set_free(ppems);
+
+        *err_pos = (char*)s;
+
+        return TA_Err_Deltas_Allocation_Error;
+      }
+
+      deltas->font_idx = font_idx;
+      deltas->glyph_idx = glyph_idx;
+      deltas->points = points;
+      deltas->x_shift = x_shift;
+      deltas->y_shift = y_shift;
+      deltas->ppems = ppems;
+      deltas->next = NULL;
+
       *deltas_p = deltas;
-    else
-      TA_deltas_free(deltas);
+    }
   }
   else
   {
-    TA_deltas_free(deltas);
-    *deltas_p = NULL;
+    if (deltas_p)
+    {
+      number_set_free(points);
+      number_set_free(ppems);
+
+      *deltas_p = NULL;
+    }
 
     if (!error && state != START)
       error = TA_Err_Deltas_Syntax_Error;
