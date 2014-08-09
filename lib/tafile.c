@@ -70,4 +70,45 @@ TA_font_file_write(FONT* font,
   return TA_Err_Ok;
 }
 
+
+FT_Error
+TA_deltas_file_read(FONT* font,
+                    FILE* deltas_file)
+{
+  char* buf[BUF_SIZE];
+  size_t deltas_len = 0;
+  size_t read_bytes;
+
+
+  font->deltas_buf = (char*)malloc(BUF_SIZE);
+  if (!font->deltas_buf)
+    return FT_Err_Out_Of_Memory;
+
+  while ((read_bytes = fread(buf, 1, BUF_SIZE, deltas_file)) > 0)
+  {
+    char* deltas_buf_new;
+
+
+    /* we store the data as a C string, allocating one more byte */
+    deltas_buf_new = (char*)realloc(font->deltas_buf,
+                                    deltas_len + read_bytes + 1);
+    if (!deltas_buf_new)
+      return FT_Err_Out_Of_Memory;
+    else
+      font->deltas_buf = deltas_buf_new;
+
+    memcpy(font->deltas_buf + deltas_len, buf, read_bytes);
+
+    deltas_len += read_bytes;
+  }
+
+  if (ferror(deltas_file))
+    return FT_Err_Invalid_Stream_Read;
+
+  font->deltas_len = deltas_len;
+  font->deltas_buf[deltas_len] = '\0';
+
+  return TA_Err_Ok;
+}
+
 /* end of tafile.c */

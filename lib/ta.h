@@ -209,6 +209,9 @@ struct FONT_
   FT_Byte* out_buf;
   size_t out_len;
 
+  char* deltas_buf;
+  size_t deltas_len;
+
   SFNT* sfnts;
   FT_Long num_sfnts;
 
@@ -279,6 +282,9 @@ TA_font_file_read(FONT* font,
 FT_Error
 TA_font_file_write(FONT* font,
                    FILE* out_file);
+FT_Error
+TA_deltas_file_read(FONT* font,
+                    FILE* deltas_file);
 
 FT_Error
 TA_sfnt_build_glyph_instructions(SFNT* sfnt,
