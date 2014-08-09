@@ -343,4 +343,36 @@ number_set_is_element(number_range* number_set,
   return 0;
 }
 
+
+int
+number_set_get_first(number_set_iter* iter_p)
+{
+  if (!iter_p || !iter_p->range)
+    return 0;
+
+  iter_p->val = iter_p->range->start;
+
+  return iter_p->val;
+}
+
+
+int
+number_set_get_next(number_set_iter* iter_p)
+{
+  if (!iter_p || !iter_p->range)
+    return 0;
+
+  iter_p->val++;
+
+  if (iter_p->val > iter_p->range->end)
+  {
+    iter_p->range = iter_p->range->next;
+
+    if (iter_p->range)
+      iter_p->val = iter_p->range->start;
+  }
+
+  return iter_p->val;
+}
+
 /* end of numberset.c */
