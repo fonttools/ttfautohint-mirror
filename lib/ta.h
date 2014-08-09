@@ -30,6 +30,7 @@
 
 #include <ttfautohint.h>
 #include <numberset.h>
+#include <tadeltas.h>
 
 
 #define TTFAUTOHINT_GLYPH ".ttfautohint"

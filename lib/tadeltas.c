@@ -289,12 +289,29 @@ get_shift(char** string_p,
 }
 
 
-TA_Error
-TA_deltas_parse(FONT* font,
-                const char* s,
-                char** err_pos,
-                Deltas** deltas_p,
-                int ppem_min, int ppem_max)
+/*
+ * Parse a delta exceptions line.
+ *
+ * In case of success (this is, the delta exceptions description in `s' is
+ * valid), `pos' is a pointer to the final zero byte in string `s'.  In case
+ * of an error, it points to the offending character in string `s'.
+ *
+ * If s is NULL, the function exits immediately, with NULL as the value of
+ * `pos'.
+ *
+ * If the user provides a non-NULL `deltas' value, `deltas_parse' stores the
+ * parsed result in `*deltas', allocating the necessary memory.  If there is
+ * no data (for example, an empty string or whitespace only) nothing gets
+ * allocated, and `*deltas' is set to NULL.
+ *
+ */
+
+static TA_Error
+deltas_parse_line(FONT* font,
+                  const char* s,
+                  char** err_pos,
+                  Deltas** deltas_p,
+                  int ppem_min, int ppem_max)
 {
   TA_Error error;
 
@@ -553,19 +570,27 @@ TA_deltas_parse(FONT* font,
 void
 TA_deltas_free(Deltas* deltas)
 {
-  if (!deltas)
-    return;
+  while (deltas)
+  {
+    Deltas* tmp;
 
-  number_set_free(deltas->points);
-  number_set_free(deltas->ppems);
 
-  free(deltas);
+    number_set_free(deltas->points);
+    number_set_free(deltas->ppems);
+
+    tmp = deltas;
+    deltas = deltas->next;
+    free(tmp);
+  }
 }
 
 
+/* `len' is the length of the returned string */
+
 char*
-TA_deltas_show(FONT* font,
-               Deltas* deltas)
+deltas_show_line(FONT* font,
+                 int* len,
+                 Deltas* deltas)
 {
   int ret;
   char glyph_name_buf[64];
@@ -619,7 +644,240 @@ Exit:
   if (ret == -1)
     return NULL;
 
+  *len = ret;
+
   return deltas_buf;
 }
+
+
+char*
+TA_deltas_show(FONT* font,
+               Deltas* deltas)
+{
+  char* s;
+  int s_len;
+
+
+  /* we return an empty string if there is no data */
+  s = (char*)malloc(1);
+  if (!s)
+    return NULL;
+
+  *s = '\0';
+  s_len = 1;
+
+  while (deltas)
+  {
+    char* tmp;
+    int tmp_len;
+    char* s_new;
+    int s_len_new;
+
+
+    tmp = deltas_show_line(font, &tmp_len, deltas);
+    if (!tmp)
+    {
+      free(s);
+      return NULL;
+    }
+
+    /* append current line to buffer, followed by a newline character */
+    s_len_new = s_len + tmp_len + 1;
+    s_new = (char*)realloc(s, s_len_new);
+    if (!s_new)
+    {
+      free(s);
+      free(tmp);
+      return NULL;
+    }
+
+    strcpy(s_new + s_len - 1, tmp);
+    s_new[s_len_new - 2] = '\n';
+    s_new[s_len_new - 1] = '\0';
+
+    s = s_new;
+    s_len = s_len_new;
+
+    free(tmp);
+
+    deltas = deltas->next;
+  }
+
+  return s;
+}
+
+
+/* Get a line from a buffer, starting at `pos'.  The final EOL */
+/* character (or character pair) of the line (if existing) gets removed. */
+/* After the call, `pos' points to the position right after the line in */
+/* the buffer.  The line is allocated with `malloc'; it returns NULL for */
+/* end of data and allocation errors; the latter can be recognized by a */
+/* changed value of `pos'.  */
+
+static char*
+get_line(char** pos)
+{
+  const char* start = *pos;
+  const char* p = start;
+  size_t len;
+  char* s;
+
+
+  if (!*p)
+    return NULL;
+
+  while (*p)
+  {
+    if (*p == '\n' || *p == '\r')
+      break;
+
+    p++;
+  }
+
+  len = p - start + 1;
+
+  if (*p == '\r')
+  {
+    len--;
+    p++;
+
+    if (*p == '\n')
+      p++;
+  }
+  else if (*p == '\n')
+  {
+    len--;
+    p++;
+  }
+
+  *pos = (char*)p;
+
+  s = (char*)malloc(len + 1);
+  if (!s)
+    return NULL;
+
+  if (len)
+    strncpy(s, start, len);
+  s[len] = '\0';
+
+  return s;
+}
+
+
+TA_Error
+TA_deltas_parse(FONT* font,
+                Deltas** deltas,
+                unsigned int* errlinenum_p,
+                char** errline_p,
+                char** errpos_p)
+{
+  FT_Error error;
+
+  Deltas* cur;
+  Deltas* new_deltas;
+  Deltas* tmp;
+  Deltas* list;
+
+  unsigned int linenum;
+
+  char* bufpos;
+  char* bufpos_old;
+
+
+  /* nothing to do if no data */
+  if (!font->deltas_buf)
+    return TA_Err_Ok;
+
+  bufpos = font->deltas_buf;
+  bufpos_old = bufpos;
+
+  linenum = 0;
+  cur = NULL;
+
+  /* parse line by line */
+  for (;;)
+  {
+    char* line;
+    char* errpos;
+
+
+    line = get_line(&bufpos);
+    if (!line)
+    {
+      if (bufpos == bufpos_old) /* end of data */
+        break;
+
+      *errlinenum_p = linenum;
+      *errline_p = NULL;
+      *errpos_p = NULL;
+
+      return FT_Err_Out_Of_Memory;
+    }
+
+    error = deltas_parse_line(font,
+                              line,
+                              &errpos,
+                              deltas ? &new_deltas : NULL,
+                              DELTA_PPEM_MIN, DELTA_PPEM_MAX);
+    if (error)
+    {
+      *errlinenum_p = linenum;
+      *errline_p = line;
+      *errpos_p = errpos;
+
+      TA_deltas_free(cur);
+
+      return error;
+    }
+
+    if (deltas && new_deltas)
+    {
+      new_deltas->next = cur;
+      cur = new_deltas;
+    }
+
+    free(line);
+    linenum++;
+    bufpos_old = bufpos;
+  }
+
+  /* success; now reverse list to have elements in original order */
+  list = NULL;
+
+  while (cur)
+  {
+    tmp = cur;
+    cur = cur->next;
+    tmp->next = list;
+    list = tmp;
+  }
+
+  if (deltas)
+    *deltas = list;
+
+  return TA_Err_Ok;
+}
+
+
+/*
+ *
+ * Using
+ *
+ *   delta_shift = 3   ,
+ *
+ * the possible shift values in the instructions are indexed as follows:
+ *
+ *    0   -1px
+ *    1   -7/8px
+ *   ...
+ *    7   -1/8px
+ *    8    1/8px
+ *   ...
+ *   14    7/8px
+ *   15    1px
+ *
+ * (note that there is no index for a zero shift).
+ */
+
 
 /* end of tadeltas.c */

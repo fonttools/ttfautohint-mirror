@@ -33,9 +33,26 @@ extern "C" {
 
 
 /*
- * A structure to hold delta exceptions for a glyph.  It gets allocated by a
- * successful call to `TA_deltas_parse'.  Use `TA_deltas_free' to deallocate
- * it.
+ * For the generated TrueType bytecode, we use
+ *
+ *   delta_base = 6   ,
+ *
+ * which gives us the following ppem ranges for the three delta
+ * instructions:
+ *
+ *   DELTAP1    6-21ppem
+ *   DELTAP2   22-37ppem
+ *   DELTAP3   38-53ppem   .
+ */
+
+#define DELTA_PPEM_MIN 6
+#define DELTA_PPEM_MAX 53
+
+
+/*
+ * A structure to hold delta exceptions for a glyph.  A linked list of it
+ * gets allocated by a successful call to `TA_deltas_parse'.  Use
+ * `TA_deltas_free' to deallocate the list.
  *
  * `x_shift' and `y_shift' are always in the range [-8;8].
  */
@@ -48,12 +65,15 @@ typedef struct Deltas_
   char x_shift;
   char y_shift;
   number_range* ppems;
+
+  struct Deltas_* next;
 } Deltas;
 
 
 /*
- * Parse a delta exceptions description in string `s', which has the
- * following syntax:
+ * Parse a delta exceptions file.
+ *
+ * A line in a delta exceptions file has the following syntax:
  *
  *   [<font idx>] <glyph id> p <points> [x <x shift>] [y <y shift>] @ <ppems>
  *
@@ -79,34 +99,34 @@ typedef struct Deltas_
  *
  * Values for <x shift>, <y shift> must be in the range
  * [DELTA_SHIFT_MIN;DELTA_SHIFT_MAX].  Values for <ppems> must be in the
- * range given by `ppem_min' and `ppem_max'.  Values for <points> are
- * limited by the number of points in the glyph.
+ * range [DELTA_PPEM_MIN;DELTA_PPEM_MAX].  Values for <points> are limited
+ * by the number of points in the glyph.
  *
  * A comment starts with character `#'; the rest of the line is ignored.  An
  * empty line is ignored also.
  *
- * In case of success (this is, the delta exceptions description in `s' is
- * valid), `pos' is a pointer to the final zero byte in string `s'.  In case
- * of an error, it points to the offending character in string `s'.
- *
- * If s is NULL, the function exits immediately, with NULL as the value of
- * `pos'.
- *
- * If the user provides a non-NULL `deltas' value, `TA_deltas_parse' stores
- * the parsed result in `*deltas', allocated with `malloc'.  If there is no
- * data (for example, an empty string or whitespace only) nothing gets
- * allocated, and `*deltas' is set to NULL.
- *
  * The returned error codes are in the range 0x200-0x2FF; see
  * `ttfautohint-errors.h' for all possible values.
+ *
+ * If the user provides a non-NULL `deltas' value, `TA_deltas_parse' stores
+ * the parsed result in `*deltas'.  If there is no data (for example, an
+ * empty string or whitespace only) nothing gets allocated, and `*deltas' is
+ * set to NULL.
+ *
+ * In case of error, `errlinenum_p' gives the line number in the delta
+ * exceptions file where the error occurred, `errline_p' the corresponding
+ * line, and `errpos_p' the position in this line.  If there is no error,
+ * those three values are undefined.  Both `errline_p' and `errpos_p' can be
+ * NULL even in case of an error; otherwise `errline_p' must be deallocated
+ * by the user.
  */
 
 TA_Error
 TA_deltas_parse(FONT* font,
-                const char* s,
-                char** err_pos,
                 Deltas** deltas,
-                int ppem_min, int ppem_max);
+                unsigned int* errlinenum_p,
+                char** errline_p,
+                char** errpos_p);
 
 
 /*
