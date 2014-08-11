@@ -245,6 +245,121 @@ TA_build_push(FT_Byte* bufp,
 }
 
 
+/*
+ * We optimize two common cases, replacing
+ *
+ *   NPUSHB A ... NPUSHB B [... NPUSHB C] ... CALL
+ *
+ * with
+ *
+ *   NPUSHB (A+B[+C]) ... CALL
+ *
+ * if possible
+ */
+
+FT_Byte*
+TA_optimize_push(FT_Byte* buf,
+                 FT_Byte** pos)
+{
+  FT_Byte sizes[3];
+  FT_Byte new_size1;
+  FT_Byte new_size2;
+
+  FT_UInt sum;
+  FT_UInt i;
+  FT_UInt pos_idx;
+
+  FT_Byte* p;
+  FT_Byte* bufp;
+
+
+  /* XXX improve handling of NPUSHW */
+  if (*(pos[0]) == NPUSHW
+      || *(pos[1]) == NPUSHW
+      || *(pos[2]) == NPUSHW)
+    return buf;
+
+  /* the point hints records block can be missing */
+  if (pos[0] == pos[1])
+  {
+    pos[1] = pos[2];
+    pos[2] = NULL;
+  }
+
+  /* there are at least two NPUSHB instructions */
+  /* (one of them directly at the start) */
+  sizes[0] = *(pos[0] + 1);
+  sizes[1] = *(pos[1] + 1);
+  sizes[2] = pos[2] ? *(pos[2] + 1) : 0;
+
+  sum = sizes[0] + sizes[1] + sizes[2];
+
+  if (sum > 2 * 0xFF)
+    return buf; /* nothing to do since we need three NPUSHB */
+  else if (!sizes[2] && (sum > 0xFF))
+    return buf; /* nothing to do since we need two NPUSHB */
+
+  if (sum > 0xFF)
+  {
+    /* reduce three NPUSHB to two */
+    new_size1 = 0xFF;
+    new_size2 = sum - 0xFF;
+  }
+  else
+  {
+    /* reduce two or three NPUSHB to one */
+    new_size1 = sum;
+    new_size2 = 0;
+  }
+
+  /* pack data */
+  p = buf;
+  bufp = buf;
+  pos_idx = 0;
+
+  if (new_size1 <= 8)
+    BCI(PUSHB_1 - 1 + new_size1);
+  else
+  {
+    BCI(NPUSHB);
+    BCI(new_size1);
+  }
+  for (i = 0; i < new_size1; i++)
+  {
+    if (p == pos[pos_idx])
+    {
+      pos_idx++;
+      p += 2; /* skip old NPUSHB */
+    }
+    *(bufp++) = *(p++);
+  }
+
+  if (new_size2)
+  {
+    if (new_size2 <= 8)
+      BCI(PUSHB_1 - 1 + new_size2);
+    else
+    {
+      BCI(NPUSHB);
+      BCI(new_size2);
+    }
+    for (i = 0; i < new_size2; i++)
+    {
+      if (p == pos[pos_idx])
+      {
+        pos_idx++;
+        p += 2;
+      }
+      *(bufp++) = *(p++);
+    }
+  }
+
+  BCI(CALL);
+
+  return bufp;
+}
+
+
 /* We add a subglyph for each composite glyph. */
 /* Since subglyphs must contain at least one point, */
 /* we have to adjust all point indices accordingly. */
@@ -2157,109 +2272,9 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     goto Err;
   }
 
-  /* XXX improve handling of NPUSHW */
-  if (num_action_hints_records == 1
-      && *(pos[0]) != NPUSHW && *(pos[1]) != NPUSHW && *(pos[2]) != NPUSHW)
-  {
-    /*
-     * we optimize two common cases, replacing
-     *
-     *   NPUSHB A ... NPUSHB B [... NPUSHB C] ... CALL
-     *
-     * with
-     *
-     *   NPUSHB (A+B[+C]) ... CALL
-     *
-     * if possible
-     */
-    FT_Byte sizes[3];
-    FT_Byte new_size1;
-    FT_Byte new_size2;
+  if (num_action_hints_records == 1)
+    bufp = TA_optimize_push(ins_buf, pos);
 
-    FT_UInt sum;
-    FT_UInt i;
-    FT_UInt pos_idx;
-
-
-    /* the point hints records block can be missing */
-    if (pos[0] == pos[1])
-    {
-      pos[1] = pos[2];
-      pos[2] = NULL;
-    }
-
-    /* there are at least two NPUSHB instructions */
-    /* (one of them directly at the start) */
-    sizes[0] = *(pos[0] + 1);
-    sizes[1] = *(pos[1] + 1);
-    sizes[2] = pos[2] ? *(pos[2] + 1) : 0;
-
-    sum = sizes[0] + sizes[1] + sizes[2];
-
-    if (sum > 2 * 0xFF)
-      goto Done2; /* nothing to do since we need three NPUSHB */
-    else if (!sizes[2] && (sum > 0xFF))
-      goto Done2; /* nothing to do since we need two NPUSHB */
-
-    if (sum > 0xFF)
-    {
-      /* reduce three NPUSHB to two */
-      new_size1 = 0xFF;
-      new_size2 = sum - 0xFF;
-    }
-    else
-    {
-      /* reduce two or three NPUSHB to one */
-      new_size1 = sum;
-      new_size2 = 0;
-    }
-
-    /* pack data */
-    p = ins_buf;
-    bufp = ins_buf;
-    pos_idx = 0;
-
-    if (new_size1 <= 8)
-      BCI(PUSHB_1 - 1 + new_size1);
-    else
-    {
-      BCI(NPUSHB);
-      BCI(new_size1);
-    }
-    for (i = 0; i < new_size1; i++)
-    {
-      if (p == pos[pos_idx])
-      {
-        pos_idx++;
-        p += 2; /* skip old NPUSHB */
-      }
-      *(bufp++) = *(p++);
-    }
-
-    if (new_size2)
-    {
-      if (new_size2 <= 8)
-        BCI(PUSHB_1 - 1 + new_size2);
-      else
-      {
-        BCI(NPUSHB);
-        BCI(new_size2);
-      }
-      for (i = 0; i < new_size2; i++)
-      {
-        if (p == pos[pos_idx])
-        {
-          pos_idx++;
-          p += 2;
-        }
-        *(bufp++) = *(p++);
-      }
-    }
-
-    BCI(CALL);
-  }
-
-Done2:
   /* clear the rest of the temporarily used part of `ins_buf' */
   p = bufp;
   while (*p != INS_A0)
