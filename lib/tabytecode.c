@@ -2035,10 +2035,6 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   if (!ins_buf)
     return FT_Err_Out_Of_Memory;
 
-  /* initialize array with an invalid bytecode */
-  /* so that we can easily find the array length at reallocation time */
-  memset(ins_buf, INS_A0, ins_len);
-
   /* handle composite glyph */
   if (font->loader->gloader->base.num_subglyphs)
   {
@@ -2231,11 +2227,6 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
       goto Err;
     }
 
-    /* clear the rest of the temporarily used part of `ins_buf' */
-    p = bufp;
-    while (*p != INS_A0)
-      *(p++) = INS_A0;
-
     goto Done;
   }
 
@@ -2275,30 +2266,10 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   if (num_action_hints_records == 1)
     bufp = TA_optimize_push(ins_buf, pos);
 
-  /* clear the rest of the temporarily used part of `ins_buf' */
-  p = bufp;
-  while (*p != INS_A0)
-    *(p++) = INS_A0;
-
 Done:
   TA_free_hints_records(action_hints_records, num_action_hints_records);
   TA_free_hints_records(point_hints_records, num_point_hints_records);
   TA_free_recorder(&recorder);
-
-  /* we are done, so reallocate the instruction array to its real size */
-  if (*bufp == INS_A0)
-  {
-    /* search backwards */
-    while (*bufp == INS_A0)
-      bufp--;
-    bufp++;
-  }
-  else
-  {
-    /* search forwards */
-    while (*bufp != INS_A0)
-      bufp++;
-  }
 
 Done1:
   ins_len = bufp - ins_buf;
