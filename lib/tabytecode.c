@@ -600,6 +600,225 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 }
 
 
+static void
+TA_font_build_delta_exception(const Delta* delta,
+                              FT_UInt** delta_args,
+                              int* num_delta_args)
+{
+  int offset;
+  int ppem;
+  int x_shift;
+  int y_shift;
+
+
+  ppem = delta->ppem - DELTA_PPEM_MIN;
+
+  if (ppem < 16)
+    offset = 0;
+  else if (ppem < 32)
+    offset = 1;
+  else
+    offset = 2;
+
+  ppem -= offset << 4;
+
+  /*
+   * Using
+   *
+   *   delta_shift = 3   ,
+   *
+   * the possible shift values in the instructions are indexed as follows:
+   *
+   *    0   -1px
+   *    1   -7/8px
+   *   ...
+   *    7   -1/8px
+   *    8    1/8px
+   *   ...
+   *   14    7/8px
+   *   15    1px
+   *
+   * (note that there is no index for a zero shift).
+   */
+
+  if (delta->x_shift < 0)
+    x_shift = delta->x_shift + 8;
+  else
+    x_shift = delta->x_shift + 7;
+
+  if (delta->y_shift < 0)
+    y_shift = delta->y_shift + 8;
+  else
+    y_shift = delta->y_shift + 7;
+
+  /* add point index and exception specification to appropriate stack */
+  if (delta->x_shift)
+  {
+    *(delta_args[offset] + num_delta_args[offset]++) =
+      (ppem << 4) + x_shift;
+    *(delta_args[offset] + num_delta_args[offset]++) =
+      delta->point_idx;
+  }
+
+  if (delta->y_shift)
+  {
+    offset += 3;
+    *(delta_args[offset] + num_delta_args[offset]++) =
+      (ppem << 4) + y_shift;
+    *(delta_args[offset] + num_delta_args[offset]++) =
+      delta->point_idx;
+  }
+}
+
+
+static FT_Byte*
+TA_font_build_delta_exceptions(FONT* font,
+                               FT_Long idx,
+                               FT_Byte* bufp)
+{
+  FT_Face face = font->loader->face;
+
+  int num_points;
+  int i;
+
+  /* DELTAP[1-3] stacks for both x and y directions */
+  FT_UInt* delta_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+  int num_delta_args[6] = {0, 0, 0, 0, 0, 0};
+
+  FT_UInt* args = NULL;
+  FT_UInt num_args;
+
+  FT_Bool need_words = 0;
+  FT_Bool allocated = 0;
+
+  const Delta* delta;
+
+
+  num_points = font->loader->gloader->base.outline.n_points;
+
+  /* loop over all fitting delta exceptions */
+  for (;;)
+  {
+    delta = TA_deltas_get_delta(font);
+
+    /* too large values of font and glyph indices in `delta' */
+    /* are handled by later calls of this function */
+    if (!delta
+        || face->face_index < delta->font_idx
+        || idx < delta->glyph_idx)
+      break;
+
+    if (!allocated)
+    {
+      for (i = 0; i < 6; i++)
+      {
+        /* see the comment on allocating `ins_buf' in function */
+        /* `TA_sfnt_build_glyph_instructions' for more on the array sizes; */
+        /* we have to increase by 1 for the number of argument pairs */
+        delta_args[i] = (FT_UInt*)malloc((16 * 2 * num_points + 1)
+                                         * sizeof (FT_UInt));
+        if (!delta_args[i])
+        {
+          bufp = NULL;
+          goto Done;
+        }
+      }
+
+      allocated = 1;
+    }
+
+    /* since we walk sequentially over all glyphs (with points), */
+    /* and the delta entries have the same order, */
+    /* we don't need to test for equality of font and glyph indices: */
+    /* at this very point in the code we certainly have a hit */
+    TA_font_build_delta_exception(delta, delta_args, num_delta_args);
+
+    if (delta->point_idx > 255)
+      need_words = 1;
+
+    TA_deltas_get_next(font);
+  }
+
+  /* nothing to do if no delta data */
+  if (!allocated)
+    return bufp;
+
+  /* add number of argument pairs to the stacks */
+  for (i = 0; i < 6; i++)
+  {
+    if (num_delta_args[i])
+    {
+      int n = num_delta_args[i] >> 1;
+
+
+      if (n > 255)
+        need_words = 1;
+
+      *(delta_args[i] + num_delta_args[i]) = n;
+      num_delta_args[i]++;
+    }
+  }
+
+  /* merge delta stacks into a single one */
+  num_args = 0;
+
+  for (i = 0; i < 6; i++)
+  {
+    FT_UInt* args_new;
+    FT_UInt num_args_new;
+
+
+    if (!num_delta_args[i])
+      continue;
+
+    num_args_new = num_args + num_delta_args[i];
+    args_new = (FT_UInt*)realloc(args, num_args_new * sizeof (FT_UInt));
+    if (!args_new)
+    {
+      bufp = NULL;
+      goto Done;
+    }
+
+    memcpy(args_new + num_args,
+           delta_args[i],
+           num_delta_args[i] * sizeof (FT_UInt));
+
+    args = args_new;
+    num_args = num_args_new;
+  }
+
+  /* with most fonts it is very rare */
+  /* that any of the pushed arguments is larger than 0xFF, */
+  /* thus we refrain from further optimizing this case */
+  bufp = TA_build_push(bufp, args, num_args, need_words, 1);
+
+  /* emit the DELTA opcodes */
+  if (num_delta_args[5])
+    BCI(DELTAP3);
+  if (num_delta_args[4])
+    BCI(DELTAP2);
+  if (num_delta_args[3])
+    BCI(DELTAP1);
+
+  if (num_delta_args[2] || num_delta_args[1] || num_delta_args[0])
+    BCI(SVTCA_x);
+
+  if (num_delta_args[2])
+    BCI(DELTAP3);
+  if (num_delta_args[1])
+    BCI(DELTAP2);
+  if (num_delta_args[0])
+    BCI(DELTAP1);
+
+Done:
+  for (i = 0; i < 6; i++)
+    free(delta_args[i]);
+  free(args);
+
+  return bufp;
+}
+
+
 static FT_Byte*
 TA_sfnt_build_glyph_scaler(SFNT* sfnt,
                            Recorder* recorder,
@@ -2027,10 +2246,25 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   if (!hints->num_points)
     return FT_Err_Ok;
 
-  /* we allocate a buffer which is certainly large enough */
-  /* to hold all of the created bytecode instructions; */
-  /* later on it gets reallocated to its real size */
-  ins_len = hints->num_points * 1000;
+  /*
+   * We allocate a buffer which is certainly large enough
+   * to hold all of the created bytecode instructions;
+   * later on it gets reallocated to its real size.
+   *
+   * The value `1000' is a very rough guess, not tested well.
+   *
+   * For delta exceptions, we have three DELTA commands,
+   * covering 3*16 ppem values.
+   * Since a point index can be larger than 255,
+   * we assume two bytes everywhere for the necessary PUSH calls.
+   * This value must be doubled for the other arguments of DELTA.
+   * Additionally, we have both x and y deltas,
+   * which need to be handled separately in the bytecode.
+   * In summary, this is approx. 3*16 * 2*2 * 2 = 400 bytes per point,
+   * adding some bytes for the necessary overhead.
+   */
+  ins_len = hints->num_points
+            * (1000 + (font->deltas_data_head != NULL) ? 400 : 0);
   ins_buf = (FT_Byte*)malloc(ins_len);
   if (!ins_buf)
     return FT_Err_Out_Of_Memory;
@@ -2272,6 +2506,17 @@ Done:
   TA_free_recorder(&recorder);
 
 Done1:
+  /* handle delta exceptions */
+  if (font->deltas_data_head)
+  {
+    bufp = TA_font_build_delta_exceptions(font, idx, bufp);
+    if (!bufp)
+    {
+      error = FT_Err_Out_Of_Memory;
+      goto Err;
+    }
+  }
+
   ins_len = bufp - ins_buf;
 
   if (ins_len > sfnt->max_instructions)

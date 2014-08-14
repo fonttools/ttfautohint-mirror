@@ -864,27 +864,6 @@ TA_deltas_parse(FONT* font,
 }
 
 
-/*
- *
- * Using
- *
- *   delta_shift = 3   ,
- *
- * the possible shift values in the instructions are indexed as follows:
- *
- *    0   -1px
- *    1   -7/8px
- *   ...
- *    7   -1/8px
- *    8    1/8px
- *   ...
- *   14    7/8px
- *   15    1px
- *
- * (note that there is no index for a zero shift).
- */
-
-
 /* node structure for delta exception data */
 
 typedef struct Node Node;

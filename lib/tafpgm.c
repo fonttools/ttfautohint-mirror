@@ -1833,6 +1833,22 @@ unsigned char FPGM(bci_create_segments_b) [] =
       bci_hint_glyph,
     CALL,
 
+};
+
+/* used if we have delta exceptions */
+
+unsigned char FPGM(bci_create_segments_c) [] =
+{
+
+    PUSHB_1,
+      1,
+    SZPS,
+
+};
+
+unsigned char FPGM(bci_create_segments_d) [] =
+{
+
   ELSE,
     CLEAR,
   EIF,
@@ -2103,6 +2119,22 @@ unsigned char FPGM(bci_create_segments_composite_b) [] =
     PUSHB_1,
       bci_hint_glyph,
     CALL,
+
+};
+
+/* used if we have delta exceptions */
+
+unsigned char FPGM(bci_create_segments_composite_c) [] =
+{
+
+    PUSHB_1,
+      1,
+    SZPS,
+
+};
+
+unsigned char FPGM(bci_create_segments_composite_d) [] =
+{
 
   ELSE,
     CLEAR,
@@ -2640,7 +2672,7 @@ unsigned char FPGM(bci_shift_contour) [] =
  *       bci_shift_contour
  */
 
-unsigned char FPGM(bci_shift_subglyph) [] =
+unsigned char FPGM(bci_shift_subglyph_a) [] =
 {
 
   PUSHB_1,
@@ -2695,6 +2727,22 @@ unsigned char FPGM(bci_shift_subglyph) [] =
     1,
   SZP2, /* set zp2 to normal zone 1 */
   LOOPCALL,
+
+};
+
+/* used if we have delta exceptions */
+
+unsigned char FPGM(bci_shift_subglyph_b) [] =
+{
+
+  PUSHB_1,
+    1,
+  SZPS,
+
+};
+
+unsigned char FPGM(bci_shift_subglyph_c) [] =
+{
 
   ENDF,
 
@@ -5644,6 +5692,10 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_create_segments_a))
             + 1
             + sizeof (FPGM(bci_create_segments_b))
+            + (font->deltas_data_head != 0
+                ? sizeof (FPGM(bci_create_segments_c))
+                : 0)
+            + sizeof (FPGM(bci_create_segments_d))
 
             + sizeof (FPGM(bci_create_segments_0))
             + sizeof (FPGM(bci_create_segments_1))
@@ -5659,6 +5711,10 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_create_segments_composite_a))
             + 1
             + sizeof (FPGM(bci_create_segments_composite_b))
+            + (font->deltas_data_head != 0
+                ? sizeof (FPGM(bci_create_segments_composite_c))
+                : 0)
+            + sizeof (FPGM(bci_create_segments_composite_d))
 
             + sizeof (FPGM(bci_create_segments_composite_0))
             + sizeof (FPGM(bci_create_segments_composite_1))
@@ -5679,7 +5735,11 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_scale_glyph))
             + sizeof (FPGM(bci_scale_composite_glyph))
             + sizeof (FPGM(bci_shift_contour))
-            + sizeof (FPGM(bci_shift_subglyph))
+            + sizeof (FPGM(bci_shift_subglyph_a))
+            + (font->deltas_data_head != 0
+                ? sizeof (FPGM(bci_shift_subglyph_b))
+                : 0)
+            + sizeof (FPGM(bci_shift_subglyph_c))
 
             + sizeof (FPGM(bci_ip_outer_align_point))
             + sizeof (FPGM(bci_ip_on_align_points))
@@ -5812,6 +5872,9 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_create_segments_a);
   *(bufp++) = (unsigned char)data->num_used_styles;
   COPY_FPGM(bci_create_segments_b);
+  if (font->deltas_data_head)
+    COPY_FPGM(bci_create_segments_c);
+  COPY_FPGM(bci_create_segments_d);
 
   COPY_FPGM(bci_create_segments_0);
   COPY_FPGM(bci_create_segments_1);
@@ -5827,6 +5890,9 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_create_segments_composite_a);
   *(bufp++) = (unsigned char)data->num_used_styles;
   COPY_FPGM(bci_create_segments_composite_b);
+  if (font->deltas_data_head)
+    COPY_FPGM(bci_create_segments_composite_c);
+  COPY_FPGM(bci_create_segments_composite_d);
 
   COPY_FPGM(bci_create_segments_composite_0);
   COPY_FPGM(bci_create_segments_composite_1);
@@ -5847,7 +5913,10 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_scale_glyph);
   COPY_FPGM(bci_scale_composite_glyph);
   COPY_FPGM(bci_shift_contour);
-  COPY_FPGM(bci_shift_subglyph);
+  COPY_FPGM(bci_shift_subglyph_a);
+  if (font->deltas_data_head)
+    COPY_FPGM(bci_shift_subglyph_b);
+  COPY_FPGM(bci_shift_subglyph_c);
 
   COPY_FPGM(bci_ip_outer_align_point);
   COPY_FPGM(bci_ip_on_align_points);

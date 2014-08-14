@@ -376,6 +376,16 @@ unsigned char PREP(reset_component_counter) [] =
 
 };
 
+unsigned char PREP(adjust_delta_exceptions) [] =
+{
+
+  /* set delta base */
+  PUSHB_1,
+    DELTA_PPEM_MIN,
+  SDB,
+
+};
+
 
 /* this function allocates `buf', parsing `number_set' to create bytecode */
 /* which eventually sets CVT index `cvtl_is_element' */
@@ -621,6 +631,8 @@ TA_table_build_prep(FT_Byte** prep,
                  + sizeof (PREP(round_blues));
   buf_new_len += sizeof (PREP(set_dropout_mode));
   buf_new_len += sizeof (PREP(reset_component_counter));
+  if (font->deltas_data_head)
+    buf_new_len += sizeof (PREP(adjust_delta_exceptions));
 
   /* buffer length must be a multiple of four */
   len = (buf_new_len + 3) & ~3;
@@ -793,6 +805,8 @@ TA_table_build_prep(FT_Byte** prep,
 
   COPY_PREP(set_dropout_mode);
   COPY_PREP(reset_component_counter);
+  if (font->deltas_data_head)
+    COPY_PREP(adjust_delta_exceptions);
 
   *prep = buf;
   *prep_len = buf_new_len;
