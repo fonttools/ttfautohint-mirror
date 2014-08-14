@@ -466,7 +466,6 @@ ta_face_globals_free(TA_FaceGlobals globals)
     globals->face = NULL;
 
     free(globals);
-    globals = NULL;
   }
 }
 

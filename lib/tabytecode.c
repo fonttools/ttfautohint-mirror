@@ -2264,7 +2264,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
    * adding some bytes for the necessary overhead.
    */
   ins_len = hints->num_points
-            * (1000 + (font->deltas_data_head != NULL) ? 400 : 0);
+            * (1000 + ((font->deltas_data_head != NULL) ? 400 : 0));
   ins_buf = (FT_Byte*)malloc(ins_len);
   if (!ins_buf)
     return FT_Err_Out_Of_Memory;
