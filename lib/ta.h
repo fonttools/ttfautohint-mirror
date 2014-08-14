@@ -224,6 +224,10 @@ struct FONT_
   /* we have a single `gasp' table for all subfonts */
   FT_ULong gasp_idx;
 
+  /* two generic pointers into the the delta exceptions tree */
+  void* deltas_data_head;
+  void* deltas_data_cur;
+
   TA_LoaderRec loader[1]; /* the interface to the autohinter */
 
   /* configuration options */

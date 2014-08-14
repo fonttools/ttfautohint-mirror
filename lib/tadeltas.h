@@ -71,6 +71,22 @@ typedef struct Deltas_
 
 
 /*
+ * A structure to hold a single delta exception.
+ */
+
+typedef struct Delta_
+{
+  long font_idx;
+  long glyph_idx;
+  int ppem;
+  int point_idx;
+
+  char x_shift;
+  char y_shift;
+} Delta;
+
+
+/*
  * Parse a delta exceptions file.
  *
  * A line in a delta exceptions file has the following syntax:
@@ -146,6 +162,40 @@ TA_deltas_free(Deltas* deltas);
 char*
 TA_deltas_show(FONT* font,
                Deltas* deltas);
+
+
+/*
+ * Build a tree providing sequential access to the delta exceptions data.
+ * This also sets `deltas_data_cur' to the first element (or NULL if there
+ * isn't one).
+ */
+
+TA_Error
+TA_deltas_build_tree(FONT* font,
+                     Deltas* deltas);
+
+
+/*
+ * Free the delta exceptions data tree.
+ */
+
+void
+TA_deltas_free_tree(FONT* font);
+
+
+/*
+ * Get next delta exception and store it in `font->deltas_data_cur'.
+ */
+
+void
+TA_deltas_get_next(FONT* font);
+
+
+/*
+ * Access delta exception.  Return NULL if there is no more data.
+ */
+const Delta*
+TA_deltas_get_delta(FONT* font);
 
 #ifdef __cplusplus
 } /* extern "C" */
