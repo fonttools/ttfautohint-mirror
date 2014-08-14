@@ -249,6 +249,51 @@ typedef int
  * :   A pointer of type `size_t*` to a value giving the length of the
  *     output buffer.  Needs `out-buffer`.
  *
+ * `deltas-file`
+ * :   A pointer of type `FILE*` to the data stream of delta exceptions,
+ *     opened for reading in *binary* mode.  Mutually exclusive with
+ *     `deltas-buffer`.
+ *
+ *     A line in a delta exceptions file or buffer has the following syntax:
+ *
+ *     > *\[* font-idx *\]* glyph-id *`p`* points *\[* *`x`* x-shift *\]* *\[* *`y`* y-shift *\]* *`@`* ppems
+ *
+ *     *font-idx* gives the index of the font in a TrueType Collection.  If
+ *     missing, it is set to zero.  For normal TrueType fonts, only value
+ *     zero is valid.  If starting with `0x` the number is interpreted as
+ *     hexadecimal.  If starting with `0` it gets interpreted as an octal
+ *     value, and as a decimal value otherwise.
+ *
+ *     *glyph-id* is a glyph's name as listed in the `post` SFNT table or a
+ *     glyph index.  A glyph name consists of characters from the set
+ *     '`A-Za-z0-9._`' only and does not start with a digit or period, with
+ *     the exceptions of the names '`.notdef`' and '`.null`'.  A glyph index
+ *     can be specified in decimal, octal, or hexadecimal format, the latter
+ *     two indicated by the prefixes `0` and `0x`, respectively.
+ *
+ *     Both *points* and *ppems* are number ranges, similar to the
+ *     `x-height-snapping-exceptions` syntax.
+ *
+ *     *x-shift* and *y-shift* represent floating point numbers that get
+ *     rounded to multiples of 1/8 pixels.  The entries for `x` and `y` are
+ *     optional; if missing, the corresponding value is set to zero.
+ *
+ *     Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0].
+ *     Values for *ppems* must be in the range [6;53].  Values for *points*
+ *     are limited by the number of points in the glyph.
+ *
+ *     A comment starts with character `#`; the rest of the line is ignored.
+ *     An empty line is ignored also.
+ *
+ * `deltas-buffer`
+ * :   A pointer of type `const char*` to a buffer that contains delta
+ *     exceptions.  Needs `deltas-buffer-len`.  Mutually exclusive with
+ *     `deltas-file`.
+ *
+ * `deltas-buffer-len`
+ * :   A value of type `size_t`, giving the length of the delta exceptions
+ *     buffer.  Needs `deltas-buffer`.
+ *
  *
  * ### Messages and Callbacks
  *

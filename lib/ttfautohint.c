@@ -15,6 +15,8 @@
 
 /* This file needs FreeType 2.4.5 or newer. */
 
+#define _POSIX_SOURCE /* to access `strtok_r' with glibc */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,21 +64,27 @@ TTF_autohint(const char* options,
   FONT* font;
   FT_Long i;
 
-  FT_Error error;
+  TA_Error error;
   const char* error_string = NULL;
   unsigned int errlinenum = 0;
   char* errline = NULL;
   char* errpos = NULL;
+  FT_Bool free_errline = 0;
 
   FILE* in_file = NULL;
   FILE* out_file = NULL;
+  FILE* deltas_file = NULL;
 
   const char* in_buf = NULL;
   size_t in_len = 0;
   char** out_bufp = NULL;
   size_t* out_lenp = NULL;
+  const char* deltas_buf = NULL;
+  size_t deltas_len = 0;
 
   const unsigned char** error_stringp = NULL;
+
+  Deltas* deltas;
 
   FT_Long hinting_range_min = -1;
   FT_Long hinting_range_max = -1;
@@ -170,6 +178,22 @@ TTF_autohint(const char* options,
       default_script_string = va_arg(ap, const char*);
     else if (COMPARE("dehint"))
       dehint = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("deltas-buffer"))
+    {
+      deltas_file = NULL;
+      deltas_buf = va_arg(ap, const char*);
+    }
+    else if (COMPARE("deltas-buffer-len"))
+    {
+      deltas_file = NULL;
+      deltas_len = va_arg(ap, size_t);
+    }
+    else if (COMPARE("deltas-file"))
+    {
+      deltas_file = va_arg(ap, FILE*);
+      deltas_buf = NULL;
+      deltas_len = 0;
+    }
     else if (COMPARE("dw-cleartype-strong-stem-width"))
       dw_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("error-callback"))
@@ -431,6 +455,18 @@ No_check:
     font->in_len = in_len;
   }
 
+  if (deltas_file)
+  {
+    error = TA_deltas_file_read(font, deltas_file);
+    if (error)
+      goto Err;
+  }
+  else if (deltas_buf)
+  {
+    font->deltas_buf = (char*)deltas_buf;
+    font->deltas_len = deltas_len;
+  }
+
   error = TA_font_init(font);
   if (error)
     goto Err;
@@ -441,7 +477,8 @@ No_check:
     _ta_debug_global = 1;
   }
 
-  /* we do some loops over all subfonts */
+  /* we do some loops over all subfonts -- */
+  /* to process options early, just start with loading all of them */
   for (i = 0; i < font->num_sfnts; i++)
   {
     SFNT* sfnt = &font->sfnts[i];
@@ -464,7 +501,15 @@ No_check:
       goto Err;
   }
 
-  /* dump parameters */
+  /* process delta exceptions data */
+  error = TA_deltas_parse(font, &deltas, &errlinenum, &errline, &errpos);
+  if (error)
+  {
+    free_errline = 1;
+    goto Err;
+  }
+
+  /* now we are able to dump all parameters */
   if (debug)
   {
     fprintf(stderr, "TTF_autohint parameters\n"
@@ -518,12 +563,48 @@ No_check:
         free(s);
       }
       else
-        return FT_Err_Out_Of_Memory;
+      {
+        error = FT_Err_Out_Of_Memory;
+        goto Err;
+      }
+
+      s = TA_deltas_show(font, deltas);
+      if (s)
+      {
+        char* token;
+        char* saveptr;
+
+
+        /* show delta exceptions data line by line */
+        token = strtok_r(s, "\n", &saveptr);
+        DUMPSTR("delta exceptions", token);
+
+        for (;;)
+        {
+          token = strtok_r(NULL, "\n", &saveptr);
+          if (!token)
+            break;
+
+          DUMPSTRX(token);
+        }
+
+        free(s);
+      }
+      else
+      {
+        error = FT_Err_Out_Of_Memory;
+        goto Err;
+      }
     }
 
     fprintf(stderr, "\n");
   }
 
+  error = TA_deltas_build_tree(font, deltas);
+  if (error)
+    goto Err;
+
+  /* loop again over subfonts and continue processing */
   for (i = 0; i < font->num_sfnts; i++)
   {
     SFNT* sfnt = &font->sfnts[i];
@@ -697,7 +778,9 @@ No_check:
   error = TA_Err_Ok;
 
 Err:
-  TA_font_unload(font, in_buf, out_bufp);
+  TA_deltas_free(deltas);
+  TA_deltas_free_tree(font);
+  TA_font_unload(font, in_buf, out_bufp, deltas_buf);
 
 Err1:
   error_string = TA_get_error_message(error);
@@ -712,6 +795,9 @@ Err1:
         errline,
         errpos,
         err_data);
+
+  if (free_errline)
+    free(errline);
 
   return error;
 }

@@ -279,7 +279,8 @@ TA_font_init(FONT* font);
 void
 TA_font_unload(FONT* font,
                const char* in_buf,
-               char** out_bufp);
+               char** out_bufp,
+               const char* deltas_buf);
 
 FT_Error
 TA_font_file_read(FONT* font,

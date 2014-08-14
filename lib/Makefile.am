@@ -27,6 +27,7 @@ libttfautohint_la_SOURCES = \
   tabytecode.c tabytecode.h \
   tacover.h \
   tacvt.c \
+  tadeltas.c tadeltas.h \
   tadsig.c \
   tadummy.c tadummy.h \
   taerror.c \
@@ -63,6 +64,7 @@ libttfautohint_la_SOURCES = \
 
 libttfautohint_la_LIBADD = \
   libnumberset.la \
+  $(LIBM) \
   $(FREETYPE_LIBS) \
   $(HARFBUZZ_LIBS)
 

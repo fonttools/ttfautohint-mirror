@@ -89,37 +89,16 @@ typedef struct Delta_
 /*
  * Parse a delta exceptions file.
  *
- * A line in a delta exceptions file has the following syntax:
+ * The format of lines in a delta exceptions file is given in
+ * `ttfautohint.h' (option `deltas-file'); the following gives more
+ * technical details, using the constants defined above.
  *
- *   [<font idx>] <glyph id> p <points> [x <x shift>] [y <y shift>] @ <ppems>
+ * x shift and y shift values represent floating point numbers that get
+ * rounded to multiples of 1/(2^DELTA_SHIFT) pixels.
  *
- * <font idx> gives the index of the font in a TrueType Collection.  If
- * missing, it is set to zero.  For normal TrueType fonts, only value zero
- * is valid.  If starting with `0x' the number is interpreted as
- * hexadecimal.  If starting with `0' it gets interpreted as an octal value,
- * and as a decimal value otherwise.
- *
- * <glyph id> is a glyph's name as listed in the `post' SFNT table or a
- * glyph index.  A glyph name consists of characters from the set
- * `A-Za-z0-9._' only and does not start with a digit or period, with the
- * exceptions of the names `.notdef' and `.null'.  A glyph index can be
- * specified in decimal, octal, or hexadecimal format, the latter two
- * indicated by the prefixes `0' and `0x', respectively.
- *
- * Both <points> and <ppems> are number ranges as described in
- * `numberset.h'; they are parsed using `number_set_parse'.
- *
- * <x shift> and <y shift> represent floating point numbers that get rounded
- * to multiples of 1/8 pixels.  The entries for `x' and `y' are optional; if
- * missing, the corresponding value is set to zero.
- *
- * Values for <x shift>, <y shift> must be in the range
- * [DELTA_SHIFT_MIN;DELTA_SHIFT_MAX].  Values for <ppems> must be in the
- * range [DELTA_PPEM_MIN;DELTA_PPEM_MAX].  Values for <points> are limited
- * by the number of points in the glyph.
- *
- * A comment starts with character `#'; the rest of the line is ignored.  An
- * empty line is ignored also.
+ * Values for x and y shifts must be in the range
+ * [DELTA_SHIFT_MIN;DELTA_SHIFT_MAX].  Values for ppems must be in the range
+ * [DELTA_PPEM_MIN;DELTA_PPEM_MAX].
  *
  * The returned error codes are in the range 0x200-0x2FF; see
  * `ttfautohint-errors.h' for all possible values.

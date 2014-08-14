@@ -62,6 +62,11 @@ LT_INIT
 LT_LTLIZE_LANG([C])
 
 
+# We use libtool's convenient check for the math library.
+LT_LIB_M
+AC_SUBST(LIBM)
+
+
 AC_ARG_WITH([doc],
             [AS_HELP_STRING([--with-doc],
                             [install documentation @<:@default=yes@:>@])],

@@ -52,7 +52,8 @@ TA_font_init(FONT* font)
 void
 TA_font_unload(FONT* font,
                const char* in_buf,
-               char** out_bufp)
+               char** out_bufp,
+               const char* deltas_buf)
 {
   /* in case of error it is expected that unallocated pointers */
   /* are NULL (and counters are zero) */
@@ -110,10 +111,15 @@ TA_font_unload(FONT* font,
   number_set_free(font->x_height_snapping_exceptions);
 
   FT_Done_FreeType(font->lib);
+
+  /* in case the user provided file handles, */
+  /* free the allocated buffers for the file contents */
   if (!in_buf)
     free(font->in_buf);
   if (!out_bufp)
     free(font->out_buf);
+  if (!deltas_buf)
+    free(font->deltas_buf);
   free(font);
 }
 
