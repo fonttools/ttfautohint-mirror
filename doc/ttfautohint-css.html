@@ -87,8 +87,13 @@
     position: relative;
     right: 14em; } /* wd2 + pad2_r */
 
+  /* we want the same appearance of markups within blockquotes */
+  /* as with LaTeX */
   blockquote {
     font-style: italic;
+  }
+  blockquote em {
+    font-style: normal;
   }
 
   code {
