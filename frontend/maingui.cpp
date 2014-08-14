@@ -128,6 +128,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   timer = new QTimer(this);
   timer->setInterval(1000);
   fileinfo_input_file.setCaching(false);
+  fileinfo_deltas_file.setCaching(false);
 
   create_layout(horizontal_layout);
   create_connections();
@@ -212,6 +213,21 @@ Main_GUI::browse_output()
 
   if (!file.isEmpty())
     output_line->setText(QDir::toNativeSeparators(file));
+}
+
+
+void
+Main_GUI::browse_deltas()
+{
+  // XXX remember last directory
+  QString file = QFileDialog::getOpenFileName(
+                   this,
+                   tr("Open Delta Exceptions File"),
+                   QDir::homePath(),
+                   "");
+
+  if (!file.isEmpty())
+    deltas_line->setText(QDir::toNativeSeparators(file));
 }
 
 
@@ -430,6 +446,19 @@ Main_GUI::absolute_output()
 
 
 void
+Main_GUI::absolute_deltas()
+{
+  QString deltas_name = QDir::fromNativeSeparators(deltas_line->text());
+  if (!deltas_name.isEmpty()
+      && QDir::isRelativePath(deltas_name))
+  {
+    QDir cur_path(QDir::currentPath() + "/" + deltas_name);
+    deltas_line->setText(QDir::toNativeSeparators(cur_path.absolutePath()));
+  }
+}
+
+
+void
 Main_GUI::check_number_set()
 {
   QString text = snapping_line->text();
@@ -531,7 +560,8 @@ Main_GUI::clear_status_bar()
 
 int
 Main_GUI::check_filenames(const QString& input_name,
-                          const QString& output_name)
+                          const QString& output_name,
+                          const QString& deltas_name)
 {
   if (!QFile::exists(input_name))
   {
@@ -571,6 +601,18 @@ Main_GUI::check_filenames(const QString& input_name,
       return 0;
   }
 
+  if (!deltas_name.isEmpty() && !QFile::exists(deltas_name))
+  {
+    QMessageBox::warning(
+      this,
+      "TTFautohint",
+      tr("The file %1 cannot be found.")
+         .arg(QUOTE_STRING(QDir::toNativeSeparators(deltas_name))),
+      QMessageBox::Ok,
+      QMessageBox::Ok);
+    return 0;
+  }
+
   return 1;
 }
 
@@ -579,7 +621,9 @@ int
 Main_GUI::open_files(const QString& input_name,
                      FILE** in,
                      const QString& output_name,
-                     FILE** out)
+                     FILE** out,
+                     const QString& deltas_name,
+                     FILE** deltas)
 {
   const int buf_len = 1024;
   char buf[buf_len];
@@ -614,6 +658,27 @@ Main_GUI::open_files(const QString& input_name,
     return 0;
   }
 
+  // inspite of being a text file we open it in binary mode
+  // to make `TTF_autohint' handle different EOL conventions gracefully
+  if (!deltas_name.isEmpty())
+  {
+    *deltas = fopen(qPrintable(deltas_name), "rb");
+    if (!*deltas)
+    {
+      strerror_r(errno, buf, buf_len);
+      QMessageBox::warning(
+        this,
+        "TTFautohint",
+        tr("The following error occurred"
+           " while opening delta exceptions file %1:\n")
+           .arg(QUOTE_STRING(QDir::toNativeSeparators(deltas_name)))
+          + QString::fromLocal8Bit(buf),
+        QMessageBox::Ok,
+        QMessageBox::Ok);
+      return 0;
+    }
+  }
+
   return 1;
 }
 
@@ -631,11 +696,15 @@ void
 Main_GUI::watch_files()
 {
   if (fileinfo_input_file.exists()
-      && fileinfo_input_file.isReadable())
+      && fileinfo_input_file.isReadable()
+      && fileinfo_deltas_file.exists()
+      && fileinfo_deltas_file.isReadable())
   {
-    QDateTime modified = fileinfo_input_file.lastModified();
-    if (modified > datetime_input_file)
-      run(); // this function sets `datetime_input_file'
+    QDateTime modified_input = fileinfo_input_file.lastModified();
+    QDateTime modified_deltas = fileinfo_deltas_file.lastModified();
+    if (modified_input > datetime_input_file
+        || modified_deltas > datetime_deltas_file)
+      run(); // this function sets `datetime_XXX'
   }
   else
     run(); // let this routine handle all errors
@@ -711,6 +780,7 @@ struct GUI_Error_Data
   Main_GUI* gui;
   QLocale* locale;
   QString output_name;
+  QString deltas_name;
   int* ignore_restrictions_p;
   bool retry;
 };
@@ -722,9 +792,9 @@ struct GUI_Error_Data
 void
 gui_error(TA_Error error,
           const char* error_string,
-          unsigned int /* errlinenum */,
-          const char* /* errline */,
-          const char* /* errpos */,
+          unsigned int errlinenum,
+          const char* errline,
+          const char* errpos,
           void* user)
 {
   GUI_Error_Data* data = static_cast<GUI_Error_Data*>(user);
@@ -808,13 +878,29 @@ gui_error(TA_Error error,
          .arg(QUOTE_STRING_LITERAL(Tr("Symbol Font"))),
       QMessageBox::Ok,
       QMessageBox::Ok);
+  else if (error >= 0x200 && error < 0x300)
+    QMessageBox::warning(
+      data->gui,
+      "TTFautohint",
+      QString::fromLocal8Bit("%1:%2: %3 (0x%4)<br>"
+                             "<tt>  %5<br>"
+                             "  %6</tt>")
+                             .arg(data->deltas_name)
+                             .arg(errlinenum)
+                             .arg(error_string)
+                             .arg(error, 2, 16, QLatin1Char('0'))
+                             .arg(errline)
+                             .arg('^', int(errpos - errline + 1))
+                             .replace(" ", "&nbsp;"),
+      QMessageBox::Ok,
+      QMessageBox::Ok);
   else
     QMessageBox::warning(
       data->gui,
       "TTFautohint",
       Tr("Error code 0x%1 while autohinting font:\n")
          .arg(error, 2, 16, QLatin1Char('0'))
-        + QString::fromLocal8Bit((const char*)error_string),
+        + QString::fromLocal8Bit(error_string),
       QMessageBox::Ok,
       QMessageBox::Ok);
 
@@ -846,7 +932,8 @@ Main_GUI::run()
 
   QString input_name = QDir::fromNativeSeparators(input_line->text());
   QString output_name = QDir::fromNativeSeparators(output_line->text());
-  if (!check_filenames(input_name, output_name))
+  QString deltas_name = QDir::fromNativeSeparators(deltas_line->text());
+  if (!check_filenames(input_name, output_name, deltas_name))
   {
     timer->stop();
     return;
@@ -855,9 +942,12 @@ Main_GUI::run()
   // we need C file descriptors for communication with TTF_autohint
   FILE* input;
   FILE* output;
+  FILE* deltas;
 
 again:
-  if (!open_files(input_name, &input, output_name, &output))
+  if (!open_files(input_name, &input,
+                  output_name, &output,
+                  deltas_name, &deltas))
   {
     timer->stop();
     return;
@@ -870,7 +960,7 @@ again:
 
   TA_Info_Func info_func = info;
   GUI_Progress_Data gui_progress_data = {-1, true, &dialog};
-  GUI_Error_Data gui_error_data = { this, locale, output_name,
+  GUI_Error_Data gui_error_data = { this, locale, output_name, deltas_name,
                                     &ignore_restrictions, false };
   Info_Data info_data;
 
@@ -946,12 +1036,14 @@ again:
       QMessageBox::Ok);
 
   fileinfo_input_file.setFile(input_name);
+  fileinfo_deltas_file.setFile(deltas_name);
   datetime_input_file = fileinfo_input_file.lastModified();
+  datetime_deltas_file = fileinfo_deltas_file.lastModified();
 
   QByteArray snapping_string = snapping_line->text().toLocal8Bit();
 
   TA_Error error =
-    TTF_autohint("in-file, out-file,"
+    TTF_autohint("in-file, out-file, deltas-file,"
                  "hinting-range-min, hinting-range-max,"
                  "hinting-limit,"
                  "gray-strong-stem-width,"
@@ -968,7 +1060,7 @@ again:
                  "x-height-snapping-exceptions, fallback-stem-width,"
                  "default-script, fallback-script,"
                  "symbol, dehint",
-                 input, output,
+                 input, output, deltas,
                  info_data.hinting_range_min, info_data.hinting_range_max,
                  info_data.hinting_limit,
                  info_data.gray_strong_stem_width,
@@ -994,6 +1086,8 @@ again:
 
   fclose(input);
   fclose(output);
+  if (deltas)
+    fclose(deltas);
 
   if (error)
   {
@@ -1050,6 +1144,35 @@ Main_GUI::create_layout(bool horizontal_layout)
     tr("<b></b>The output file, which will be essentially identical"
        " to the input font but will contain new, generated hints."));
   output_line->setCompleter(completer);
+
+  deltas_label = new QLabel(tr("Delta &Exception File:"));
+  deltas_line = new Drag_Drop_Line_Edit(DRAG_DROP_ANY);
+  deltas_button = new QPushButton(tr("Browse..."));
+  deltas_label->setBuddy(deltas_line);
+  deltas_label->setToolTip(
+    tr("<p>An optional delta exceptions file to fine-tune point positions"
+       " after hinting, using DELTAP TrueType instructions."
+       "  This text file contains lines of the form<br>"
+       "&nbsp;<br>"
+       "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
+       "&nbsp;&nbsp;<i>glyph-id</i>"
+       "&nbsp;&nbsp;<tt>p</tt>&nbsp;<i>points</i>"
+       "&nbsp;&nbsp;[&nbsp;<tt>x</tt>&nbsp;<i>shift</i>&nbsp;]"
+       "&nbsp;&nbsp;[&nbsp;<tt>y</tt>&nbsp;<i>shift</i>&nbsp;]"
+       "&nbsp;&nbsp;<tt>@</tt>&nbsp;<i>ppems</i><br>"
+       "&nbsp;<br>"
+       "<i>subfont-idx</i> gives the subfont index in a TTC,"
+       " <i>glyph-id</i> is a glyph name or index,"
+       " the x and y <i>shift</i> values are in the range [-1;1],"
+       " rounded to multiples of 1/8px,"
+       " <i>points</i> and <i>ppems</i> are ranges for point indices"
+       " and ppem values as with x&nbsp;height snapping exceptions.<br>"
+       "<tt>#</tt> starts a line comment, which gets ignored."
+       "  Empty lines are ignored, too.</p>"
+       ""
+       "Example:<br>"
+       "&nbsp;&nbsp;<tt>Adieresis p 3-6 y 0.25 @ 13</tt>"));
+  deltas_line->setCompleter(completer);
 
   //
   // minmax controls
@@ -1342,6 +1465,12 @@ Main_GUI::create_vertical_layout()
   file_layout->addWidget(output_line, 2, 1);
   file_layout->addWidget(output_button, 2, 2);
 
+  file_layout->setRowStretch(3, 1);
+
+  file_layout->addWidget(deltas_label, 4, 0, Qt::AlignRight);
+  file_layout->addWidget(deltas_line, 4, 1);
+  file_layout->addWidget(deltas_button, 4, 2);
+
   // bottom area
   QGridLayout* run_layout = new QGridLayout;
 
@@ -1449,6 +1578,12 @@ Main_GUI::create_horizontal_layout()
   file_layout->addWidget(output_label, 2, 0, Qt::AlignRight);
   file_layout->addWidget(output_line, 2, 1);
   file_layout->addWidget(output_button, 2, 2);
+
+  file_layout->setRowStretch(3, 1);
+
+  file_layout->addWidget(deltas_label, 4, 0, Qt::AlignRight);
+  file_layout->addWidget(deltas_line, 4, 1);
+  file_layout->addWidget(deltas_button, 4, 2);
 
   // bottom area
   QGridLayout* run_layout = new QGridLayout;
@@ -1566,6 +1701,8 @@ Main_GUI::create_connections()
           SLOT(browse_input()));
   connect(output_button, SIGNAL(clicked()), this,
           SLOT(browse_output()));
+  connect(deltas_button, SIGNAL(clicked()), this,
+          SLOT(browse_deltas()));
 
   connect(input_line, SIGNAL(textChanged(QString)), this,
           SLOT(check_run()));
@@ -1576,6 +1713,8 @@ Main_GUI::create_connections()
           SLOT(absolute_input()));
   connect(output_line, SIGNAL(editingFinished()), this,
           SLOT(absolute_output()));
+  connect(deltas_line, SIGNAL(editingFinished()), this,
+          SLOT(absolute_deltas()));
 
   connect(min_box, SIGNAL(valueChanged(int)), this,
           SLOT(check_min()));

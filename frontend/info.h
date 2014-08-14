@@ -44,6 +44,8 @@ typedef struct Info_Data_
   char fallback_script[5];
   bool symbol;
   bool dehint;
+
+  const char* deltas_name;
 } Info_Data;
 
 

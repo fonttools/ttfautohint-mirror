@@ -262,6 +262,9 @@ show_help(bool
 "  -i, --ignore-restrictions  override font license restrictions\n"
 "  -l, --hinting-range-min=N  the minimum PPEM value for hint sets\n"
 "                             (default: %d)\n"
+#ifndef BUILD_GUI
+"  -m, --deltas-file=FILE     get delta exceptions from FILE\n"
+#endif
 "  -n, --no-info              don't add ttfautohint info\n"
 "                             to the version string(s) in the `name' table\n"
 "  -p, --adjust-subglyphs     handle subglyph adjustments in exotic fonts\n",
@@ -379,6 +382,17 @@ show_help(bool
     }
   }
   fprintf(handle,
+#ifndef BUILD_GUI
+"\n"
+"A delta exceptions file contains lines of the form\n"
+"\n"
+"  [<subfont idx>] <glyph id> p <points> [x <shift>] [y <shift>] @ <ppems>\n"
+"\n"
+"to fine-tune point positions after hinting.  <glyph id> is a glyph name\n"
+"or index, <shift> is in px, <points> and <ppems> are ranges as with\n"
+"option `-X'.  `#' starts a line comment, which gets ignored.\n"
+"Empty lines are ignored, too.\n"
+#endif
 "\n"
 #ifdef BUILD_GUI
 "A command-line version of this program is called `ttfautohint'.\n"
@@ -457,6 +471,8 @@ main(int argc,
   TA_Progress_Func progress_func = NULL;
   TA_Error_Func err_func = err;
   TA_Info_Func info_func = info;
+
+  const char* deltas_name = NULL;
 #endif
 
   // make GNU, Qt, and X11 command line options look the same;
@@ -492,6 +508,9 @@ main(int argc,
 #endif
       {"default-script", required_argument, NULL, 'D'},
       {"dehint", no_argument, NULL, 'd'},
+#ifndef BUILD_GUI
+      {"deltas-file", required_argument, NULL, 'm'},
+#endif
       {"fallback-script", required_argument, NULL, 'f'},
       {"hinting-limit", required_argument, NULL, 'G'},
       {"hinting-range-max", required_argument, NULL, 'r'},
@@ -538,7 +557,12 @@ main(int argc,
     };
 
     int option_index;
-    int c = getopt_long_only(argc, argv, "cdD:f:G:hH:il:npr:stVvw:Wx:X:",
+    int c = getopt_long_only(argc, argv,
+#ifdef BUILD_GUI
+                             "cdD:f:G:hH:il:npr:stVvw:Wx:X:",
+#else
+                             "cdD:f:G:hH:il:m:npr:stVvw:Wx:X:",
+#endif
                              long_options, &option_index);
     if (c == -1)
       break;
@@ -587,6 +611,12 @@ main(int argc,
       hinting_range_min = atoi(optarg);
       have_hinting_range_min = true;
       break;
+
+#ifndef BUILD_GUI
+    case 'm':
+      deltas_name = optarg;
+      break;
+#endif
 
     case 'n':
       no_info = true;
@@ -824,6 +854,25 @@ main(int argc,
     out = stdout;
   }
 
+  FILE* deltas = NULL;
+  if (deltas_name)
+  {
+    /* inspite of being a text file we open it in binary mode */
+    /* to make `TTF_autohint' handle different EOL conventions gracefully */
+    deltas = fopen(deltas_name, "rb");
+    if (!deltas)
+    {
+      fprintf(stderr,
+              "The following error occurred while open deltas file `%s':\n"
+              "\n"
+              "  %s\n",
+              deltas_name, strerror(errno));
+      exit(EXIT_FAILURE);
+    }
+  }
+  else
+    deltas = NULL;
+
   Progress_Data progress_data = {-1, 1, 0};
   Info_Data info_data;
 
@@ -835,6 +884,8 @@ main(int argc,
     info_data.data_wide = NULL; // must be deallocated after use
     info_data.data_len = 0;
     info_data.data_wide_len = 0;
+
+    info_data.deltas_name = deltas_name;
 
     info_data.hinting_range_min = hinting_range_min;
     info_data.hinting_range_max = hinting_range_max;
@@ -876,7 +927,7 @@ main(int argc,
     SET_BINARY(stdout);
 
   TA_Error error =
-    TTF_autohint("in-file, out-file,"
+    TTF_autohint("in-file, out-file, deltas-file,"
                  "hinting-range-min, hinting-range-max, hinting-limit,"
                  "gray-strong-stem-width, gdi-cleartype-strong-stem-width,"
                  "dw-cleartype-strong-stem-width,"
@@ -888,7 +939,7 @@ main(int argc,
                  "increase-x-height, x-height-snapping-exceptions,"
                  "fallback-stem-width, default-script, fallback-script,"
                  "symbol, dehint, debug",
-                 in, out,
+                 in, out, deltas,
                  hinting_range_min, hinting_range_max, hinting_limit,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                  dw_cleartype_strong_stem_width,
@@ -911,6 +962,8 @@ main(int argc,
     fclose(in);
   if (out != stdout)
     fclose(out);
+  if (deltas)
+    fclose(deltas);
 
   exit(error ? EXIT_FAILURE : EXIT_SUCCESS);
 
