@@ -106,13 +106,16 @@
   a {
     text-decoration: none; }
 
+  /* we want neither superscripts or subscripts */
+  /* consume extra vertical space */
+  sup, sub {
+    line-height: 0.1ex; }
+
   /* pandoc uses superscripts for footnote numbers, */
   /* however, we want a number in brackets */
   /* (which is easier to select with the mouse) */
   a.footnoteRef > sup:before {
     content: "["; }
-  a.footnoteRef > sup {
-    line-height: 0.1ex; }
   a.footnoteRef > sup:after {
     content: "]"; }
 
