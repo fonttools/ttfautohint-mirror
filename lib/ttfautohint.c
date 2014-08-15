@@ -84,7 +84,7 @@ TTF_autohint(const char* options,
 
   const unsigned char** error_stringp = NULL;
 
-  Deltas* deltas;
+  Deltas* deltas = NULL;
 
   FT_Long hinting_range_min = -1;
   FT_Long hinting_range_max = -1;
