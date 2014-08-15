@@ -1427,10 +1427,11 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // running
   //
-  watch_box = new QCheckBox(tr("&Watch Input File"), this);
+  watch_box = new QCheckBox(tr("&Watch Input Files"), this);
   watch_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> automatically re-runs"
-       " the hinting process as soon as the input file is modified.<br>"
+       " the hinting process as soon as an input file"
+       " (either the font or the delta exceptions file) is modified.<br>"
        "Pressing the %1 button starts watching.<br>"
        "If an error occurs, watching stops and must be restarted"
        " with the %1 button.")

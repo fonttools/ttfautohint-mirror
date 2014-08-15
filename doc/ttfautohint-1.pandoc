@@ -543,7 +543,7 @@ bytecode larger.
 
 ### Miscellaneous
 
-Watch input file (GUI only)
+Watch input files (GUI only)
 :   If this checkbox is set, automatically regenerate the output file as
     soon as an input file (either the font or the delta exceptions file)
     gets modified.
