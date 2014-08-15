@@ -285,6 +285,9 @@ typedef int
  *     A comment starts with character `#`; the rest of the line is ignored.
  *     An empty line is ignored also.
  *
+ *     Note that only character '`.`' is recognized as a decimal point, and
+ *     a thousands separator is not accepted.
+ *
  * `deltas-buffer`
  * :   A pointer of type `const char*` to a buffer that contains delta
  *     exceptions.  Needs `deltas-buffer-len`.  Mutually exclusive with

@@ -14,6 +14,7 @@
 
 #include <ta.h>
 #include <tadeltas.h>
+#include <locale.h>
 #include <errno.h>
 #include <ctype.h>
 #include <math.h>
@@ -62,18 +63,24 @@ get_font_idx(FONT* font,
   char* endptr;
   long font_idx;
 
+  int saved_errno;
+  char* saved_locale;
 
+
+  saved_locale = setlocale(LC_NUMERIC, "C");
   errno = 0;
   font_idx = strtol(s, &endptr, 0);
+  saved_errno = errno;
+  setlocale(LC_NUMERIC, saved_locale);
 
-  if (errno == ERANGE)
+  if (saved_errno == ERANGE)
   {
     /* *string_p = s; */
     return TA_Err_Deltas_Invalid_Font_Index;
   }
 
   /* there must be a whitespace character after the number */
-  if (errno || !isspace(*endptr))
+  if (saved_errno || !isspace(*endptr))
   {
     *string_p = endptr;
     return TA_Err_Deltas_Syntax_Error;
@@ -111,17 +118,24 @@ get_glyph_idx(FONT* font,
   {
     /* glyph index */
 
+    int saved_errno;
+    char* saved_locale;
+
+
+    saved_locale = setlocale(LC_NUMERIC, "C");
     errno = 0;
     glyph_idx = strtol(s, &endptr, 0);
+    saved_errno = errno;
+    setlocale(LC_NUMERIC, saved_locale);
 
-    if (errno == ERANGE)
+    if (saved_errno == ERANGE)
     {
       /* *string_p = s; */
       return TA_Err_Deltas_Invalid_Glyph_Index;
     }
 
     /* there must be a whitespace character after the number */
-    if (errno || !isspace(*endptr))
+    if (saved_errno || !isspace(*endptr))
     {
       *string_p = endptr;
       return TA_Err_Deltas_Syntax_Error;
@@ -258,11 +272,17 @@ get_shift(char** string_p,
   char* endptr;
   double shift;
 
+  int saved_errno;
+  char* saved_locale;
 
+
+  saved_locale = setlocale(LC_NUMERIC, "C");
   errno = 0;
   shift = strtod(s, &endptr);
+  saved_errno = errno;
+  setlocale(LC_NUMERIC, saved_locale);
 
-  if (errno == ERANGE)
+  if (saved_errno == ERANGE)
   {
     /* *string_p = s; */
     /* this error code should be adjusted by the caller if necessary */
@@ -270,7 +290,7 @@ get_shift(char** string_p,
   }
 
   /* there must be a whitespace character after the number */
-  if (errno || !isspace(*endptr))
+  if (saved_errno || !isspace(*endptr))
   {
     *string_p = endptr;
     return TA_Err_Deltas_Syntax_Error;
