@@ -485,11 +485,68 @@ bytecode larger.
      algorithm.  Note how the stems are aligned to the pixel
      grid.](img/ff-g-26px-wD.png)
 
+### Delta Exception File
+
+`--deltas-file=`*file*, `-m`\ *file* (TTY only)
+
+:   Specify the name of a delta exceptions file to add delta hinting.
+    This feature can be used to correct glitches in ttfautohint's hinting
+    algorithm.
+
+    A line in a delta exceptions file has the following syntax:
+
+    > *\[* font-idx *\]* glyph-id *`p`* points *\[* *`x`* x-shift *\]* *\[* *`y`* y-shift *\]* *`@`* ppems
+
+    *font-idx* gives the index of the font in a TrueType Collection.  If
+    missing, it is set to zero.  For normal TrueType fonts, only value zero
+    is valid.  If starting with `0x` the number is interpreted as
+    hexadecimal.  If starting with `0` it gets interpreted as an octal
+    value, and as a decimal value otherwise.
+
+    *glyph-id* is a glyph's name as listed in the `post` SFNT table or a
+    glyph index.  A glyph name consists of characters from the set
+    '`A-Za-z0-9._`' only and does not start with a digit or period, with the
+    exceptions of the names '`.notdef`' and '`.null`'.  A glyph index can be
+    specified in decimal, octal, or hexadecimal format, the latter two
+    indicated by the prefixes `0` and `0x`, respectively.
+
+    Both *points* and *ppems* are number ranges, see ['x Height Snapping
+    Exceptions'](#x-height-snapping-exceptions) for the syntax.
+
+    *x-shift* and *y-shift* represent floating point numbers that get
+    rounded to multiples of 1/8 pixels.  The entries for `x` and `y` are
+    optional; if missing, the corresponding value is set to zero.
+
+    Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0].
+    Values for *ppems* must be in the range [6;53].  Values for *points* are
+    limited by the number of points in the glyph.
+
+    A comment starts with character `#`; the rest of the line is ignored.
+    An empty line is ignored also.
+
+    In case there are multiple shift entries for the same (*font idx*,
+    *glyph-id*, *point-idx*, *ppem-value*) quadruplet, the first entry in
+    the delta exceptions file wins.
+
+    Note that only character '`.`' is recognized as a decimal point, and a
+    thousands separator is not accepted.
+
+    As an example, let's assume that you want to shift points 2, 3, and\ 4
+    in glyph `Aacute' at ppem sizes 12 and\ 13 by a vertical amount of 0.25
+    pixels.  This corresponds to the line
+
+    ```
+        Aacute  p 2-4  y 0.25  @ 12, 13
+    ```
+
+    in a delta exceptions file.
+
 ### Miscellaneous
 
 Watch input file (GUI only)
 :   If this checkbox is set, automatically regenerate the output file as
-    soon as the input file gets modified.
+    soon as an input file (either the font or the delta exceptions file)
+    gets modified.
 
     Pressing the 'Run' button starts watching.  If an error occurs, watching
     stops and must be restarted with the 'Run' button.
