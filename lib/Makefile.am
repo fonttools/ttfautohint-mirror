@@ -30,6 +30,7 @@ libttfautohint_la_SOURCES = \
   tadeltas.c tadeltas.h \
   tadsig.c \
   tadummy.c tadummy.h \
+  tadump.c \
   taerror.c \
   tafile.c \
   tafont.c \
@@ -50,6 +51,7 @@ libttfautohint_la_SOURCES = \
   tapost.c \
   taprep.c \
   taranges.c taranges.h \
+  tascript.c \
   tasfnt.c \
   tasort.c tasort.h \
   tastyles.h \

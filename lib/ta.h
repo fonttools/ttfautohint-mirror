@@ -260,8 +260,17 @@ struct FONT_
 #include "tabytecode.h"
 
 
+/* in file `tascript.c' */
+extern const char* script_names[];
+
+
 const char*
 TA_get_error_message(FT_Error error);
+
+TA_Error
+TA_font_dump_parameters(FONT* font,
+                        Deltas* deltas,
+                        FT_Bool dehint);
 
 void
 TA_get_current_time(FT_ULong* high,
