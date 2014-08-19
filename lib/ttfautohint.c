@@ -485,7 +485,7 @@ No_check:
   /* now we are able to dump all parameters */
   if (debug)
   {
-    error = TA_font_dump_parameters(font, deltas, dehint);
+    error = TA_font_dump_parameters(font, stderr, deltas, dehint, 1);
     if (error)
       goto Err;
   }

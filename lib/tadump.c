@@ -18,40 +18,51 @@
 #include <string.h>
 
 
-#define DUMP_COLUMN "33"
-
 #define DUMPVAL(str, arg) \
-          fprintf(stderr, "%" DUMP_COLUMN "s = %ld\n", \
-                          (str), \
+          fprintf(stream, "%*s = %ld\n", \
+                          width, (str), \
                           (FT_Long)(arg))
 #define DUMPSTR(str, arg) \
-          fprintf(stderr, "%" DUMP_COLUMN "s = %s\n", \
-                          (str), \
-                          (arg))
+          fprintf(stream, "%*s = %s%s", \
+                          width, (str), \
+                          (arg), eol)
 #define DUMPSTRX(arg) \
-          fprintf(stderr, "%" DUMP_COLUMN "s   %s\n", \
-                          "", \
-                          (arg))
+          fprintf(stream, "%s%*s   %s%s", \
+                          prev_eol, width, "", \
+                          (arg), eol)
 
+
+/* if `format' is set, we present the data in a more friendly format */
 
 TA_Error
 TA_font_dump_parameters(FONT* font,
+                        FILE* stream,
                         Deltas* deltas,
-                        FT_Bool dehint)
+                        FT_Bool dehint,
+                        FT_Bool format)
 {
   char* s;
   char* token;
   char* saveptr;
 
+  int width = 0;
+  const char* eol = "\n";
+  const char* prev_eol = "";
 
-  fprintf(stderr, "TTF_autohint parameters\n"
-                  "=======================\n"
-                  "\n");
+
+  if (format)
+  {
+    fprintf(stream, "TTF_autohint parameters\n"
+                    "=======================\n"
+                    "\n");
+    width = 33;
+  }
 
   if (dehint)
   {
-    DUMPVAL("dehint",
-            font->dehint);
+    if (format)
+      DUMPVAL("dehint",
+              font->dehint);
     return TA_Err_Ok;
   }
 
@@ -99,6 +110,12 @@ TA_font_dump_parameters(FONT* font,
     return FT_Err_Out_Of_Memory;
 
   /* show delta exceptions data line by line */
+  if (!format)
+  {
+    eol = "";
+    prev_eol = "; \\\n";
+  }
+
   token = strtok_r(s, "\n", &saveptr);
   DUMPSTR("delta exceptions", token);
 
@@ -110,6 +127,8 @@ TA_font_dump_parameters(FONT* font,
 
     DUMPSTRX(token);
   }
+  if (!format)
+    fprintf(stream, "\n");
 
   free(s);
 
