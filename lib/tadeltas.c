@@ -12,8 +12,8 @@
  * with the ttfautohint library.
  */
 
-#include <ta.h>
-#include <tadeltas.h>
+#include "ta.h"
+
 #include <locale.h>
 #include <errno.h>
 #include <ctype.h>

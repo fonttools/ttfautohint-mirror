@@ -23,14 +23,14 @@
 #include FT_TRUETYPE_TABLES_H
 #include FT_TRUETYPE_TAGS_H
 
+#include <ttfautohint.h>
+#include <numberset.h>
+
 #include "taloader.h"
 #include "taglobal.h"
 #include "tadummy.h"
 #include "talatin.h"
-
-#include <ttfautohint.h>
-#include <numberset.h>
-#include <tadeltas.h>
+#include "tadeltas.h"
 
 
 #define TTFAUTOHINT_GLYPH ".ttfautohint"

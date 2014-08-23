@@ -12,9 +12,8 @@
  * with the ttfautohint library.
  */
 
-#define _POSIX_SOURCE /* to access `strtok_r' with glibc */
-
 #include "ta.h"
+
 #include <string.h>
 
 
