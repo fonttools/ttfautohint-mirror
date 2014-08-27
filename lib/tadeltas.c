@@ -423,7 +423,7 @@ deltas_parse_line(FONT* font,
       }
       /* possibility 2: <glyph name> `p' */
       else if ((isdigit(*token1) || isnamestart(*token1))
-               && (c == 'p' && next_is_space))
+               && (*token2 == 'p' && isspace(*(token2 + 1))))
       {
         if (!(error = get_glyph_idx(font, font_idx,
                                     &pos, &glyph_idx)))
