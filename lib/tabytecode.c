@@ -601,9 +601,9 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 
 
 static void
-TA_font_build_delta_exception(const Delta* delta,
-                              FT_UInt** delta_args,
-                              int* num_delta_args)
+build_delta_exception(const Delta* delta,
+                      FT_UInt** delta_args,
+                      int* num_delta_args)
 {
   int offset;
   int ppem;
@@ -672,7 +672,8 @@ TA_font_build_delta_exception(const Delta* delta,
 
 
 static FT_Byte*
-TA_font_build_delta_exceptions(FONT* font,
+TA_sfnt_build_delta_exceptions(SFNT* sfnt,
+                               FONT* font,
                                FT_Long idx,
                                FT_Byte* bufp)
 {
@@ -681,14 +682,15 @@ TA_font_build_delta_exceptions(FONT* font,
   int num_points;
   int i;
 
+  FT_UShort num_stack_elements;
+
   /* DELTAP[1-3] stacks for both x and y directions */
   FT_UInt* delta_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
   int num_delta_args[6] = {0, 0, 0, 0, 0, 0};
-
   FT_UInt* args = NULL;
-  FT_UInt num_args;
 
   FT_Bool need_words = 0;
+  FT_Bool need_word_counts = 0;
   FT_Bool allocated = 0;
 
   const Delta* delta;
@@ -731,7 +733,7 @@ TA_font_build_delta_exceptions(FONT* font,
     /* and the delta entries have the same order, */
     /* we don't need to test for equality of font and glyph indices: */
     /* at this very point in the code we certainly have a hit */
-    TA_font_build_delta_exception(delta, delta_args, num_delta_args);
+    build_delta_exception(delta, delta_args, num_delta_args);
 
     if (delta->point_idx > 255)
       need_words = 1;
@@ -752,7 +754,7 @@ TA_font_build_delta_exceptions(FONT* font,
 
 
       if (n > 255)
-        need_words = 1;
+        need_word_counts = 1;
 
       *(delta_args[i] + num_delta_args[i]) = n;
       num_delta_args[i]++;
@@ -760,37 +762,70 @@ TA_font_build_delta_exceptions(FONT* font,
   }
 
   /* merge delta stacks into a single one */
-  num_args = 0;
-
-  for (i = 0; i < 6; i++)
+  if (need_words
+      || (!need_words && !need_word_counts))
   {
-    FT_UInt* args_new;
-    FT_UInt num_args_new;
+    FT_UInt num_args = 0;
 
 
-    if (!num_delta_args[i])
-      continue;
-
-    num_args_new = num_args + num_delta_args[i];
-    args_new = (FT_UInt*)realloc(args, num_args_new * sizeof (FT_UInt));
-    if (!args_new)
+    for (i = 0; i < 6; i++)
     {
-      bufp = NULL;
-      goto Done;
+      FT_UInt* args_new;
+      FT_UInt num_args_new;
+
+
+      if (!num_delta_args[i])
+        continue;
+
+      num_args_new = num_args + num_delta_args[i];
+      args_new = (FT_UInt*)realloc(args, num_args_new * sizeof (FT_UInt));
+      if (!args_new)
+      {
+        bufp = NULL;
+        goto Done;
+      }
+
+      memcpy(args_new + num_args,
+             delta_args[i],
+             num_delta_args[i] * sizeof (FT_UInt));
+
+      args = args_new;
+      num_args = num_args_new;
     }
 
-    memcpy(args_new + num_args,
-           delta_args[i],
-           num_delta_args[i] * sizeof (FT_UInt));
+    num_stack_elements = num_args;
 
-    args = args_new;
-    num_args = num_args_new;
+    bufp = TA_build_push(bufp, args, num_args, need_words, 1);
   }
+  else
+  {
+    num_stack_elements = 0;
 
-  /* with most fonts it is very rare */
-  /* that any of the pushed arguments is larger than 0xFF, */
-  /* thus we refrain from further optimizing this case */
-  bufp = TA_build_push(bufp, args, num_args, need_words, 1);
+    /* stack elements are bytes, but counts need words */
+    for (i = 0; i < 6; i++)
+    {
+      int num_delta_arg;
+
+
+      if (!num_delta_args[i])
+        continue;
+
+      num_delta_arg = num_delta_args[i] - 1;
+
+      bufp = TA_build_push(bufp,
+                           delta_args[i],
+                           num_delta_arg,
+                           need_words,
+                           1);
+
+      num_stack_elements += num_delta_arg + 1;
+
+      num_delta_arg >>= 1;
+      BCI(PUSHW_1);
+      BCI(HIGH(num_delta_arg));
+      BCI(LOW(num_delta_arg));
+    }
+  }
 
   /* emit the DELTA opcodes */
   if (num_delta_args[5])
@@ -815,6 +850,8 @@ Done:
     free(delta_args[i]);
   free(args);
 
+  if (num_stack_elements > sfnt->max_stack_elements)
+    sfnt->max_stack_elements = num_stack_elements;
   return bufp;
 }
 
@@ -2509,7 +2546,7 @@ Done1:
   /* handle delta exceptions */
   if (font->deltas_data_head)
   {
-    bufp = TA_font_build_delta_exceptions(font, idx, bufp);
+    bufp = TA_sfnt_build_delta_exceptions(sfnt, font, idx, bufp);
     if (!bufp)
     {
       error = FT_Err_Out_Of_Memory;
