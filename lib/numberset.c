@@ -22,6 +22,85 @@
 #include <numberset.h>
 
 
+number_range*
+number_set_new(int start,
+               int end,
+               int min,
+               int max)
+{
+  number_range* nr;
+
+
+  nr = (number_range*)malloc(sizeof (number_range));
+  if (!nr)
+    return NUMBERSET_ALLOCATION_ERROR;
+
+  if (start > end)
+  {
+    int tmp;
+
+
+    tmp = start;
+    start = end;
+    end = tmp;
+  }
+
+  if (start < min || end > max)
+    return NUMBERSET_INVALID_RANGE;
+
+  nr->start = start;
+  nr->end = end;
+  nr->next = NULL;
+
+  return nr;
+}
+
+
+number_range*
+number_set_prepend(number_range* list,
+                   number_range* element)
+{
+  if (!element)
+    return list;
+
+  if (element->start <= list->end)
+  {
+    if (element->end < list->start)
+      return NUMBERSET_NOT_ASCENDING;
+    else
+      return NUMBERSET_OVERLAPPING_RANGES;
+  }
+
+  element->next = list;
+
+  return element;
+}
+
+
+number_range*
+number_set_reverse(number_range* list)
+{
+  number_range* cur;
+
+
+  cur = list;
+  list = NULL;
+
+  while (cur)
+  {
+    number_range* tmp;
+
+
+    tmp = cur;
+    cur = cur->next;
+    tmp->next = list;
+    list = tmp;
+  }
+
+  return list;
+}
+
+
 const char*
 number_set_parse(const char* s,
                  number_range** number_set,

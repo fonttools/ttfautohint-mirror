@@ -36,6 +36,40 @@ typedef struct number_range_
 
 
 /*
+ * Create and initialize a `number_range' object.  In case of an allocation
+ * error, the return value is NULL.
+ */
+
+number_range*
+number_set_new(int start,
+               int end,
+               int min,
+               int max);
+
+
+/*
+ * Prepend `element' to `list' of `number_range' objects, which is expected
+ * to be stored in reversed order.  Consequently, the range in `element'
+ * must be larger than the first element of `list', otherwise an error is
+ * returned.
+ *
+ * If `element' is NULL, return `list.
+ */
+
+number_range*
+number_set_prepend(number_range* list,
+                   number_range* element);
+
+
+/*
+ * Reverse a list of `number_range' objects.
+ */
+
+number_range*
+number_set_reverse(number_range* list);
+
+
+/*
  * Parse a description in string `s' for a set of non-negative integers
  * within the limits given by the input parameters `min' and `max', and
  * which consists of the following ranges, separated by commas (`n' and `m'
