@@ -873,6 +873,7 @@ TA_sfnt_build_glyph_scaler(SFNT* sfnt,
   FT_Bool need_words = 0;
   FT_Int p, q;
   FT_Int start, end;
+  FT_UShort num_storage;
   FT_UShort num_stack_elements;
 
 
@@ -938,6 +939,10 @@ TA_sfnt_build_glyph_scaler(SFNT* sfnt,
   bufp = TA_build_push(bufp, args, num_args, need_words, 1);
 
   BCI(CALL);
+
+  num_storage = sal_segment_offset;
+  if (num_storage > sfnt->max_storage)
+    sfnt->max_storage = num_storage;
 
   num_stack_elements = ADDITIONAL_STACK_ELEMENTS + num_args;
   if (num_stack_elements > sfnt->max_stack_elements)
