@@ -22,6 +22,51 @@
 #include "llrb.h" /* a red-black tree implementation */
 
 
+Deltas*
+TA_deltas_new(long font_idx,
+              long glyph_idx,
+              number_range* point_set,
+              double x_shift,
+              double y_shift,
+              number_range* ppem_set)
+{
+  Deltas* deltas;
+
+
+  deltas = (Deltas*)malloc(sizeof (Deltas));
+  if (!deltas)
+    return NULL;
+
+  deltas->font_idx = font_idx;
+  deltas->glyph_idx = glyph_idx;
+  deltas->points = number_set_reverse(point_set);
+
+  /* we round shift values to multiples of 1/(2^DELTA_SHIFT) */
+  deltas->x_shift = (char)(x_shift * DELTA_FACTOR
+                           + (x_shift > 0 ? 0.5 : -0.5));
+  deltas->y_shift = (char)(y_shift * DELTA_FACTOR
+                           + (y_shift > 0 ? 0.5 : -0.5));
+
+  deltas->ppems = number_set_reverse(ppem_set);
+  deltas->next = NULL;
+
+  return deltas;
+}
+
+
+Deltas*
+TA_deltas_prepend(Deltas* list,
+                  Deltas* element)
+{
+  if (!element)
+    return list;
+
+  element->next = list;
+
+  return element;
+}
+
+
 /* a test to check the validity of the first character */
 /* in a PostScript glyph name -- for simplicity, we include `.' also */
 

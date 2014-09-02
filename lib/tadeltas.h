@@ -87,6 +87,31 @@ typedef struct Delta_
 
 
 /*
+ * Create and initialize a `Deltas' object.  In case of an allocation error,
+ * the return value is NULL.  `point_set' and `ppem_set' are expected to be
+ * in reverse list order; `TA_deltas_new' then reverts them to normal order.
+ */
+
+Deltas*
+TA_deltas_new(long font_idx,
+              long glyph_idx,
+              number_range* point_set,
+              double x_shift,
+              double y_shift,
+              number_range* ppem_set);
+
+
+/*
+ * Prepend `element' to `list' of `Deltas' objects.  If `element' is NULL,
+ * return `list.
+ */
+
+Deltas*
+TA_deltas_prepend(Deltas* list,
+                  Deltas* element);
+
+
+/*
  * Parse a delta exceptions file.
  *
  * The format of lines in a delta exceptions file is given in
