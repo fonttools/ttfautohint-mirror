@@ -31,10 +31,6 @@ number_set_new(int start,
   number_range* nr;
 
 
-  nr = (number_range*)malloc(sizeof (number_range));
-  if (!nr)
-    return NUMBERSET_ALLOCATION_ERROR;
-
   if (start > end)
   {
     int tmp;
@@ -47,6 +43,10 @@ number_set_new(int start,
 
   if (start < min || end > max)
     return NUMBERSET_INVALID_RANGE;
+
+  nr = (number_range*)malloc(sizeof (number_range));
+  if (!nr)
+    return NUMBERSET_ALLOCATION_ERROR;
 
   nr->start = start;
   nr->end = end;
