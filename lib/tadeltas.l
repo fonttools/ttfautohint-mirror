@@ -165,6 +165,7 @@ TA_deltas_scanner_init(Deltas_Context* context,
   int flex_error;
 
   yyscan_t scanner;
+  YY_BUFFER_STATE b;
 
 
   buf_len = strlen(input);
@@ -188,7 +189,13 @@ TA_deltas_scanner_init(Deltas_Context* context,
   /* (via YY_FATAL_ERROR) in case of a (more or less) fatal error -- */
   /* a possible error handling solution is using `longjmp', cf. */
   /* https://github.com/plusvic/yara/issues/45 */
-  yy_scan_buffer(buf, buf_len, scanner);
+  b = yy_scan_buffer(buf, buf_len, scanner);
+
+  /* flex bug: those two fields are not initialized, */
+  /*           causing zillions of valgrind errors; see */
+  /*           https://sourceforge.net/p/flex/bugs/180 */
+  b->yy_bs_lineno = 0;
+  b->yy_bs_column = 0;
 
   /* only initialize fields related to the lexer */
   context->error = TA_Err_Ok;
