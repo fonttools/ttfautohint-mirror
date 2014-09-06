@@ -25,6 +25,7 @@
 %option nounput
 %option noyywrap
 %option reentrant
+%option yylineno
 
 %{
 
@@ -33,11 +34,15 @@
 
 #include "tadeltas-bison.h"
 
+/* option `yylineno' resets `yycolumn' to 0 after a newline */
+/* (since version 2.5.30, March 2003) before the next token gets read; */
+/* note we want both line number and column start with value 1 */
+
 #define YY_USER_ACTION \
-  yylloc->first_line = yylineno; \
-  yylloc->last_line = yylineno; \
+  yylloc->first_line = yylineno + 1; \
+  yylloc->last_line = yylineno + 1; \
   yylloc->first_column = yycolumn; \
-  yylloc->lasl_column = yycolumn + yyleng - 1; \
+  yylloc->last_column = yycolumn + yyleng - 1; \
   yycolumn += yyleng;
 
 #define YY_EXTRA_TYPE Deltas_Context*
@@ -105,7 +110,7 @@
   {
     /* overflow or underflow */
     yyextra->error = TA_Err_Deltas_Overflow;
-    return BAD;
+    return BAD_INTEGER;
   }
   return INTEGER;
 }
@@ -121,7 +126,7 @@
   {
     /* overflow */
     yyextra->error = TA_Err_Deltas_Overflow;
-    return BAD;
+    return BAD_REAL;
   }
   return REAL;
 }
@@ -139,7 +144,7 @@
   if (!yylval->name)
   {
     yyextra->error = TA_Err_Deltas_Allocation_Error;
-    return BAD;
+    return BAD_NAME;
   }
   return NAME;
 }
@@ -149,7 +154,7 @@
 ) {
   /* invalid input */
   yyextra->error = TA_Err_Deltas_Syntax_Error;
-  return BAD;
+  return INVALID_CHARACTER;
 }
 
 
@@ -197,8 +202,11 @@ TA_deltas_scanner_init(Deltas_Context* context,
   b->yy_bs_lineno = 0;
   b->yy_bs_column = 0;
 
-  /* only initialize fields related to the lexer */
+  /* initialize some context fields */
   context->error = TA_Err_Ok;
+
+  context->result = NULL;
+
   context->scanner = scanner;
   context->buf = buf;
   context->eof = 0;

@@ -26,7 +26,7 @@
 
 %define api.pure
 %error-verbose
-%expect 2
+%expect 3
 %glr-parser
 %lex-param { void* scanner }
 %locations
@@ -57,13 +57,22 @@ TA_deltas_error(YYLTYPE *locp,
                 Deltas_Context* context,
                 char const* msg);
 
+void
+store_error_data(YYLTYPE *locp,
+                 Deltas_Context* context,
+                 TA_Error error);
+
 
 /* calls to `yylex' in the generated bison code use `scanner' directly */
 #define scanner context->scanner
 %}
 
-%token BAD /* indicates a flex error */
+/* BAD_XXX and INVALID_CHARACTER indicate flex errors */
+%token INVALID_CHARACTER
 %token EOE
+%token <integer> BAD_INTEGER
+%token <name> BAD_NAME
+%token <real> BAD_REAL
 %token <integer> INTEGER
 %token <name> NAME
 %token <real> REAL
@@ -125,7 +134,7 @@ entry:
                              $ppem_set);
       if (!$entry)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -142,7 +151,7 @@ font_idx:
       $font_idx = $integer;
       if ($font_idx >= context->font->num_sfnts)
       {
-        context->error = TA_Err_Deltas_Invalid_Font_Index;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Font_Index);
         YYABORT;
       }
       context->font_idx = $font_idx;
@@ -158,7 +167,7 @@ glyph_idx:
       $glyph_idx = $integer;
       if ($glyph_idx >= face->num_glyphs)
       {
-        context->error = TA_Err_Deltas_Invalid_Glyph_Index;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Glyph_Index);
         YYABORT;
       }
       context->glyph_idx = $glyph_idx;
@@ -184,7 +193,7 @@ glyph_idx:
 
       if ($glyph_idx < 0)
       {
-        context->error = TA_Err_Deltas_Invalid_Glyph_Name;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Glyph_Name);
         YYABORT;
       }
       context->glyph_idx = $glyph_idx;
@@ -197,7 +206,7 @@ glyph_name:
       $glyph_name = strdup("p");
       if ($glyph_name)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -206,7 +215,7 @@ glyph_name:
       $glyph_name = strdup("x");
       if ($glyph_name)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -215,7 +224,7 @@ glyph_name:
       $glyph_name = strdup("y");
       if ($glyph_name)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -223,6 +232,11 @@ glyph_name:
     {
       /* `$NAME' was allocated in the lexer */
       $glyph_name = $NAME;
+    }
+| BAD_NAME
+    {
+      $glyph_name = $BAD_NAME;
+      YYABORT;
     }
 ;
 
@@ -237,7 +251,7 @@ point_set:
       error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
       if (error)
       {
-        context->error = TA_Err_Deltas_Invalid_Glyph;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Glyph);
         YYABORT;
       }
 
@@ -269,7 +283,7 @@ shift:
     {
       if ($real < DELTA_SHIFT_MIN || $real > DELTA_SHIFT_MAX)
       {
-        context->error = TA_Err_Deltas_Invalid_Shift;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Shift);
         YYABORT;
       }
       $shift = $real;
@@ -291,6 +305,11 @@ integer:
     { $integer = 0; }
 | INTEGER
     { $integer = $INTEGER; }
+| BAD_INTEGER
+    {
+      $integer = $BAD_INTEGER;
+      YYABORT;
+    }
 ;
 
 real:
@@ -306,6 +325,21 @@ real:
     { $real = $REAL; }
 | '-' REAL
     { $real = -$REAL; }
+| BAD_REAL
+    {
+      $real = $BAD_REAL;
+      YYABORT;
+    }
+| '+' BAD_REAL
+    {
+      $real = $BAD_REAL;
+      YYABORT;
+    }
+| '-' BAD_REAL
+    {
+      $real = -$BAD_REAL;
+      YYABORT;
+    }
 ;
 
 number_set:
@@ -322,12 +356,16 @@ number_set:
       $number_set = number_set_prepend($right_limited, $range_elems);
       if ($number_set == NUMBERSET_NOT_ASCENDING)
       {
-        context->error = TA_Err_Deltas_Ranges_Not_Ascending;
+        number_set_free($right_limited);
+        number_set_free($range_elems);
+        store_error_data(&@$, context, TA_Err_Deltas_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($number_set == NUMBERSET_OVERLAPPING_RANGES)
       {
-        context->error = TA_Err_Deltas_Overlapping_Ranges;
+        number_set_free($right_limited);
+        number_set_free($range_elems);
+        store_error_data(&@$, context, TA_Err_Deltas_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -336,12 +374,16 @@ number_set:
       $number_set = number_set_prepend($range_elems, $left_limited);
       if ($number_set == NUMBERSET_NOT_ASCENDING)
       {
-        context->error = TA_Err_Deltas_Ranges_Not_Ascending;
+        number_set_free($range_elems);
+        number_set_free($left_limited);
+        store_error_data(&@$, context, TA_Err_Deltas_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($number_set == NUMBERSET_OVERLAPPING_RANGES)
       {
-        context->error = TA_Err_Deltas_Overlapping_Ranges;
+        number_set_free($range_elems);
+        number_set_free($left_limited);
+        store_error_data(&@$, context, TA_Err_Deltas_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -357,7 +399,7 @@ unlimited:
       /* range of `$unlimited' is always valid */
       if ($unlimited == NUMBERSET_ALLOCATION_ERROR)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -372,12 +414,12 @@ right_limited:
                                       context->number_set_max);
       if ($right_limited == NUMBERSET_INVALID_RANGE)
       {
-        context->error = TA_Err_Deltas_Invalid_Range;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Range);
         YYABORT;
       }
       if ($right_limited == NUMBERSET_ALLOCATION_ERROR)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -392,12 +434,12 @@ left_limited:
                                      context->number_set_max);
       if ($left_limited == NUMBERSET_INVALID_RANGE)
       {
-        context->error = TA_Err_Deltas_Invalid_Range;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Range);
         YYABORT;
       }
       if ($left_limited == NUMBERSET_ALLOCATION_ERROR)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -411,12 +453,16 @@ range_elems[result]:
       $result = number_set_prepend($left, $range_elem);
       if ($result == NUMBERSET_NOT_ASCENDING)
       {
-        context->error = TA_Err_Deltas_Ranges_Not_Ascending;
+        number_set_free($left);
+        number_set_free($range_elem);
+        store_error_data(&@$, context, TA_Err_Deltas_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($result == NUMBERSET_OVERLAPPING_RANGES)
       {
-        context->error = TA_Err_Deltas_Overlapping_Ranges;
+        number_set_free($left);
+        number_set_free($range_elem);
+        store_error_data(&@$, context, TA_Err_Deltas_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -431,12 +477,12 @@ range_elem:
                                    context->number_set_max);
       if ($range_elem == NUMBERSET_INVALID_RANGE)
       {
-        context->error = TA_Err_Deltas_Invalid_Range;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Range);
         YYABORT;
       }
       if ($range_elem == NUMBERSET_ALLOCATION_ERROR)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -453,12 +499,12 @@ range:
                               context->number_set_max);
       if ($range == NUMBERSET_INVALID_RANGE)
       {
-        context->error = TA_Err_Deltas_Invalid_Range;
+        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Range);
         YYABORT;
       }
       if ($range == NUMBERSET_ALLOCATION_ERROR)
       {
-        context->error = TA_Err_Deltas_Allocation_Error;
+        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
         YYABORT;
       }
     }
@@ -473,10 +519,28 @@ TA_deltas_error(YYLTYPE *locp,
                 Deltas_Context* context,
                 char const* msg)
 {
-  (void)locp;
-  (void)context;
+  context->error = TA_Err_Deltas_Syntax_Error;
 
-  fprintf(stderr, "%s\n", msg);
+  context->errline_num = locp->first_line;
+  context->errline_pos_left = locp->first_column;
+  context->errline_pos_right = locp->last_column;
+
+  strncpy(context->errmsg, msg, sizeof (context->errmsg));
+}
+
+
+void
+store_error_data(YYLTYPE *locp,
+                 Deltas_Context* context,
+                 TA_Error error)
+{
+  context->error = error;
+
+  context->errline_num = locp->first_line;
+  context->errline_pos_left = locp->first_column;
+  context->errline_pos_right = locp->last_column;
+
+  context->errmsg[0] = '\0';
 }
 
 
