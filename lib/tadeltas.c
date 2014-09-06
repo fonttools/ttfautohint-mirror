@@ -296,8 +296,7 @@ get_range(char** string_p,
   else if (number_set == NUMBERSET_OVERFLOW)
     return TA_Err_Deltas_Overflow;
   else if (number_set == NUMBERSET_INVALID_RANGE)
-    /* this error code should be adjusted by the caller if necessary */
-    return TA_Err_Deltas_Invalid_Point_Range;
+    return TA_Err_Deltas_Invalid_Range;
   else if (number_set == NUMBERSET_OVERLAPPING_RANGES)
     return TA_Err_Deltas_Overlapping_Ranges;
   else if (number_set == NUMBERSET_NOT_ASCENDING)
@@ -330,8 +329,7 @@ get_shift(char** string_p,
   if (saved_errno == ERANGE)
   {
     /* *string_p = s; */
-    /* this error code should be adjusted by the caller if necessary */
-    return TA_Err_Deltas_Invalid_X_Range;
+    return TA_Err_Deltas_Invalid_Shift;
   }
 
   /* there must be a whitespace character after the number */
@@ -344,7 +342,7 @@ get_shift(char** string_p,
   if (shift < DELTA_SHIFT_MIN || shift > DELTA_SHIFT_MAX)
   {
     /* *string_p = s; */
-    return TA_Err_Deltas_Invalid_X_Range;
+    return TA_Err_Deltas_Invalid_Shift;
   }
 
   *string_p = endptr;
@@ -554,8 +552,6 @@ deltas_parse_line(FONT* font,
       /* <y shift> */
       if (!(error = get_shift(&pos, &y_shift)))
         state = HAD_Y_SHIFT;
-      if (error == TA_Err_Deltas_Invalid_X_Range)
-        error = TA_Err_Deltas_Invalid_Y_Range;
       break;
 
     case HAD_Y_SHIFT:
@@ -572,8 +568,6 @@ deltas_parse_line(FONT* font,
       if (!(error = get_range(&pos, deltas_p ? &ppems : NULL,
                               ppem_min, ppem_max, "")))
         state = HAD_PPEMS;
-      if (error == TA_Err_Deltas_Invalid_Point_Range)
-        error = TA_Err_Deltas_Invalid_Ppem_Range;
       break;
 
     case HAD_PPEMS:
