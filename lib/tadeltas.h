@@ -87,6 +87,39 @@ typedef struct Delta_
 
 
 /*
+ * This structure is used for both the parser and lexer,
+ * holding local variables and the parsing result.
+ */
+
+typedef struct Deltas_Context_
+{
+  TA_Error error;
+
+  int errline_num;
+  int errline_pos_left;
+  int errline_pos_right;
+
+  char errmsg[256];
+
+  Deltas* result;
+
+  /* flex data */
+  void* scanner;
+  char* buf;
+  int eof;
+
+  /* bison data */
+  FONT* font;
+
+  long font_idx;
+  long glyph_idx;
+
+  long number_set_min;
+  long number_set_max;
+} Deltas_Context;
+
+
+/*
  * Create and initialize a `Deltas' object.  In case of an allocation error,
  * the return value is NULL.  `point_set' and `ppem_set' are expected to be
  * in reverse list order; `TA_deltas_new' then reverts them to normal order.
@@ -109,6 +142,28 @@ TA_deltas_new(long font_idx,
 Deltas*
 TA_deltas_prepend(Deltas* list,
                   Deltas* element);
+
+
+/*
+ * Initialize the scanner data within a `Deltas_Context' object.  `input' is
+ * the delta exceptions string to be parsed.
+ *
+ * This function is defined in `tadeltas.l'.
+ */
+
+TA_Error
+TA_deltas_scanner_init(Deltas_Context* context,
+                       const char* input);
+
+
+/*
+ * Free the scanner data within a `Deltas_Context' object.
+ *
+ * This function is defined in `tadeltas.l'.
+ */
+
+void
+TA_deltas_scanner_done(Deltas_Context* context);
 
 
 /*
