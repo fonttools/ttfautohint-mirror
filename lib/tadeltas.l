@@ -199,6 +199,7 @@ TA_deltas_scanner_init(Deltas_Context* context,
   if (flex_error && errno == ENOMEM)
   {
     context->error = FT_Err_Out_Of_Memory;
+    context->errmsg = '\0';
     return;
   }
 
