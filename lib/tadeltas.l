@@ -165,23 +165,11 @@ TA_Error
 TA_deltas_scanner_init(Deltas_Context* context,
                        const char* input)
 {
-  char* buf;
-  size_t buf_len;
   int flex_error;
 
   yyscan_t scanner;
   YY_BUFFER_STATE b;
 
-
-  buf_len = strlen(input);
-  buf_len += 2; /* two bytes more at the end needed for flex */
-
-  buf = (char*)malloc(buf_len);
-  if (!buf)
-    return FT_Err_Out_Of_Memory;
-  strncpy(buf, input, buf_len - 2);
-  buf[buf_len - 2] = YY_END_OF_BUFFER_CHAR;
-  buf[buf_len - 1] = YY_END_OF_BUFFER_CHAR;
 
   /* this function sets `errno' in case of error */
   flex_error = yylex_init(&scanner);
@@ -194,7 +182,7 @@ TA_deltas_scanner_init(Deltas_Context* context,
   /* (via YY_FATAL_ERROR) in case of a (more or less) fatal error -- */
   /* a possible error handling solution is using `longjmp', cf. */
   /* https://github.com/plusvic/yara/issues/45 */
-  b = yy_scan_buffer(buf, buf_len, scanner);
+  b = yy_scan_string(input, scanner);
 
   /* flex bug: those two fields are not initialized, */
   /*           causing zillions of valgrind errors; see */
@@ -208,7 +196,6 @@ TA_deltas_scanner_init(Deltas_Context* context,
   context->result = NULL;
 
   context->scanner = scanner;
-  context->buf = buf;
   context->eof = 0;
 
   return TA_Err_Ok;
@@ -219,8 +206,6 @@ void
 TA_deltas_scanner_done(Deltas_Context* context)
 {
   yylex_destroy(context->scanner);
-
-  free(context->buf);
 }
 
 

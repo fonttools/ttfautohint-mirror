@@ -105,7 +105,6 @@ typedef struct Deltas_Context_
 
   /* flex data */
   void* scanner;
-  char* buf;
   int eof;
 
   /* bison data */
