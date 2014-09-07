@@ -51,7 +51,7 @@ extern "C" {
 
 /*
  * A structure to hold delta exceptions for a glyph.  A linked list of it
- * gets allocated by a successful call to `TA_deltas_parse'.  Use
+ * gets allocated by a successful call to `TA_deltas_parse_buffer'.  Use
  * `TA_deltas_free' to deallocate the list.
  *
  * `x_shift' and `y_shift' are always in the range [-8;8].
@@ -183,10 +183,10 @@ TA_deltas_scanner_done(Deltas_Context* context);
  * The returned error codes are in the range 0x200-0x2FF; see
  * `ttfautohint-errors.h' for all possible values.
  *
- * If the user provides a non-NULL `deltas' value, `TA_deltas_parse' stores
- * the parsed result in `*deltas'.  If there is no data (for example, an
- * empty string or whitespace only) nothing gets allocated, and `*deltas' is
- * set to NULL.
+ * If the user provides a non-NULL `deltas' value, `TA_deltas_parse_buffer'
+ * stores the parsed result in `*deltas'.  If there is no data (for example,
+ * an empty string or whitespace only) nothing gets allocated, and `*deltas'
+ * is set to NULL.
  *
  * In case of error, `errlinenum_p' gives the line number in the delta
  * exceptions file where the error occurred, `errline_p' the corresponding
@@ -197,11 +197,11 @@ TA_deltas_scanner_done(Deltas_Context* context);
  */
 
 TA_Error
-TA_deltas_parse(FONT* font,
-                Deltas** deltas,
-                unsigned int* errlinenum_p,
-                char** errline_p,
-                char** errpos_p);
+TA_deltas_parse_buffer(FONT* font,
+                       Deltas** deltas,
+                       unsigned int* errlinenum_p,
+                       char** errline_p,
+                       char** errpos_p);
 
 
 /*

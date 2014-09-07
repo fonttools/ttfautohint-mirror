@@ -475,7 +475,9 @@ No_check:
   }
 
   /* process delta exceptions data */
-  error = TA_deltas_parse(font, &deltas, &errlinenum, &errline, &errpos);
+  error = TA_deltas_parse_buffer(font,
+                                 &deltas,
+                                 &errlinenum, &errline, &errpos);
   if (error)
   {
     free_errline = 1;

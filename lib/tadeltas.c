@@ -826,11 +826,11 @@ get_line(char** pos)
 
 
 TA_Error
-TA_deltas_parse(FONT* font,
-                Deltas** deltas,
-                unsigned int* errlinenum_p,
-                char** errline_p,
-                char** errpos_p)
+TA_deltas_parse_buffer(FONT* font,
+                       Deltas** deltas,
+                       unsigned int* errlinenum_p,
+                       char** errline_p,
+                       char** errpos_p)
 {
   FT_Error error;
 
