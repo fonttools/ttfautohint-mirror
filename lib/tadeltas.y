@@ -603,8 +603,8 @@ main(int argc,
   context.font = &font;
 
   TA_deltas_debug = 1;
-  error = TA_deltas_scanner_init(&context, input);
-  if (error)
+  TA_deltas_scanner_init(&context, input);
+  if (context.error)
     return 0;
   TA_deltas_parse(&context);
   TA_deltas_scanner_done(&context);

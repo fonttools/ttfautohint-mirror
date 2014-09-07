@@ -107,6 +107,8 @@ TA_ERRORDEF_(Deltas_Ranges_Not_Ascending, 0x20B,
              "ranges not ascending")
 TA_ERRORDEF_(Deltas_Allocation_Error,     0x20C,
              "allocation error")
+TA_ERRORDEF_(Deltas_Flex_Error,           0x20D,
+             "internal flex error")
 
 #ifdef TA_ERROR_END_LIST
   TA_ERROR_END_LIST

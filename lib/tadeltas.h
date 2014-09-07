@@ -20,6 +20,8 @@
 extern "C" {
 #endif
 
+#include <setjmp.h>  /* for flex error handling */
+
 
 /* see the section `Managing exceptions' in chapter 6 */
 /* (`The TrueType Instruction Set') of the OpenType reference */
@@ -106,6 +108,7 @@ typedef struct Deltas_Context_
   /* flex data */
   void* scanner;
   int eof;
+  jmp_buf jump_buffer;
 
   /* bison data */
   FONT* font;
@@ -150,7 +153,7 @@ TA_deltas_prepend(Deltas* list,
  * This function is defined in `tadeltas.l'.
  */
 
-TA_Error
+void
 TA_deltas_scanner_init(Deltas_Context* context,
                        const char* input);
 

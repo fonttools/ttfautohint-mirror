@@ -47,6 +47,11 @@
 
 #define YY_EXTRA_TYPE Deltas_Context*
 
+#define YY_FATAL_ERROR(msg) TA_deltas_scanner_fatal_error(msg, yyscanner)
+
+void
+TA_deltas_scanner_fatal_error(const char* msg,
+                              yyscan_t yyscanner);
 %}
 
 
@@ -161,7 +166,25 @@
 %%
 
 
-TA_Error
+void
+TA_deltas_scanner_fatal_error(const char* msg,
+                              yyscan_t yyscanner)
+{
+  YY_EXTRA_TYPE context = yyget_extra(yyscanner);
+
+
+  context->error = TA_Err_Deltas_Flex_Error;
+  strncpy(context->errmsg, msg, sizeof (context->errmsg));
+
+  longjmp(context->jump_buffer, 1);
+
+  /* the next line, which we never reach, suppresses a warning about */
+  /* `yy_fatal_error' defined but not used */
+  yy_fatal_error(msg, yyscanner);
+}
+
+
+void
 TA_deltas_scanner_init(Deltas_Context* context,
                        const char* input)
 {
@@ -174,14 +197,24 @@ TA_deltas_scanner_init(Deltas_Context* context,
   /* this function sets `errno' in case of error */
   flex_error = yylex_init(&scanner);
   if (flex_error && errno == ENOMEM)
-    return FT_Err_Out_Of_Memory;
+  {
+    context->error = FT_Err_Out_Of_Memory;
+    return;
+  }
+
+  /* by default, flex functions simply call `exit' */
+  /* (via YY_FATAL_ERROR) in case of a (more or less) fatal error -- */
+  /* this is bad for a library, thus we use `longjmp' to catch them, */
+  /* together with a proper handler for YY_FATAL_ERROR */
+  if (setjmp(context->jump_buffer) != 0)
+  {
+    /* error and error message in `context' already stored by */
+    /* `TA_deltas_scanner_fatal_error' */
+    return;
+  }
 
   yyset_extra(context, scanner);
 
-  /* XXX unfortunately, this flex function simply calls `exit' */
-  /* (via YY_FATAL_ERROR) in case of a (more or less) fatal error -- */
-  /* a possible error handling solution is using `longjmp', cf. */
-  /* https://github.com/plusvic/yara/issues/45 */
   b = yy_scan_string(input, scanner);
 
   /* flex bug: those two fields are not initialized, */
@@ -190,15 +223,11 @@ TA_deltas_scanner_init(Deltas_Context* context,
   b->yy_bs_lineno = 0;
   b->yy_bs_column = 0;
 
-  /* initialize some context fields */
+  /* initialize some other context fields */
   context->error = TA_Err_Ok;
-
   context->result = NULL;
-
   context->scanner = scanner;
   context->eof = 0;
-
-  return TA_Err_Ok;
 }
 
 
@@ -229,8 +258,8 @@ main(void)
   YYLTYPE yylloc_param;
 
 
-  error = TA_deltas_scanner_init(&context, input);
-  if (error)
+  TA_deltas_scanner_init(&context, input);
+  if (context.error)
     return 1;
 
   yyset_debug(1, context.scanner);
