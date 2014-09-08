@@ -12,7 +12,13 @@
  * with the ttfautohint library.
  */
 
-/* lexical analyzer for parsing delta exceptions */
+/*
+ * lexical analyzer for parsing delta exceptions
+ *
+ * Lexing errors are indicated with tokens like `BAD_INTEGER'; fatal lexer
+ * errors return token `INTERNAL_FLEX_ERROR' and set `context->error' to an
+ * appropriate value.
+ */
 
 %option outfile="tadeltas-flex.c"
 %option header-file="tadeltas-flex.h"
@@ -23,6 +29,9 @@
 %option never-interactive
 %option noinput
 %option nounput
+%option noyyalloc
+%option noyyfree
+%option noyyrealloc
 %option noyywrap
 %option reentrant
 %option yylineno
@@ -50,6 +59,27 @@
 
 #define YY_FATAL_ERROR(msg) TA_deltas_scanner_fatal_error(msg, yyscanner)
 
+/* by default, `yylex' simply calls `exit' (via YY_FATAL_ERROR) */
+/* in case of a (more or less) fatal error -- */
+/* this is bad for a library, thus we use `longjmp' to catch this, */
+/* together with a proper handler for YY_FATAL_ERROR */
+
+#define YY_USER_INIT \
+          do \
+          { \
+            if (setjmp(yyextra->jump_buffer) != 0) \
+            { \
+              /* error and error message in `context' already stored by */ \
+              /* `TA_deltas_scanner_fatal_error' */ \
+              return INTERNAL_FLEX_ERROR; \
+            } \
+          } while (0)
+
+/* this macro works around flex bug to suppress a compilation warning, */
+/* cf. https://sourceforge.net/p/flex/bugs/115 */
+
+#define YY_EXIT_FAILURE ((void)yyscanner, 2)
+
 void
 TA_deltas_scanner_fatal_error(const char* msg,
                               yyscan_t yyscanner);
@@ -70,7 +100,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
      | ";"
      )+
 ) {
-  /* end of entry */ 
+  /* end of entry */
   return EOE;
 }
 
@@ -115,7 +145,6 @@ TA_deltas_scanner_fatal_error(const char* msg,
   if (errno == ERANGE)
   {
     /* overflow or underflow */
-    yyextra->error = TA_Err_Deltas_Overflow;
     return BAD_INTEGER;
   }
   return INTEGER;
@@ -131,7 +160,6 @@ TA_deltas_scanner_fatal_error(const char* msg,
   if (yylval->real && errno == ERANGE)
   {
     /* overflow */
-    yyextra->error = TA_Err_Deltas_Overflow;
     return BAD_REAL;
   }
   return REAL;
@@ -149,7 +177,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
   yylval->name = strdup(yytext);
   if (!yylval->name)
   {
-    yyextra->error = TA_Err_Deltas_Allocation_Error;
+    /* allocation error */
     return BAD_NAME;
   }
   return NAME;
@@ -159,12 +187,59 @@ TA_deltas_scanner_fatal_error(const char* msg,
 (?x: .
 ) {
   /* invalid input */
-  yyextra->error = TA_Err_Deltas_Syntax_Error;
   return INVALID_CHARACTER;
 }
 
 
 %%
+
+
+/* the following two routines set `context->error' */
+
+void*
+yyalloc(yy_size_t size,
+        yyscan_t yyscanner)
+{
+  YY_EXTRA_TYPE context;
+
+
+  void* p = malloc(size);
+  if (!p && yyscanner)
+  {
+    context = yyget_extra(yyscanner);
+    context->error = TA_Err_Deltas_Allocation_Error;
+  }
+  return p;
+}
+
+
+void*
+yyrealloc(void* ptr,
+          yy_size_t size,
+          yyscan_t yyscanner)
+{
+  YY_EXTRA_TYPE context;
+
+
+  void* p = realloc(ptr, size);
+  if (!p && yyscanner)
+  {
+    context = yyget_extra(yyscanner);
+    context->error = TA_Err_Deltas_Allocation_Error;
+  }
+  return p;
+}
+
+
+/* we reimplement this routine also to avoid a compiler warning, */
+/* cf. https://sourceforge.net/p/flex/bugs/115 */
+void
+yyfree(void* ptr,
+       yyscan_t yyscanner)
+{
+  (void)yyscanner;
+  free(ptr);
+}
 
 
 void
@@ -174,7 +249,9 @@ TA_deltas_scanner_fatal_error(const char* msg,
   YY_EXTRA_TYPE context = yyget_extra(yyscanner);
 
 
-  context->error = TA_Err_Deltas_Flex_Error;
+  /* allocation routines set a different error value */
+  if (!context->error)
+    context->error = TA_Err_Deltas_Flex_Error;
   strncpy(context->errmsg, msg, sizeof (context->errmsg));
 
   longjmp(context->jump_buffer, 1);
@@ -204,9 +281,18 @@ TA_deltas_scanner_init(Deltas_Context* context,
     return;
   }
 
-  /* by default, flex functions simply call `exit' */
+  /* initialize some context fields */
+  context->font = font;
+  context->error = TA_Err_Ok;
+  context->result = NULL;
+  context->scanner = scanner;
+  context->eof = 0;
+
+  yyset_extra(context, scanner);
+
+  /* by default, `yy_scan_bytes' simply calls `exit' */
   /* (via YY_FATAL_ERROR) in case of a (more or less) fatal error -- */
-  /* this is bad for a library, thus we use `longjmp' to catch them, */
+  /* this is bad for a library, thus we use `longjmp' to catch this, */
   /* together with a proper handler for YY_FATAL_ERROR */
   if (setjmp(context->jump_buffer) != 0)
   {
@@ -215,8 +301,6 @@ TA_deltas_scanner_init(Deltas_Context* context,
     return;
   }
 
-  yyset_extra(context, scanner);
-
   b = yy_scan_bytes(font->deltas_buf, font->deltas_len, scanner);
 
   /* flex bug: these two fields are not initialized, */
@@ -224,13 +308,6 @@ TA_deltas_scanner_init(Deltas_Context* context,
   /*           https://sourceforge.net/p/flex/bugs/180 */
   b->yy_bs_lineno = 0;
   b->yy_bs_column = 0;
-
-  /* initialize some other context fields */
-  context->font = font;
-  context->error = TA_Err_Ok;
-  context->result = NULL;
-  context->scanner = scanner;
-  context->eof = 0;
 }
 
 
@@ -255,6 +332,8 @@ int
 main(void)
 {
   TA_Error error;
+  int retval = 1;
+
   FONT font;
   Deltas_Context context;
 
@@ -268,15 +347,21 @@ main(void)
 
   TA_deltas_scanner_init(&context, &font);
   if (context.error)
-    return 1;
+    goto Exit;
 
   yyset_debug(1, context.scanner);
   while (yylex(&yylval_param, &yylloc_param, context.scanner))
-    ;
+  {
+    if (context.error)
+      goto Exit;
+  }
 
+  retval = 0;
+
+Exit:
   TA_deltas_scanner_done(&context);
 
-  return 0;
+  return retval;
 }
 
 #endif

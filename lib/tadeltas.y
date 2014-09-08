@@ -13,7 +13,13 @@
  */
 
 
-/* grammar for parsing delta exceptions */
+/*
+ * grammar for parsing delta exceptions
+ *
+ * Parsing errors that essentially belong to the lexing stage are handled
+ * with `store_error_data'.  Syntax errors and fatal lexer errors (token
+ * `INTERNAL_FLEX_ERROR') are handled with `TA_deltas_error'.
+ */
 
 /*
  * Edsko de Vries's article `Writing a Reentrant Parser with Flex and Bison'
@@ -67,8 +73,9 @@ store_error_data(YYLTYPE *locp,
 #define scanner context->scanner
 %}
 
-/* BAD_XXX and INVALID_CHARACTER indicate flex errors */
+/* BAD_XXX, INVALID_CHARACTER, and INTERNAL_FLEX_ERROR are flex errors */
 %token INVALID_CHARACTER
+%token INTERNAL_FLEX_ERROR
 %token EOE
 %token <integer> BAD_INTEGER
 %token <name> BAD_NAME
@@ -236,6 +243,7 @@ glyph_name:
 | BAD_NAME
     {
       $glyph_name = $BAD_NAME;
+      store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
       YYABORT;
     }
 ;
@@ -308,6 +316,7 @@ integer:
 | BAD_INTEGER
     {
       $integer = $BAD_INTEGER;
+      store_error_data(&@$, context, TA_Err_Deltas_Overflow);
       YYABORT;
     }
 ;
@@ -328,16 +337,19 @@ real:
 | BAD_REAL
     {
       $real = $BAD_REAL;
+      store_error_data(&@$, context, TA_Err_Deltas_Overflow);
       YYABORT;
     }
 | '+' BAD_REAL
     {
       $real = $BAD_REAL;
+      store_error_data(&@$, context, TA_Err_Deltas_Overflow);
       YYABORT;
     }
 | '-' BAD_REAL
     {
       $real = -$BAD_REAL;
+      store_error_data(&@$, context, TA_Err_Deltas_Overflow);
       YYABORT;
     }
 ;
@@ -519,13 +531,16 @@ TA_deltas_error(YYLTYPE *locp,
                 Deltas_Context* context,
                 char const* msg)
 {
-  context->error = TA_Err_Deltas_Syntax_Error;
+  /* if `error' is already set, we have a fatal flex error */
+  if (!context->error)
+  {
+    context->error = TA_Err_Deltas_Syntax_Error;
+    strncpy(context->errmsg, msg, sizeof (context->errmsg));
+  }
 
   context->errline_num = locp->first_line;
   context->errline_pos_left = locp->first_column;
   context->errline_pos_right = locp->last_column;
-
-  strncpy(context->errmsg, msg, sizeof (context->errmsg));
 }
 
 
@@ -561,6 +576,9 @@ main(int argc,
      char** argv)
 {
   TA_Error error;
+  int bison_error;
+  int retval = 1;
+
   Deltas_Context context;
   FONT font;
   SFNT sfnts[1];
@@ -572,7 +590,7 @@ main(int argc,
   if (argc != 2)
   {
     fprintf(stderr, "need an outline font as an argument\n");
-    exit(EXIT_FAILURE);
+    goto Exit0;
   }
 
   filename = argv[1];
@@ -582,7 +600,7 @@ main(int argc,
   {
     fprintf(stderr, "error while initializing FreeType library (0x%X)\n",
                     error);
-    exit(EXIT_FAILURE);
+    goto Exit0;
   }
 
   error = FT_New_Face(library, filename, 0, &face);
@@ -591,7 +609,7 @@ main(int argc,
     fprintf(stderr, "error while loading font `%s' (0x%X)\n",
                     filename,
                     error);
-    exit(EXIT_FAILURE);
+    goto Exit1;
   }
 
   /* we construct a minumum Deltas_Context */
@@ -605,18 +623,29 @@ main(int argc,
   context.font = &font;
 
   TA_deltas_debug = 1;
+
   TA_deltas_scanner_init(&context, &font);
   if (context.error)
-    return 0;
-  TA_deltas_parse(&context);
-  TA_deltas_scanner_done(&context);
+    goto Exit2;
 
+  bison_error = TA_deltas_parse(&context);
+  if (bison_error)
+    goto Exit3;
+
+  retval = 0;
+
+Exit3:
+  TA_deltas_scanner_done(&context);
   TA_deltas_free(context.result);
 
+Exit2:
   FT_Done_Face(face);
+
+Exit1:
   FT_Done_FreeType(library);
 
-  return 0;
+Exit0:
+  return retval;
 }
 
 #endif
