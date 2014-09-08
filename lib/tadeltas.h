@@ -147,15 +147,16 @@ TA_deltas_prepend(Deltas* list,
 
 
 /*
- * Initialize the scanner data within a `Deltas_Context' object.  `input' is
- * the delta exceptions string to be parsed.
+ * Initialize the scanner data within a `Deltas_Context' object.
+ * `font->delta_buf' is the delta exceptions buffer to be parsed,
+ * `font->delta_len' its length.
  *
  * This function is defined in `tadeltas.l'.
  */
 
 void
 TA_deltas_scanner_init(Deltas_Context* context,
-                       const char* input);
+                       FONT* font);
 
 
 /*

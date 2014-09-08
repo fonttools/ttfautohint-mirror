@@ -30,7 +30,6 @@
 #include "taglobal.h"
 #include "tadummy.h"
 #include "talatin.h"
-#include "tadeltas.h"
 
 
 #define TTFAUTOHINT_GLYPH ".ttfautohint"
@@ -258,6 +257,7 @@ struct FONT_
 
 #include "tatables.h"
 #include "tabytecode.h"
+#include "tadeltas.h"
 
 
 /* in file `tascript.c' */

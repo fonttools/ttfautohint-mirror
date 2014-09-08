@@ -599,11 +599,13 @@ main(int argc,
 
   font.num_sfnts = 1;
   font.sfnts = sfnts;
+  font.deltas_buf = (char*)input;
+  font.deltas_len = strlen(input);
 
   context.font = &font;
 
   TA_deltas_debug = 1;
-  TA_deltas_scanner_init(&context, input);
+  TA_deltas_scanner_init(&context, &font);
   if (context.error)
     return 0;
   TA_deltas_parse(&context);

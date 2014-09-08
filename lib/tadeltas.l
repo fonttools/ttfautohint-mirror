@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "ta.h"
 #include "tadeltas-bison.h"
 
 /* option `yylineno' resets `yycolumn' to 0 after a newline */
@@ -186,7 +187,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
 
 void
 TA_deltas_scanner_init(Deltas_Context* context,
-                       const char* input)
+                       FONT* font)
 {
   int flex_error;
 
@@ -199,7 +200,7 @@ TA_deltas_scanner_init(Deltas_Context* context,
   if (flex_error && errno == ENOMEM)
   {
     context->error = FT_Err_Out_Of_Memory;
-    context->errmsg = '\0';
+    context->errmsg[0] = '\0';
     return;
   }
 
@@ -216,15 +217,16 @@ TA_deltas_scanner_init(Deltas_Context* context,
 
   yyset_extra(context, scanner);
 
-  b = yy_scan_string(input, scanner);
+  b = yy_scan_bytes(font->deltas_buf, font->deltas_len, scanner);
 
-  /* flex bug: those two fields are not initialized, */
+  /* flex bug: these two fields are not initialized, */
   /*           causing zillions of valgrind errors; see */
   /*           https://sourceforge.net/p/flex/bugs/180 */
   b->yy_bs_lineno = 0;
   b->yy_bs_column = 0;
 
   /* initialize some other context fields */
+  context->font = font;
   context->error = TA_Err_Ok;
   context->result = NULL;
   context->scanner = scanner;
@@ -253,13 +255,18 @@ int
 main(void)
 {
   TA_Error error;
+  FONT font;
   Deltas_Context context;
 
   YYSTYPE yylval_param;
   YYLTYPE yylloc_param;
 
 
-  TA_deltas_scanner_init(&context, input);
+  /* we only need the delta exceptions buffer */
+  font.deltas_buf = (char*)input;
+  font.deltas_len = strlen(input);
+
+  TA_deltas_scanner_init(&context, &font);
   if (context.error)
     return 1;
 
