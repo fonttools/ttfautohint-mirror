@@ -71,6 +71,17 @@ number_set_prepend(number_range* list,
       return NUMBERSET_OVERLAPPING_RANGES;
   }
 
+  if (list
+      && element->start == list->end + 1)
+  {
+    /* merge adjacent ranges */
+    list->end = element->end;
+
+    free(element);
+
+    return list;
+  }
+
   element->next = list;
 
   return element;

@@ -49,10 +49,12 @@ number_set_new(int start,
 
 
 /*
- * Prepend `element' to `list' of `number_range' objects, which is expected
- * to be stored in reversed order.  Consequently, the range in `element'
- * must be larger than the first element of `list', otherwise an error is
- * returned.
+ * Prepend a single `number_range' object `element' to `list' of
+ * `number_range' objects, which might be NULL.  `list' is expected to be
+ * stored in reversed order; consequently, the range in `element' must be
+ * larger than the first element of `list', otherwise an error is returned.
+ * If possible, the ranges of `element' and the first element of `list' are
+ * merged, in which case `element' gets deallocated.
  *
  * If `element' is NULL, return `list.
  */
