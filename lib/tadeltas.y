@@ -107,6 +107,26 @@ store_error_data(YYLTYPE *locp,
 %destructor { TA_deltas_free($$); } <deltas>
 %destructor { number_set_free($$); } <range>
 
+%printer { fprintf(yyoutput, "`%ld'", $$); } <integer>
+%printer { fprintf(yyoutput, "`%s'", $$); } <name>
+%printer { fprintf(yyoutput, "`%g'", $$); } <real>
+%printer {
+           char* s;
+           number_range* nr;
+
+
+           nr = number_set_reverse($$);
+           s = number_set_show(nr, -1, -1);
+           (void)number_set_reverse(nr);
+           if (s)
+           {
+             fprintf(yyoutput, "`%s'", s);
+             free(s);
+           }
+           else
+             fprintf(yyoutput, "allocation error");
+         } <range>
+
 
 %%
 
