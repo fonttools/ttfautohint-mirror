@@ -17,8 +17,10 @@
  * grammar for parsing delta exceptions
  *
  * Parsing errors that essentially belong to the lexing stage are handled
- * with `store_error_data'.  Syntax errors and fatal lexer errors (token
- * `INTERNAL_FLEX_ERROR') are handled with `TA_deltas_error'.
+ * with `store_error_data'; in case the lexer detects an error, it returns
+ * the right token type but sets `context->error'.  Syntax errors and fatal
+ * lexer errors (token `INTERNAL_FLEX_ERROR') are handled with
+ * `TA_deltas_error'.
  */
 
 /*
@@ -32,7 +34,7 @@
 
 %define api.pure
 %error-verbose
-%expect 3
+%expect 2
 %glr-parser
 %lex-param { void* scanner }
 %locations
@@ -48,6 +50,7 @@
 }
 
 %union {
+  char character;
   long integer;
   char* name;
   number_range* range;
@@ -73,14 +76,11 @@ store_error_data(YYLTYPE *locp,
 #define scanner context->scanner
 %}
 
-/* BAD_XXX, INVALID_CHARACTER, and INTERNAL_FLEX_ERROR are flex errors */
-%token INVALID_CHARACTER
-%token INTERNAL_FLEX_ERROR
+/* INVALID_CHARACTER and INTERNAL_FLEX_ERROR are flex errors */
 %token EOE
-%token <integer> BAD_INTEGER
-%token <name> BAD_NAME
-%token <real> BAD_REAL
 %token <integer> INTEGER
+%token INTERNAL_FLEX_ERROR "internal flex error"
+%token <character> INVALID_CHARACTER "invalid character"
 %token <name> NAME
 %token <real> REAL
 
@@ -126,7 +126,7 @@ store_error_data(YYLTYPE *locp,
            else
              fprintf(yyoutput, "allocation error");
          } <range>
-
+%printer { fprintf(yyoutput, "`%c'", $$); } INVALID_CHARACTER
 
 %%
 
@@ -259,13 +259,14 @@ glyph_name:
 | NAME
     {
       /* `$NAME' was allocated in the lexer */
+      if (context->error)
+      {
+        /* lexing error */
+        store_error_data(&@$, context, context->error);
+        YYABORT;
+      }
+
       $glyph_name = $NAME;
-    }
-| BAD_NAME
-    {
-      $glyph_name = $BAD_NAME;
-      store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
-      YYABORT;
     }
 ;
 
@@ -333,46 +334,36 @@ integer:
   '0'
     { $integer = 0; }
 | INTEGER
-    { $integer = $INTEGER; }
-| BAD_INTEGER
     {
-      $integer = $BAD_INTEGER;
-      store_error_data(&@$, context, TA_Err_Deltas_Overflow);
-      YYABORT;
+      if (context->error)
+      {
+        /* lexing error */
+        store_error_data(&@$, context, context->error);
+        YYABORT;
+      }
+
+      $integer = $INTEGER;
     }
 ;
 
-real:
+real[result]:
   integer
-    { $real = $integer; }
-| '+' integer
-    { $real = $integer; }
-| '-' integer
-    { $real = -$integer; }
+    { $result = $integer; }
 | REAL
-    { $real = $REAL; }
-| '+' REAL
-    { $real = $REAL; }
-| '-' REAL
-    { $real = -$REAL; }
-| BAD_REAL
     {
-      $real = $BAD_REAL;
-      store_error_data(&@$, context, TA_Err_Deltas_Overflow);
-      YYABORT;
+      if (context->error)
+      {
+        /* lexing error */
+        store_error_data(&@$, context, context->error);
+        YYABORT;
+      }
+
+      $result = $REAL;
     }
-| '+' BAD_REAL
-    {
-      $real = $BAD_REAL;
-      store_error_data(&@$, context, TA_Err_Deltas_Overflow);
-      YYABORT;
-    }
-| '-' BAD_REAL
-    {
-      $real = -$BAD_REAL;
-      store_error_data(&@$, context, TA_Err_Deltas_Overflow);
-      YYABORT;
-    }
+| '+' real[unsigned]
+    { $result = $unsigned; }
+| '-' real[unsigned]
+    { $result = -$unsigned; }
 ;
 
 number_set:
@@ -587,7 +578,7 @@ const char* input =
   "\n"
   "# 0 a p 1-3 x 0.3 y -0.2 @ 20-30; \\\n"
   "0 exclam p 2-4 x 0.7 y -0.4 @ 6,7,9,10,11; \\\n"
-  "a p x 12 x 0.5 @ 23-25";
+  "a p / 12 x 0.5 @ 23-25";
 
 
 #undef scanner

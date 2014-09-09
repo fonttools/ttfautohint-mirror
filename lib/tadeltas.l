@@ -15,9 +15,8 @@
 /*
  * lexical analyzer for parsing delta exceptions
  *
- * Lexing errors are indicated with tokens like `BAD_INTEGER'; fatal lexer
- * errors return token `INTERNAL_FLEX_ERROR' and set `context->error' to an
- * appropriate value.
+ * Lexing errors are indicated by setting `context->error' to an appropriate
+ * value; fatal lexer errors return token `INTERNAL_FLEX_ERROR'.
  */
 
 %option outfile="tadeltas-flex.c"
@@ -145,7 +144,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
   if (errno == ERANGE)
   {
     /* overflow or underflow */
-    return BAD_INTEGER;
+    yyextra->error = TA_Err_Deltas_Overflow;
   }
   return INTEGER;
 }
@@ -160,7 +159,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
   if (yylval->real && errno == ERANGE)
   {
     /* overflow */
-    return BAD_REAL;
+    yyextra->error = TA_Err_Deltas_Overflow;
   }
   return REAL;
 }
@@ -178,7 +177,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
   if (!yylval->name)
   {
     /* allocation error */
-    return BAD_NAME;
+    yyextra->error = TA_Err_Deltas_Allocation_Error;
   }
   return NAME;
 }
@@ -187,6 +186,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
 (?x: .
 ) {
   /* invalid input */
+  yylval->character = yytext[0];
   return INVALID_CHARACTER;
 }
 
