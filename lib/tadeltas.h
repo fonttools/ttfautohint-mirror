@@ -147,6 +147,14 @@ TA_deltas_prepend(Deltas* list,
 
 
 /*
+ * Reverse a list of `Deltas' objects.
+ */
+
+Deltas*
+TA_deltas_reverse(Deltas* list);
+
+
+/*
  * Initialize the scanner data within a `Deltas_Context' object.
  * `font->delta_buf' is the delta exceptions buffer to be parsed,
  * `font->delta_len' its length.

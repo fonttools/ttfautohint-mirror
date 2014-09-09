@@ -113,12 +113,13 @@ store_error_data(YYLTYPE *locp,
 
 /* `number_range' list elements are stored in reversed order; */
 /* the call to `TA_deltas_new' fixes this */
-/* (`Deltas' list elements are stored in reversed order, too, */
-/* but they don't need to be sorted so we don't care */
+
+/* `Deltas' list elements are stored in reversed order, too; */
+/* this gets fixed by an explicit call to `TA_deltas_reverse' */
 
 start:
   input
-    { context->result = $input; }
+    { context->result = TA_deltas_reverse($input); }
 ;
 
 input[result]:
@@ -566,7 +567,7 @@ const char* input =
   "\n"
   "# 0 a p 1-3 x 0.3 y -0.2 @ 20-30; \\\n"
   "0 exclam p 2-4 x 0.7 y -0.4 @ 6,7,9,10,11; \\\n"
-  "a p 12345678901234567890 x 0.5 @ 23-25";
+  "a p x 12 x 0.5 @ 23-25";
 
 
 #undef scanner

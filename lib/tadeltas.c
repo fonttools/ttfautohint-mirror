@@ -67,6 +67,30 @@ TA_deltas_prepend(Deltas* list,
 }
 
 
+Deltas*
+TA_deltas_reverse(Deltas* list)
+{
+  Deltas* cur;
+
+
+  cur = list;
+  list = NULL;
+
+  while (cur)
+  {
+    Deltas* tmp;
+
+
+    tmp = cur;
+    cur = cur->next;
+    tmp->next = list;
+    list = tmp;
+  }
+
+  return list;
+}
+
+
 /* a test to check the validity of the first character */
 /* in a PostScript glyph name -- for simplicity, we include `.' also */
 
