@@ -624,15 +624,13 @@ main(int argc,
     goto Exit1;
   }
 
-  /* we construct a minumum Deltas_Context */
+  /* we construct a minumum `Font' object */
   sfnts[0].face = face;
 
   font.num_sfnts = 1;
   font.sfnts = sfnts;
   font.deltas_buf = (char*)input;
   font.deltas_len = strlen(input);
-
-  context.font = &font;
 
   TA_deltas_debug = 1;
 
