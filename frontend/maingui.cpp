@@ -880,11 +880,12 @@ gui_error(TA_Error error,
     QMessageBox::warning(
       data->gui,
       "TTFautohint",
-      QString::fromLocal8Bit("%1:%2: %3 (0x%4)<br>"
-                             "<tt>  %5<br>"
-                             "  %6</tt>")
+      QString::fromLocal8Bit("%1:%2:%3: %4 (0x%5)<br>"
+                             "<tt>  %6<br>"
+                             "  %7</tt>")
                              .arg(data->deltas_name)
                              .arg(errlinenum)
+                             .arg(int(errpos - errline + 1))
                              .arg(error_string)
                              .arg(error, 2, 16, QLatin1Char('0'))
                              .arg(errline)
@@ -958,8 +959,8 @@ again:
 
   TA_Info_Func info_func = info;
   GUI_Progress_Data gui_progress_data = {-1, true, &dialog};
-  GUI_Error_Data gui_error_data = { this, locale, output_name, deltas_name,
-                                    &ignore_restrictions, false };
+  GUI_Error_Data gui_error_data = {this, locale, output_name, deltas_name,
+                                   &ignore_restrictions, false};
   Info_Data info_data;
 
   info_data.data = NULL; // must be deallocated after use

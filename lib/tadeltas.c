@@ -956,9 +956,7 @@ Fail:
       else
         auxbuf[0] = '\0';
 
-      ret = asprintf(error_string_p, "%d:%d: %s%s",
-                     context.errline_num,
-                     context.errline_pos_left,
+      ret = asprintf(error_string_p, "%s%s",
                      *context.errmsg ? context.errmsg
                                      : TA_get_error_message(context.error),
                      auxbuf);

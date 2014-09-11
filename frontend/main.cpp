@@ -132,14 +132,22 @@ progress(long curr_idx,
 }
 
 
+typedef struct Error_Data_
+{
+  const char* deltas_name;
+} Error_Data;
+
+
 void
 err(TA_Error error,
     const char* error_string,
-    unsigned int /* linenum */,
-    const char* line,
+    unsigned int errlinenum,
+    const char* errline,
     const char* errpos,
-    void* /* error_data */)
+    void* user)
 {
+  Error_Data* data = static_cast<Error_Data*>(user);
+
   if (!error)
     return;
 
@@ -187,15 +195,28 @@ err(TA_Error error,
       fprintf(stderr, "An error with code 0x%03x occurred"
                         " while parsing the argument of option `-X'",
                       error);
-      fprintf(stderr, (error_string || line) ? ":\n" : ".\n");
-    }
+      fprintf(stderr, errline ? ":\n" : ".\n");
 
-    if (error_string)
-      fprintf(stderr, "  %s\n", error_string);
-    if (line)
-      fprintf(stderr, "  %s\n", line);
-    if (errpos && line)
-      fprintf(stderr, "  %*s\n", int(errpos - line + 1), "^");
+      if (errline)
+        fprintf(stderr, "  %s\n", errline);
+      if (errpos && errline)
+        fprintf(stderr, "  %*s\n", int(errpos - errline + 1), "^");
+    }
+    else if (error >= 0x200 && error < 0x300)
+    {
+      fprintf(stderr, "%s:", data->deltas_name);
+      if (errlinenum)
+        fprintf(stderr, "%d:", errlinenum);
+      if (errpos && errline)
+        fprintf(stderr, "%d:", int(errpos - errline + 1));
+      if (error_string)
+        fprintf(stderr, " %s", error_string);
+      fprintf(stderr, " (0x%02X)\n", error);
+      if (errline)
+        fprintf(stderr, "  %s\n", errline);
+      if (errpos && errline)
+        fprintf(stderr, "  %*s\n", int(errpos - errline + 1), "^");
+    }
   }
 }
 
@@ -875,6 +896,7 @@ main(int argc,
     deltas = NULL;
 
   Progress_Data progress_data = {-1, 1, 0};
+  Error_Data error_data = {deltas_name};
   Info_Data info_data;
 
   if (no_info)
@@ -933,7 +955,7 @@ main(int argc,
                  "gray-strong-stem-width, gdi-cleartype-strong-stem-width,"
                  "dw-cleartype-strong-stem-width,"
                  "progress-callback, progress-callback-data,"
-                 "error-callback,"
+                 "error-callback, error-callback-data,"
                  "info-callback, info-callback-data,"
                  "ignore-restrictions, windows-compatibility,"
                  "adjust-subglyphs, hint-composites,"
@@ -945,7 +967,7 @@ main(int argc,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                  dw_cleartype_strong_stem_width,
                  progress_func, &progress_data,
-                 err_func,
+                 err_func, &error_data,
                  info_func, &info_data,
                  ignore_restrictions, windows_compatibility,
                  adjust_subglyphs, hint_composites,
