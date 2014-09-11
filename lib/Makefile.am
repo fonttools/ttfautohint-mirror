@@ -20,6 +20,12 @@ noinst_LTLIBRARIES = \
 libnumberset_la_SOURCES = \
   numberset.c numberset.h
 
+# We have to bypass automake's default handling of flex (.l) and bison (.y)
+# files, since such files are always treated as traditional lex and yacc
+# files, not allowing for flex and bison extensions.  For this reason, we
+# call our source files `tadeltas.flex' and `tadeltas.bison' and write
+# explicit dependency rules.
+
 libttfautohint_la_SOURCES = \
   llrb.h \
   ta.h \
@@ -28,6 +34,8 @@ libttfautohint_la_SOURCES = \
   tacover.h \
   tacvt.c \
   tadeltas.c tadeltas.h \
+  tadeltas-flex-wrapper.c tadeltas-flex.h \
+  tadeltas-bison.c tadeltas-bison.h \
   tadsig.c \
   tadummy.c tadummy.h \
   tadump.c \
@@ -71,12 +79,15 @@ libttfautohint_la_LIBADD = \
   $(HARFBUZZ_LIBS)
 
 BUILT_SOURCES = \
-  tablue.c tablue.h
+  tablue.c tablue.h \
+  tadeltas-flex.c tadeltas-flex.h \
+  tadeltas-bison.c tadeltas-bison.h
 
 EXTRA_DIST = \
   afblue.pl \
   tablue.cin tablue.hin \
-  tablue.dat
+  tablue.dat \
+  tadeltas.flex tadeltas.bison tadeltas-flex.c
 
 tablue.c: tablue.dat tablue.cin
 	$(AM_V_GEN)rm -f $@-t $@ \
@@ -91,5 +102,25 @@ tablue.h: tablue.dat tablue.hin
 	                  < $(srcdir)/tablue.hin \
 	                  > $@-t \
 	&& mv $@-t $@
+
+TA_V_FLEX = $(TA_V_FLEX_@AM_V@)
+TA_V_FLEX_ = $(TA_V_FLEX_@AM_DEFAULT_V@)
+TA_V_FLEX_0 = @echo "  FLEX    " $@;
+
+# we use `touch' to make the created .h file newer than the created .c file
+
+tadeltas-flex.c tadeltas-flex.h: tadeltas.flex
+	$(TA_V_FLEX)$(FLEX) tadeltas.flex \
+	&& touch tadeltas-flex.h
+tadeltas-flex.h: tadeltas-flex.c
+
+TA_V_BISON = $(TA_V_BISON_@AM_V@)
+TA_V_BISON_ = $(TA_V_BISON_@AM_DEFAULT_V@)
+TA_V_BISON_0 = @echo "  BISON   " $@;
+
+tadeltas-bison.c tadeltas-bison.h: tadeltas.bison
+	$(TA_V_BISON)$(BISON) tadeltas.bison \
+	&& touch tadeltas-bison.h
+tadeltas-bison.h: tadeltas-bison.c
 
 ## end of Makefile.am

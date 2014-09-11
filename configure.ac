@@ -38,6 +38,9 @@ PKG_PROG_PKG_CONFIG([0.24])
 # however, MinGW doesn't have it yet (May 2012)
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
+AC_PATH_PROG([BISON], [bison])
+AC_PATH_PROG([FLEX], [flex])
+
 gl_EARLY
 gl_INIT
 
