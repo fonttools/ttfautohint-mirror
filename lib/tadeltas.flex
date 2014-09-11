@@ -1,4 +1,4 @@
-/* tadeltas.l */
+/* tadeltas.flex */
 
 /*
  * Copyright (C) 2014 by Werner Lemberg.
@@ -18,6 +18,9 @@
  * Lexing errors are indicated by setting `context->error' to an appropriate
  * value; fatal lexer errors return token `INTERNAL_FLEX_ERROR'.
  */
+
+/* you should use flex version >= 2.5.39 to avoid various buglets */
+/* that don't have work-arounds */
 
 %option outfile="tadeltas-flex.c"
 %option header-file="tadeltas-flex.h"
@@ -366,4 +369,4 @@ Exit:
 
 #endif
 
-/* end of tadeltas.l */
+/* end of tadeltas.flex */

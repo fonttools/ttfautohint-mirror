@@ -1,4 +1,4 @@
-/* tadeltas.y */
+/* tadeltas.bison */
 
 /*
  * Copyright (C) 2014 by Werner Lemberg.
@@ -40,7 +40,7 @@
 %locations
 %name-prefix "TA_deltas_"
 %parse-param { Deltas_Context* context }
-%require "2.5"
+%require "2.5" /* note that some versions < 2.7 use `//' in comments */
 
 %code requires {
 #include "ta.h"
@@ -571,7 +571,7 @@ store_error_data(YYLTYPE *locp,
 }
 
 
-#if 1
+#if 0
 
 const char* input =
   "# Test\n"
@@ -660,4 +660,4 @@ Exit0:
 
 #endif
 
-/* end of tadeltas.y */
+/* end of tadeltas.bison */
