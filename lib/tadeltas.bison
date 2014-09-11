@@ -67,7 +67,7 @@ TA_deltas_error(YYLTYPE *locp,
                 char const* msg);
 
 void
-store_error_data(YYLTYPE *locp,
+store_error_data(const YYLTYPE *locp,
                  Deltas_Context* context,
                  TA_Error error);
 
@@ -78,11 +78,11 @@ store_error_data(YYLTYPE *locp,
 
 /* INVALID_CHARACTER and INTERNAL_FLEX_ERROR are flex errors */
 %token EOE
-%token <integer> INTEGER
+%token <integer> INTEGER "integer number"
 %token INTERNAL_FLEX_ERROR "internal flex error"
 %token <character> INVALID_CHARACTER "invalid character"
-%token <name> NAME
-%token <real> REAL
+%token <name> NAME "glyph name"
+%token <real> REAL "real number"
 
 %type <deltas> entry
 %type <integer> font_idx
@@ -382,14 +382,14 @@ number_set:
       {
         number_set_free($right_limited);
         number_set_free($range_elems);
-        store_error_data(&@$, context, TA_Err_Deltas_Ranges_Not_Ascending);
+        store_error_data(&@3, context, TA_Err_Deltas_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($number_set == NUMBERSET_OVERLAPPING_RANGES)
       {
         number_set_free($right_limited);
         number_set_free($range_elems);
-        store_error_data(&@$, context, TA_Err_Deltas_Overlapping_Ranges);
+        store_error_data(&@3, context, TA_Err_Deltas_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -400,14 +400,14 @@ number_set:
       {
         number_set_free($range_elems);
         number_set_free($left_limited);
-        store_error_data(&@$, context, TA_Err_Deltas_Ranges_Not_Ascending);
+        store_error_data(&@3, context, TA_Err_Deltas_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($number_set == NUMBERSET_OVERLAPPING_RANGES)
       {
         number_set_free($range_elems);
         number_set_free($left_limited);
-        store_error_data(&@$, context, TA_Err_Deltas_Overlapping_Ranges);
+        store_error_data(&@3, context, TA_Err_Deltas_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -479,14 +479,14 @@ range_elems[result]:
       {
         number_set_free($left);
         number_set_free($range_elem);
-        store_error_data(&@$, context, TA_Err_Deltas_Ranges_Not_Ascending);
+        store_error_data(&@3, context, TA_Err_Deltas_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($result == NUMBERSET_OVERLAPPING_RANGES)
       {
         number_set_free($left);
         number_set_free($range_elem);
-        store_error_data(&@$, context, TA_Err_Deltas_Overlapping_Ranges);
+        store_error_data(&@3, context, TA_Err_Deltas_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -557,7 +557,7 @@ TA_deltas_error(YYLTYPE *locp,
 
 
 void
-store_error_data(YYLTYPE *locp,
+store_error_data(const YYLTYPE *locp,
                  Deltas_Context* context,
                  TA_Error error)
 {
