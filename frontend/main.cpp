@@ -183,10 +183,13 @@ err(TA_Error error,
                         " while autohinting fonts",
                       error);
     else if (error >= 0x100 && error < 0x200)
+    {
       fprintf(stderr, "An error with code 0x%03x occurred"
                         " while parsing the argument of option `-X'",
                       error);
-    fprintf(stderr, (error_string || line) ? ":\n" : ".\n");
+      fprintf(stderr, (error_string || line) ? ":\n" : ".\n");
+    }
+
     if (error_string)
       fprintf(stderr, "  %s\n", error_string);
     if (line)
@@ -857,9 +860,7 @@ main(int argc,
   FILE* deltas = NULL;
   if (deltas_name)
   {
-    /* inspite of being a text file we open it in binary mode */
-    /* to make `TTF_autohint' handle different EOL conventions gracefully */
-    deltas = fopen(deltas_name, "rb");
+    deltas = fopen(deltas_name, "r");
     if (!deltas)
     {
       fprintf(stderr,

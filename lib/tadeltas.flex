@@ -96,9 +96,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
   /* skip whitespace */
 }
 
-(?x: ( "\r\n"
-     | "\n"
-     | "\r"
+(?x: ( "\n"
      | ";"
      )+
 ) {
@@ -117,9 +115,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
     yyterminate();
 }
 
-(?x: ( "\\\r\n"
-     | "\\\n"
-     | "\\\r"
+(?x: ( "\\\n"
      )+
 ) {
   /* skip escaped newline */

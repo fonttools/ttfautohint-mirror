@@ -658,11 +658,9 @@ Main_GUI::open_files(const QString& input_name,
     return 0;
   }
 
-  // inspite of being a text file we open it in binary mode
-  // to make `TTF_autohint' handle different EOL conventions gracefully
   if (!deltas_name.isEmpty())
   {
-    *deltas = fopen(qPrintable(deltas_name), "rb");
+    *deltas = fopen(qPrintable(deltas_name), "r");
     if (!*deltas)
     {
       strerror_r(errno, buf, buf_len);
