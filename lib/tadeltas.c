@@ -20,7 +20,7 @@
 #include <math.h>
 
 #include "llrb.h" /* a red-black tree implementation */
-
+#include "tadeltas-bison.h"
 
 Deltas*
 TA_deltas_new(long font_idx,
@@ -849,101 +849,139 @@ get_line(char** pos)
 }
 
 
+/* Parse delta exceptions in `font->deltas_buf'. */
+
 TA_Error
 TA_deltas_parse_buffer(FONT* font,
                        Deltas** deltas,
+                       char** error_string_p,
                        unsigned int* errlinenum_p,
                        char** errline_p,
                        char** errpos_p)
 {
-  FT_Error error;
+  int bison_error;
 
-  Deltas* cur;
-  Deltas* new_deltas;
-  Deltas* tmp;
-  Deltas* list;
-
-  unsigned int linenum;
-
-  char* bufpos;
-  char* bufpos_old;
+  Deltas_Context context;
 
 
   /* nothing to do if no data */
   if (!font->deltas_buf)
   {
-    *deltas = NULL;
+    if (deltas)
+      *deltas = NULL;
     return TA_Err_Ok;
   }
 
-  bufpos = font->deltas_buf;
-  bufpos_old = bufpos;
+  TA_deltas_scanner_init(&context, font);
+  if (context.error)
+    goto Fail;
+  /* this is `yyparse' in disguise */
+  bison_error = TA_deltas_parse(&context);
+  TA_deltas_scanner_done(&context);
 
-  linenum = 0;
-  cur = NULL;
-
-  /* parse line by line */
-  for (;;)
+  if (bison_error)
   {
-    char* line;
-    char* errpos;
+    if (bison_error == 2)
+      context.error = TA_Err_Deltas_Allocation_Error;
 
+Fail:
+    if (deltas)
+      *deltas = NULL;
 
-    line = get_line(&bufpos);
-    if (!line)
+    if (context.error == TA_Err_Deltas_Allocation_Error
+        || context.error == TA_Err_Deltas_Flex_Error)
     {
-      if (bufpos == bufpos_old) /* end of data */
-        break;
-
-      *errlinenum_p = linenum;
+      *errlinenum_p = 0;
       *errline_p = NULL;
       *errpos_p = NULL;
-
-      return FT_Err_Out_Of_Memory;
+      if (context.errmsg)
+        *error_string_p = strdup(context.errmsg);
+      else
+        *error_string_p = strdup(TA_get_error_message(context.error));
     }
-
-    error = deltas_parse_line(font,
-                              line,
-                              &errpos,
-                              deltas ? &new_deltas : NULL,
-                              DELTA_PPEM_MIN, DELTA_PPEM_MAX);
-    if (error)
+    else
     {
-      *errlinenum_p = linenum;
-      *errline_p = line;
-      *errpos_p = errpos;
+      int i, ret;
+      char auxbuf[128];
 
-      TA_deltas_free(cur);
+      char* buf_end;
+      char* p_start;
+      char* p_end;
 
-      return error;
+
+      /* construct data for `errline_p' */
+      buf_end = font->deltas_buf + font->deltas_len;
+
+      p_start = font->deltas_buf;
+      if (context.errline_num > 1)
+      {
+        i = 1;
+        while (p_start < buf_end)
+        {
+          if (*p_start++ == '\n')
+          {
+            i++;
+            if (i == context.errline_num)
+              break;
+          }
+        }
+      }
+
+      p_end = p_start;
+      while (p_end < buf_end)
+      {
+        if (*p_end == '\n')
+          break;
+        p_end++;
+      }
+      *errline_p = strndup(p_start, p_end - p_start);
+
+      /* construct data for `error_string_p' */
+      if (context.error == TA_Err_Deltas_Invalid_Font_Index)
+        sprintf(auxbuf, " (valid range is [%ld;%ld])",
+                0L,
+                font->num_sfnts);
+      else if (context.error == TA_Err_Deltas_Invalid_Glyph_Index)
+        sprintf(auxbuf, " (valid range is [%ld;%ld])",
+                0L,
+                font->sfnts[context.font_idx].face->num_glyphs);
+      else if (context.error == TA_Err_Deltas_Invalid_Shift)
+        sprintf(auxbuf, " (valid interval is [%g;%g])",
+                DELTA_SHIFT_MIN,
+                DELTA_SHIFT_MAX);
+      else if (context.error == TA_Err_Deltas_Invalid_Range)
+        sprintf(auxbuf, " (values must be within [%ld;%ld])",
+                context.number_set_min,
+                context.number_set_max);
+      else
+        auxbuf[0] = '\0';
+
+      ret = asprintf(error_string_p, "%d:%d: %s%s",
+                     context.errline_num,
+                     context.errline_pos_left,
+                     *context.errmsg ? context.errmsg
+                                     : TA_get_error_message(context.error),
+                     auxbuf);
+      if (ret == -1)
+        *error_string_p = NULL;
+
+      if (errline_p)
+        *errpos_p = *errline_p + context.errline_pos_left - 1;
+      else
+        *errpos_p = NULL;
+
+      *errlinenum_p = context.errline_num;
     }
-
-    if (deltas && new_deltas)
-    {
-      new_deltas->next = cur;
-      cur = new_deltas;
-    }
-
-    free(line);
-    linenum++;
-    bufpos_old = bufpos;
   }
-
-  /* success; now reverse list to have elements in original order */
-  list = NULL;
-
-  while (cur)
+  else
   {
-    tmp = cur;
-    cur = cur->next;
-    tmp->next = list;
-    list = tmp;
+    if (deltas)
+      *deltas = context.result;
+    else
+      TA_deltas_free(context.result);
   }
 
-  if (deltas)
-    *deltas = list;
-
-  return TA_Err_Ok;
+  return context.error;
 }
 
 

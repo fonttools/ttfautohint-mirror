@@ -49,11 +49,12 @@ TTF_autohint(const char* options,
   FT_Long i;
 
   TA_Error error;
-  const char* error_string = NULL;
+  char* error_string = NULL;
   unsigned int errlinenum = 0;
   char* errline = NULL;
   char* errpos = NULL;
   FT_Bool free_errline = 0;
+  FT_Bool free_error_string = 0;
 
   FILE* in_file = NULL;
   FILE* out_file = NULL;
@@ -477,10 +478,12 @@ No_check:
   /* process delta exceptions data */
   error = TA_deltas_parse_buffer(font,
                                  &deltas,
+                                 &error_string,
                                  &errlinenum, &errline, &errpos);
   if (error)
   {
     free_errline = 1;
+    free_error_string = 1;
     goto Err;
   }
 
@@ -675,10 +678,12 @@ Err:
   TA_font_unload(font, in_buf, out_bufp, deltas_buf);
 
 Err1:
-  error_string = TA_get_error_message(error);
+  if (!error_string)
+    error_string = (char*)TA_get_error_message(error);
 
+  /* this must be a static value */
   if (error_stringp)
-    *error_stringp = (const unsigned char*)error_string;
+    *error_stringp = (const unsigned char*)TA_get_error_message(error);
 
   if (err)
     err(error,
@@ -690,6 +695,8 @@ Err1:
 
   if (free_errline)
     free(errline);
+  if (free_error_string)
+    free(error_string);
 
   return error;
 }

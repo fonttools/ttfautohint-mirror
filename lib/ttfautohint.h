@@ -254,7 +254,8 @@ typedef int
  *     opened for reading in *binary* mode.  Mutually exclusive with
  *     `deltas-buffer`.
  *
- *     A line in a delta exceptions file or buffer has the following syntax:
+ *     An entry in a delta exceptions file or buffer has the following
+ *     syntax:
  *
  *     > *\[* font-idx *\]* glyph-id *`p`* points *\[* *`x`* x-shift *\]* *\[* *`y`* y-shift *\]* *`@`* ppems
  *
@@ -281,6 +282,11 @@ typedef int
  *     Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0].
  *     Values for *ppems* must be in the range [6;53].  Values for *points*
  *     are limited by the number of points in the glyph.
+ *
+ *     Delta exceptions entries can be either separated with newlines or
+ *     with character '`;`'.  Additionally, a line can be continued on the
+ *     next line by ending it with backslash character ('`\`').  A backslash
+ *     followed by a newline gets treated similar to a whitespace character.
  *
  *     A comment starts with character `#`; the rest of the line is ignored.
  *     An empty line is ignored also.

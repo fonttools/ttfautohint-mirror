@@ -89,35 +89,60 @@ typedef struct Delta_
 
 
 /*
- * This structure is used for both the parser and lexer,
- * holding local variables and the parsing result.
+ * This structure is used for communication with `TA_deltas_parse'.
  */
 
 typedef struct Deltas_Context_
 {
+  /* The error code returned by the parser or lexer. */
   TA_Error error;
 
+  /* If no error, this holds the parsing result. */
+  Deltas* result;
+
+  /*
+   * The parser's or lexer's error message in case of error; might be the
+   * empty string.
+   */
+  char errmsg[256];
+
+  /*
+   * In case of error, `errline_num' gives the line number of the offending
+   * line in `font->delta_buf', starting with value 1; `errline_pos_left'
+   * and `errline_pos_right' hold the left and right position of the
+   * offending token in this line, also starting with value 1.  For
+   * allocation errors or internal parser or lexer errors those values are
+   * meaningless, though.
+   */
   int errline_num;
   int errline_pos_left;
   int errline_pos_right;
 
-  char errmsg[256];
+  /*
+   * The current font index, useful for `TA_Err_Deltas_Invalid_Font_Index'.
+   */
+  long font_idx;
 
-  Deltas* result;
+  /*
+   * The current glyph index, useful for
+   * `TA_Err_Deltas_Invalid_Glyph_Index'.
+   */
+  long glyph_idx;
 
-  /* flex data */
+  /*
+   * If the returned error is `TA_Err_Deltas_Invalid_Range', these two
+   * values set up the allowed range.
+   */
+  long number_set_min;
+  long number_set_max;
+
+  /* private flex data */
   void* scanner;
   int eof;
   jmp_buf jump_buffer;
 
-  /* bison data */
+  /* private bison data */
   FONT* font;
-
-  long font_idx;
-  long glyph_idx;
-
-  long number_set_min;
-  long number_set_max;
 } Deltas_Context;
 
 
@@ -178,10 +203,10 @@ TA_deltas_scanner_done(Deltas_Context* context);
 
 
 /*
- * Parse a delta exceptions file.
+ * Parse buffer with descriptions of delta exceptions.
  *
- * The format of lines in a delta exceptions file is given in
- * `ttfautohint.h' (option `deltas-file'); the following gives more
+ * The format of lines in such a delta exceptions buffer is given in
+ * `ttfautohint.h' (option `deltas-file'); the following describes more
  * technical details, using the constants defined above.
  *
  * x shift and y shift values represent floating point numbers that get
@@ -191,25 +216,28 @@ TA_deltas_scanner_done(Deltas_Context* context);
  * [DELTA_SHIFT_MIN;DELTA_SHIFT_MAX].  Values for ppems must be in the range
  * [DELTA_PPEM_MIN;DELTA_PPEM_MAX].
  *
- * The returned error codes are in the range 0x200-0x2FF; see
- * `ttfautohint-errors.h' for all possible values.
+ * The returned error codes are 0 (TA_Err_Ok) or in the range 0x200-0x2FF;
+ * see `ttfautohint-errors.h' for all possible values.
  *
  * If the user provides a non-NULL `deltas' value, `TA_deltas_parse_buffer'
- * stores the parsed result in `*deltas'.  If there is no data (for example,
- * an empty string or whitespace only) nothing gets allocated, and `*deltas'
- * is set to NULL.
+ * stores the parsed result in `*deltas', to be freed with `TA_deltas_free'
+ * after use.  If there is no delta exceptions data (for example, an empty
+ * string or whitespace only) nothing gets allocated, and `*deltas' is set
+ * to NULL.
  *
- * In case of error, `errlinenum_p' gives the line number in the delta
- * exceptions file where the error occurred, `errline_p' the corresponding
- * line, and `errpos_p' the position in this line.  If there is no error,
- * those three values are undefined.  Both `errline_p' and `errpos_p' can be
- * NULL even in case of an error; otherwise `errline_p' must be deallocated
- * by the user.
+ * In case of error, `error_string_p' holds an error message, `errlinenum_p'
+ * gives the line number in the delta exceptions buffer where the error
+ * occurred, `errline_p' the corresponding line, and `errpos_p' the position
+ * in this line.  After use, `error_string_p' and `errline_p' must be
+ * deallocated by the user.  Note that `errline_p' and `errpos_p' can be
+ * NULL even in case of an error.  If there is no error, those four values
+ * are undefined.
  */
 
 TA_Error
 TA_deltas_parse_buffer(FONT* font,
                        Deltas** deltas,
+                       char** error_string_p,
                        unsigned int* errlinenum_p,
                        char** errline_p,
                        char** errpos_p);
