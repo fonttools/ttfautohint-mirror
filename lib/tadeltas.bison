@@ -573,6 +573,28 @@ store_error_data(const YYLTYPE *locp,
 
 #if 0
 
+/*
+ * compile this test program with
+ *
+ *   make libnumberset.la
+ *
+ *   flex -d tadeltas.flex \
+ *   && bison -t tadeltas.bison \
+ *   && gcc -g3 -O0 \
+ *          -Wall -W \
+ *          -I.. \
+ *          -I. \
+ *          -I/usr/local/include/freetype2 \
+ *          -I/usr/local/include/harfbuzz \
+ *          -L.libs \
+ *          -o tadeltas-bison \
+ *          tadeltas-bison.c \
+ *          tadeltas-flex.c \
+ *          tadeltas.c \
+ *          -lfreetype \
+ *          -lnumberset
+ */
+
 const char* input =
   "# Test\n"
   "\n"
