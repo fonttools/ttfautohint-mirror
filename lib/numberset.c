@@ -375,8 +375,11 @@ number_set_show(number_range* number_set,
 
     comma = (s_len == 1) ? "" : ", ";
 
-    if (nr->start <= min
-        && nr->end >= max)
+    if (nr->start == nr->end)
+      tmp_len = sprintf(tmp, "%s%i",
+                             comma, nr->start);
+    else if (nr->start <= min
+             && nr->end >= max)
       tmp_len = sprintf(tmp, "-");
     else if (nr->start <= min)
       tmp_len = sprintf(tmp, "-%i",
@@ -385,14 +388,8 @@ number_set_show(number_range* number_set,
       tmp_len = sprintf(tmp, "%s%i-",
                              comma, nr->start);
     else
-    {
-      if (nr->start == nr->end)
-        tmp_len = sprintf(tmp, "%s%i",
-                               comma, nr->start);
-      else
-        tmp_len = sprintf(tmp, "%s%i-%i",
-                               comma, nr->start, nr->end);
-    }
+      tmp_len = sprintf(tmp, "%s%i-%i",
+                             comma, nr->start, nr->end);
 
     s_len_new = s_len + tmp_len;
     s_new = (char*)realloc(s, s_len_new);
