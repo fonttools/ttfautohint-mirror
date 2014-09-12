@@ -179,6 +179,7 @@ TA_deltas_show(FONT* font,
                Deltas* deltas)
 {
   char* s;
+  char* s_new;
   int s_len;
 
 
@@ -194,8 +195,8 @@ TA_deltas_show(FONT* font,
   {
     char* tmp;
     int tmp_len;
-    char* s_new;
     int s_len_new;
+    char* p;
 
 
     tmp = deltas_show_line(font, &tmp_len, deltas);
@@ -205,8 +206,9 @@ TA_deltas_show(FONT* font,
       return NULL;
     }
 
-    /* append current line to buffer, followed by a newline character */
-    s_len_new = s_len + tmp_len + 1;
+    /* append current line to buffer; */
+    /* prepend `\n; \' if it is not the first line */
+    s_len_new = s_len + tmp_len + (s_len == 1 ? 0 : 4);
     s_new = (char*)realloc(s, s_len_new);
     if (!s_new)
     {
@@ -215,9 +217,17 @@ TA_deltas_show(FONT* font,
       return NULL;
     }
 
-    strcpy(s_new + s_len - 1, tmp);
-    s_new[s_len_new - 2] = '\n';
-    s_new[s_len_new - 1] = '\0';
+    p = s_new + s_len - 1;
+
+    if (s_len != 1)
+    {
+      *p++ = ';';
+      *p++ = ' ';
+      *p++ = '\\';
+      *p++ = '\n';
+    }
+
+    strcpy(p, tmp);
 
     s = s_new;
     s_len = s_len_new;
@@ -227,7 +237,17 @@ TA_deltas_show(FONT* font,
     deltas = deltas->next;
   }
 
-  return s;
+  /* append final '\n' */
+  s_new = (char*)realloc(s, s_len + 1);
+  if (!s_new)
+  {
+    free(s);
+    return NULL;
+  }
+  s_new[s_len - 1] = '\n';
+  s_new[s_len] = '\0';
+
+  return s_new;
 }
 
 
