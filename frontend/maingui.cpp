@@ -130,6 +130,12 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   fileinfo_input_file.setCaching(false);
   fileinfo_deltas_file.setCaching(false);
 
+  // XXX register translations somewhere and loop over them
+  if (QLocale::system().name() == "en_US")
+    locale = new QLocale;
+  else
+    locale = new QLocale(QLocale::C);
+
   create_layout(horizontal_layout);
   create_connections();
   create_actions();
@@ -140,12 +146,6 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   read_settings();
 
   setUnifiedTitleAndToolBarOnMac(true);
-
-  // XXX register translations somewhere and loop over them
-  if (QLocale::system().name() == "en_US")
-    locale = new QLocale;
-  else
-    locale = new QLocale(QLocale::C);
 }
 
 
