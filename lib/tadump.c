@@ -14,33 +14,140 @@
 
 #include "ta.h"
 
-#include <string.h>
+#include <stdarg.h>
+
+
+typedef struct elem_
+{
+  char* s;
+  int len;
+
+  struct elem_* next;
+} elem;
+
 
 
 #define DUMPVAL(str, arg) \
-          fprintf(stream, "%*s = %ld\n", \
-                          width, (str), \
-                          (FT_Long)(arg))
+          do \
+          { \
+            list = list_prepend(list, \
+                                "%*s = %ld\n", \
+                                width, (str), (FT_Long)(arg)); \
+            if (!list) \
+              goto Fail; \
+          } while (0)
 #define DUMPSTR(str, arg) \
-          fprintf(stream, "%*s = %s%s", \
-                          width, (str), \
-                          (arg), eol)
+          do \
+          { \
+            list = list_prepend(list, \
+                                "%*s = %s%s", \
+                                width, (str), (arg), eol); \
+            if (!list) \
+              goto Fail; \
+          } while (0)
 #define DUMPSTRX(arg) \
-          fprintf(stream, "%s%*s   %s%s", \
-                          prev_eol, width, "", \
-                          (arg), eol)
+          do \
+          { \
+            list = list_prepend(list, \
+                                "%s%*s   %s%s", \
+                                prev_eol, width, "", (arg), eol); \
+            if (!list) \
+              goto Fail; \
+          } while (0)
+
+
+void
+list_free(elem* list)
+{
+  while (list)
+  {
+    elem* tmp;
+
+
+    tmp = list;
+    list = list->next;
+    free(tmp->s);
+    free(tmp);
+  }
+}
+
+
+elem*
+list_prepend(elem* list,
+             const char* fmt,
+             ...)
+{
+  va_list ap;
+  char* s;
+  int len;
+
+  elem* e;
+
+
+  va_start(ap, fmt);
+  len = vasprintf(&s, fmt, ap);
+  va_end(ap);
+
+  if (len == -1)
+  {
+    list_free(list);
+    return NULL;
+  }
+
+  e = (elem*)malloc(sizeof (elem));
+  if (!e)
+  {
+    free(s);
+    list_free(list);
+    return NULL;
+  }
+
+  e->s = s;
+  e->len = len;
+  e->next = list;
+
+  return e;
+}
+
+
+elem*
+list_reverse(elem* list)
+{
+  elem* cur;
+
+
+  cur = list;
+  list = NULL;
+
+  while (cur)
+  {
+    elem* tmp;
+
+
+    tmp = cur;
+    cur = cur->next;
+    tmp->next = list;
+    list = tmp;
+  }
+
+  return list;
+}
 
 
 /* if `format' is set, we present the data in a more friendly format */
 
-TA_Error
+char*
 TA_font_dump_parameters(FONT* font,
-                        FILE* stream,
                         Deltas* deltas,
                         FT_Bool dehint,
                         FT_Bool format)
 {
-  char* s;
+  char* buf = NULL;
+  char* bufp;
+
+  char* ns = NULL;
+  char* ds = NULL;
+
   char* token;
   char* saveptr;
 
@@ -48,12 +155,20 @@ TA_font_dump_parameters(FONT* font,
   const char* eol = "\n";
   const char* prev_eol = "";
 
+  elem* list = NULL;
+  elem* e;
+
+  int len;
+
 
   if (format)
   {
-    fprintf(stream, "TTF_autohint parameters\n"
-                    "=======================\n"
-                    "\n");
+    list = list_prepend(list, "TTF_autohint parameters\n"
+                              "=======================\n"
+                              "\n");
+    if (!list)
+      goto Fail;
+
     width = 33;
   }
 
@@ -62,7 +177,7 @@ TA_font_dump_parameters(FONT* font,
     if (format)
       DUMPVAL("dehint",
               font->dehint);
-    return TA_Err_Ok;
+    goto Exit;
   }
 
   DUMPVAL("adjust-subglyphs",
@@ -96,17 +211,16 @@ TA_font_dump_parameters(FONT* font,
   DUMPVAL("windows-compatibility",
           font->windows_compatibility);
 
-  s = number_set_show(font->x_height_snapping_exceptions,
-                      TA_PROP_INCREASE_X_HEIGHT_MIN, 0x7FFF);
-  if (!s)
-    return FT_Err_Out_Of_Memory;
+  ns = number_set_show(font->x_height_snapping_exceptions,
+                       TA_PROP_INCREASE_X_HEIGHT_MIN, 0x7FFF);
+  if (!ns)
+    goto Fail;
 
-  DUMPSTR("x-height-snapping-exceptions", s);
-  free(s);
+  DUMPSTR("x-height-snapping-exceptions", ns);
 
-  s = TA_deltas_show(font, deltas);
-  if (!s)
-    return FT_Err_Out_Of_Memory;
+  ds = TA_deltas_show(font, deltas);
+  if (!ds)
+    goto Fail;
 
   /* show delta exceptions data line by line */
   if (!format)
@@ -115,7 +229,7 @@ TA_font_dump_parameters(FONT* font,
     prev_eol = "; \\\n";
   }
 
-  token = strtok_r(s, "\n", &saveptr);
+  token = strtok_r(ds, "\n", &saveptr);
   DUMPSTR("delta exceptions", token);
 
   for (;;)
@@ -126,14 +240,51 @@ TA_font_dump_parameters(FONT* font,
 
     DUMPSTRX(token);
   }
+
   if (!format)
-    fprintf(stream, "\n");
+  {
+    list = list_prepend(list, "\n");
+    if (!list)
+      goto Fail;
+  }
 
-  free(s);
+  list = list_prepend(list, "\n");
+  if (!list)
+    goto Fail;
 
-  fprintf(stderr, "\n");
+Exit:
+  list = list_reverse(list);
 
-  return TA_Err_Ok;
+  /* now determine the length of the collected strings */
+  /* and print them concatenated into a new buffer */
+
+  len = 0;
+  e = list;
+  while (e)
+  {
+    len += e->len;
+    e = e->next;
+  }
+
+  buf = (char*)malloc(len + 1);
+  if (!buf)
+    goto Fail;
+
+  bufp = buf;
+  e = list;
+  while (e)
+  {
+    strcpy(bufp, e->s);
+    bufp += e->len;
+    e = e->next;
+  }
+
+Fail:
+  free(ns);
+  free(ds);
+  list_free(list);
+
+  return buf;
 }
 
 /* end of tadump.c */

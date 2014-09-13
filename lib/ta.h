@@ -267,9 +267,8 @@ extern const char* script_names[];
 const char*
 TA_get_error_message(FT_Error error);
 
-TA_Error
+char*
 TA_font_dump_parameters(FONT* font,
-                        FILE* stream,
                         Deltas* deltas,
                         FT_Bool dehint,
                         FT_Bool format);

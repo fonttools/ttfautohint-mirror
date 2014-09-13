@@ -490,9 +490,18 @@ No_check:
   /* now we are able to dump all parameters */
   if (debug)
   {
-    error = TA_font_dump_parameters(font, stderr, deltas, dehint, 1);
-    if (error)
+    char* s;
+
+
+    s = TA_font_dump_parameters(font, deltas, dehint, 1);
+    if (!s)
+    {
+      error = FT_Err_Out_Of_Memory;
       goto Err;
+    }
+
+    fprintf(stderr, "%s", s);
+    free(s);
   }
 
   error = TA_deltas_build_tree(font, deltas);
