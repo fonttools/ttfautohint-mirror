@@ -69,8 +69,6 @@ TTF_autohint(const char* options,
 
   const unsigned char** error_stringp = NULL;
 
-  Deltas* deltas = NULL;
-
   FT_Long hinting_range_min = -1;
   FT_Long hinting_range_max = -1;
   FT_Long hinting_limit = -1;
@@ -477,7 +475,6 @@ No_check:
 
   /* process delta exceptions data */
   error = TA_deltas_parse_buffer(font,
-                                 &deltas,
                                  &error_string,
                                  &errlinenum, &errline, &errpos);
   if (error)
@@ -493,7 +490,7 @@ No_check:
     char* s;
 
 
-    s = TA_font_dump_parameters(font, deltas, 1);
+    s = TA_font_dump_parameters(font, 1);
     if (!s)
     {
       error = FT_Err_Out_Of_Memory;
@@ -504,7 +501,7 @@ No_check:
     free(s);
   }
 
-  error = TA_deltas_build_tree(font, deltas);
+  error = TA_deltas_build_tree(font);
   if (error)
     goto Err;
 
@@ -682,7 +679,7 @@ No_check:
   error = TA_Err_Ok;
 
 Err:
-  TA_deltas_free(deltas);
+  TA_deltas_free(font->deltas);
   TA_deltas_free_tree(font);
   TA_font_unload(font, in_buf, out_bufp, deltas_buf);
 

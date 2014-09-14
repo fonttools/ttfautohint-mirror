@@ -175,11 +175,12 @@ Exit:
 
 
 char*
-TA_deltas_show(FONT* font,
-               Deltas* deltas)
+TA_deltas_show(FONT* font)
 {
   char* s;
   int s_len;
+
+  Deltas* deltas = font->deltas;
 
 
   /* we return an empty string if there is no data */
@@ -235,7 +236,6 @@ TA_deltas_show(FONT* font,
 
 TA_Error
 TA_deltas_parse_buffer(FONT* font,
-                       Deltas** deltas,
                        char** error_string_p,
                        unsigned int* errlinenum_p,
                        char** errline_p,
@@ -249,8 +249,7 @@ TA_deltas_parse_buffer(FONT* font,
   /* nothing to do if no data */
   if (!font->deltas_buf)
   {
-    if (deltas)
-      *deltas = NULL;
+    font->deltas = NULL;
     return TA_Err_Ok;
   }
 
@@ -267,8 +266,7 @@ TA_deltas_parse_buffer(FONT* font,
       context.error = TA_Err_Deltas_Allocation_Error;
 
 Fail:
-    if (deltas)
-      *deltas = NULL;
+    font->deltas = NULL;
 
     if (context.error == TA_Err_Deltas_Allocation_Error
         || context.error == TA_Err_Deltas_Flex_Error)
@@ -354,12 +352,7 @@ Fail:
     }
   }
   else
-  {
-    if (deltas)
-      *deltas = context.result;
-    else
-      TA_deltas_free(context.result);
-  }
+    font->deltas = context.result;
 
   return context.error;
 }
@@ -443,9 +436,9 @@ TA_deltas_free_tree(FONT* font)
 
 
 TA_Error
-TA_deltas_build_tree(FONT* font,
-                     Deltas* deltas)
+TA_deltas_build_tree(FONT* font)
 {
+  Deltas* deltas = font->deltas;
   deltas_data* deltas_data_head;
   int emit_newline = 0;
 
@@ -509,7 +502,7 @@ TA_deltas_build_tree(FONT* font,
         if (val && font->debug)
         {
           /* entry is already present; we ignore it */
-          Deltas deltas;
+          Deltas d;
           number_range ppems;
           number_range points;
 
@@ -525,15 +518,15 @@ TA_deltas_build_tree(FONT* font,
           points.end = point_idx;
           points.next = NULL;
 
-          deltas.font_idx = font_idx;
-          deltas.glyph_idx = glyph_idx;
-          deltas.points = &points;
-          deltas.x_shift = x_shift;
-          deltas.y_shift = y_shift;
-          deltas.ppems = &ppems;
-          deltas.next = NULL;
+          d.font_idx = font_idx;
+          d.glyph_idx = glyph_idx;
+          d.points = &points;
+          d.x_shift = x_shift;
+          d.y_shift = y_shift;
+          d.ppems = &ppems;
+          d.next = NULL;
 
-          s = deltas_show_line(font, &s_len, &deltas);
+          s = deltas_show_line(font, &s_len, &d);
           if (s)
           {
             fprintf(stderr, "Delta exception %s ignored.\n", s);

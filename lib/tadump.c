@@ -138,7 +138,6 @@ list_reverse(elem* list)
 
 char*
 TA_font_dump_parameters(FONT* font,
-                        Deltas* deltas,
                         FT_Bool format)
 {
   char* buf = NULL;
@@ -217,7 +216,7 @@ TA_font_dump_parameters(FONT* font,
 
   DUMPSTR("x-height-snapping-exceptions", ns);
 
-  ds = TA_deltas_show(font, deltas);
+  ds = TA_deltas_show(font);
   if (!ds)
     goto Fail;
 

@@ -198,7 +198,9 @@ typedef struct SFNT_
   FT_UShort max_components;
 } SFNT;
 
-/* our font object */
+typedef struct Deltas_ Deltas;
+
+/* our font object; the `FONT' typedef is in `taloader.h' */
 struct FONT_
 {
   FT_Library lib;
@@ -222,6 +224,9 @@ struct FONT_
 
   /* we have a single `gasp' table for all subfonts */
   FT_ULong gasp_idx;
+
+  /* the delta exceptions data */
+  Deltas* deltas;
 
   /* two generic pointers into the the delta exceptions tree */
   void* deltas_data_head;
@@ -269,7 +274,6 @@ TA_get_error_message(FT_Error error);
 
 char*
 TA_font_dump_parameters(FONT* font,
-                        Deltas* deltas,
                         FT_Bool format);
 
 void

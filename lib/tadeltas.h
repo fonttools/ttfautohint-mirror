@@ -57,9 +57,11 @@ extern "C" {
  * `TA_deltas_free' to deallocate the list.
  *
  * `x_shift' and `y_shift' are always in the range [-8;8].
+ *
+ * The `Deltas' typedef is in `ta.h'.
  */
 
-typedef struct Deltas_
+struct Deltas_
 {
   long font_idx;
   long glyph_idx;
@@ -69,7 +71,7 @@ typedef struct Deltas_
   number_range* ppems;
 
   struct Deltas_* next;
-} Deltas;
+};
 
 
 /*
@@ -203,7 +205,8 @@ TA_deltas_scanner_done(Deltas_Context* context);
 
 
 /*
- * Parse buffer with descriptions of delta exceptions.
+ * Parse buffer with descriptions of delta exceptions, stored in
+ * `font->deltas_buf' with length `font->deltas_len'.
  *
  * The format of lines in such a delta exceptions buffer is given in
  * `ttfautohint.h' (option `deltas-file'); the following describes more
@@ -219,11 +222,10 @@ TA_deltas_scanner_done(Deltas_Context* context);
  * The returned error codes are 0 (TA_Err_Ok) or in the range 0x200-0x2FF;
  * see `ttfautohint-errors.h' for all possible values.
  *
- * If the user provides a non-NULL `deltas' value, `TA_deltas_parse_buffer'
- * stores the parsed result in `*deltas', to be freed with `TA_deltas_free'
- * after use.  If there is no delta exceptions data (for example, an empty
- * string or whitespace only) nothing gets allocated, and `*deltas' is set
- * to NULL.
+ * `TA_deltas_parse_buffer' stores the parsed result in `font->deltas', to
+ * be freed with `TA_deltas_free' after use.  If there is no delta
+ * exceptions data (for example, an empty string or whitespace only) nothing
+ * gets allocated, and `font->deltas' is set to NULL.
  *
  * In case of error, `error_string_p' holds an error message, `errlinenum_p'
  * gives the line number in the delta exceptions buffer where the error
@@ -236,7 +238,6 @@ TA_deltas_scanner_done(Deltas_Context* context);
 
 TA_Error
 TA_deltas_parse_buffer(FONT* font,
-                       Deltas** deltas,
                        char** error_string_p,
                        unsigned int* errlinenum_p,
                        char** errline_p,
@@ -252,25 +253,23 @@ TA_deltas_free(Deltas* deltas);
 
 
 /*
- * Return a string representation of `deltas'.  After use, the string should
- * be deallocated with a call to `free'.  In case of an allocation error,
- * the return value is NULL.
+ * Return a string representation of `font->deltas'.  After use, the string
+ * should be deallocated with a call to `free'.  In case of an allocation
+ * error, the return value is NULL.
  */
 
 char*
-TA_deltas_show(FONT* font,
-               Deltas* deltas);
+TA_deltas_show(FONT* font);
 
 
 /*
- * Build a tree providing sequential access to the delta exceptions data.
- * This also sets `deltas_data_cur' to the first element (or NULL if there
- * isn't one).
+ * Build a tree providing sequential access to the delta exceptions data in
+ * `font->deltas'.  This also sets `font->deltas_data_cur' to the first
+ * element (or NULL if there isn't one).
  */
 
 TA_Error
-TA_deltas_build_tree(FONT* font,
-                     Deltas* deltas);
+TA_deltas_build_tree(FONT* font);
 
 
 /*
