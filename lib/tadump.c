@@ -135,7 +135,7 @@ list_reverse(elem* list)
 
 
 char*
-list_concat(elem* list)
+list_to_string(elem* list)
 {
   elem* e;
   int len;
@@ -155,6 +155,7 @@ list_concat(elem* list)
   buf = (char*)malloc(len + 1);
   if (!buf)
     return NULL;
+  buf[0] = '\0';
 
   e = list;
   bufp = buf;
@@ -290,7 +291,7 @@ TA_font_dump_parameters(FONT* font,
 
 Exit:
   list = list_reverse(list);
-  buf = list_concat(list);
+  buf = list_to_string(list);
 
 Fail:
   free(ns);
