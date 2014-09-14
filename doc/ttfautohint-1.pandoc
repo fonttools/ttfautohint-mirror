@@ -488,7 +488,6 @@ bytecode larger.
 ### Delta Exception File
 
 `--deltas-file=`*file*, `-m`\ *file* (TTY only)
-
 :   Specify the name of a delta exceptions file to add delta hinting.
     This feature can be used to correct glitches in ttfautohint's hinting
     algorithm.
