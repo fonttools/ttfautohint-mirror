@@ -146,9 +146,6 @@ TA_font_dump_parameters(FONT* font,
   char* ns = NULL;
   char* ds = NULL;
 
-  char* token;
-  char* saveptr;
-
   int width = 0;
   const char* eol = "\n";
   const char* prev_eol = "";
@@ -229,17 +226,26 @@ TA_font_dump_parameters(FONT* font,
     prev_eol = "; \\\n";
   }
 
-  token = strtok_r(ds, "\n", &saveptr);
-  DUMPSTR("delta exceptions", token);
-
-  for (;;)
+  if (*ds)
   {
-    token = strtok_r(NULL, "\n", &saveptr);
-    if (!token)
-      break;
+    char* token;
+    char* saveptr;
 
-    DUMPSTRX(token);
+
+    token = strtok_r(ds, "\n", &saveptr);
+    DUMPSTR("delta exceptions", token);
+
+    for (;;)
+    {
+      token = strtok_r(NULL, "\n", &saveptr);
+      if (!token)
+        break;
+
+      DUMPSTRX(token);
+    }
   }
+  else
+    DUMPSTR("delta exceptions", "");
 
   if (!format)
   {
