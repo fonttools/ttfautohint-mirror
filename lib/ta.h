@@ -270,7 +270,6 @@ TA_get_error_message(FT_Error error);
 char*
 TA_font_dump_parameters(FONT* font,
                         Deltas* deltas,
-                        FT_Bool dehint,
                         FT_Bool format);
 
 void

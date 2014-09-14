@@ -493,7 +493,7 @@ No_check:
     char* s;
 
 
-    s = TA_font_dump_parameters(font, deltas, dehint, 1);
+    s = TA_font_dump_parameters(font, deltas, 1);
     if (!s)
     {
       error = FT_Err_Out_Of_Memory;

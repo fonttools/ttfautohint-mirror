@@ -139,7 +139,6 @@ list_reverse(elem* list)
 char*
 TA_font_dump_parameters(FONT* font,
                         Deltas* deltas,
-                        FT_Bool dehint,
                         FT_Bool format)
 {
   char* buf = NULL;
@@ -172,7 +171,7 @@ TA_font_dump_parameters(FONT* font,
     width = 33;
   }
 
-  if (dehint)
+  if (font->dehint)
   {
     if (format)
       DUMPVAL("dehint",
