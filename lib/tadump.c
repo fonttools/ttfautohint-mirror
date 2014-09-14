@@ -134,14 +134,49 @@ list_reverse(elem* list)
 }
 
 
+char*
+list_concat(elem* list)
+{
+  elem* e;
+  int len;
+
+  char* buf;
+  char* bufp;
+
+
+  e = list;
+  len = 0;
+  while (e)
+  {
+    len += e->len;
+    e = e->next;
+  }
+
+  buf = (char*)malloc(len + 1);
+  if (!buf)
+    return NULL;
+
+  e = list;
+  bufp = buf;
+  while (e)
+  {
+    strcpy(bufp, e->s);
+    bufp += e->len;
+    e = e->next;
+  }
+
+  return buf;
+}
+
+
 /* if `format' is set, we present the data in a more friendly format */
 
 char*
 TA_font_dump_parameters(FONT* font,
                         FT_Bool format)
 {
-  char* buf = NULL;
-  char* bufp;
+  char* buf;
+  elem* list = NULL;
 
   char* ns = NULL;
   char* ds = NULL;
@@ -149,11 +184,6 @@ TA_font_dump_parameters(FONT* font,
   int width = 0;
   const char* eol = "\n";
   const char* prev_eol = "";
-
-  elem* list = NULL;
-  elem* e;
-
-  int len;
 
 
   if (format)
@@ -260,30 +290,7 @@ TA_font_dump_parameters(FONT* font,
 
 Exit:
   list = list_reverse(list);
-
-  /* now determine the length of the collected strings */
-  /* and print them concatenated into a new buffer */
-
-  len = 0;
-  e = list;
-  while (e)
-  {
-    len += e->len;
-    e = e->next;
-  }
-
-  buf = (char*)malloc(len + 1);
-  if (!buf)
-    goto Fail;
-
-  bufp = buf;
-  e = list;
-  while (e)
-  {
-    strcpy(bufp, e->s);
-    bufp += e->len;
-    e = e->next;
-  }
+  buf = list_concat(list);
 
 Fail:
   free(ns);
