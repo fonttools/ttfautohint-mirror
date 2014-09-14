@@ -206,6 +206,8 @@ TA_font_dump_parameters(FONT* font,
           font->increase_x_height);
   DUMPVAL("symbol",
           font->symbol);
+  DUMPVAL("TTFA-info",
+          font->TTFA_info);
   DUMPVAL("windows-compatibility",
           font->windows_compatibility);
 

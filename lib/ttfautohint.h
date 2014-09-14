@@ -492,6 +492,26 @@ typedef int
  *     value\ 1 to make ttfautohint handle the font.  The default value
  *     is\ 0.
  *
+ * `TTFA-info`
+ * :   If set to\ 1, ttfautohint creates an SFNT table called `TTFA` and
+ *     fills it with information on the parameters used while calling
+ *     `TTF_autohint`.  The format of the output data resembles the
+ *     information at the very beginning of the dump emitted by option
+ *     `debug`.  The default value is\ 0.
+ *
+ *     Main use of this option is for font editing purposes.  For example,
+ *     after a font editor has added some glyphs, a front-end to
+ *     `TTF_autohint` can parse `TTFA` and feed the parameters into another
+ *     call of `TTF_autohint`.  The new glyphs are then hinted while hints
+ *     of the old glyphs stay unchanged.
+ *
+ *     If this option is not set, and the font to be processed contains a
+ *     `TTFA` table, it gets removed.
+ *
+ *     Note that such a `TTFA` table gets ignored by all font rendering
+ *     engines.  In TrueType Collections, the `TTFA` table is added to the
+ *     first subfont.
+ *
  * `dehint`
  * :   If set to\ 1, remove all hints from the font.  All other hinting
  *     options are ignored.

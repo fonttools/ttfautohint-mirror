@@ -194,8 +194,6 @@ TA_font_build_TTF(FONT* font)
 
   FT_ULong SFNT_offset;
 
-  FT_Byte* DSIG_buf;
-
   FT_Byte* header_buf;
   FT_ULong header_len;
 
@@ -203,10 +201,41 @@ TA_font_build_TTF(FONT* font)
   FT_Error error;
 
 
+  /* add our information table */
+
+  if (font->TTFA_info)
+  {
+    FT_Byte* TTFA_buf;
+    FT_ULong TTFA_len;
+
+
+    error = TA_sfnt_add_table_info(sfnt);
+    if (error)
+      return error;
+
+    error = TA_table_build_TTFA(&TTFA_buf, &TTFA_len, font);
+    if (error)
+      return error;
+
+    /* in case of success, `TTFA_buf' gets linked */
+    /* and is eventually freed in `TA_font_unload' */
+    error = TA_font_add_table(font,
+                              &sfnt->table_infos[sfnt->num_table_infos - 1],
+                              TTAG_TTFA, TTFA_len, TTFA_buf);
+    if (error)
+    {
+      free(TTFA_buf);
+      return error;
+    }
+  }
+
   /* replace an existing `DSIG' table with a dummy */
 
   if (font->have_DSIG)
   {
+    FT_Byte* DSIG_buf;
+
+
     error = TA_sfnt_add_table_info(sfnt);
     if (error)
       return error;

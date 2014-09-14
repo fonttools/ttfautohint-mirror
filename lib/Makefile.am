@@ -67,6 +67,7 @@ libttfautohint_la_SOURCES = \
   tatime.c \
   tattc.c \
   tattf.c \
+  tattfa.c \
   tatypes.h \
   tawrtsys.h \
   ttfautohint.c \

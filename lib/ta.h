@@ -48,6 +48,9 @@
 #define BYTE4(x) ((x) & 0x000000FFUL);
 
 
+/* an SFNT tag for our information table */
+#define TTAG_TTFA FT_MAKE_TAG('T', 'T', 'F', 'A')
+
 /* the length of a dummy `DSIG' table */
 #define DSIG_LEN 8
 
@@ -257,6 +260,7 @@ struct FONT_
   FT_Bool symbol;
   FT_Bool dehint;
   FT_Bool debug;
+  FT_Bool TTFA_info;
 };
 
 
@@ -317,6 +321,11 @@ TA_sfnt_split_into_SFNT_tables(SFNT* sfnt,
 FT_Error
 TA_sfnt_build_cvt_table(SFNT* sfnt,
                         FONT* font);
+
+FT_Error
+TA_table_build_TTFA(FT_Byte** TTFA,
+                    FT_ULong* TTFA_len,
+                    FONT* font);
 
 FT_Error
 TA_table_build_DSIG(FT_Byte** DSIG);

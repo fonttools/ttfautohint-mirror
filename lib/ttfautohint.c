@@ -103,6 +103,7 @@ TTF_autohint(const char* options,
 
   FT_Bool dehint = 0;
   FT_Bool debug = 0;
+  FT_Bool TTFA_info = 0;
 
   const char* op;
 
@@ -238,6 +239,8 @@ TTF_autohint(const char* options,
       progress_data = va_arg(ap, void*);
     else if (COMPARE("symbol"))
       symbol = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("TTFA-info"))
+      TTFA_info = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("windows-compatibility"))
       windows_compatibility = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("x-height-snapping-exceptions"))
@@ -404,6 +407,7 @@ No_check:
 
   font->debug = debug;
   font->dehint = dehint;
+  font->TTFA_info = TTFA_info;
 
   font->gasp_idx = MISSING;
 

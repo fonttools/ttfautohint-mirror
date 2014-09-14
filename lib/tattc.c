@@ -126,9 +126,6 @@ TA_font_build_TTC(FONT* font)
   SFNT_Table* tables;
   FT_ULong num_tables;
 
-  FT_Byte* DSIG_buf;
-  SFNT_Table_Info dummy;
-
   FT_Byte* TTC_header_buf;
   FT_ULong TTC_header_len;
 
@@ -141,10 +138,46 @@ TA_font_build_TTC(FONT* font)
   FT_Error error;
 
 
+  /* add our information table to first subfont; */
+  /* this is enforced by the TTC structure, */
+  /* which only allows `DSIG' to be not related to a subfont */
+
+  if (font->TTFA_info)
+  {
+    SFNT* sfnt0 = &sfnts[0];
+
+    FT_Byte* TTFA_buf;
+    FT_ULong TTFA_len;
+
+
+    error = TA_sfnt_add_table_info(sfnt0);
+    if (error)
+      return error;
+
+    error = TA_table_build_TTFA(&TTFA_buf, &TTFA_len, font);
+    if (error)
+      return error;
+
+    /* in case of success, `TTFA_buf' gets linked */
+    /* and is eventually freed in `TA_font_unload' */
+    error = TA_font_add_table(font,
+                              &sfnt0->table_infos[sfnt0->num_table_infos - 1],
+                              TTAG_TTFA, TTFA_len, TTFA_buf);
+    if (error)
+    {
+      free(TTFA_buf);
+      return error;
+    }
+  }
+
   /* replace an existing `DSIG' table with a dummy */
 
   if (font->have_DSIG)
   {
+    FT_Byte* DSIG_buf;
+    SFNT_Table_Info dummy;
+
+
     error = TA_table_build_DSIG(&DSIG_buf);
     if (error)
       return error;
