@@ -13,12 +13,11 @@
  */
 
 
-#include <string.h>
+#include "ta.h"
+
 #include <stdbool.h> /* for llrb.h */
 
 #include "llrb.h" /* a red-black tree implementation */
-
-#include "ta.h"
 #include "tahints.h"
 
 

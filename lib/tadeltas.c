@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <math.h>
+#include <stdbool.h> /* for llrb.h */
 
 #include "llrb.h" /* a red-black tree implementation */
 #include "tadeltas-bison.h"
