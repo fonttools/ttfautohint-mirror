@@ -14,8 +14,12 @@ AM_CPPFLAGS = $(FREETYPE_CPPFLAGS) \
               $(HARFBUZZ_CFLAGS)
 
 noinst_LTLIBRARIES = \
-  libttfautohint.la \
-  libnumberset.la
+  libsds.la \
+  libnumberset.la \
+  libttfautohint.la
+
+libsds_la_SOURCES = \
+  sds-wrapper.c sds.h
 
 libnumberset_la_SOURCES = \
   numberset.c numberset.h
@@ -74,6 +78,7 @@ libttfautohint_la_SOURCES = \
   ttfautohint.h ttfautohint-errors.h ttfautohint-scripts.h
 
 libttfautohint_la_LIBADD = \
+  libsds.la \
   libnumberset.la \
   $(LIBM) \
   $(FREETYPE_LIBS) \
@@ -86,6 +91,7 @@ BUILT_SOURCES = \
 
 EXTRA_DIST = \
   afblue.pl \
+  sds.c \
   tablue.cin tablue.hin \
   tablue.dat \
   tadeltas.flex tadeltas.bison tadeltas-flex.c

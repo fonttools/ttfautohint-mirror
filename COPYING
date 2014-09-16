@@ -43,17 +43,27 @@ modified version which carries forward this exception.
 
 The following files are distributed with the source bundle of the
 ttfautohint library to configure and build the library with GNU tools, but
-which aren't part of it due to a different license (GPL only).
+which aren't part of it due to different licenses.
 
-  bootstrap
-  bootstrap.conf
-  m4/ltlize_lang.m4
+  GPL only:
+    bootstrap
+    bootstrap.conf
+    m4/autotroll.m4
+    m4/ltlize_lang.m4
+    m4/pkg.m4
+
+  X11 license:
+    lib/llrb.h
+
+  two-clause BSD license:
+    lib/sds.c
+    lib/sds.h
 
 All files of the following directories are distributed with the source
 bundle of the ttfautohint library to configure and build the library with
-GNU tools, but which aren't part of it due to a different license (GPL
-only).
+GNU tools, but which aren't part of it due to a different license.
 
-  gnulib
+  GPL only:
+    gnulib
 
 EOF

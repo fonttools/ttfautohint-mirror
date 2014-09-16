@@ -41,5 +41,7 @@ doc/ttfautohint-css.html
 #
 lib/afblue.pl
 lib/llrb.h
+lib/sds.c
+lib/sds.h
 #
 # EOF
