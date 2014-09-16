@@ -24,6 +24,7 @@
 #include FT_TRUETYPE_TAGS_H
 
 #include <ttfautohint.h>
+#include <sds.h>
 #include <numberset.h>
 
 #include "taloader.h"

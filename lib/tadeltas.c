@@ -110,27 +110,28 @@ TA_deltas_free(Deltas* deltas)
 }
 
 
-/* `len' is the length of the returned string */
-
-char*
+sds
 deltas_show_line(FONT* font,
-                 int* len,
                  Deltas* deltas)
 {
-  int ret;
   char glyph_name_buf[64];
   char* points_buf = NULL;
   char* ppems_buf = NULL;
-  char* deltas_buf = NULL;
+
+  sds s;
 
   FT_Face face;
 
 
-  if (!deltas)
+  s = sdsempty();
+  if (!s)
     return NULL;
 
+  if (!deltas)
+    goto Exit;
+
   if (deltas->font_idx >= font->num_sfnts)
-    return NULL;
+    goto Exit;
 
   face = font->sfnts[deltas->font_idx].face;
   glyph_name_buf[0] = '\0';
@@ -146,90 +147,76 @@ deltas_show_line(FONT* font,
 
   /* display glyph index if we don't have a glyph name */
   if (*glyph_name_buf)
-    ret = asprintf(&deltas_buf, "%ld %s p %s x %.20g y %.20g @ %s",
-                   deltas->font_idx,
-                   glyph_name_buf,
-                   points_buf,
-                   (double)deltas->x_shift / DELTA_FACTOR,
-                   (double)deltas->y_shift / DELTA_FACTOR,
-                   ppems_buf);
+    s = sdscatprintf(s, "%ld %s p %s x %.20g y %.20g @ %s",
+                     deltas->font_idx,
+                     glyph_name_buf,
+                     points_buf,
+                     (double)deltas->x_shift / DELTA_FACTOR,
+                     (double)deltas->y_shift / DELTA_FACTOR,
+                     ppems_buf);
   else
-    ret = asprintf(&deltas_buf, "%ld %ld p %s x %.20g y %.20g @ %s",
-                   deltas->font_idx,
-                   deltas->glyph_idx,
-                   points_buf,
-                   (double)deltas->x_shift / DELTA_FACTOR,
-                   (double)deltas->y_shift / DELTA_FACTOR,
-                   ppems_buf);
+    s = sdscatprintf(s, "%ld %ld p %s x %.20g y %.20g @ %s",
+                     deltas->font_idx,
+                     deltas->glyph_idx,
+                     points_buf,
+                     (double)deltas->x_shift / DELTA_FACTOR,
+                     (double)deltas->y_shift / DELTA_FACTOR,
+                     ppems_buf);
 
 Exit:
   free(points_buf);
   free(ppems_buf);
 
-  if (ret == -1)
-    return NULL;
-
-  *len = ret;
-
-  return deltas_buf;
+  return s;
 }
 
 
 char*
 TA_deltas_show(FONT* font)
 {
-  char* s;
-  int s_len;
+  sds s;
+  size_t len;
+  char* res;
 
   Deltas* deltas = font->deltas;
 
 
-  /* we return an empty string if there is no data */
-  s = (char*)malloc(1);
+  s = sdsempty();
   if (!s)
     return NULL;
 
-  *s = '\0';
-  s_len = 1;
-
   while (deltas)
   {
-    char* tmp;
-    int tmp_len;
-    char* s_new;
-    int s_len_new;
+    sds d;
 
-
-    tmp = deltas_show_line(font, &tmp_len, deltas);
-    if (!tmp)
-    {
-      free(s);
-      return NULL;
-    }
 
     /* append current line to buffer, followed by a newline character */
-    s_len_new = s_len + tmp_len + 1;
-    s_new = (char*)realloc(s, s_len_new);
-    if (!s_new)
+    d = deltas_show_line(font, deltas);
+    if (!d)
     {
-      free(s);
-      free(tmp);
+      sdsfree(s);
       return NULL;
     }
-
-    strcpy(s_new + s_len - 1, tmp);
-    s_new[s_len_new - 2] = '\n';
-    s_new[s_len_new - 1] = '\0';
-
-    s = s_new;
-    s_len = s_len_new;
-
-    free(tmp);
+    s = sdscatsds(s, d);
+    sdsfree(d);
+    if (!s)
+      return NULL;
+    s = sdscat(s, "\n");
+    if (!s)
+      return NULL;
 
     deltas = deltas->next;
   }
 
-  return s;
+  /* we return an empty string if there is no data */
+  len = sdslen(s) + 1;
+  res = (char*)malloc(len);
+  if (res)
+    memcpy(res, s, len);
+
+  sdsfree(s);
+
+  return res;
 }
 
 
@@ -507,8 +494,7 @@ TA_deltas_build_tree(FONT* font)
           number_range ppems;
           number_range points;
 
-          char* s;
-          int s_len;
+          sds s;
 
 
           /* construct Deltas entry for debugging output */
@@ -527,11 +513,11 @@ TA_deltas_build_tree(FONT* font)
           d.ppems = &ppems;
           d.next = NULL;
 
-          s = deltas_show_line(font, &s_len, &d);
+          s = deltas_show_line(font, &d);
           if (s)
           {
             fprintf(stderr, "Delta exception %s ignored.\n", s);
-            free(s);
+            sdsfree(s);
           }
 
           emit_newline = 1;
