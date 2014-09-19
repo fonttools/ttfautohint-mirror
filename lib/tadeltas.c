@@ -124,8 +124,6 @@ deltas_show_line(FONT* font,
 
 
   s = sdsempty();
-  if (!s)
-    return NULL;
 
   if (!deltas)
     goto Exit;
@@ -182,8 +180,6 @@ TA_deltas_show(FONT* font)
 
 
   s = sdsempty();
-  if (!s)
-    return NULL;
 
   while (deltas)
   {
@@ -199,14 +195,13 @@ TA_deltas_show(FONT* font)
     }
     s = sdscatsds(s, d);
     sdsfree(d);
-    if (!s)
-      return NULL;
     s = sdscat(s, "\n");
-    if (!s)
-      return NULL;
 
     deltas = deltas->next;
   }
+
+  if (!s)
+    return NULL;
 
   /* we return an empty string if there is no data */
   len = sdslen(s) + 1;

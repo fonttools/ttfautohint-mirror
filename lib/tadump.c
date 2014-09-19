@@ -23,8 +23,6 @@
             s = sdscatprintf(s, \
                              "%*s = %ld\n", \
                              width, (str), (FT_Long)(arg)); \
-            if (!s) \
-              goto Exit; \
           } while (0)
 #define DUMPSTR(str, arg) \
           do \
@@ -32,8 +30,6 @@
             s = sdscatprintf(s, \
                              "%*s = %s%s", \
                              width, (str), (arg), eol); \
-            if (!s) \
-              goto Exit; \
           } while (0)
 #define DUMPSTRX(arg) \
           do \
@@ -41,8 +37,6 @@
             s = sdscatprintf(s, \
                              "%s%*s   %s%s", \
                              prev_eol, width, "", (arg), eol); \
-            if (!s) \
-              goto Exit; \
           } while (0)
 
 
@@ -66,17 +60,12 @@ TA_font_dump_parameters(FONT* font,
 
 
   s = sdsempty();
-  if (!s)
-    return NULL;
 
   if (format)
   {
     s = sdscat(s, "TTF_autohint parameters\n"
                   "=======================\n"
                   "\n");
-    if (!s)
-      goto Exit;
-
     width = 33;
   }
 
@@ -169,15 +158,8 @@ TA_font_dump_parameters(FONT* font,
     DUMPSTR("delta exceptions", "");
 
   if (!format)
-  {
     s = sdscat(s, "\n");
-    if (!s)
-      goto Exit;
-  }
-
   s = sdscat(s, "\n");
-  if (!s)
-    goto Exit;
 
 Exit:
   free(ns);

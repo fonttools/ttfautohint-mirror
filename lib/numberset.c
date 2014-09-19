@@ -360,8 +360,6 @@ number_set_show(number_range* number_set,
   }
 
   s = sdsempty();
-  if (!s)
-    return NULL;
 
   while (nr)
   {
@@ -384,14 +382,14 @@ number_set_show(number_range* number_set,
     else
       s = sdscatprintf(s, "%s%i-%i", comma, nr->start, nr->end);
 
-    if (!s)
-      return NULL;
-
   Again:
     nr = nr->next;
   }
 
 Exit:
+  if (!s)
+    return NULL;
+
   /* we return an empty string for an empty number set */
   /* (this is, number_set == NULL or unsuitable `min' and `max' values) */
   len = sdslen(s) + 1;
