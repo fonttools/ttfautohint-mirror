@@ -60,6 +60,8 @@ build_version_string(Info_Data* idata)
     d = sdscatprintf(d, " -H %d", idata->fallback_stem_width);
   d = sdscatprintf(d, " -D %s", idata->default_script);
   d = sdscatprintf(d, " -f %s", idata->fallback_script);
+  if (idata->deltas_name)
+    d = sdscatprintf(d, " -m \"%s\"", idata->deltas_name);
 
   count = 0;
   strong[0] = '\0';
