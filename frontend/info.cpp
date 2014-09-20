@@ -17,6 +17,7 @@
 #include <stdlib.h>
 
 #include "info.h"
+#include <sds.h>
 #include <numberset.h>
 
 
@@ -32,42 +33,33 @@ extern "C" {
 int
 build_version_string(Info_Data* idata)
 {
-  char* d;
-  char* dw;
+  // since we use `goto' we have to initialize variables before the jumps
+  unsigned char* data;
+  unsigned char* data_wide;
+  unsigned char* dt;
+  unsigned char* dtw;
   char* s = NULL;
-  size_t s_len;
-  unsigned char* data_new;
-  unsigned short data_new_len;
   char strong[4];
   int count;
   int ret = 0;
+  sds d;
 
-  // 128 bytes certainly hold the following options except -X
-  data_new = (unsigned char*)realloc(idata->data, 128);
-  if (!data_new)
-  {
-    ret = 1;
-    goto Fail;
-  }
-  idata->data = data_new;
+  d = sdsempty();
 
-  d = (char*)idata->data;
-  d += sprintf(d, TTFAUTOHINT_STRING " (v%s)", VERSION);
-
+  d = sdscatprintf(d, TTFAUTOHINT_STRING " (v%s)", VERSION);
   if (idata->dehint)
   {
-    d += sprintf(d, " -d");
+    d = sdscat(d, " -d");
     goto Dehint_only;
   }
-
-  d += sprintf(d, " -l %d", idata->hinting_range_min);
-  d += sprintf(d, " -r %d", idata->hinting_range_max);
-  d += sprintf(d, " -G %d", idata->hinting_limit);
-  d += sprintf(d, " -x %d", idata->increase_x_height);
+  d = sdscatprintf(d, " -l %d", idata->hinting_range_min);
+  d = sdscatprintf(d, " -r %d", idata->hinting_range_max);
+  d = sdscatprintf(d, " -G %d", idata->hinting_limit);
+  d = sdscatprintf(d, " -x %d", idata->increase_x_height);
   if (idata->fallback_stem_width)
-    d += sprintf(d, " -H %d", idata->fallback_stem_width);
-  d += sprintf(d, " -D %s", idata->default_script);
-  d += sprintf(d, " -f %s", idata->fallback_script);
+    d = sdscatprintf(d, " -H %d", idata->fallback_stem_width);
+  d = sdscatprintf(d, " -D %s", idata->default_script);
+  d = sdscatprintf(d, " -f %s", idata->fallback_script);
 
   count = 0;
   strong[0] = '\0';
@@ -81,34 +73,28 @@ build_version_string(Info_Data* idata)
   if (idata->dw_cleartype_strong_stem_width)
     strong[count++] = 'D';
   if (*strong)
-    d += sprintf(d, " -w %s", strong);
+    d = sdscatprintf(d, " -w %s", strong);
   else
-    d += sprintf(d, " -w \"\"");
+    d = sdscat(d, " -w \"\"");
 
   if (idata->windows_compatibility)
-    d += sprintf(d, " -W");
+    d = sdscat(d, " -W");
   if (idata->adjust_subglyphs)
-    d += sprintf(d, " -p");
+    d = sdscat(d, " -p");
   if (idata->hint_composites)
-    d += sprintf(d, " -c");
+    d = sdscat(d, " -c");
   if (idata->symbol)
-    d += sprintf(d, " -s");
-  if (idata->x_height_snapping_exceptions_string)
-    d += sprintf(d, " -X \"\""); // fill in data later
-
-Dehint_only:
-  idata->data_len = d - (char*)idata->data;
+    d = sdscat(d, " -s");
 
   if (idata->x_height_snapping_exceptions_string)
   {
-    number_range* x_height_snapping_exceptions;
-    const char* pos;
-
     // only set specific value of `ret' for an allocation error,
     // since syntax errors are handled in TTF_autohint
-    pos = number_set_parse(idata->x_height_snapping_exceptions_string,
-                           &x_height_snapping_exceptions,
-                           6, 0x7FFF);
+    number_range* x_height_snapping_exceptions;
+    const char* pos = number_set_parse(
+                        idata->x_height_snapping_exceptions_string,
+                        &x_height_snapping_exceptions,
+                        6, 0x7FFF);
     if (*pos)
     {
       if (x_height_snapping_exceptions == NUMBERSET_ALLOCATION_ERROR)
@@ -119,64 +105,56 @@ Dehint_only:
     s = number_set_show(x_height_snapping_exceptions, 6, 0x7FFF);
     number_set_free(x_height_snapping_exceptions);
 
-    if (!s)
-    {
-      ret = 1;
-      goto Fail;
-    }
-
     // ensure UTF16-BE version doesn't get too long
-    s_len = strlen(s);
-    if (s_len > 0xFFFF / 2 - 128)
+    if (strlen(s) > 0xFFFF / 2 - sdslen(d))
     {
       ret = 2;
       goto Fail;
     }
-  }
-  else
-    s_len = 0;
 
-  // we now reallocate to the real size
-  // (plus one byte so that `sprintf' works)
-  data_new_len = idata->data_len + s_len;
-  data_new = (unsigned char*)realloc(idata->data, data_new_len + 1);
-  if (!data_new)
+    d = sdscatprintf(d, " -X \"%s\"", s);
+  }
+
+Dehint_only:
+  if (!d)
   {
     ret = 1;
     goto Fail;
   }
 
-  if (idata->x_height_snapping_exceptions_string)
+  data = (unsigned char*)malloc(sdslen(d) + 1);
+  if (!data)
   {
-    // overwrite second doublequote and append it instead
-    d = (char*)(data_new + idata->data_len - 1);
-    sprintf(d, "%s\"", s);
+    ret = 1;
+    goto Fail;
   }
+  memcpy(data, d, sdslen(d) + 1);
 
-  idata->data = data_new;
-  idata->data_len = data_new_len;
+  idata->data = data;
+  idata->data_len = (unsigned short)sdslen(d);
 
   // prepare UTF16-BE version data
   idata->data_wide_len = 2 * idata->data_len;
-  data_new = (unsigned char*)realloc(idata->data_wide,
-                                     idata->data_wide_len);
-  if (!data_new)
+  data_wide = (unsigned char*)realloc(idata->data_wide,
+                                      idata->data_wide_len);
+  if (!data_wide)
   {
     ret = 1;
     goto Fail;
   }
-  idata->data_wide = data_new;
+  idata->data_wide = data_wide;
 
-  d = (char*)idata->data;
-  dw = (char*)idata->data_wide;
+  dt = idata->data;
+  dtw = idata->data_wide;
   for (unsigned short i = 0; i < idata->data_len; i++)
   {
-    *(dw++) = '\0';
-    *(dw++) = *(d++);
+    *(dtw++) = '\0';
+    *(dtw++) = *(dt++);
   }
 
 Exit:
   free(s);
+  sdsfree(d);
 
   return ret;
 
