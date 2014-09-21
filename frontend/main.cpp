@@ -30,6 +30,7 @@
 #include <getopt.h>
 #include <limits.h>
 #include <unistd.h>
+#include <locale.h>
 
 #include <vector>
 #include <string>
@@ -500,6 +501,11 @@ main(int argc,
 
   const char* deltas_name = NULL;
 #endif
+
+  // For real numbers (both parsing and displaying) we only use `.' as the
+  // decimal separator; similarly, we don't want localized formats like a
+  // thousands separator for any number.
+  setlocale(LC_NUMERIC, "C");
 
   // make GNU, Qt, and X11 command line options look the same;
   // we allow `--foo=bar', `--foo bar', `-foo=bar', `-foo bar',

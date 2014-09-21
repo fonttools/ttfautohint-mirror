@@ -15,6 +15,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+// the next header file is from gnulib defining function `base_name',
+// which is a replacement for `basename' that works on Windows also
+#include "dirname.h"
 
 #include "info.h"
 #include <sds.h>
@@ -61,7 +64,11 @@ build_version_string(Info_Data* idata)
   d = sdscatprintf(d, " -D %s", idata->default_script);
   d = sdscatprintf(d, " -f %s", idata->fallback_script);
   if (idata->deltas_name)
-    d = sdscatprintf(d, " -m \"%s\"", idata->deltas_name);
+  {
+    char* bn = base_name(idata->deltas_name);
+    d = sdscatprintf(d, " -m \"%s\"", bn ? bn : idata->deltas_name);
+    free(bn);
+  }
 
   count = 0;
   strong[0] = '\0';

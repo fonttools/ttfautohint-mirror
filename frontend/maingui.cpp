@@ -16,6 +16,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <locale.h>
 
 #include <QtGui>
 
@@ -165,6 +166,11 @@ Main_GUI::Main_GUI(bool horizontal_layout,
     locale = new QLocale;
   else
     locale = new QLocale(QLocale::C);
+
+  // For real numbers (both parsing and displaying) we only use `.' as the
+  // decimal separator; similarly, we don't want localized formats like a
+  // thousands separator for any number.
+  setlocale(LC_NUMERIC, "C");
 
   create_layout(horizontal_layout);
   create_connections();
@@ -991,12 +997,18 @@ again:
   GUI_Progress_Data gui_progress_data = {-1, true, &dialog};
   GUI_Error_Data gui_error_data = {this, locale, output_name, deltas_name,
                                    &ignore_restrictions, false};
+
+  fileinfo_input_file.setFile(input_name);
+  fileinfo_deltas_file.setFile(deltas_name);
+
   Info_Data info_data;
 
   info_data.data = NULL; // must be deallocated after use
   info_data.data_wide = NULL; // must be deallocated after use
   info_data.data_len = 0;
   info_data.data_wide_len = 0;
+
+  info_data.deltas_name = qPrintable(fileinfo_deltas_file.fileName());
 
   info_data.hinting_range_min = min_box->value();
   info_data.hinting_range_max = max_box->value();
@@ -1065,8 +1077,6 @@ again:
       QMessageBox::Ok,
       QMessageBox::Ok);
 
-  fileinfo_input_file.setFile(input_name);
-  fileinfo_deltas_file.setFile(deltas_name);
   datetime_input_file = fileinfo_input_file.lastModified();
   datetime_deltas_file = fileinfo_deltas_file.lastModified();
 
