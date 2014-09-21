@@ -492,9 +492,9 @@ bytecode larger.
     This feature can be used to correct glitches in ttfautohint's hinting
     algorithm.
 
-    A line in a delta exceptions file has the following syntax:
+    An entry in a delta exceptions file has the following syntax:
 
-    > *\[* font-idx *\]* glyph-id *`p`* points *\[* *`x`* x-shift *\]* *\[* *`y`* y-shift *\]* *`@`* ppems
+    > *\[* font-idx *\]*\ \ glyph-id\ \ *`p`* points\ \ *\[* *`x`* x-shift *\]*\ \ *\[* *`y`* y-shift *\]*\ \ *`@`* ppems
 
     *font-idx* gives the index of the font in a TrueType Collection.  If
     missing, it is set to zero.  For normal TrueType fonts, only value zero
@@ -516,12 +516,15 @@ bytecode larger.
     rounded to multiples of 1/8 pixels.  The entries for `x` and `y` are
     optional; if missing, the corresponding value is set to zero.
 
-    Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0].
+    Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0]. 
     Values for *ppems* must be in the range [6;53].  Values for *points* are
     limited by the number of points in the glyph.
 
-    A comment starts with character `#`; the rest of the line is ignored.
-    An empty line is ignored also.
+    Similar to the Bourne shell (`sh` or `bash`), a comment starts with
+    character `#`; the rest of the line is ignored.  An empty line is
+    ignored also.  Both the newline character and '`;`' can be used as a
+    separator between exception entries.  A trailing '`\`' at the end of
+    line continues the current line on the next one.
 
     In case there are multiple shift entries for the same (*font idx*,
     *glyph-id*, *point-idx*, *ppem-value*) quadruplet, the first entry in
