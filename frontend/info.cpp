@@ -87,6 +87,8 @@ build_version_string(Info_Data* idata)
     d = sdscat(d, " -c");
   if (idata->symbol)
     d = sdscat(d, " -s");
+  if (idata->TTFA_info)
+    d = sdscat(d, " -t");
 
   if (idata->x_height_snapping_exceptions_string)
   {

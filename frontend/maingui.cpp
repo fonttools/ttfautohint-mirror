@@ -60,6 +60,34 @@ const Script_Names script_names[] =
 };
 
 
+// used hotkeys:
+//   a: Add ttf&autohint Info
+//   b: Add TTFA info ta&ble
+//   c: x Height In&crease Limit / No x Height In&crease
+//   d: &Dehint
+//   e: Delta &Exception File
+//   f: &File (menu)
+//   g: Stron&g Stem Width and Positioning
+//   h: &Help (menu)
+//   i: &Input File
+//   j: Ad&just Subglyphs
+//   b: Fallbac&k Stem Width / Default Fallbac&k Stem Width
+//   l: Hinting &Limit / No Hinting &Limit
+//   m: Hint Co&mposites
+//   n: Hint Set Range Mi&nimum
+//   o: &Output File
+//   p: Windows Comp&patibility
+//   q: --
+//   r: &Run
+//   s: Fallback &Script
+//   t: x Height Snapping Excep&tions
+//   u: Defa&ult Script
+//   v: --
+//   w: &Watch Input Files
+//   x: Hint Set Range Ma&ximum
+//   y: S&ymbol Font
+//   z: --
+
 Main_GUI::Main_GUI(bool horizontal_layout,
                    int range_min,
                    int range_max,
@@ -78,7 +106,8 @@ Main_GUI::Main_GUI(bool horizontal_layout,
                    const char* dflt,
                    const char* fallback,
                    bool symb,
-                   bool dh)
+                   bool dh,
+                   bool TTFA)
 : hinting_range_min(range_min),
   hinting_range_max(range_max),
   hinting_limit(limit),
@@ -94,7 +123,8 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   hint_composites(composites),
   no_info(no),
   symbol(symb),
-  dehint(dh)
+  dehint(dh),
+  TTFA_info(TTFA)
 {
   int i;
 
@@ -992,6 +1022,7 @@ again:
   info_data.hint_composites = hint_box->isChecked();
   info_data.symbol = symbol_box->isChecked();
   info_data.dehint = dehint_box->isChecked();
+  info_data.TTFA_info = TTFA_box->isChecked();
 
   strncpy(info_data.default_script,
           script_names[default_box->currentIndex()].tag,
@@ -1058,7 +1089,7 @@ again:
                  "increase-x-height,"
                  "x-height-snapping-exceptions, fallback-stem-width,"
                  "default-script, fallback-script,"
-                 "symbol, dehint",
+                 "symbol, dehint, TTFA-info",
                  input, output, deltas,
                  info_data.hinting_range_min, info_data.hinting_range_max,
                  info_data.hinting_limit,
@@ -1075,7 +1106,7 @@ again:
                  info_data.increase_x_height,
                  snapping_string.constData(), info_data.fallback_stem_width,
                  info_data.default_script, info_data.fallback_script,
-                 info_data.symbol, info_data.dehint);
+                 info_data.symbol, info_data.dehint, info_data.TTFA_info);
 
   if (info_box->isChecked())
   {
@@ -1313,7 +1344,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // fallback stem width
   //
-  stem_width_label_text_with_key = tr("Fall&back Stem Width:");
+  stem_width_label_text_with_key = tr("Fallbac&k Stem Width:");
   stem_width_label_text = tr("Fallback Stem Width:");
   stem_width_label = new QLabel(stem_width_label_text_with_key);
   stem_width_box = new QSpinBox;
@@ -1325,7 +1356,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   stem_width_box->setKeyboardTracking(false);
   stem_width_box->setRange(1, 10000);
 
-  default_stem_width_box_text_with_key = tr("Default Fall&back Stem Width");
+  default_stem_width_box_text_with_key = tr("Default Fallbac&k Stem Width");
   default_stem_width_box_text = tr("Default Fallback Stem Width");
   default_stem_width_box = new QCheckBox(default_stem_width_box_text, this);
   default_stem_width_box->setToolTip(
@@ -1381,6 +1412,13 @@ Main_GUI::create_layout(bool horizontal_layout)
     tr("If switched on, information about <b>TTFautohint</b>"
        " and its calling parameters are added to the version string(s)"
        " (name ID&nbsp;5) in the <i>name</i> table."));
+
+  TTFA_box = new QCheckBox(tr("Add TTFA Info Ta&ble"), this);
+  TTFA_box->setToolTip(
+    tr("If switched on, an SFNT table called <tt>TTFA</tt>"
+       " gets added to the output font,"
+       " holding a dump of all parameters."
+       "  In particular, it lists all delta exceptions."));
 
   //
   // stem width and positioning
@@ -1539,6 +1577,7 @@ Main_GUI::create_vertical_layout()
   gui_layout->addWidget(symbol_box, row++, 1);
   gui_layout->addWidget(dehint_box, row++, 1);
   gui_layout->addWidget(info_box, row++, 1);
+  gui_layout->addWidget(TTFA_box, row++, 1);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
@@ -1667,6 +1706,7 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(symbol_box, row++, 4);
   gui_layout->addWidget(dehint_box, row++, 4);
   gui_layout->addWidget(info_box, row++, 4);
+  gui_layout->addWidget(TTFA_box, row++, 4);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
@@ -1832,6 +1872,8 @@ Main_GUI::set_defaults()
   if (dehint)
     dehint_box->setChecked(true);
   if (!no_info)
+    info_box->setChecked(true);
+  if (TTFA_info)
     info_box->setChecked(true);
 
   if (gray_strong_stem_width)

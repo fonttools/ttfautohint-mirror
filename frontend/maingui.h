@@ -51,7 +51,7 @@ public:
            const char*, int,
            bool, bool, bool,
            bool, bool, const char*, const char*,
-           bool, bool);
+           bool, bool, bool);
   ~Main_GUI();
 
 protected:
@@ -99,6 +99,7 @@ private:
   int fallback_script_idx;
   int symbol;
   int dehint;
+  int TTFA_info;
 
   void create_layout(bool);
   void create_horizontal_layout();
@@ -189,6 +190,7 @@ private:
   QCheckBox* symbol_box;
   QCheckBox* dehint_box;
   QCheckBox* info_box;
+  QCheckBox* TTFA_box;
 
   QCheckBox* watch_box;
   QPushButton* run_button;

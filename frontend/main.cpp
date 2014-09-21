@@ -297,6 +297,7 @@ show_help(bool
 "  -r, --hinting-range-max=N  the maximum PPEM value for hint sets\n"
 "                             (default: %d)\n"
 "  -s, --symbol               input is symbol font\n"
+"  -t, --ttfa-table           add TTFA information table\n"
 "  -v, --verbose              show progress information\n"
 "  -V, --version              print version information and exit\n"
 "  -w, --strong-stem-width=S  use strong stem width routine for modes S,\n"
@@ -478,6 +479,7 @@ main(int argc,
   bool adjust_subglyphs = false;
   bool hint_composites = false;
   bool no_info = false;
+  bool TTFA_info = false;
   bool symbol = false;
 
   const char* default_script = NULL;
@@ -536,6 +538,7 @@ main(int argc,
       {"deltas-file", required_argument, NULL, 'm'},
 #endif
       {"fallback-script", required_argument, NULL, 'f'},
+      {"fallback-stem-width", required_argument, NULL, 'H'},
       {"hinting-limit", required_argument, NULL, 'G'},
       {"hinting-range-max", required_argument, NULL, 'r'},
       {"hinting-range-min", required_argument, NULL, 'l'},
@@ -545,7 +548,7 @@ main(int argc,
       {"pre-hinting", no_argument, NULL, 'p'},
       {"strong-stem-width", required_argument, NULL, 'w'},
       {"symbol", no_argument, NULL, 's'},
-      {"fallback-stem-width", required_argument, NULL, 'H'},
+      {"ttfa-table", no_argument, NULL, 't'},
       {"verbose", no_argument, NULL, 'v'},
       {"version", no_argument, NULL, 'V'},
       {"windows-compatibility", no_argument, NULL, 'W'},
@@ -657,6 +660,10 @@ main(int argc,
 
     case 's':
       symbol = true;
+      break;
+
+    case 't':
+      TTFA_info = true;
       break;
 
     case 'v':
@@ -925,6 +932,7 @@ main(int argc,
     info_data.x_height_snapping_exceptions_string = x_height_snapping_exceptions_string;
     info_data.fallback_stem_width = fallback_stem_width;
     info_data.symbol = symbol;
+    info_data.TTFA_info = TTFA_info;
 
     strncpy(info_data.default_script,
             default_script,
@@ -961,7 +969,7 @@ main(int argc,
                  "adjust-subglyphs, hint-composites,"
                  "increase-x-height, x-height-snapping-exceptions,"
                  "fallback-stem-width, default-script, fallback-script,"
-                 "symbol, dehint, debug",
+                 "symbol, dehint, debug, TTFA-info",
                  in, out, deltas,
                  hinting_range_min, hinting_range_max, hinting_limit,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
@@ -973,7 +981,7 @@ main(int argc,
                  adjust_subglyphs, hint_composites,
                  increase_x_height, x_height_snapping_exceptions_string,
                  fallback_stem_width, default_script, fallback_script,
-                 symbol, dehint, debug);
+                 symbol, dehint, debug, TTFA_info);
 
   if (!no_info)
   {
@@ -1037,7 +1045,7 @@ main(int argc,
                    x_height_snapping_exceptions_string, fallback_stem_width,
                    ignore_restrictions, windows_compatibility, adjust_subglyphs,
                    hint_composites, no_info, default_script, fallback_script,
-                   symbol, dehint);
+                   symbol, dehint, TTFA_info);
 
     dummy.move(-50000, -50000);
     dummy.show();
@@ -1056,7 +1064,7 @@ main(int argc,
                x_height_snapping_exceptions_string, fallback_stem_width,
                ignore_restrictions, windows_compatibility, adjust_subglyphs,
                hint_composites, no_info, default_script, fallback_script,
-               symbol, dehint);
+               symbol, dehint, TTFA_info);
   gui.show();
 
   return app.exec();

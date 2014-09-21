@@ -430,6 +430,21 @@ bytecode larger.
     information is not added to the `name` table.  Except for testing and
     development purposes it is strongly recommended to not use this option.
 
+### Add TTFA Info Table
+
+`--ttfa-info`, `-t`
+:   Add an SFNT table called `TTFA` to the output font that holds a dump of
+    all parameters; the data resembles the format of the `--debug` option's
+    parameter listing.  In particular, it lists all delta exceptions (which
+    are *not* shown in the `name` table info).  This option is mainly for
+    archival purposes so that all information used to create a font is
+    stored in the font itself.  Note that such a `TTFA` table gets ignored
+    by all TrueType rendering engines.
+
+    Forthcoming versions of the ttfautohint front-ends will be able to use
+    this data so that a font can be processed another time with exactly the
+    same parameters, thus providing a means for round-tripping fonts.
+
 ### Strong Stem Width and Positioning
 
 `--strong-stem-width=`*string*, `-w`\ *string*
