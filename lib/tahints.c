@@ -69,7 +69,8 @@ Exit:
 }
 
 
-/* get new edge for given axis, direction, and position */
+/* get new edge for given axis, direction, and position, */
+/* without initializing the edge itself */
 
 FT_Error
 ta_axis_hints_new_edge(TA_AxisHints axis,
@@ -130,10 +131,6 @@ ta_axis_hints_new_edge(TA_AxisHints axis,
   }
 
   axis->num_edges++;
-
-  memset(edge, 0, sizeof (TA_EdgeRec));
-  edge->fpos = (FT_Short)fpos;
-  edge->dir = (FT_Char)dir;
 
 Exit:
   *anedge = edge;
