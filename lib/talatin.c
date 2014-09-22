@@ -1362,16 +1362,18 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
         /* this is the start of a new segment! */
         segment_dir = (TA_Direction)point->out_dir;
 
-        /* clear all segment fields */
         error = ta_axis_hints_new_segment(axis, &segment);
         if (error)
           goto Exit;
 
+        /* clear all segment fields */
         segment[0] = seg0;
+
         segment->dir = (FT_Char)segment_dir;
         min_pos = max_pos = point->u;
         segment->first = point;
         segment->last = point;
+
         on_edge = 1;
       }
 
