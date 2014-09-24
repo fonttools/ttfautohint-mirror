@@ -205,7 +205,7 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
 
   for (point = points; point < limit; point++)
     TA_LOG(("  [ %5d | %5d | %5d | %6.2f | %6.2f"
-            " | %5.2f | %5.2f | %c%c%c%c%c%c ]\n",
+            " | %5.2f | %5.2f | %c ]\n",
             point - points,
             point->fx,
             point->fy,
@@ -213,12 +213,7 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
             point->oy / 64.0,
             point->x / 64.0,
             point->y / 64.0,
-            (point->flags & TA_FLAG_WEAK_INTERPOLATION) ? 'w' : ' ',
-            (point->flags & TA_FLAG_INFLECTION) ? 'i' : ' ',
-            (point->flags & TA_FLAG_EXTREMA_X) ? '<' : ' ',
-            (point->flags & TA_FLAG_EXTREMA_Y) ? 'v' : ' ',
-            (point->flags & TA_FLAG_ROUND_X) ? '(' : ' ',
-            (point->flags & TA_FLAG_ROUND_Y) ? 'u' : ' '));
+            (point->flags & TA_FLAG_WEAK_INTERPOLATION) ? 'w' : ' '));
   TA_LOG(("\n"));
 }
 
@@ -1040,8 +1035,7 @@ ta_glyph_hints_align_strong_points(TA_GlyphHints hints,
       /* if this point is candidate to weak interpolation, we */
       /* interpolate it after all strong points have been processed */
 
-      if ((point->flags & TA_FLAG_WEAK_INTERPOLATION)
-          && !(point->flags & TA_FLAG_INFLECTION))
+      if ((point->flags & TA_FLAG_WEAK_INTERPOLATION))
         continue;
 
       if (dim == TA_DIMENSION_VERT)

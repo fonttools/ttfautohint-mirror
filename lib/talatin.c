@@ -1398,9 +1398,6 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
       FT_Pos last_v = last->v;
 
 
-      if (first == last)
-        continue;
-
       if (first_v < last_v)
       {
         TA_Point p;
@@ -1478,10 +1475,7 @@ ta_latin_hints_link_segments(TA_GlyphHints hints,
   /* now compare each segment to the others */
   for (seg1 = segments; seg1 < segment_limit; seg1++)
   {
-    /* the fake segments are introduced to hint the metrics -- */
-    /* we must never link them to anything */
-    if (seg1->dir != axis->major_dir
-        || seg1->first == seg1->last)
+    if (seg1->dir != axis->major_dir)
       continue;
 
     /* search for stems having opposite directions, */

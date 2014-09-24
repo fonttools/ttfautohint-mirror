@@ -70,13 +70,9 @@ typedef enum TA_Direction_
  *    `ta_{cjk,latin,...}_hints_compute_segments' are the functions to
  *    find segments in an outline.
  *
- *    A segment is a series of consecutive points that are approximately
- *    aligned along a coordinate axis.  The analysis to do so is specific
- *    to a writing system.
- *
- *    A segment must have at least two points, except in the case of
- *    `fake' segments that are generated to hint metrics appropriately,
- *    and which consist of a single point.
+ *    A segment is a series of at least two consecutive points that are
+ *    approximately aligned along a coordinate axis.  The analysis to do
+ *    so is specific to a writing system.
  *
  *
  *  Edges
@@ -146,7 +142,7 @@ typedef enum TA_Direction_
  *    Serifs are detected by `ta_{cjk,latin,...}_hint_edges'.
  *
  *    In comparison to a stem, a serif (as handled by the auto-hinter
- *    module which takes care of the `latin' writing system) has
+ *    module that takes care of the `latin' writing system) has
  *
  *      best segment_1 = segment_2 && best segment_2 != segment_1
  *
@@ -176,19 +172,19 @@ typedef enum TA_Direction_
  *
  *  Strong Points
  *
- *    Experience has shown that points which are not part of an edge need
- *    to be interpolated linearly between their two closest edges, even if
- *    these are not part of the contour of those particular points.
- *    Typical candidates for this are
+ *    Experience has shown that points not part of an edge need to be
+ *    interpolated linearly between their two closest edges, even if these
+ *    are not part of the contour of those particular points.  Typical
+ *    candidates for this are
  *
  *    - angle points (i.e., points where the `in' and `out' direction
  *      differ greatly)
  *
  *    - inflection points (i.e., where the `in' and `out' angles are the
  *      same, but the curvature changes sign) [currently, such points
- *      aren't handled in the auto-hinter]
+ *      aren't handled specially in the auto-hinter]
  *
- *    `ta_glyph_hints_align_strong_points' is the function which takes
+ *    `ta_glyph_hints_align_strong_points' is the function that takes
  *    care of such situations; it is equivalent to the TrueType `IP'
  *    hinting instruction.
  *
@@ -216,23 +212,12 @@ typedef enum TA_Direction_
 #define TA_FLAG_CUBIC (1 << 1)
 #define TA_FLAG_CONTROL (TA_FLAG_CONIC | TA_FLAG_CUBIC)
 
-/* point extremum flags */
-#define TA_FLAG_EXTREMA_X (1 << 2)
-#define TA_FLAG_EXTREMA_Y (1 << 3)
-
-/* point roundness flags */
-#define TA_FLAG_ROUND_X (1 << 4)
-#define TA_FLAG_ROUND_Y (1 << 5)
-
 /* point touch flags */
-#define TA_FLAG_TOUCH_X (1 << 6)
-#define TA_FLAG_TOUCH_Y (1 << 7)
+#define TA_FLAG_TOUCH_X (1 << 2)
+#define TA_FLAG_TOUCH_Y (1 << 3)
 
 /* candidates for weak interpolation have this flag set */
-#define TA_FLAG_WEAK_INTERPOLATION (1 << 8)
-
-/* all inflection points in the outline have this flag set */
-#define TA_FLAG_INFLECTION (1 << 9)
+#define TA_FLAG_WEAK_INTERPOLATION (1 << 4)
 
 
 /* edge hint flags */
