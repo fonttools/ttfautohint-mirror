@@ -24,7 +24,8 @@
 #include "tacontrol-bison.h"
 
 Control*
-TA_control_new(long font_idx,
+TA_control_new(Control_Type type,
+               long font_idx,
                long glyph_idx,
                number_range* point_set,
                double x_shift,
@@ -38,15 +39,29 @@ TA_control_new(long font_idx,
   if (!control)
     return NULL;
 
+  control->type = type;
+
   control->font_idx = font_idx;
   control->glyph_idx = glyph_idx;
   control->points = number_set_reverse(point_set);
 
-  /* we round shift values to multiples of 1/(2^CONTROL_DELTA_SHIFT) */
-  control->x_shift = (char)(x_shift * CONTROL_DELTA_FACTOR
-                            + (x_shift > 0 ? 0.5 : -0.5));
-  control->y_shift = (char)(y_shift * CONTROL_DELTA_FACTOR
-                            + (y_shift > 0 ? 0.5 : -0.5));
+  switch (control->type)
+  {
+  case Control_Delta_before_IUP:
+  case Control_Delta_after_IUP:
+    /* we round shift values to multiples of 1/(2^CONTROL_DELTA_SHIFT) */
+    control->x_shift = (char)(x_shift * CONTROL_DELTA_FACTOR
+                              + (x_shift > 0 ? 0.5 : -0.5));
+    control->y_shift = (char)(y_shift * CONTROL_DELTA_FACTOR
+                              + (y_shift > 0 ? 0.5 : -0.5));
+    break;
+
+  case Control_One_Point_Segment:
+    /* not implemented yet */
+    control->x_shift = 0;
+    control->y_shift = 0;
+    break;
+  }
 
   control->ppems = number_set_reverse(ppem_set);
   control->next = NULL;
@@ -143,23 +158,36 @@ control_show_line(FONT* font,
   if (!ppems_buf)
     goto Exit;
 
-  /* display glyph index if we don't have a glyph name */
-  if (*glyph_name_buf)
-    s = sdscatprintf(s, "%ld %s p %s x %.20g y %.20g @ %s",
-                     control->font_idx,
-                     glyph_name_buf,
-                     points_buf,
-                     (double)control->x_shift / CONTROL_DELTA_FACTOR,
-                     (double)control->y_shift / CONTROL_DELTA_FACTOR,
-                     ppems_buf);
-  else
-    s = sdscatprintf(s, "%ld %ld p %s x %.20g y %.20g @ %s",
-                     control->font_idx,
-                     control->glyph_idx,
-                     points_buf,
-                     (double)control->x_shift / CONTROL_DELTA_FACTOR,
-                     (double)control->y_shift / CONTROL_DELTA_FACTOR,
-                     ppems_buf);
+  switch (control->type)
+  {
+  case Control_Delta_before_IUP:
+    /* not implemented yet */
+    break;
+
+  case Control_Delta_after_IUP:
+    /* display glyph index if we don't have a glyph name */
+    if (*glyph_name_buf)
+      s = sdscatprintf(s, "%ld %s p %s x %.20g y %.20g @ %s",
+                       control->font_idx,
+                       glyph_name_buf,
+                       points_buf,
+                       (double)control->x_shift / CONTROL_DELTA_FACTOR,
+                       (double)control->y_shift / CONTROL_DELTA_FACTOR,
+                       ppems_buf);
+    else
+      s = sdscatprintf(s, "%ld %ld p %s x %.20g y %.20g @ %s",
+                       control->font_idx,
+                       control->glyph_idx,
+                       points_buf,
+                       (double)control->x_shift / CONTROL_DELTA_FACTOR,
+                       (double)control->y_shift / CONTROL_DELTA_FACTOR,
+                       ppems_buf);
+    break;
+
+  case Control_One_Point_Segment:
+    /* not implemented yet */
+    break;
+  }
 
 Exit:
   free(points_buf);
@@ -441,6 +469,7 @@ TA_control_build_tree(FONT* font)
 
   while (control)
   {
+    Control_Type type = control->type;
     long font_idx = control->font_idx;
     long glyph_idx = control->glyph_idx;
     char x_shift = control->x_shift;
@@ -472,6 +501,7 @@ TA_control_build_tree(FONT* font)
         if (!node)
           return FT_Err_Out_Of_Memory;
 
+        node->ctrl.type = type;
         node->ctrl.font_idx = font_idx;
         node->ctrl.glyph_idx = glyph_idx;
         node->ctrl.ppem = ppem;
@@ -500,6 +530,7 @@ TA_control_build_tree(FONT* font)
           points.end = point_idx;
           points.next = NULL;
 
+          d.type = type;
           d.font_idx = font_idx;
           d.glyph_idx = glyph_idx;
           d.points = &points;

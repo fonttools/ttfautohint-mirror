@@ -702,10 +702,17 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   {
     ctrl = TA_control_get_ctrl(font);
 
+    if (!ctrl)
+      break;
+
+    /* check type */
+    if (!(ctrl->type == Control_Delta_before_IUP
+          || ctrl->type == Control_Delta_after_IUP))
+      break;
+
     /* too large values of font and glyph indices in `ctrl' */
     /* are handled by later calls of this function */
-    if (!ctrl
-        || face->face_index < ctrl->font_idx
+    if (face->face_index < ctrl->font_idx
         || idx < ctrl->glyph_idx)
       break;
 

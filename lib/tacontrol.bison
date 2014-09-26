@@ -154,7 +154,8 @@ entry:
     { $entry = NULL; }
 | font_idx glyph_idx point_set x_shift y_shift ppem_set EOE
     {
-      $entry = TA_control_new($font_idx,
+      $entry = TA_control_new(Control_Delta_after_IUP,
+                              $font_idx,
                               $glyph_idx,
                               $point_set,
                               $x_shift,

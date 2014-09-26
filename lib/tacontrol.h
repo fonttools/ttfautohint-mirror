@@ -52,6 +52,18 @@ extern "C" {
 
 
 /*
+ * The control type.
+ */
+
+typedef enum Control_Type_
+{
+  Control_Delta_before_IUP,
+  Control_Delta_after_IUP,
+  Control_One_Point_Segment
+} Control_Type;
+
+
+/*
  * A structure to hold control instructions for a glyph.  A linked list of it
  * gets allocated by a successful call to `TA_control_parse_buffer'.  Use
  * `TA_control_free' to deallocate the list.
@@ -63,6 +75,8 @@ extern "C" {
 
 struct Control_
 {
+  Control_Type type;
+
   long font_idx;
   long glyph_idx;
   number_range* points;
@@ -80,6 +94,8 @@ struct Control_
 
 typedef struct Ctrl_
 {
+  Control_Type type;
+
   long font_idx;
   long glyph_idx;
   int ppem;
@@ -155,7 +171,8 @@ typedef struct Control_Context_
  */
 
 Control*
-TA_control_new(long font_idx,
+TA_control_new(Control_Type type,
+               long font_idx,
                long glyph_idx,
                number_range* point_set,
                double x_shift,
