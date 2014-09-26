@@ -13,8 +13,8 @@
  */
 
 
-#ifndef __DELTAS_H__
-#define __DELTAS_H__
+#ifndef __TADELTAS_H__
+#define __TADELTAS_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -298,6 +298,6 @@ TA_deltas_get_delta(FONT* font);
 } /* extern "C" */
 #endif
 
-#endif /* __DELTAS_H__ */
+#endif /* __TADELTAS_H__ */
 
 /* end of deltas.h */
