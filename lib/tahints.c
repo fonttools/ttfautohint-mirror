@@ -201,11 +201,11 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
 
   TA_LOG(("Table of points:\n"
           "  [ index |  xorg |  yorg | xscale | yscale"
-          " |  xfit |  yfit |  flags ]\n"));
+          " |  xfit |  yfit | flags ]\n"));
 
   for (point = points; point < limit; point++)
     TA_LOG(("  [ %5d | %5d | %5d | %6.2f | %6.2f"
-            " | %5.2f | %5.2f | %c ]\n",
+            " | %5.2f | %5.2f |   %c   ]\n",
             point - points,
             point->fx,
             point->fy,

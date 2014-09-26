@@ -143,7 +143,7 @@ TA_font_dump_parameters(FONT* font,
 
 
     token = strtok_r(ds, "\n", &saveptr);
-    DUMPSTR("control instructions", token);
+    DUMPSTR("control-instructions", token);
 
     for (;;)
     {
@@ -155,7 +155,7 @@ TA_font_dump_parameters(FONT* font,
     }
   }
   else
-    DUMPSTR("control instructions", "");
+    DUMPSTR("control-instructions", "");
 
   if (!format)
     s = sdscat(s, "\n");
