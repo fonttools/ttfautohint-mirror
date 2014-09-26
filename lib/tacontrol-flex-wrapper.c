@@ -1,4 +1,4 @@
-/* tadeltas-flex-wrapper.c */
+/* tacontrol-flex-wrapper.c */
 
 /*
  * Copyright (C) 2014 by Werner Lemberg.
@@ -21,6 +21,6 @@
 
 #include "config.h"
 
-#include "tadeltas-flex.c"
+#include "tacontrol-flex.c"
 
-/* end of tadeltas-flex-wrapper.c */
+/* end of tacontrol-flex-wrapper.c */

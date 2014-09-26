@@ -72,41 +72,41 @@ TA_font_file_write(FONT* font,
 
 
 FT_Error
-TA_deltas_file_read(FONT* font,
-                    FILE* deltas_file)
+TA_control_file_read(FONT* font,
+                     FILE* control_file)
 {
   char* buf[BUF_SIZE];
-  size_t deltas_len = 0;
+  size_t control_len = 0;
   size_t read_bytes;
 
 
-  font->deltas_buf = (char*)malloc(BUF_SIZE);
-  if (!font->deltas_buf)
+  font->control_buf = (char*)malloc(BUF_SIZE);
+  if (!font->control_buf)
     return FT_Err_Out_Of_Memory;
 
-  while ((read_bytes = fread(buf, 1, BUF_SIZE, deltas_file)) > 0)
+  while ((read_bytes = fread(buf, 1, BUF_SIZE, control_file)) > 0)
   {
-    char* deltas_buf_new;
+    char* control_buf_new;
 
 
     /* we store the data as a C string, allocating one more byte */
-    deltas_buf_new = (char*)realloc(font->deltas_buf,
-                                    deltas_len + read_bytes + 1);
-    if (!deltas_buf_new)
+    control_buf_new = (char*)realloc(font->control_buf,
+                                     control_len + read_bytes + 1);
+    if (!control_buf_new)
       return FT_Err_Out_Of_Memory;
     else
-      font->deltas_buf = deltas_buf_new;
+      font->control_buf = control_buf_new;
 
-    memcpy(font->deltas_buf + deltas_len, buf, read_bytes);
+    memcpy(font->control_buf + control_len, buf, read_bytes);
 
-    deltas_len += read_bytes;
+    control_len += read_bytes;
   }
 
-  if (ferror(deltas_file))
+  if (ferror(control_file))
     return FT_Err_Invalid_Stream_Read;
 
-  font->deltas_len = deltas_len;
-  font->deltas_buf[deltas_len] = '\0';
+  font->control_len = control_len;
+  font->control_buf[control_len] = '\0';
 
   return TA_Err_Ok;
 }

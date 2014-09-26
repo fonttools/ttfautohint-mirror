@@ -27,7 +27,7 @@ libnumberset_la_SOURCES = \
 # We have to bypass automake's default handling of flex (.l) and bison (.y)
 # files, since such files are always treated as traditional lex and yacc
 # files, not allowing for flex and bison extensions.  For this reason, we
-# call our source files `tadeltas.flex' and `tadeltas.bison' and write
+# call our source files `tacontrol.flex' and `tacontrol.bison' and write
 # explicit dependency rules.
 
 libttfautohint_la_SOURCES = \
@@ -35,11 +35,11 @@ libttfautohint_la_SOURCES = \
   ta.h \
   tablue.c tablue.h \
   tabytecode.c tabytecode.h \
+  tacontrol.c tacontrol.h \
+  tacontrol-flex-wrapper.c tacontrol-flex.h \
+  tacontrol-bison.c tacontrol-bison.h \
   tacover.h \
   tacvt.c \
-  tadeltas.c tadeltas.h \
-  tadeltas-flex-wrapper.c tadeltas-flex.h \
-  tadeltas-bison.c tadeltas-bison.h \
   tadsig.c \
   tadummy.c tadummy.h \
   tadump.c \
@@ -86,15 +86,15 @@ libttfautohint_la_LIBADD = \
 
 BUILT_SOURCES = \
   tablue.c tablue.h \
-  tadeltas-flex.c tadeltas-flex.h \
-  tadeltas-bison.c tadeltas-bison.h
+  tacontrol-flex.c tacontrol-flex.h \
+  tacontrol-bison.c tacontrol-bison.h
 
 EXTRA_DIST = \
   afblue.pl \
   sds.c \
   tablue.cin tablue.hin \
   tablue.dat \
-  tadeltas.flex tadeltas.bison tadeltas-flex.c
+  tacontrol.flex tacontrol.bison tacontrol-flex.c
 
 tablue.c: tablue.dat tablue.cin
 	$(AM_V_GEN)rm -f $@-t $@ \
@@ -116,18 +116,18 @@ TA_V_FLEX_0 = @echo "  FLEX    " $@;
 
 # we use `touch' to make the created .h file newer than the created .c file
 
-tadeltas-flex.c tadeltas-flex.h: tadeltas.flex
-	$(TA_V_FLEX)$(FLEX) tadeltas.flex \
-	&& touch tadeltas-flex.h
-tadeltas-flex.h: tadeltas-flex.c
+tacontrol-flex.c tacontrol-flex.h: tacontrol.flex
+	$(TA_V_FLEX)$(FLEX) tacontrol.flex \
+	&& touch tacontrol-flex.h
+tacontrol-flex.h: tacontrol-flex.c
 
 TA_V_BISON = $(TA_V_BISON_@AM_V@)
 TA_V_BISON_ = $(TA_V_BISON_@AM_DEFAULT_V@)
 TA_V_BISON_0 = @echo "  BISON   " $@;
 
-tadeltas-bison.c tadeltas-bison.h: tadeltas.bison
-	$(TA_V_BISON)$(BISON) tadeltas.bison \
-	&& touch tadeltas-bison.h
-tadeltas-bison.h: tadeltas-bison.c
+tacontrol-bison.c tacontrol-bison.h: tacontrol.bison
+	$(TA_V_BISON)$(BISON) tacontrol.bison \
+	&& touch tacontrol-bison.h
+tacontrol-bison.h: tacontrol-bison.c
 
 ## end of Makefile.am

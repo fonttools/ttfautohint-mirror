@@ -58,14 +58,14 @@ TTF_autohint(const char* options,
 
   FILE* in_file = NULL;
   FILE* out_file = NULL;
-  FILE* deltas_file = NULL;
+  FILE* control_file = NULL;
 
   const char* in_buf = NULL;
   size_t in_len = 0;
   char** out_bufp = NULL;
   size_t* out_lenp = NULL;
-  const char* deltas_buf = NULL;
-  size_t deltas_len = 0;
+  const char* control_buf = NULL;
+  size_t control_len = 0;
 
   const unsigned char** error_stringp = NULL;
 
@@ -151,21 +151,21 @@ TTF_autohint(const char* options,
       default_script_string = va_arg(ap, const char*);
     else if (COMPARE("dehint"))
       dehint = (FT_Bool)va_arg(ap, FT_Int);
-    else if (COMPARE("deltas-buffer"))
+    else if (COMPARE("control-buffer"))
     {
-      deltas_file = NULL;
-      deltas_buf = va_arg(ap, const char*);
+      control_file = NULL;
+      control_buf = va_arg(ap, const char*);
     }
-    else if (COMPARE("deltas-buffer-len"))
+    else if (COMPARE("control-buffer-len"))
     {
-      deltas_file = NULL;
-      deltas_len = va_arg(ap, size_t);
+      control_file = NULL;
+      control_len = va_arg(ap, size_t);
     }
-    else if (COMPARE("deltas-file"))
+    else if (COMPARE("control-file"))
     {
-      deltas_file = va_arg(ap, FILE*);
-      deltas_buf = NULL;
-      deltas_len = 0;
+      control_file = va_arg(ap, FILE*);
+      control_buf = NULL;
+      control_len = 0;
     }
     else if (COMPARE("dw-cleartype-strong-stem-width"))
       dw_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
@@ -431,16 +431,16 @@ No_check:
     font->in_len = in_len;
   }
 
-  if (deltas_file)
+  if (control_file)
   {
-    error = TA_deltas_file_read(font, deltas_file);
+    error = TA_control_file_read(font, control_file);
     if (error)
       goto Err;
   }
-  else if (deltas_buf)
+  else if (control_buf)
   {
-    font->deltas_buf = (char*)deltas_buf;
-    font->deltas_len = deltas_len;
+    font->control_buf = (char*)control_buf;
+    font->control_len = control_len;
   }
 
   error = TA_font_init(font);
@@ -477,10 +477,10 @@ No_check:
       goto Err;
   }
 
-  /* process delta exceptions data */
-  error = TA_deltas_parse_buffer(font,
-                                 &error_string,
-                                 &errlinenum, &errline, &errpos);
+  /* process control instructions */
+  error = TA_control_parse_buffer(font,
+                                  &error_string,
+                                  &errlinenum, &errline, &errpos);
   if (error)
   {
     free_errline = 1;
@@ -505,7 +505,7 @@ No_check:
     free(s);
   }
 
-  error = TA_deltas_build_tree(font);
+  error = TA_control_build_tree(font);
   if (error)
     goto Err;
 
@@ -683,9 +683,9 @@ No_check:
   error = TA_Err_Ok;
 
 Err:
-  TA_deltas_free(font->deltas);
-  TA_deltas_free_tree(font);
-  TA_font_unload(font, in_buf, out_bufp, deltas_buf);
+  TA_control_free(font->control);
+  TA_control_free_tree(font);
+  TA_font_unload(font, in_buf, out_bufp, control_buf);
 
 Err1:
   if (!error_string)

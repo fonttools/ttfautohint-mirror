@@ -83,31 +83,31 @@ TA_ERRORDEF_(XHeightSnapping_Not_Ascending,      0x105,
 TA_ERRORDEF_(XHeightSnapping_Allocation_Error,   0x106,
              "allocation error")
 
-TA_ERRORDEF_(Deltas_Syntax_Error,         0x201,
+TA_ERRORDEF_(Control_Syntax_Error,         0x201,
              "syntax error")
-TA_ERRORDEF_(Deltas_Invalid_Font_Index,   0x202,
+TA_ERRORDEF_(Control_Invalid_Font_Index,   0x202,
              "invalid font index")
-TA_ERRORDEF_(Deltas_Invalid_Glyph_Index,  0x203,
+TA_ERRORDEF_(Control_Invalid_Glyph_Index,  0x203,
              "invalid glyph index")
-TA_ERRORDEF_(Deltas_Invalid_Glyph_Name,   0x204,
+TA_ERRORDEF_(Control_Invalid_Glyph_Name,   0x204,
              "invalid glyph name")
-TA_ERRORDEF_(Deltas_Invalid_Character,    0x205,
+TA_ERRORDEF_(Control_Invalid_Character,    0x205,
              "invalid character")
-TA_ERRORDEF_(Deltas_Invalid_Shift,        0x206,
+TA_ERRORDEF_(Control_Invalid_Shift,        0x206,
              "invalid shift")
-TA_ERRORDEF_(Deltas_Invalid_Range,        0x207,
+TA_ERRORDEF_(Control_Invalid_Range,        0x207,
              "invalid range")
-TA_ERRORDEF_(Deltas_Invalid_Glyph,        0x208,
+TA_ERRORDEF_(Control_Invalid_Glyph,        0x208,
              "invalid glyph")
-TA_ERRORDEF_(Deltas_Overflow,             0x209,
+TA_ERRORDEF_(Control_Overflow,             0x209,
              "overflow")
-TA_ERRORDEF_(Deltas_Overlapping_Ranges,   0x20A,
+TA_ERRORDEF_(Control_Overlapping_Ranges,   0x20A,
              "overlapping ranges")
-TA_ERRORDEF_(Deltas_Ranges_Not_Ascending, 0x20B,
+TA_ERRORDEF_(Control_Ranges_Not_Ascending, 0x20B,
              "ranges not ascending")
-TA_ERRORDEF_(Deltas_Allocation_Error,     0x20C,
+TA_ERRORDEF_(Control_Allocation_Error,     0x20C,
              "allocation error")
-TA_ERRORDEF_(Deltas_Flex_Error,           0x20D,
+TA_ERRORDEF_(Control_Flex_Error,           0x20D,
              "internal flex error")
 
 #ifdef TA_ERROR_END_LIST

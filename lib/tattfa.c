@@ -43,7 +43,7 @@ TA_table_build_TTFA(FT_Byte** TTFA,
     return FT_Err_Out_Of_Memory;
   }
   buf = buf_new;
-    
+
   /* pad end of buffer with zeros */
   p = buf + buf_len;
   switch (buf_len % 4)

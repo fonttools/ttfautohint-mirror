@@ -1,4 +1,4 @@
-/* tadeltas.flex */
+/* tacontrol.flex */
 
 /*
  * Copyright (C) 2014 by Werner Lemberg.
@@ -13,7 +13,7 @@
  */
 
 /*
- * lexical analyzer for parsing delta exceptions
+ * lexical analyzer for parsing ttfautohint control instructions
  *
  * Lexing errors are indicated by setting `context->error' to an appropriate
  * value; fatal lexer errors return token `INTERNAL_FLEX_ERROR'.
@@ -22,8 +22,8 @@
 /* you should use flex version >= 2.5.39 to avoid various buglets */
 /* that don't have work-arounds */
 
-%option outfile="tadeltas-flex.c"
-%option header-file="tadeltas-flex.h"
+%option outfile="tacontrol-flex.c"
+%option header-file="tacontrol-flex.h"
 
 %option batch
 %option bison-bridge
@@ -44,7 +44,7 @@
 #include <string.h>
 
 #include "ta.h"
-#include "tadeltas-bison.h"
+#include "tacontrol-bison.h"
 
 /* option `yylineno' resets `yycolumn' to 0 after a newline */
 /* (since version 2.5.30, March 2003) before the next token gets read; */
@@ -57,9 +57,9 @@
   yylloc->last_column = yycolumn + yyleng - 1; \
   yycolumn += yyleng;
 
-#define YY_EXTRA_TYPE Deltas_Context*
+#define YY_EXTRA_TYPE Control_Context*
 
-#define YY_FATAL_ERROR(msg) TA_deltas_scanner_fatal_error(msg, yyscanner)
+#define YY_FATAL_ERROR(msg) TA_control_scanner_fatal_error(msg, yyscanner)
 
 /* by default, `yylex' simply calls `exit' (via YY_FATAL_ERROR) */
 /* in case of a (more or less) fatal error -- */
@@ -72,7 +72,7 @@
             if (setjmp(yyextra->jump_buffer) != 0) \
             { \
               /* error and error message in `context' already stored by */ \
-              /* `TA_deltas_scanner_fatal_error' */ \
+              /* `TA_control_scanner_fatal_error' */ \
               return INTERNAL_FLEX_ERROR; \
             } \
           } while (0)
@@ -83,8 +83,8 @@
 #define YY_EXIT_FAILURE ((void)yyscanner, 2)
 
 void
-TA_deltas_scanner_fatal_error(const char* msg,
-                              yyscan_t yyscanner);
+TA_control_scanner_fatal_error(const char* msg,
+                               yyscan_t yyscanner);
 %}
 
 
@@ -143,7 +143,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
   if (errno == ERANGE)
   {
     /* overflow or underflow */
-    yyextra->error = TA_Err_Deltas_Overflow;
+    yyextra->error = TA_Err_Control_Overflow;
   }
   return INTEGER;
 }
@@ -158,7 +158,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
   if (yylval->real && errno == ERANGE)
   {
     /* overflow */
-    yyextra->error = TA_Err_Deltas_Overflow;
+    yyextra->error = TA_Err_Control_Overflow;
   }
   return REAL;
 }
@@ -176,7 +176,7 @@ TA_deltas_scanner_fatal_error(const char* msg,
   if (!yylval->name)
   {
     /* allocation error */
-    yyextra->error = TA_Err_Deltas_Allocation_Error;
+    yyextra->error = TA_Err_Control_Allocation_Error;
   }
   return NAME;
 }
@@ -206,7 +206,7 @@ yyalloc(yy_size_t size,
   if (!p && yyscanner)
   {
     context = yyget_extra(yyscanner);
-    context->error = TA_Err_Deltas_Allocation_Error;
+    context->error = TA_Err_Control_Allocation_Error;
   }
   return p;
 }
@@ -224,7 +224,7 @@ yyrealloc(void* ptr,
   if (!p && yyscanner)
   {
     context = yyget_extra(yyscanner);
-    context->error = TA_Err_Deltas_Allocation_Error;
+    context->error = TA_Err_Control_Allocation_Error;
   }
   return p;
 }
@@ -242,15 +242,15 @@ yyfree(void* ptr,
 
 
 void
-TA_deltas_scanner_fatal_error(const char* msg,
-                              yyscan_t yyscanner)
+TA_control_scanner_fatal_error(const char* msg,
+                               yyscan_t yyscanner)
 {
   YY_EXTRA_TYPE context = yyget_extra(yyscanner);
 
 
   /* allocation routines set a different error value */
   if (!context->error)
-    context->error = TA_Err_Deltas_Flex_Error;
+    context->error = TA_Err_Control_Flex_Error;
   strncpy(context->errmsg, msg, sizeof (context->errmsg));
 
   longjmp(context->jump_buffer, 1);
@@ -262,8 +262,8 @@ TA_deltas_scanner_fatal_error(const char* msg,
 
 
 void
-TA_deltas_scanner_init(Deltas_Context* context,
-                       FONT* font)
+TA_control_scanner_init(Control_Context* context,
+                        FONT* font)
 {
   int flex_error;
 
@@ -296,11 +296,11 @@ TA_deltas_scanner_init(Deltas_Context* context,
   if (setjmp(context->jump_buffer) != 0)
   {
     /* error and error message in `context' already stored by */
-    /* `TA_deltas_scanner_fatal_error' */
+    /* `TA_control_scanner_fatal_error' */
     return;
   }
 
-  b = yy_scan_bytes(font->deltas_buf, font->deltas_len, scanner);
+  b = yy_scan_bytes(font->control_buf, font->control_len, scanner);
 
   /* flex bug: these two fields are not initialized, */
   /*           causing zillions of valgrind errors; see */
@@ -311,7 +311,7 @@ TA_deltas_scanner_init(Deltas_Context* context,
 
 
 void
-TA_deltas_scanner_done(Deltas_Context* context)
+TA_control_scanner_done(Control_Context* context)
 {
   yylex_destroy(context->scanner);
 }
@@ -334,17 +334,17 @@ main(void)
   int retval = 1;
 
   FONT font;
-  Deltas_Context context;
+  Control_Context context;
 
   YYSTYPE yylval_param;
   YYLTYPE yylloc_param;
 
 
-  /* we only need the delta exceptions buffer */
-  font.deltas_buf = (char*)input;
-  font.deltas_len = strlen(input);
+  /* we only need the control instructions buffer */
+  font.control_buf = (char*)input;
+  font.control_len = strlen(input);
 
-  TA_deltas_scanner_init(&context, &font);
+  TA_control_scanner_init(&context, &font);
   if (context.error)
     goto Exit;
 
@@ -358,11 +358,11 @@ main(void)
   retval = 0;
 
 Exit:
-  TA_deltas_scanner_done(&context);
+  TA_control_scanner_done(&context);
 
   return retval;
 }
 
 #endif
 
-/* end of tadeltas.flex */
+/* end of tacontrol.flex */

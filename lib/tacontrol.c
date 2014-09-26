@@ -1,4 +1,4 @@
-/* tadeltas.c */
+/* tacontrol.c */
 
 /*
  * Copyright (C) 2014 by Werner Lemberg.
@@ -21,43 +21,43 @@
 #include <stdbool.h> /* for llrb.h */
 
 #include "llrb.h" /* a red-black tree implementation */
-#include "tadeltas-bison.h"
+#include "tacontrol-bison.h"
 
-Deltas*
-TA_deltas_new(long font_idx,
-              long glyph_idx,
-              number_range* point_set,
-              double x_shift,
-              double y_shift,
-              number_range* ppem_set)
+Control*
+TA_control_new(long font_idx,
+               long glyph_idx,
+               number_range* point_set,
+               double x_shift,
+               double y_shift,
+               number_range* ppem_set)
 {
-  Deltas* deltas;
+  Control* control;
 
 
-  deltas = (Deltas*)malloc(sizeof (Deltas));
-  if (!deltas)
+  control = (Control*)malloc(sizeof (Control));
+  if (!control)
     return NULL;
 
-  deltas->font_idx = font_idx;
-  deltas->glyph_idx = glyph_idx;
-  deltas->points = number_set_reverse(point_set);
+  control->font_idx = font_idx;
+  control->glyph_idx = glyph_idx;
+  control->points = number_set_reverse(point_set);
 
-  /* we round shift values to multiples of 1/(2^DELTA_SHIFT) */
-  deltas->x_shift = (char)(x_shift * DELTA_FACTOR
-                           + (x_shift > 0 ? 0.5 : -0.5));
-  deltas->y_shift = (char)(y_shift * DELTA_FACTOR
-                           + (y_shift > 0 ? 0.5 : -0.5));
+  /* we round shift values to multiples of 1/(2^CONTROL_DELTA_SHIFT) */
+  control->x_shift = (char)(x_shift * CONTROL_DELTA_FACTOR
+                            + (x_shift > 0 ? 0.5 : -0.5));
+  control->y_shift = (char)(y_shift * CONTROL_DELTA_FACTOR
+                            + (y_shift > 0 ? 0.5 : -0.5));
 
-  deltas->ppems = number_set_reverse(ppem_set);
-  deltas->next = NULL;
+  control->ppems = number_set_reverse(ppem_set);
+  control->next = NULL;
 
-  return deltas;
+  return control;
 }
 
 
-Deltas*
-TA_deltas_prepend(Deltas* list,
-                  Deltas* element)
+Control*
+TA_control_prepend(Control* list,
+                   Control* element)
 {
   if (!element)
     return list;
@@ -68,10 +68,10 @@ TA_deltas_prepend(Deltas* list,
 }
 
 
-Deltas*
-TA_deltas_reverse(Deltas* list)
+Control*
+TA_control_reverse(Control* list)
 {
-  Deltas* cur;
+  Control* cur;
 
 
   cur = list;
@@ -79,7 +79,7 @@ TA_deltas_reverse(Deltas* list)
 
   while (cur)
   {
-    Deltas* tmp;
+    Control* tmp;
 
 
     tmp = cur;
@@ -93,26 +93,26 @@ TA_deltas_reverse(Deltas* list)
 
 
 void
-TA_deltas_free(Deltas* deltas)
+TA_control_free(Control* control)
 {
-  while (deltas)
+  while (control)
   {
-    Deltas* tmp;
+    Control* tmp;
 
 
-    number_set_free(deltas->points);
-    number_set_free(deltas->ppems);
+    number_set_free(control->points);
+    number_set_free(control->ppems);
 
-    tmp = deltas;
-    deltas = deltas->next;
+    tmp = control;
+    control = control->next;
     free(tmp);
   }
 }
 
 
 sds
-deltas_show_line(FONT* font,
-                 Deltas* deltas)
+control_show_line(FONT* font,
+                  Control* control)
 {
   char glyph_name_buf[64];
   char* points_buf = NULL;
@@ -125,40 +125,40 @@ deltas_show_line(FONT* font,
 
   s = sdsempty();
 
-  if (!deltas)
+  if (!control)
     goto Exit;
 
-  if (deltas->font_idx >= font->num_sfnts)
+  if (control->font_idx >= font->num_sfnts)
     goto Exit;
 
-  face = font->sfnts[deltas->font_idx].face;
+  face = font->sfnts[control->font_idx].face;
   glyph_name_buf[0] = '\0';
   if (FT_HAS_GLYPH_NAMES(face))
-    FT_Get_Glyph_Name(face, deltas->glyph_idx, glyph_name_buf, 64);
+    FT_Get_Glyph_Name(face, control->glyph_idx, glyph_name_buf, 64);
 
-  points_buf = number_set_show(deltas->points, -1, -1);
+  points_buf = number_set_show(control->points, -1, -1);
   if (!points_buf)
     goto Exit;
-  ppems_buf = number_set_show(deltas->ppems, -1, -1);
+  ppems_buf = number_set_show(control->ppems, -1, -1);
   if (!ppems_buf)
     goto Exit;
 
   /* display glyph index if we don't have a glyph name */
   if (*glyph_name_buf)
     s = sdscatprintf(s, "%ld %s p %s x %.20g y %.20g @ %s",
-                     deltas->font_idx,
+                     control->font_idx,
                      glyph_name_buf,
                      points_buf,
-                     (double)deltas->x_shift / DELTA_FACTOR,
-                     (double)deltas->y_shift / DELTA_FACTOR,
+                     (double)control->x_shift / CONTROL_DELTA_FACTOR,
+                     (double)control->y_shift / CONTROL_DELTA_FACTOR,
                      ppems_buf);
   else
     s = sdscatprintf(s, "%ld %ld p %s x %.20g y %.20g @ %s",
-                     deltas->font_idx,
-                     deltas->glyph_idx,
+                     control->font_idx,
+                     control->glyph_idx,
                      points_buf,
-                     (double)deltas->x_shift / DELTA_FACTOR,
-                     (double)deltas->y_shift / DELTA_FACTOR,
+                     (double)control->x_shift / CONTROL_DELTA_FACTOR,
+                     (double)control->y_shift / CONTROL_DELTA_FACTOR,
                      ppems_buf);
 
 Exit:
@@ -170,24 +170,24 @@ Exit:
 
 
 char*
-TA_deltas_show(FONT* font)
+TA_control_show(FONT* font)
 {
   sds s;
   size_t len;
   char* res;
 
-  Deltas* deltas = font->deltas;
+  Control* control = font->control;
 
 
   s = sdsempty();
 
-  while (deltas)
+  while (control)
   {
     sds d;
 
 
     /* append current line to buffer, followed by a newline character */
-    d = deltas_show_line(font, deltas);
+    d = control_show_line(font, control);
     if (!d)
     {
       sdsfree(s);
@@ -197,7 +197,7 @@ TA_deltas_show(FONT* font)
     sdsfree(d);
     s = sdscat(s, "\n");
 
-    deltas = deltas->next;
+    control = control->next;
   }
 
   if (!s)
@@ -215,44 +215,44 @@ TA_deltas_show(FONT* font)
 }
 
 
-/* Parse delta exceptions in `font->deltas_buf'. */
+/* Parse control instructions in `font->control_buf'. */
 
 TA_Error
-TA_deltas_parse_buffer(FONT* font,
-                       char** error_string_p,
-                       unsigned int* errlinenum_p,
-                       char** errline_p,
-                       char** errpos_p)
+TA_control_parse_buffer(FONT* font,
+                        char** error_string_p,
+                        unsigned int* errlinenum_p,
+                        char** errline_p,
+                        char** errpos_p)
 {
   int bison_error;
 
-  Deltas_Context context;
+  Control_Context context;
 
 
   /* nothing to do if no data */
-  if (!font->deltas_buf)
+  if (!font->control_buf)
   {
-    font->deltas = NULL;
+    font->control = NULL;
     return TA_Err_Ok;
   }
 
-  TA_deltas_scanner_init(&context, font);
+  TA_control_scanner_init(&context, font);
   if (context.error)
     goto Fail;
   /* this is `yyparse' in disguise */
-  bison_error = TA_deltas_parse(&context);
-  TA_deltas_scanner_done(&context);
+  bison_error = TA_control_parse(&context);
+  TA_control_scanner_done(&context);
 
   if (bison_error)
   {
     if (bison_error == 2)
-      context.error = TA_Err_Deltas_Allocation_Error;
+      context.error = TA_Err_Control_Allocation_Error;
 
 Fail:
-    font->deltas = NULL;
+    font->control = NULL;
 
-    if (context.error == TA_Err_Deltas_Allocation_Error
-        || context.error == TA_Err_Deltas_Flex_Error)
+    if (context.error == TA_Err_Control_Allocation_Error
+        || context.error == TA_Err_Control_Flex_Error)
     {
       *errlinenum_p = 0;
       *errline_p = NULL;
@@ -273,9 +273,9 @@ Fail:
 
 
       /* construct data for `errline_p' */
-      buf_end = font->deltas_buf + font->deltas_len;
+      buf_end = font->control_buf + font->control_len;
 
-      p_start = font->deltas_buf;
+      p_start = font->control_buf;
       if (context.errline_num > 1)
       {
         i = 1;
@@ -300,19 +300,19 @@ Fail:
       *errline_p = strndup(p_start, p_end - p_start);
 
       /* construct data for `error_string_p' */
-      if (context.error == TA_Err_Deltas_Invalid_Font_Index)
+      if (context.error == TA_Err_Control_Invalid_Font_Index)
         sprintf(auxbuf, " (valid range is [%ld;%ld])",
                 0L,
                 font->num_sfnts);
-      else if (context.error == TA_Err_Deltas_Invalid_Glyph_Index)
+      else if (context.error == TA_Err_Control_Invalid_Glyph_Index)
         sprintf(auxbuf, " (valid range is [%ld;%ld])",
                 0L,
                 font->sfnts[context.font_idx].face->num_glyphs);
-      else if (context.error == TA_Err_Deltas_Invalid_Shift)
+      else if (context.error == TA_Err_Control_Invalid_Shift)
         sprintf(auxbuf, " (valid interval is [%g;%g])",
-                DELTA_SHIFT_MIN,
-                DELTA_SHIFT_MAX);
-      else if (context.error == TA_Err_Deltas_Invalid_Range)
+                CONTROL_DELTA_SHIFT_MIN,
+                CONTROL_DELTA_SHIFT_MAX);
+      else if (context.error == TA_Err_Control_Invalid_Range)
         sprintf(auxbuf, " (values must be within [%ld;%ld])",
                 context.number_set_min,
                 context.number_set_max);
@@ -335,19 +335,19 @@ Fail:
     }
   }
   else
-    font->deltas = context.result;
+    font->control = context.result;
 
   return context.error;
 }
 
 
-/* node structure for delta exception data */
+/* node structure for control instruction data */
 
 typedef struct Node Node;
 struct Node
 {
   LLRB_ENTRY(Node) entry;
-  Delta delta;
+  Ctrl ctrl;
 };
 
 
@@ -361,22 +361,22 @@ nodecmp(Node* e1,
 
 
   /* sort by font index ... */
-  diff = e1->delta.font_idx - e2->delta.font_idx;
+  diff = e1->ctrl.font_idx - e2->ctrl.font_idx;
   if (diff)
     goto Exit;
 
   /* ... then by glyph index ... */
-  diff = e1->delta.glyph_idx - e2->delta.glyph_idx;
+  diff = e1->ctrl.glyph_idx - e2->ctrl.glyph_idx;
   if (diff)
     goto Exit;
 
   /* ... then by ppem ... */
-  diff = e1->delta.ppem - e2->delta.ppem;
+  diff = e1->ctrl.ppem - e2->ctrl.ppem;
   if (diff)
     goto Exit;
 
   /* ... then by point index */
-  diff = e1->delta.point_idx - e2->delta.point_idx;
+  diff = e1->ctrl.point_idx - e2->ctrl.point_idx;
 
 Exit:
   /* https://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign */
@@ -385,72 +385,72 @@ Exit:
 
 
 /* the red-black tree function body */
-typedef struct deltas_data deltas_data;
+typedef struct control_data control_data;
 
-LLRB_HEAD(deltas_data, Node);
+LLRB_HEAD(control_data, Node);
 
 /* no trailing semicolon in the next line */
-LLRB_GENERATE_STATIC(deltas_data, Node, entry, nodecmp)
+LLRB_GENERATE_STATIC(control_data, Node, entry, nodecmp)
 
 
 void
-TA_deltas_free_tree(FONT* font)
+TA_control_free_tree(FONT* font)
 {
-  deltas_data* deltas_data_head = (deltas_data*)font->deltas_data_head;
+  control_data* control_data_head = (control_data*)font->control_data_head;
 
   Node* node;
   Node* next_node;
 
 
-  if (!deltas_data_head)
+  if (!control_data_head)
     return;
 
-  for (node = LLRB_MIN(deltas_data, deltas_data_head);
+  for (node = LLRB_MIN(control_data, control_data_head);
        node;
        node = next_node)
   {
-    next_node = LLRB_NEXT(deltas_data, deltas_data_head, node);
-    LLRB_REMOVE(deltas_data, deltas_data_head, node);
+    next_node = LLRB_NEXT(control_data, control_data_head, node);
+    LLRB_REMOVE(control_data, control_data_head, node);
     free(node);
   }
 
-  free(deltas_data_head);
+  free(control_data_head);
 }
 
 
 TA_Error
-TA_deltas_build_tree(FONT* font)
+TA_control_build_tree(FONT* font)
 {
-  Deltas* deltas = font->deltas;
-  deltas_data* deltas_data_head;
+  Control* control = font->control;
+  control_data* control_data_head;
   int emit_newline = 0;
 
 
   /* nothing to do if no data */
-  if (!deltas)
+  if (!control)
   {
-    font->deltas_data_head = NULL;
+    font->control_data_head = NULL;
     return TA_Err_Ok;
   }
 
-  deltas_data_head = (deltas_data*)malloc(sizeof (deltas_data));
-  if (!deltas_data_head)
+  control_data_head = (control_data*)malloc(sizeof (control_data));
+  if (!control_data_head)
     return FT_Err_Out_Of_Memory;
 
-  LLRB_INIT(deltas_data_head);
+  LLRB_INIT(control_data_head);
 
-  while (deltas)
+  while (control)
   {
-    long font_idx = deltas->font_idx;
-    long glyph_idx = deltas->glyph_idx;
-    char x_shift = deltas->x_shift;
-    char y_shift = deltas->y_shift;
+    long font_idx = control->font_idx;
+    long glyph_idx = control->glyph_idx;
+    char x_shift = control->x_shift;
+    char y_shift = control->y_shift;
 
     number_set_iter ppems_iter;
     int ppem;
 
 
-    ppems_iter.range = deltas->ppems;
+    ppems_iter.range = control->ppems;
     ppem = number_set_get_first(&ppems_iter);
 
     while (ppems_iter.range)
@@ -459,7 +459,7 @@ TA_deltas_build_tree(FONT* font)
       int point_idx;
 
 
-      points_iter.range = deltas->points;
+      points_iter.range = control->points;
       point_idx = number_set_get_first(&points_iter);
 
       while (points_iter.range)
@@ -472,27 +472,27 @@ TA_deltas_build_tree(FONT* font)
         if (!node)
           return FT_Err_Out_Of_Memory;
 
-        node->delta.font_idx = font_idx;
-        node->delta.glyph_idx = glyph_idx;
-        node->delta.ppem = ppem;
-        node->delta.point_idx = point_idx;
-        node->delta.x_shift = x_shift;
-        node->delta.y_shift = y_shift;
+        node->ctrl.font_idx = font_idx;
+        node->ctrl.glyph_idx = glyph_idx;
+        node->ctrl.ppem = ppem;
+        node->ctrl.point_idx = point_idx;
+        node->ctrl.x_shift = x_shift;
+        node->ctrl.y_shift = y_shift;
 
-        val = LLRB_INSERT(deltas_data, deltas_data_head, node);
+        val = LLRB_INSERT(control_data, control_data_head, node);
         if (val)
           free(node);
         if (val && font->debug)
         {
           /* entry is already present; we ignore it */
-          Deltas d;
+          Control d;
           number_range ppems;
           number_range points;
 
           sds s;
 
 
-          /* construct Deltas entry for debugging output */
+          /* construct Control entry for debugging output */
           ppems.start = ppem;
           ppems.end = ppem;
           ppems.next = NULL;
@@ -508,10 +508,10 @@ TA_deltas_build_tree(FONT* font)
           d.ppems = &ppems;
           d.next = NULL;
 
-          s = deltas_show_line(font, &d);
+          s = control_show_line(font, &d);
           if (s)
           {
-            fprintf(stderr, "Delta exception %s ignored.\n", s);
+            fprintf(stderr, "Control instruction %s ignored.\n", s);
             sdsfree(s);
           }
 
@@ -524,45 +524,45 @@ TA_deltas_build_tree(FONT* font)
       ppem = number_set_get_next(&ppems_iter);
     }
 
-    deltas = deltas->next;
+    control = control->next;
   }
 
   if (font->debug && emit_newline)
     fprintf(stderr, "\n");
 
-  font->deltas_data_head = deltas_data_head;
-  font->deltas_data_cur = LLRB_MIN(deltas_data, deltas_data_head);
+  font->control_data_head = control_data_head;
+  font->control_data_cur = LLRB_MIN(control_data, control_data_head);
 
   return TA_Err_Ok;
 }
 
 
 /* the next functions are intended to restrict the use of LLRB stuff */
-/* related to delta exceptions to this file, */
+/* related to control instructions to this file, */
 /* providing a means to access the data sequentially */
 
 void
-TA_deltas_get_next(FONT* font)
+TA_control_get_next(FONT* font)
 {
-  Node* node = (Node*)font->deltas_data_cur;
+  Node* node = (Node*)font->control_data_cur;
 
 
   if (!node)
     return;
 
-  node = LLRB_NEXT(deltas_data, /* unused */, node);
+  node = LLRB_NEXT(control_data, /* unused */, node);
 
-  font->deltas_data_cur = node;
+  font->control_data_cur = node;
 }
 
 
-const Delta*
-TA_deltas_get_delta(FONT* font)
+const Ctrl*
+TA_control_get_ctrl(FONT* font)
 {
-  Node* node = (Node*)font->deltas_data_cur;
+  Node* node = (Node*)font->control_data_cur;
 
 
-  return node ? &node->delta : NULL;
+  return node ? &node->ctrl : NULL;
 }
 
-/* end of tadeltas.c */
+/* end of tacontrol.c */

@@ -1,4 +1,4 @@
-/* tadeltas.bison */
+/* tacontrol.bison */
 
 /*
  * Copyright (C) 2014 by Werner Lemberg.
@@ -14,13 +14,13 @@
 
 
 /*
- * grammar for parsing delta exceptions
+ * grammar for parsing ttfautohint control instructions
  *
  * Parsing errors that essentially belong to the lexing stage are handled
  * with `store_error_data'; in case the lexer detects an error, it returns
  * the right token type but sets `context->error'.  Syntax errors and fatal
  * lexer errors (token `INTERNAL_FLEX_ERROR') are handled with
- * `TA_deltas_error'.
+ * `TA_control_error'.
  */
 
 /*
@@ -29,8 +29,8 @@
  * was extremely helpful in writing this code.
  */
 
-%output "tadeltas-bison.c"
-%defines "tadeltas-bison.h"
+%output "tacontrol-bison.c"
+%defines "tacontrol-bison.h"
 
 %define api.pure
 %error-verbose
@@ -38,15 +38,15 @@
 %glr-parser
 %lex-param { void* scanner }
 %locations
-%name-prefix "TA_deltas_"
-%parse-param { Deltas_Context* context }
+%name-prefix "TA_control_"
+%parse-param { Control_Context* context }
 %require "2.5" /* note that some versions < 2.7 use `//' in comments */
 
 %code requires {
 #include "ta.h"
 
 /* we don't change the name prefix of flex functions */
-#define TA_deltas_lex yylex
+#define TA_control_lex yylex
 }
 
 %union {
@@ -55,20 +55,20 @@
   char* name;
   number_range* range;
   double real;
-  Deltas* deltas;
+  Control* control;
 }
 
 %{
-#include "tadeltas-flex.h"
+#include "tacontrol-flex.h"
 
 void
-TA_deltas_error(YYLTYPE *locp,
-                Deltas_Context* context,
-                char const* msg);
+TA_control_error(YYLTYPE *locp,
+                 Control_Context* context,
+                 char const* msg);
 
 void
 store_error_data(const YYLTYPE *locp,
-                 Deltas_Context* context,
+                 Control_Context* context,
                  TA_Error error);
 
 
@@ -84,11 +84,11 @@ store_error_data(const YYLTYPE *locp,
 %token <name> NAME "glyph name"
 %token <real> REAL "real number"
 
-%type <deltas> entry
+%type <control> entry
 %type <integer> font_idx
 %type <integer> glyph_idx
 %type <name> glyph_name
-%type <deltas> input
+%type <control> input
 %type <integer> integer
 %type <range> left_limited
 %type <range> number_set
@@ -104,7 +104,7 @@ store_error_data(const YYLTYPE *locp,
 %type <real> x_shift
 %type <real> y_shift
 
-%destructor { TA_deltas_free($$); } <deltas>
+%destructor { TA_control_free($$); } <control>
 %destructor { number_set_free($$); } <range>
 
 %printer { fprintf(yyoutput, "`%ld'", $$); } <integer>
@@ -132,21 +132,21 @@ store_error_data(const YYLTYPE *locp,
 
 
 /* `number_range' list elements are stored in reversed order; */
-/* the call to `TA_deltas_new' fixes this */
+/* the call to `TA_control_new' fixes this */
 
-/* `Deltas' list elements are stored in reversed order, too; */
-/* this gets fixed by an explicit call to `TA_deltas_reverse' */
+/* `Control' list elements are stored in reversed order, too; */
+/* this gets fixed by an explicit call to `TA_control_reverse' */
 
 start:
   input
-    { context->result = TA_deltas_reverse($input); }
+    { context->result = TA_control_reverse($input); }
 ;
 
 input[result]:
   /* empty */
     { $result = NULL; }
 | input[left] entry
-    { $result = TA_deltas_prepend($left, $entry); }
+    { $result = TA_control_prepend($left, $entry); }
 ;
 
 entry:
@@ -154,15 +154,15 @@ entry:
     { $entry = NULL; }
 | font_idx glyph_idx point_set x_shift y_shift ppem_set EOE
     {
-      $entry = TA_deltas_new($font_idx,
-                             $glyph_idx,
-                             $point_set,
-                             $x_shift,
-                             $y_shift,
-                             $ppem_set);
+      $entry = TA_control_new($font_idx,
+                              $glyph_idx,
+                              $point_set,
+                              $x_shift,
+                              $y_shift,
+                              $ppem_set);
       if (!$entry)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -179,7 +179,7 @@ font_idx:
       $font_idx = $integer;
       if ($font_idx >= context->font->num_sfnts)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Font_Index);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Font_Index);
         YYABORT;
       }
       context->font_idx = $font_idx;
@@ -195,7 +195,7 @@ glyph_idx:
       $glyph_idx = $integer;
       if ($glyph_idx >= face->num_glyphs)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Glyph_Index);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph_Index);
         YYABORT;
       }
       context->glyph_idx = $glyph_idx;
@@ -221,7 +221,7 @@ glyph_idx:
 
       if ($glyph_idx < 0)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Glyph_Name);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph_Name);
         YYABORT;
       }
       context->glyph_idx = $glyph_idx;
@@ -234,7 +234,7 @@ glyph_name:
       $glyph_name = strdup("p");
       if ($glyph_name)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -243,7 +243,7 @@ glyph_name:
       $glyph_name = strdup("x");
       if ($glyph_name)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -252,7 +252,7 @@ glyph_name:
       $glyph_name = strdup("y");
       if ($glyph_name)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -281,7 +281,7 @@ point_set:
       error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
       if (error)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Glyph);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph);
         YYABORT;
       }
 
@@ -311,9 +311,9 @@ y_shift:
 shift:
   real
     {
-      if ($real < DELTA_SHIFT_MIN || $real > DELTA_SHIFT_MAX)
+      if ($real < CONTROL_DELTA_SHIFT_MIN || $real > CONTROL_DELTA_SHIFT_MAX)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Shift);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Shift);
         YYABORT;
       }
       $shift = $real;
@@ -323,8 +323,8 @@ shift:
 ppem_set:
   '@'
     {
-      context->number_set_min = DELTA_PPEM_MIN;
-      context->number_set_max = DELTA_PPEM_MAX;
+      context->number_set_min = CONTROL_DELTA_PPEM_MIN;
+      context->number_set_max = CONTROL_DELTA_PPEM_MAX;
     }
   number_set
     { $ppem_set = $number_set; }
@@ -382,14 +382,14 @@ number_set:
       {
         number_set_free($right_limited);
         number_set_free($range_elems);
-        store_error_data(&@3, context, TA_Err_Deltas_Ranges_Not_Ascending);
+        store_error_data(&@3, context, TA_Err_Control_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($number_set == NUMBERSET_OVERLAPPING_RANGES)
       {
         number_set_free($right_limited);
         number_set_free($range_elems);
-        store_error_data(&@3, context, TA_Err_Deltas_Overlapping_Ranges);
+        store_error_data(&@3, context, TA_Err_Control_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -400,14 +400,14 @@ number_set:
       {
         number_set_free($range_elems);
         number_set_free($left_limited);
-        store_error_data(&@3, context, TA_Err_Deltas_Ranges_Not_Ascending);
+        store_error_data(&@3, context, TA_Err_Control_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($number_set == NUMBERSET_OVERLAPPING_RANGES)
       {
         number_set_free($range_elems);
         number_set_free($left_limited);
-        store_error_data(&@3, context, TA_Err_Deltas_Overlapping_Ranges);
+        store_error_data(&@3, context, TA_Err_Control_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -423,7 +423,7 @@ unlimited:
       /* range of `$unlimited' is always valid */
       if ($unlimited == NUMBERSET_ALLOCATION_ERROR)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -438,12 +438,12 @@ right_limited:
                                       context->number_set_max);
       if ($right_limited == NUMBERSET_INVALID_RANGE)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Range);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Range);
         YYABORT;
       }
       if ($right_limited == NUMBERSET_ALLOCATION_ERROR)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -458,12 +458,12 @@ left_limited:
                                      context->number_set_max);
       if ($left_limited == NUMBERSET_INVALID_RANGE)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Range);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Range);
         YYABORT;
       }
       if ($left_limited == NUMBERSET_ALLOCATION_ERROR)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -479,14 +479,14 @@ range_elems[result]:
       {
         number_set_free($left);
         number_set_free($range_elem);
-        store_error_data(&@3, context, TA_Err_Deltas_Ranges_Not_Ascending);
+        store_error_data(&@3, context, TA_Err_Control_Ranges_Not_Ascending);
         YYABORT;
       }
       if ($result == NUMBERSET_OVERLAPPING_RANGES)
       {
         number_set_free($left);
         number_set_free($range_elem);
-        store_error_data(&@3, context, TA_Err_Deltas_Overlapping_Ranges);
+        store_error_data(&@3, context, TA_Err_Control_Overlapping_Ranges);
         YYABORT;
       }
     }
@@ -501,12 +501,12 @@ range_elem:
                                    context->number_set_max);
       if ($range_elem == NUMBERSET_INVALID_RANGE)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Range);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Range);
         YYABORT;
       }
       if ($range_elem == NUMBERSET_ALLOCATION_ERROR)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -523,12 +523,12 @@ range:
                               context->number_set_max);
       if ($range == NUMBERSET_INVALID_RANGE)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Invalid_Range);
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Range);
         YYABORT;
       }
       if ($range == NUMBERSET_ALLOCATION_ERROR)
       {
-        store_error_data(&@$, context, TA_Err_Deltas_Allocation_Error);
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
       }
     }
@@ -539,14 +539,14 @@ range:
 
 
 void
-TA_deltas_error(YYLTYPE *locp,
-                Deltas_Context* context,
-                char const* msg)
+TA_control_error(YYLTYPE *locp,
+                 Control_Context* context,
+                 char const* msg)
 {
   /* if `error' is already set, we have a fatal flex error */
   if (!context->error)
   {
-    context->error = TA_Err_Deltas_Syntax_Error;
+    context->error = TA_Err_Control_Syntax_Error;
     strncpy(context->errmsg, msg, sizeof (context->errmsg));
   }
 
@@ -558,7 +558,7 @@ TA_deltas_error(YYLTYPE *locp,
 
 void
 store_error_data(const YYLTYPE *locp,
-                 Deltas_Context* context,
+                 Control_Context* context,
                  TA_Error error)
 {
   context->error = error;
@@ -578,8 +578,8 @@ store_error_data(const YYLTYPE *locp,
  *
  *   make libnumberset.la
  *
- *   flex -d tadeltas.flex \
- *   && bison -t tadeltas.bison \
+ *   flex -d tacontrol.flex \
+ *   && bison -t tacontrol.bison \
  *   && gcc -g3 -O0 \
  *          -Wall -W \
  *          -I.. \
@@ -587,10 +587,10 @@ store_error_data(const YYLTYPE *locp,
  *          -I/usr/local/include/freetype2 \
  *          -I/usr/local/include/harfbuzz \
  *          -L.libs \
- *          -o tadeltas-bison \
- *          tadeltas-bison.c \
- *          tadeltas-flex.c \
- *          tadeltas.c \
+ *          -o tacontrol-bison \
+ *          tacontrol-bison.c \
+ *          tacontrol-flex.c \
+ *          tacontrol.c \
  *          -lfreetype \
  *          -lnumberset
  */
@@ -613,7 +613,7 @@ main(int argc,
   int bison_error;
   int retval = 1;
 
-  Deltas_Context context;
+  Control_Context context;
   FONT font;
   SFNT sfnts[1];
   FT_Library library;
@@ -651,24 +651,24 @@ main(int argc,
 
   font.num_sfnts = 1;
   font.sfnts = sfnts;
-  font.deltas_buf = (char*)input;
-  font.deltas_len = strlen(input);
+  font.control_buf = (char*)input;
+  font.control_len = strlen(input);
 
-  TA_deltas_debug = 1;
+  TA_control_debug = 1;
 
-  TA_deltas_scanner_init(&context, &font);
+  TA_control_scanner_init(&context, &font);
   if (context.error)
     goto Exit2;
 
-  bison_error = TA_deltas_parse(&context);
+  bison_error = TA_control_parse(&context);
   if (bison_error)
     goto Exit3;
 
   retval = 0;
 
 Exit3:
-  TA_deltas_scanner_done(&context);
-  TA_deltas_free(context.result);
+  TA_control_scanner_done(&context);
+  TA_control_free(context.result);
 
 Exit2:
   FT_Done_Face(face);
@@ -682,4 +682,4 @@ Exit0:
 
 #endif
 
-/* end of tadeltas.bison */
+/* end of tacontrol.bison */

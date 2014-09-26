@@ -249,12 +249,11 @@ typedef int
  * :   A pointer of type `size_t*` to a value giving the length of the
  *     output buffer.  Needs `out-buffer`.
  *
- * `deltas-file`
- * :   A pointer of type `FILE*` to the data stream of delta exceptions,
- *     opened for reading in *binary* mode.  Mutually exclusive with
- *     `deltas-buffer`.
+ * `control-file`
+ * :   A pointer of type `FILE*` to the data stream of control instructions.
+ *     Mutually exclusive with `control-buffer`.
  *
- *     An entry in a delta exceptions file or buffer has the following
+ *     An entry in a control instructions file or buffer has the following
  *     syntax:
  *
  *     > *\[* font-idx *\]* glyph-id *`p`* points *\[* *`x`* x-shift *\]* *\[* *`y`* y-shift *\]* *`@`* ppems
@@ -283,7 +282,7 @@ typedef int
  *     Values for *ppems* must be in the range [6;53].  Values for *points*
  *     are limited by the number of points in the glyph.
  *
- *     Delta exceptions entries can be either separated with newlines or
+ *     Control instruction entries can be either separated with newlines or
  *     with character '`;`'.  Additionally, a line can be continued on the
  *     next line by ending it with backslash character ('`\`').  A backslash
  *     followed by a newline gets treated similar to a whitespace character.
@@ -294,14 +293,14 @@ typedef int
  *     Note that only character '`.`' is recognized as a decimal point, and
  *     a thousands separator is not accepted.
  *
- * `deltas-buffer`
- * :   A pointer of type `const char*` to a buffer that contains delta
- *     exceptions.  Needs `deltas-buffer-len`.  Mutually exclusive with
- *     `deltas-file`.
+ * `control-buffer`
+ * :   A pointer of type `const char*` to a buffer that contains control
+ *     instructions.  Needs `control-buffer-len`.  Mutually exclusive with
+ *     `control-file`.
  *
- * `deltas-buffer-len`
- * :   A value of type `size_t`, giving the length of the delta exceptions
- *     buffer.  Needs `deltas-buffer`.
+ * `control-buffer-len`
+ * :   A value of type `size_t`, giving the length of the control
+ *     instructions buffer.  Needs `control-buffer`.
  *
  *
  * ### Messages and Callbacks

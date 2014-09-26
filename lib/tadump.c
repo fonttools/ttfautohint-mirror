@@ -121,7 +121,7 @@ TA_font_dump_parameters(FONT* font,
 
   DUMPSTR("x-height-snapping-exceptions", ns);
 
-  ds = TA_deltas_show(font);
+  ds = TA_control_show(font);
   if (!ds)
   {
     sdsfree(s);
@@ -129,7 +129,7 @@ TA_font_dump_parameters(FONT* font,
     goto Exit;
   }
 
-  /* show delta exceptions data line by line */
+  /* show control instructions line by line */
   if (!format)
   {
     eol = "";
@@ -143,7 +143,7 @@ TA_font_dump_parameters(FONT* font,
 
 
     token = strtok_r(ds, "\n", &saveptr);
-    DUMPSTR("delta exceptions", token);
+    DUMPSTR("control instructions", token);
 
     for (;;)
     {
@@ -155,7 +155,7 @@ TA_font_dump_parameters(FONT* font,
     }
   }
   else
-    DUMPSTR("delta exceptions", "");
+    DUMPSTR("control instructions", "");
 
   if (!format)
     s = sdscat(s, "\n");

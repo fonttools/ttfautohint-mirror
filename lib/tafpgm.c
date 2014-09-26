@@ -5692,7 +5692,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_create_segments_a))
             + 1
             + sizeof (FPGM(bci_create_segments_b))
-            + (font->deltas_data_head != 0
+            + (font->control_data_head != 0
                 ? sizeof (FPGM(bci_create_segments_c))
                 : 0)
             + sizeof (FPGM(bci_create_segments_d))
@@ -5711,7 +5711,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_create_segments_composite_a))
             + 1
             + sizeof (FPGM(bci_create_segments_composite_b))
-            + (font->deltas_data_head != 0
+            + (font->control_data_head != 0
                 ? sizeof (FPGM(bci_create_segments_composite_c))
                 : 0)
             + sizeof (FPGM(bci_create_segments_composite_d))
@@ -5736,7 +5736,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_scale_composite_glyph))
             + sizeof (FPGM(bci_shift_contour))
             + sizeof (FPGM(bci_shift_subglyph_a))
-            + (font->deltas_data_head != 0
+            + (font->control_data_head != 0
                 ? sizeof (FPGM(bci_shift_subglyph_b))
                 : 0)
             + sizeof (FPGM(bci_shift_subglyph_c))
@@ -5872,7 +5872,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_create_segments_a);
   *(bufp++) = (unsigned char)data->num_used_styles;
   COPY_FPGM(bci_create_segments_b);
-  if (font->deltas_data_head)
+  if (font->control_data_head)
     COPY_FPGM(bci_create_segments_c);
   COPY_FPGM(bci_create_segments_d);
 
@@ -5890,7 +5890,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_create_segments_composite_a);
   *(bufp++) = (unsigned char)data->num_used_styles;
   COPY_FPGM(bci_create_segments_composite_b);
-  if (font->deltas_data_head)
+  if (font->control_data_head)
     COPY_FPGM(bci_create_segments_composite_c);
   COPY_FPGM(bci_create_segments_composite_d);
 
@@ -5914,7 +5914,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_scale_composite_glyph);
   COPY_FPGM(bci_shift_contour);
   COPY_FPGM(bci_shift_subglyph_a);
-  if (font->deltas_data_head)
+  if (font->control_data_head)
     COPY_FPGM(bci_shift_subglyph_b);
   COPY_FPGM(bci_shift_subglyph_c);
 

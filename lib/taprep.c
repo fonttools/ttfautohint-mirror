@@ -381,7 +381,7 @@ unsigned char PREP(adjust_delta_exceptions) [] =
 
   /* set delta base */
   PUSHB_1,
-    DELTA_PPEM_MIN,
+    CONTROL_DELTA_PPEM_MIN,
   SDB,
 
 };
@@ -631,7 +631,7 @@ TA_table_build_prep(FT_Byte** prep,
                  + sizeof (PREP(round_blues));
   buf_new_len += sizeof (PREP(set_dropout_mode));
   buf_new_len += sizeof (PREP(reset_component_counter));
-  if (font->deltas_data_head)
+  if (font->control_data_head)
     buf_new_len += sizeof (PREP(adjust_delta_exceptions));
 
   /* buffer length must be a multiple of four */
@@ -805,7 +805,7 @@ TA_table_build_prep(FT_Byte** prep,
 
   COPY_PREP(set_dropout_mode);
   COPY_PREP(reset_component_counter);
-  if (font->deltas_data_head)
+  if (font->control_data_head)
     COPY_PREP(adjust_delta_exceptions);
 
   *prep = buf;

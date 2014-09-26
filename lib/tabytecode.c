@@ -600,7 +600,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 
 
 static void
-build_delta_exception(const Delta* delta,
+build_delta_exception(const Ctrl* ctrl,
                       FT_UInt** delta_args,
                       int* num_delta_args)
 {
@@ -610,7 +610,7 @@ build_delta_exception(const Delta* delta,
   int y_shift;
 
 
-  ppem = delta->ppem - DELTA_PPEM_MIN;
+  ppem = ctrl->ppem - CONTROL_DELTA_PPEM_MIN;
 
   if (ppem < 16)
     offset = 0;
@@ -640,32 +640,32 @@ build_delta_exception(const Delta* delta,
    * (note that there is no index for a zero shift).
    */
 
-  if (delta->x_shift < 0)
-    x_shift = delta->x_shift + 8;
+  if (ctrl->x_shift < 0)
+    x_shift = ctrl->x_shift + 8;
   else
-    x_shift = delta->x_shift + 7;
+    x_shift = ctrl->x_shift + 7;
 
-  if (delta->y_shift < 0)
-    y_shift = delta->y_shift + 8;
+  if (ctrl->y_shift < 0)
+    y_shift = ctrl->y_shift + 8;
   else
-    y_shift = delta->y_shift + 7;
+    y_shift = ctrl->y_shift + 7;
 
   /* add point index and exception specification to appropriate stack */
-  if (delta->x_shift)
+  if (ctrl->x_shift)
   {
     *(delta_args[offset] + num_delta_args[offset]++) =
       (ppem << 4) + x_shift;
     *(delta_args[offset] + num_delta_args[offset]++) =
-      delta->point_idx;
+      ctrl->point_idx;
   }
 
-  if (delta->y_shift)
+  if (ctrl->y_shift)
   {
     offset += 3;
     *(delta_args[offset] + num_delta_args[offset]++) =
       (ppem << 4) + y_shift;
     *(delta_args[offset] + num_delta_args[offset]++) =
-      delta->point_idx;
+      ctrl->point_idx;
   }
 }
 
@@ -692,21 +692,21 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   FT_Bool need_word_counts = 0;
   FT_Bool allocated = 0;
 
-  const Delta* delta;
+  const Ctrl* ctrl;
 
 
   num_points = font->loader->gloader->base.outline.n_points;
 
-  /* loop over all fitting delta exceptions */
+  /* loop over all fitting control instructions */
   for (;;)
   {
-    delta = TA_deltas_get_delta(font);
+    ctrl = TA_control_get_ctrl(font);
 
-    /* too large values of font and glyph indices in `delta' */
+    /* too large values of font and glyph indices in `ctrl' */
     /* are handled by later calls of this function */
-    if (!delta
-        || face->face_index < delta->font_idx
-        || idx < delta->glyph_idx)
+    if (!ctrl
+        || face->face_index < ctrl->font_idx
+        || idx < ctrl->glyph_idx)
       break;
 
     if (!allocated)
@@ -729,18 +729,18 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
     }
 
     /* since we walk sequentially over all glyphs (with points), */
-    /* and the delta entries have the same order, */
+    /* and the control instruction entries have the same order, */
     /* we don't need to test for equality of font and glyph indices: */
     /* at this very point in the code we certainly have a hit */
-    build_delta_exception(delta, delta_args, num_delta_args);
+    build_delta_exception(ctrl, delta_args, num_delta_args);
 
-    if (delta->point_idx > 255)
+    if (ctrl->point_idx > 255)
       need_words = 1;
 
-    TA_deltas_get_next(font);
+    TA_control_get_next(font);
   }
 
-  /* nothing to do if no delta data */
+  /* nothing to do if no control instructions */
   if (!allocated)
     return bufp;
 
@@ -2305,7 +2305,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
    * adding some bytes for the necessary overhead.
    */
   ins_len = hints->num_points
-            * (1000 + ((font->deltas_data_head != NULL) ? 400 : 0));
+            * (1000 + ((font->control_data_head != NULL) ? 400 : 0));
   ins_buf = (FT_Byte*)malloc(ins_len);
   if (!ins_buf)
     return FT_Err_Out_Of_Memory;
@@ -2548,7 +2548,7 @@ Done:
 
 Done1:
   /* handle delta exceptions */
-  if (font->deltas_data_head)
+  if (font->control_data_head)
   {
     bufp = TA_sfnt_build_delta_exceptions(sfnt, font, idx, bufp);
     if (!bufp)

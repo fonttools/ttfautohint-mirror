@@ -202,7 +202,7 @@ typedef struct SFNT_
   FT_UShort max_components;
 } SFNT;
 
-typedef struct Deltas_ Deltas;
+typedef struct Control_ Control;
 
 /* our font object; the `FONT' typedef is in `taloader.h' */
 struct FONT_
@@ -215,8 +215,8 @@ struct FONT_
   FT_Byte* out_buf;
   size_t out_len;
 
-  char* deltas_buf;
-  size_t deltas_len;
+  char* control_buf;
+  size_t control_len;
 
   SFNT* sfnts;
   FT_Long num_sfnts;
@@ -229,12 +229,12 @@ struct FONT_
   /* we have a single `gasp' table for all subfonts */
   FT_ULong gasp_idx;
 
-  /* the delta exceptions data */
-  Deltas* deltas;
+  /* the control instructions */
+  Control* control;
 
-  /* two generic pointers into the the delta exceptions tree */
-  void* deltas_data_head;
-  void* deltas_data_cur;
+  /* two generic pointers into the control instructions tree */
+  void* control_data_head;
+  void* control_data_cur;
 
   TA_LoaderRec loader[1]; /* the interface to the autohinter */
 
@@ -267,7 +267,7 @@ struct FONT_
 
 #include "tatables.h"
 #include "tabytecode.h"
-#include "tadeltas.h"
+#include "tacontrol.h"
 
 
 /* in file `tascript.c' */
@@ -298,7 +298,7 @@ void
 TA_font_unload(FONT* font,
                const char* in_buf,
                char** out_bufp,
-               const char* deltas_buf);
+               const char* control_buf);
 
 FT_Error
 TA_font_file_read(FONT* font,
@@ -307,8 +307,8 @@ FT_Error
 TA_font_file_write(FONT* font,
                    FILE* out_file);
 FT_Error
-TA_deltas_file_read(FONT* font,
-                    FILE* deltas_file);
+TA_control_file_read(FONT* font,
+                     FILE* control_file);
 
 FT_Error
 TA_sfnt_build_glyph_instructions(SFNT* sfnt,
