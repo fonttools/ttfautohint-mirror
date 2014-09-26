@@ -66,13 +66,13 @@ const Script_Names script_names[] =
 //   b: Add TTFA info ta&ble
 //   c: x Height In&crease Limit / No x Height In&crease
 //   d: &Dehint
-//   e: Delta &Exception File
+//   e: Control Instructions Fil&e
 //   f: &File (menu)
 //   g: Stron&g Stem Width and Positioning
 //   h: &Help (menu)
 //   i: &Input File
 //   j: Ad&just Subglyphs
-//   b: Fallbac&k Stem Width / Default Fallbac&k Stem Width
+//   k: Fallbac&k Stem Width / Default Fallbac&k Stem Width
 //   l: Hinting &Limit / No Hinting &Limit
 //   m: Hint Co&mposites
 //   n: Hint Set Range Mi&nimum
@@ -159,7 +159,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   timer = new QTimer(this);
   timer->setInterval(1000);
   fileinfo_input_file.setCaching(false);
-  fileinfo_deltas_file.setCaching(false);
+  fileinfo_control_file.setCaching(false);
 
   // XXX register translations somewhere and loop over them
   if (QLocale::system().name() == "en_US")
@@ -253,17 +253,17 @@ Main_GUI::browse_output()
 
 
 void
-Main_GUI::browse_deltas()
+Main_GUI::browse_control()
 {
   // XXX remember last directory
   QString file = QFileDialog::getOpenFileName(
                    this,
-                   tr("Open Delta Exceptions File"),
+                   tr("Open Control INstructions File"),
                    QDir::homePath(),
                    "");
 
   if (!file.isEmpty())
-    deltas_line->setText(QDir::toNativeSeparators(file));
+    control_line->setText(QDir::toNativeSeparators(file));
 }
 
 
@@ -482,14 +482,14 @@ Main_GUI::absolute_output()
 
 
 void
-Main_GUI::absolute_deltas()
+Main_GUI::absolute_control()
 {
-  QString deltas_name = QDir::fromNativeSeparators(deltas_line->text());
-  if (!deltas_name.isEmpty()
-      && QDir::isRelativePath(deltas_name))
+  QString control_name = QDir::fromNativeSeparators(control_line->text());
+  if (!control_name.isEmpty()
+      && QDir::isRelativePath(control_name))
   {
-    QDir cur_path(QDir::currentPath() + "/" + deltas_name);
-    deltas_line->setText(QDir::toNativeSeparators(cur_path.absolutePath()));
+    QDir cur_path(QDir::currentPath() + "/" + control_name);
+    control_line->setText(QDir::toNativeSeparators(cur_path.absolutePath()));
   }
 }
 
@@ -597,7 +597,7 @@ Main_GUI::clear_status_bar()
 int
 Main_GUI::check_filenames(const QString& input_name,
                           const QString& output_name,
-                          const QString& deltas_name)
+                          const QString& control_name)
 {
   if (!QFile::exists(input_name))
   {
@@ -637,13 +637,13 @@ Main_GUI::check_filenames(const QString& input_name,
       return 0;
   }
 
-  if (!deltas_name.isEmpty() && !QFile::exists(deltas_name))
+  if (!control_name.isEmpty() && !QFile::exists(control_name))
   {
     QMessageBox::warning(
       this,
       "TTFautohint",
       tr("The file %1 cannot be found.")
-         .arg(QUOTE_STRING(QDir::toNativeSeparators(deltas_name))),
+         .arg(QUOTE_STRING(QDir::toNativeSeparators(control_name))),
       QMessageBox::Ok,
       QMessageBox::Ok);
     return 0;
@@ -658,8 +658,8 @@ Main_GUI::open_files(const QString& input_name,
                      FILE** in,
                      const QString& output_name,
                      FILE** out,
-                     const QString& deltas_name,
-                     FILE** deltas)
+                     const QString& control_name,
+                     FILE** control)
 {
   const int buf_len = 1024;
   char buf[buf_len];
@@ -694,18 +694,18 @@ Main_GUI::open_files(const QString& input_name,
     return 0;
   }
 
-  if (!deltas_name.isEmpty())
+  if (!control_name.isEmpty())
   {
-    *deltas = fopen(qPrintable(deltas_name), "r");
-    if (!*deltas)
+    *control = fopen(qPrintable(control_name), "r");
+    if (!*control)
     {
       strerror_r(errno, buf, buf_len);
       QMessageBox::warning(
         this,
         "TTFautohint",
         tr("The following error occurred"
-           " while opening delta exceptions file %1:\n")
-           .arg(QUOTE_STRING(QDir::toNativeSeparators(deltas_name)))
+           " while opening control instructions file %1:\n")
+           .arg(QUOTE_STRING(QDir::toNativeSeparators(control_name)))
           + QString::fromLocal8Bit(buf),
         QMessageBox::Ok,
         QMessageBox::Ok);
@@ -731,13 +731,13 @@ Main_GUI::watch_files()
 {
   if (fileinfo_input_file.exists()
       && fileinfo_input_file.isReadable()
-      && fileinfo_deltas_file.exists()
-      && fileinfo_deltas_file.isReadable())
+      && fileinfo_control_file.exists()
+      && fileinfo_control_file.isReadable())
   {
     QDateTime modified_input = fileinfo_input_file.lastModified();
-    QDateTime modified_deltas = fileinfo_deltas_file.lastModified();
+    QDateTime modified_control = fileinfo_control_file.lastModified();
     if (modified_input > datetime_input_file
-        || modified_deltas > datetime_deltas_file)
+        || modified_control > datetime_control_file)
       run(); // this function sets `datetime_XXX'
   }
   else
@@ -814,7 +814,7 @@ struct GUI_Error_Data
   Main_GUI* gui;
   QLocale* locale;
   QString output_name;
-  QString deltas_name;
+  QString control_name;
   int* ignore_restrictions_p;
   bool retry;
 };
@@ -919,7 +919,7 @@ gui_error(TA_Error error,
       QString::fromLocal8Bit("%1:%2:%3: %4 (0x%5)<br>"
                              "<tt>  %6<br>"
                              "  %7</tt>")
-                             .arg(data->deltas_name)
+                             .arg(data->control_name)
                              .arg(errlinenum)
                              .arg(int(errpos - errline + 1))
                              .arg(error_string)
@@ -967,8 +967,8 @@ Main_GUI::run()
 
   QString input_name = QDir::fromNativeSeparators(input_line->text());
   QString output_name = QDir::fromNativeSeparators(output_line->text());
-  QString deltas_name = QDir::fromNativeSeparators(deltas_line->text());
-  if (!check_filenames(input_name, output_name, deltas_name))
+  QString control_name = QDir::fromNativeSeparators(control_line->text());
+  if (!check_filenames(input_name, output_name, control_name))
   {
     timer->stop();
     return;
@@ -977,12 +977,12 @@ Main_GUI::run()
   // we need C file descriptors for communication with TTF_autohint
   FILE* input;
   FILE* output;
-  FILE* deltas;
+  FILE* control;
 
 again:
   if (!open_files(input_name, &input,
                   output_name, &output,
-                  deltas_name, &deltas))
+                  control_name, &control))
   {
     timer->stop();
     return;
@@ -995,11 +995,11 @@ again:
 
   TA_Info_Func info_func = info;
   GUI_Progress_Data gui_progress_data = {-1, true, &dialog};
-  GUI_Error_Data gui_error_data = {this, locale, output_name, deltas_name,
+  GUI_Error_Data gui_error_data = {this, locale, output_name, control_name,
                                    &ignore_restrictions, false};
 
   fileinfo_input_file.setFile(input_name);
-  fileinfo_deltas_file.setFile(deltas_name);
+  fileinfo_control_file.setFile(control_name);
 
   Info_Data info_data;
 
@@ -1008,7 +1008,7 @@ again:
   info_data.data_len = 0;
   info_data.data_wide_len = 0;
 
-  info_data.deltas_name = qPrintable(fileinfo_deltas_file.fileName());
+  info_data.control_name = qPrintable(fileinfo_control_file.fileName());
 
   info_data.hinting_range_min = min_box->value();
   info_data.hinting_range_max = max_box->value();
@@ -1078,12 +1078,12 @@ again:
       QMessageBox::Ok);
 
   datetime_input_file = fileinfo_input_file.lastModified();
-  datetime_deltas_file = fileinfo_deltas_file.lastModified();
+  datetime_control_file = fileinfo_control_file.lastModified();
 
   QByteArray snapping_string = snapping_line->text().toLocal8Bit();
 
   TA_Error error =
-    TTF_autohint("in-file, out-file, deltas-file,"
+    TTF_autohint("in-file, out-file, control-file,"
                  "hinting-range-min, hinting-range-max,"
                  "hinting-limit,"
                  "gray-strong-stem-width,"
@@ -1100,7 +1100,7 @@ again:
                  "x-height-snapping-exceptions, fallback-stem-width,"
                  "default-script, fallback-script,"
                  "symbol, dehint, TTFA-info",
-                 input, output, deltas,
+                 input, output, control,
                  info_data.hinting_range_min, info_data.hinting_range_max,
                  info_data.hinting_limit,
                  info_data.gray_strong_stem_width,
@@ -1126,8 +1126,8 @@ again:
 
   fclose(input);
   fclose(output);
-  if (deltas)
-    fclose(deltas);
+  if (control)
+    fclose(control);
 
   if (error)
   {
@@ -1185,14 +1185,14 @@ Main_GUI::create_layout(bool horizontal_layout)
        " to the input font but will contain new, generated hints."));
   output_line->setCompleter(completer);
 
-  deltas_label = new QLabel(tr("Delta &Exception File:"));
-  deltas_line = new Drag_Drop_Line_Edit(DRAG_DROP_ANY);
-  deltas_button = new QPushButton(tr("Browse..."));
-  deltas_label->setBuddy(deltas_line);
-  deltas_label->setToolTip(
-    tr("<p>An optional delta exceptions file to fine-tune point positions"
-       " after hinting, using DELTAP TrueType instructions."
-       "  This text file contains lines of the form<br>"
+  control_label = new QLabel(tr("Control Instructions Fil&e:"));
+  control_line = new Drag_Drop_Line_Edit(DRAG_DROP_ANY);
+  control_button = new QPushButton(tr("Browse..."));
+  control_label->setBuddy(control_line);
+  control_label->setToolTip(
+    tr("<p>An optional control instructions file to fine-tune"
+       " point positions after hinting, using DELTAP TrueType instructions."
+       "  This text file contains entries of the form<br>"
        "&nbsp;<br>"
        "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
        "&nbsp;&nbsp;<i>glyph-id</i>"
@@ -1207,12 +1207,16 @@ Main_GUI::create_layout(bool horizontal_layout)
        " rounded to multiples of 1/8px,"
        " <i>points</i> and <i>ppems</i> are ranges for point indices"
        " and ppem values as with x&nbsp;height snapping exceptions.<br>"
+       "Control instruction entries are separated"
+       " by character&nbsp;<tt>;</tt> or by a newline.<br>"
+       "  A trailing character&nbsp;<tt>\\</tt> continues the current line"
+       " on the next line.<br>"
        "<tt>#</tt> starts a line comment, which gets ignored."
        "  Empty lines are ignored, too.</p>"
        ""
        "Example:<br>"
        "&nbsp;&nbsp;<tt>Adieresis p 3-6 y 0.25 @ 13</tt>"));
-  deltas_line->setCompleter(completer);
+  control_line->setCompleter(completer);
 
   //
   // minmax controls
@@ -1428,7 +1432,7 @@ Main_GUI::create_layout(bool horizontal_layout)
     tr("If switched on, an SFNT table called <tt>TTFA</tt>"
        " gets added to the output font,"
        " holding a dump of all parameters."
-       "  In particular, it lists all delta exceptions."));
+       "  In particular, it lists all control instructions."));
 
   //
   // stem width and positioning
@@ -1478,7 +1482,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   watch_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> automatically re-runs"
        " the hinting process as soon as an input file"
-       " (either the font or the delta exceptions file) is modified.<br>"
+       " (either the font or the control instructions file) is modified.<br>"
        "Pressing the %1 button starts watching.<br>"
        "If an error occurs, watching stops and must be restarted"
        " with the %1 button.")
@@ -1515,9 +1519,9 @@ Main_GUI::create_vertical_layout()
 
   file_layout->setRowStretch(3, 1);
 
-  file_layout->addWidget(deltas_label, 4, 0, Qt::AlignRight);
-  file_layout->addWidget(deltas_line, 4, 1);
-  file_layout->addWidget(deltas_button, 4, 2);
+  file_layout->addWidget(control_label, 4, 0, Qt::AlignRight);
+  file_layout->addWidget(control_line, 4, 1);
+  file_layout->addWidget(control_button, 4, 2);
 
   // bottom area
   QGridLayout* run_layout = new QGridLayout;
@@ -1630,9 +1634,9 @@ Main_GUI::create_horizontal_layout()
 
   file_layout->setRowStretch(3, 1);
 
-  file_layout->addWidget(deltas_label, 4, 0, Qt::AlignRight);
-  file_layout->addWidget(deltas_line, 4, 1);
-  file_layout->addWidget(deltas_button, 4, 2);
+  file_layout->addWidget(control_label, 4, 0, Qt::AlignRight);
+  file_layout->addWidget(control_line, 4, 1);
+  file_layout->addWidget(control_button, 4, 2);
 
   // bottom area
   QGridLayout* run_layout = new QGridLayout;
@@ -1751,8 +1755,8 @@ Main_GUI::create_connections()
           SLOT(browse_input()));
   connect(output_button, SIGNAL(clicked()), this,
           SLOT(browse_output()));
-  connect(deltas_button, SIGNAL(clicked()), this,
-          SLOT(browse_deltas()));
+  connect(control_button, SIGNAL(clicked()), this,
+          SLOT(browse_control()));
 
   connect(input_line, SIGNAL(textChanged(QString)), this,
           SLOT(check_run()));
@@ -1763,8 +1767,8 @@ Main_GUI::create_connections()
           SLOT(absolute_input()));
   connect(output_line, SIGNAL(editingFinished()), this,
           SLOT(absolute_output()));
-  connect(deltas_line, SIGNAL(editingFinished()), this,
-          SLOT(absolute_deltas()));
+  connect(control_line, SIGNAL(editingFinished()), this,
+          SLOT(absolute_control()));
 
   connect(min_box, SIGNAL(valueChanged(int)), this,
           SLOT(check_min()));

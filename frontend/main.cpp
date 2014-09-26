@@ -135,7 +135,7 @@ progress(long curr_idx,
 
 typedef struct Error_Data_
 {
-  const char* deltas_name;
+  const char* control_name;
 } Error_Data;
 
 
@@ -205,7 +205,7 @@ err(TA_Error error,
     }
     else if (error >= 0x200 && error < 0x300)
     {
-      fprintf(stderr, "%s:", data->deltas_name);
+      fprintf(stderr, "%s:", data->control_name);
       if (errlinenum)
         fprintf(stderr, "%d:", errlinenum);
       if (errpos && errline)
@@ -288,7 +288,7 @@ show_help(bool
 "  -l, --hinting-range-min=N  the minimum PPEM value for hint sets\n"
 "                             (default: %d)\n"
 #ifndef BUILD_GUI
-"  -m, --deltas-file=FILE     get delta exceptions from FILE\n"
+"  -m, --control-file=FILE    get control instructions from FILE\n"
 #endif
 "  -n, --no-info              don't add ttfautohint info\n"
 "                             to the version string(s) in the `name' table\n"
@@ -410,7 +410,7 @@ show_help(bool
   fprintf(handle,
 #ifndef BUILD_GUI
 "\n"
-"A delta exceptions file contains lines of the form\n"
+"A control instructions file contains entries of the form\n"
 "\n"
 "  [<subfont idx>] <glyph id> p <points> [x <shift>] [y <shift>] @ <ppems>\n"
 "\n"
@@ -499,7 +499,7 @@ main(int argc,
   TA_Error_Func err_func = err;
   TA_Info_Func info_func = info;
 
-  const char* deltas_name = NULL;
+  const char* control_name = NULL;
 #endif
 
   // For real numbers (both parsing and displaying) we only use `.' as the
@@ -536,13 +536,11 @@ main(int argc,
       {"adjust-subglyphs", no_argument, NULL, 'p'},
       {"composites", no_argument, NULL, 'c'},
 #ifndef BUILD_GUI
+      {"control-file", required_argument, NULL, 'm'},
       {"debug", no_argument, NULL, DEBUG_OPTION},
 #endif
       {"default-script", required_argument, NULL, 'D'},
       {"dehint", no_argument, NULL, 'd'},
-#ifndef BUILD_GUI
-      {"deltas-file", required_argument, NULL, 'm'},
-#endif
       {"fallback-script", required_argument, NULL, 'f'},
       {"fallback-stem-width", required_argument, NULL, 'H'},
       {"hinting-limit", required_argument, NULL, 'G'},
@@ -647,7 +645,7 @@ main(int argc,
 
 #ifndef BUILD_GUI
     case 'm':
-      deltas_name = optarg;
+      control_name = optarg;
       break;
 #endif
 
@@ -891,25 +889,25 @@ main(int argc,
     out = stdout;
   }
 
-  FILE* deltas = NULL;
-  if (deltas_name)
+  FILE* control = NULL;
+  if (control_name)
   {
-    deltas = fopen(deltas_name, "r");
-    if (!deltas)
+    control = fopen(control_name, "r");
+    if (!control)
     {
       fprintf(stderr,
-              "The following error occurred while open deltas file `%s':\n"
+              "The following error occurred while open control file `%s':\n"
               "\n"
               "  %s\n",
-              deltas_name, strerror(errno));
+              control_name, strerror(errno));
       exit(EXIT_FAILURE);
     }
   }
   else
-    deltas = NULL;
+    control = NULL;
 
   Progress_Data progress_data = {-1, 1, 0};
-  Error_Data error_data = {deltas_name};
+  Error_Data error_data = {control_name};
   Info_Data info_data;
 
   if (no_info)
@@ -921,7 +919,7 @@ main(int argc,
     info_data.data_len = 0;
     info_data.data_wide_len = 0;
 
-    info_data.deltas_name = deltas_name;
+    info_data.control_name = control_name;
 
     info_data.hinting_range_min = hinting_range_min;
     info_data.hinting_range_max = hinting_range_max;
@@ -964,7 +962,7 @@ main(int argc,
     SET_BINARY(stdout);
 
   TA_Error error =
-    TTF_autohint("in-file, out-file, deltas-file,"
+    TTF_autohint("in-file, out-file, control-file,"
                  "hinting-range-min, hinting-range-max, hinting-limit,"
                  "gray-strong-stem-width, gdi-cleartype-strong-stem-width,"
                  "dw-cleartype-strong-stem-width,"
@@ -976,7 +974,7 @@ main(int argc,
                  "increase-x-height, x-height-snapping-exceptions,"
                  "fallback-stem-width, default-script, fallback-script,"
                  "symbol, dehint, debug, TTFA-info",
-                 in, out, deltas,
+                 in, out, control,
                  hinting_range_min, hinting_range_max, hinting_limit,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                  dw_cleartype_strong_stem_width,
@@ -999,8 +997,8 @@ main(int argc,
     fclose(in);
   if (out != stdout)
     fclose(out);
-  if (deltas)
-    fclose(deltas);
+  if (control)
+    fclose(control);
 
   exit(error ? EXIT_FAILURE : EXIT_SUCCESS);
 

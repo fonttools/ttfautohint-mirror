@@ -46,7 +46,7 @@ typedef struct Info_Data_
   bool dehint;
   bool TTFA_info;
 
-  const char* deltas_name;
+  const char* control_name;
 } Info_Data;
 
 

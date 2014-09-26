@@ -61,7 +61,7 @@ private slots:
   void about();
   void browse_input();
   void browse_output();
-  void browse_deltas();
+  void browse_control();
   void check_min();
   void check_max();
   void check_limit();
@@ -71,7 +71,7 @@ private slots:
   void check_default_stem_width();
   void absolute_input();
   void absolute_output();
-  void absolute_deltas();
+  void absolute_control();
   void check_number_set();
   void clear_status_bar();
   void check_watch();
@@ -107,9 +107,9 @@ private:
 
   QTimer* timer;
   QFileInfo fileinfo_input_file;
-  QFileInfo fileinfo_deltas_file;
+  QFileInfo fileinfo_control_file;
   QDateTime datetime_input_file;
-  QDateTime datetime_deltas_file;
+  QDateTime datetime_control_file;
 
   void create_connections();
   void create_actions();
@@ -138,9 +138,9 @@ private:
   Drag_Drop_Line_Edit* output_line;
   QPushButton* output_button;
 
-  QLabel* deltas_label;
-  Drag_Drop_Line_Edit* deltas_line;
-  QPushButton* deltas_button;
+  QLabel* control_label;
+  Drag_Drop_Line_Edit* control_line;
+  QPushButton* control_button;
 
   QLabel* min_label;
   QSpinBox* min_box;
