@@ -66,6 +66,9 @@ number_set_prepend(number_range* list,
   if (!element)
     return list;
 
+  if (!list)
+    return element;
+
   if (element->start <= list->end)
   {
     if (element->end < list->start)
