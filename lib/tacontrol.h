@@ -59,7 +59,7 @@ typedef enum Control_Type_
 {
   Control_Delta_before_IUP,
   Control_Delta_after_IUP,
-  Control_One_Point_Segment
+  Control_Point_Dir
 } Control_Type;
 
 
@@ -308,8 +308,32 @@ TA_control_get_next(FONT* font);
 /*
  * Access control instruction.  Return NULL if there is no more data.
  */
+
 const Ctrl*
 TA_control_get_ctrl(FONT* font);
+
+
+/*
+ * Collect forced point directions and store them in
+ * `font->control_point_dirs'.
+ */
+
+TA_Error
+TA_control_point_dir_collect(FONT* font,
+                             long font_idx,
+                             long glyph_idx);
+
+/*
+ * Access next forced point direction.  Returns 1 on success or 0 if no more
+ * data.  In the latter case, it resets the internal iterator so that
+ * calling this function another time starts at the beginning again.
+ */
+
+int
+TA_control_point_dir_get_next(FONT* font,
+                              int* point_idx,
+                              TA_Direction* dir);
+
 
 #ifdef __cplusplus
 } /* extern "C" */

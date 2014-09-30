@@ -253,10 +253,11 @@ typedef int
  * :   A pointer of type `FILE*` to the data stream of control instructions.
  *     Mutually exclusive with `control-buffer`.
  *
- *     An entry in a control instructions file or buffer has the following
- *     syntax:
+ *     An entry in a control instructions file or buffer has one of the
+ *     following syntax forms:
  *
- *     > *\[* font-idx *\]* glyph-id *`p`* points *\[* *`x`* x-shift *\]* *\[* *`y`* y-shift *\]* *`@`* ppems
+ *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`l`|`r`|`n`* points\
+ *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`p`* points\ \ *\[* *`x`* x-shift *\]*\ \ *\[* *`y`* y-shift *\]*\ \ *`@`* ppems
  *
  *     *font-idx* gives the index of the font in a TrueType Collection.  If
  *     missing, it is set to zero.  For normal TrueType fonts, only value
@@ -271,12 +272,31 @@ typedef int
  *     can be specified in decimal, octal, or hexadecimal format, the latter
  *     two indicated by the prefixes `0` and `0x`, respectively.
  *
+ *     The mutually exclusive parameters `l`, `r`, or\ `n` indicate that the
+ *     following points have left, right, or no direction, respectively,
+ *     overriding ttfautohint's algorithm for setting point directions.  The
+ *     'direction of a point' is the direction of the outline controlled by
+ *     this point.  By changing a point's direction from 'no direction' to
+ *     either left or right, you can create a one-point segment with the
+ *     given direction so that ttfautohint handles the point similar to
+ *     other segments.  Setting a point's direction to 'no direction',
+ *     ttfautohint no longer considers it as part of a segment, thus
+ *     treating it as a 'weak' point.  Changed point directions don't
+ *     directly modify the outlines; they only influence the hinting
+ *     process.
+ *
+ *     Parameter `p` makes ttfautohint apply delta exceptions for the given
+ *     points, shifting the points by the given values.  Note that those
+ *     delta exceptions are applied *after* the final `IP` instructions in
+ *     the bytecode; as a consequence, they are (partially) ignored by
+ *     rasterizers if in ClearType mode.
+ *
  *     Both *points* and *ppems* are number ranges, similar to the
  *     `x-height-snapping-exceptions` syntax.
  *
- *     *x-shift* and *y-shift* represent floating point numbers that get
- *     rounded to multiples of 1/8 pixels.  The entries for `x` and `y` are
- *     optional; if missing, the corresponding value is set to zero.
+ *     *x-shift* and *y-shift* represent real numbers that get rounded to
+ *     multiples of 1/8 pixels.  The entries for `x` and `y` are optional;
+ *     if missing, the corresponding value is set to zero.
  *
  *     Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0].
  *     Values for *ppems* must be in the range [6;53].  Values for *points*

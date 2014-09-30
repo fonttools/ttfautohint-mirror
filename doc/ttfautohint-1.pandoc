@@ -527,9 +527,9 @@ bytecode larger.
     Both *points* and *ppems* are number ranges, see ['x Height Snapping
     Exceptions'](#x-height-snapping-exceptions) for the syntax.
 
-    *x-shift* and *y-shift* represent floating point numbers that get
-    rounded to multiples of 1/8 pixels.  The entries for `x` and `y` are
-    optional; if missing, the corresponding value is set to zero.
+    *x-shift* and *y-shift* represent real numbers that get rounded to
+    multiples of 1/8 pixels.  The entries for `x` and `y` are optional; if
+    missing, the corresponding value is set to zero.
 
     Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0]. 
     Values for *ppems* must be in the range [6;53].  Values for *points* are

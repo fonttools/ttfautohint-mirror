@@ -17,6 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
+#include "ta.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include "tahints.h"
@@ -876,6 +878,36 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
           goto Is_Weak_Point;
         }
       }
+    }
+  }
+
+  /* change some directions at the user's request */
+  /* to make ttfautohint insert one-point segments */
+  /* or remove points from segments */
+  {
+    FONT* font;
+    FT_Int idx;
+    TA_Direction dir;
+
+
+    /* `globals' is not set up while initializing metrics, */
+    /* so exit early in this case */
+    if (!hints->metrics->globals)
+      goto Exit;
+
+    font = hints->metrics->globals->font;
+
+    /* start conditions are set with `TA_control_point_dir_collect' */
+    while (TA_control_point_dir_get_next(font, &idx, &dir))
+    {
+      TA_Point point = &points[idx];
+
+
+      point->out_dir = dir;
+      if (dir == TA_DIR_NONE)
+        point->flags |= TA_FLAG_WEAK_INTERPOLATION;
+      else
+        point->flags &= ~TA_FLAG_WEAK_INTERPOLATION;
     }
   }
 

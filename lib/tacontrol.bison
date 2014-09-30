@@ -93,6 +93,9 @@ store_error_data(const YYLTYPE *locp,
 %type <range> left_limited
 %type <range> number_set
 %type <range> point_set
+%type <range> left_dir_set
+%type <range> right_dir_set
+%type <range> none_dir_set
 %type <range> ppem_set
 %type <range> range
 %type <range> range_elem
@@ -167,6 +170,51 @@ entry:
         YYABORT;
       }
     }
+| font_idx glyph_idx left_dir_set EOE
+    {
+      $entry = TA_control_new(Control_Point_Dir,
+                              $font_idx,
+                              $glyph_idx,
+                              $left_dir_set,
+                              TA_DIR_LEFT,
+                              0,
+                              NULL);
+      if (!$entry)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+| font_idx glyph_idx right_dir_set EOE
+    {
+      $entry = TA_control_new(Control_Point_Dir,
+                              $font_idx,
+                              $glyph_idx,
+                              $right_dir_set,
+                              TA_DIR_RIGHT,
+                              0,
+                              NULL);
+      if (!$entry)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+| font_idx glyph_idx none_dir_set EOE
+    {
+      $entry = TA_control_new(Control_Point_Dir,
+                              $font_idx,
+                              $glyph_idx,
+                              $none_dir_set,
+                              TA_DIR_NONE,
+                              0,
+                              NULL);
+      if (!$entry)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
 ;
 
 font_idx:
@@ -230,9 +278,36 @@ glyph_idx:
 ;
 
 glyph_name:
-  'p'
+  'l'
+    {
+      $glyph_name = strdup("l");
+      if ($glyph_name)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+| 'n'
+    {
+      $glyph_name = strdup("n");
+      if ($glyph_name)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+| 'p'
     {
       $glyph_name = strdup("p");
+      if ($glyph_name)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+| 'r'
+    {
+      $glyph_name = strdup("r");
       if ($glyph_name)
       {
         store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
@@ -294,6 +369,79 @@ point_set:
   number_set
     { $point_set = $number_set; }
 ;
+
+left_dir_set:
+  'l'
+    {
+      FT_Error error;
+      FT_Face face = context->font->sfnts[context->font_idx].face;
+      int num_points;
+
+
+      error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
+      if (error)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph);
+        YYABORT;
+      }
+
+      num_points = face->glyph->outline.n_points;
+
+      context->number_set_min = 0;
+      context->number_set_max = num_points - 1;
+    }
+  number_set
+    { $left_dir_set = $number_set; }
+;
+
+right_dir_set:
+  'r'
+    {
+      FT_Error error;
+      FT_Face face = context->font->sfnts[context->font_idx].face;
+      int num_points;
+
+
+      error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
+      if (error)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph);
+        YYABORT;
+      }
+
+      num_points = face->glyph->outline.n_points;
+
+      context->number_set_min = 0;
+      context->number_set_max = num_points - 1;
+    }
+  number_set
+    { $right_dir_set = $number_set; }
+;
+
+none_dir_set:
+  'n'
+    {
+      FT_Error error;
+      FT_Face face = context->font->sfnts[context->font_idx].face;
+      int num_points;
+
+
+      error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
+      if (error)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph);
+        YYABORT;
+      }
+
+      num_points = face->glyph->outline.n_points;
+
+      context->number_set_min = 0;
+      context->number_set_max = num_points - 1;
+    }
+  number_set
+    { $none_dir_set = $number_set; }
+;
+
 
 x_shift:
   /* empty */

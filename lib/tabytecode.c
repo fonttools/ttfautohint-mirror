@@ -692,15 +692,14 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   FT_Bool need_word_counts = 0;
   FT_Bool allocated = 0;
 
-  const Ctrl* ctrl;
-
 
   num_points = font->loader->gloader->base.outline.n_points;
 
   /* loop over all fitting control instructions */
   for (;;)
   {
-    ctrl = TA_control_get_ctrl(font);
+    const Ctrl* ctrl = TA_control_get_ctrl(font);
+
 
     if (!ctrl)
       break;
@@ -2264,6 +2263,12 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   error = FT_Set_Pixel_Sizes(face,
                              font->hinting_range_min,
                              font->hinting_range_min);
+  if (error)
+    return error;
+
+  /* this data is needed for `ta_glyph_hints_reload' (in file `tahints.c') */
+  /* to modify `out' directions of points at the user's request */
+  error = TA_control_point_dir_collect(font, face->face_index, idx);
   if (error)
     return error;
 

@@ -56,9 +56,9 @@ TA_control_new(Control_Type type,
                               + (y_shift > 0 ? 0.5 : -0.5));
     break;
 
-  case Control_One_Point_Segment:
-    /* not implemented yet */
-    control->x_shift = 0;
+  case Control_Point_Dir:
+    /* values -1, 1, and 4 mean `left', `right', and `none', respectively */
+    control->x_shift = x_shift;
     control->y_shift = 0;
     break;
   }
@@ -184,8 +184,24 @@ control_show_line(FONT* font,
                        ppems_buf);
     break;
 
-  case Control_One_Point_Segment:
-    /* not implemented yet */
+  case Control_Point_Dir:
+    /* display glyph index if we don't have a glyph name */
+    if (*glyph_name_buf)
+      s = sdscatprintf(s, "%ld %s %c %s",
+                       control->font_idx,
+                       glyph_name_buf,
+                       control->x_shift == TA_DIR_LEFT ? 'l'
+                         : control->x_shift == TA_DIR_RIGHT ? 'r'
+                           : 'n',
+                       points_buf);
+    else
+      s = sdscatprintf(s, "%ld %ld %c %s",
+                       control->font_idx,
+                       control->glyph_idx,
+                       control->x_shift == TA_DIR_LEFT ? 'l'
+                         : control->x_shift == TA_DIR_RIGHT ? 'r'
+                           : 'n',
+                       points_buf);
     break;
   }
 
@@ -425,6 +441,7 @@ void
 TA_control_free_tree(FONT* font)
 {
   control_data* control_data_head = (control_data*)font->control_data_head;
+  number_range* control_point_dirs = font->control_point_dirs;
 
   Node* node;
   Node* next_node;
@@ -443,6 +460,7 @@ TA_control_free_tree(FONT* font)
   }
 
   free(control_data_head);
+  number_set_free(control_point_dirs);
 }
 
 
@@ -454,10 +472,14 @@ TA_control_build_tree(FONT* font)
   int emit_newline = 0;
 
 
+  font->control_point_dirs = NULL;
+  font->control_point_dir_iter.range = NULL;
+
   /* nothing to do if no data */
   if (!control)
   {
     font->control_data_head = NULL;
+    font->control_data_cur = NULL;
     return TA_Err_Ok;
   }
 
@@ -482,12 +504,16 @@ TA_control_build_tree(FONT* font)
     ppems_iter.range = control->ppems;
     ppem = number_set_get_first(&ppems_iter);
 
+    if (type == Control_Point_Dir)
+      goto Points_Loop;
+
     while (ppems_iter.range)
     {
       number_set_iter points_iter;
       int point_idx;
 
 
+    Points_Loop:
       points_iter.range = control->points;
       point_idx = number_set_get_first(&points_iter);
 
@@ -594,6 +620,102 @@ TA_control_get_ctrl(FONT* font)
 
 
   return node ? &node->ctrl : NULL;
+}
+
+
+TA_Error
+TA_control_point_dir_collect(FONT* font,
+                             long font_idx,
+                             long glyph_idx)
+{
+  number_range* control_point_dirs = font->control_point_dirs;
+
+
+  /* nothing to do if no data */
+  if (!font->control_data_head)
+    return TA_Err_Ok;
+
+  if (control_point_dirs)
+  {
+    number_set_free(control_point_dirs);
+    control_point_dirs = NULL;
+  }
+
+  /*
+   * The PPEM value for one-point segments is always zero; such control
+   * instructions are thus sorted before other control instructions for the
+   * same glyph index -- this fits nicely with the call to
+   * `TA_control_get_next' in the loop of `TA_sfnt_build_delta_exceptions',
+   * assuring proper sequential access to the red-black tree.
+   */
+  for (;;)
+  {
+    const Ctrl* ctrl = TA_control_get_ctrl(font);
+    number_range* elem;
+    int point_idx;
+
+
+    if (!ctrl)
+      break;
+
+    /* check type */
+    if (ctrl->type != Control_Point_Dir)
+      break;
+
+    /* too large values of font and glyph indices in `ctrl' */
+    /* are handled by later calls of this function */
+    if (font_idx < ctrl->font_idx
+        || glyph_idx < ctrl->glyph_idx)
+      break;
+
+    /* we store point index and direction together */
+    point_idx = (ctrl->point_idx << 2)
+                + (ctrl->x_shift == TA_DIR_LEFT ? 0
+                     : ctrl->x_shift == TA_DIR_RIGHT ? 1
+                       : 2);
+
+    /* don't care about checking valid point indices */
+    elem = number_set_new(point_idx, point_idx, point_idx, point_idx);
+    if (elem == NUMBERSET_ALLOCATION_ERROR)
+    {
+      number_set_free(control_point_dirs);
+      return TA_Err_Control_Allocation_Error;
+    }
+    control_point_dirs = number_set_prepend(control_point_dirs, elem);
+
+    TA_control_get_next(font);
+  }
+
+  font->control_point_dirs = number_set_reverse(control_point_dirs);
+
+  return TA_Err_Ok;
+}
+
+
+int
+TA_control_point_dir_get_next(FONT* font,
+                              int* point_idx,
+                              TA_Direction* dir)
+{
+  number_range* control_point_dirs = font->control_point_dirs;
+  number_set_iter* control_point_dir_iter = &font->control_point_dir_iter;
+  int pd_idx;
+
+
+  if (!control_point_dir_iter->range)
+  {
+    control_point_dir_iter->range = control_point_dirs;
+    pd_idx = number_set_get_first(control_point_dir_iter);
+  }
+  else
+    pd_idx = number_set_get_next(control_point_dir_iter);
+
+  *point_idx = pd_idx >> 2;
+  *dir = pd_idx % 4 == 0 ? TA_DIR_LEFT
+           : pd_idx % 4 == 1 ? TA_DIR_RIGHT
+             : TA_DIR_NONE;
+
+  return control_point_dir_iter->range != NULL;
 }
 
 /* end of tacontrol.c */
