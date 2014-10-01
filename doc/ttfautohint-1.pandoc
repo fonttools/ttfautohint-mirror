@@ -220,7 +220,7 @@ given [afterwards](#background-and-technical-details).
 
 ### Hint Set Range Minimum, Hint Set Range Maximum
 
-See ['Hint Sets'](#hint-sets) for a definition and explanation.
+See '[Hint Sets](#hint-sets)' for a definition and explanation.
 
 `--hinting-range-min=`*n*, `-l`\ *n*
 :   The minimum PPEM value (in pixels) at which hint sets are created.  The
@@ -283,7 +283,7 @@ bytecode larger.
     To switch off this feature, use `--increase-x-height=0` (or check the
     'No x\ Height Increase' box in the GUI).  To switch off rounding the
     x\ height to the pixel grid in general, either partially or completely,
-    see ['x Height Snapping Exceptions'](#x-height-snapping-exceptions).
+    see '[x Height Snapping Exceptions](#x-height-snapping-exceptions)'.
 
     The following images again use the font 'Mertz Bold'.
 
@@ -320,7 +320,7 @@ bytecode larger.
     font).  However, having larger vertical glyph sizes is not always
     desired, especially if it is not possible to adjust the `usWinAscent`
     and `usWinDescent` values from the font's `OS/2` table so that they are
-    not too tight.  See ['Windows Compatibility'](#windows-compatibility)
+    not too tight.  See '[Windows Compatibility](#windows-compatibility)'
     for more details.
 
 ### Fallback Stem Width
@@ -489,8 +489,8 @@ bytecode larger.
     width routine for a given rendering target.  If you unset the check box,
     the smooth width routine gets used.
 
-    The following FontForge snapshot images use the font ['Mertz
-    Bold'](http://code.newtypography.co.uk/mertz-sans/) (still under
+    The following FontForge snapshot images use the font '[Mertz
+    Bold](http://code.newtypography.co.uk/mertz-sans/)' (still under
     development) from [Vernon Adams].
 
     ![The left part shows the glyph 'g' unhinted at 26px, the right part
@@ -543,8 +543,8 @@ bytecode larger.
     bytecode; as a consequence, they are (partially) ignored by rasterizers
     if in ClearType mode.
 
-    Both *points* and *ppems* are number ranges, see ['x Height Snapping
-    Exceptions'](#x-height-snapping-exceptions) for the syntax.
+    Both *points* and *ppems* are number ranges, see '[x Height Snapping
+    Exceptions](#x-height-snapping-exceptions)' for the syntax.
 
     *x-shift* and *y-shift* represent real numbers that get rounded to
     multiples of 1/8 pixels.  The entries for '`x`' and '`y`' are optional;
@@ -795,7 +795,7 @@ available (latin), providing support for scripts like Latin or Greek.
     instruction.
 
 The following images illustrate the hinting process, using glyph 'a' from
-the freely available font ['Ubuntu Book'](http://font.ubuntu.com).  The
+the freely available font '[Ubuntu Book](http://font.ubuntu.com)'.  The
 manual hints were added by [Dalton Maag Ltd], the used application to create
 the hinting debug snapshots was [FontForge].
 
