@@ -1384,8 +1384,8 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
           if (point->flags & TA_FLAG_CONTROL)
             segment->flags |= TA_EDGE_ROUND;
 
-          segment->min_coord = (FT_Short)min_pos;
-          segment->max_coord = (FT_Short)max_pos;
+          segment->min_coord = (FT_Short)point->v;
+          segment->max_coord = (FT_Short)point->v;
           segment->height = 0;
 
           on_edge = 0;
@@ -1519,6 +1519,14 @@ ta_latin_hints_link_segments(TA_GlyphHints hints,
         /* compute maximum coordinate difference of the two segments */
         /* (this is, how much they overlap) */
         len = max - min;
+
+        /* for one-point segments, `len' is zero if there is an overlap */
+        /* (and negative otherwise); we have to correct this */
+        if (len == 0
+            && (seg1->min_coord == seg1->max_coord
+                || seg2->min_coord == seg2->max_coord))
+          len = len_threshold;
+
         if (len >= len_threshold)
         {
           /*
