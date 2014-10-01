@@ -435,11 +435,11 @@ bytecode larger.
 `--ttfa-info`, `-t`
 :   Add an SFNT table called `TTFA` to the output font that holds a dump of
     all parameters; the data resembles the format of the `--debug` option's
-    parameter listing.  In particular, it lists all delta exceptions (which
-    are *not* shown in the `name` table info).  This option is mainly for
-    archival purposes so that all information used to create a font is
-    stored in the font itself.  Note that such a `TTFA` table gets ignored
-    by all TrueType rendering engines.
+    parameter listing.  In particular, it lists all ttfautohint control
+    instructions (which are *not* shown in the `name` table info).  This
+    option is mainly for archival purposes so that all information used to
+    create a font is stored in the font itself.  Note that such a `TTFA`
+    table gets ignored by all TrueType rendering engines.
 
     Forthcoming versions of the ttfautohint front-ends will be able to use
     this data so that a font can be processed another time with exactly the
@@ -500,15 +500,16 @@ bytecode larger.
      algorithm.  Note how the stems are aligned to the pixel
      grid.](img/ff-g-26px-wD.png)
 
-### Delta Exception File
+### Control Instructions File
+`--control-file=`*file*, `-m`\ *file* (TTY only)
+:   Specify the name of a control instructions file to manually tweak the
+    hinting process.  This feature can be used to correct glitches in
+    ttfautohint's hinting algorithm.
 
-`--deltas-file=`*file*, `-m`\ *file* (TTY only)
-:   Specify the name of a delta exceptions file to add delta hinting.
-    This feature can be used to correct glitches in ttfautohint's hinting
-    algorithm.
+    An entry in a control instructions file has one of the following syntax
+    forms:
 
-    An entry in a delta exceptions file has the following syntax:
-
+    > *\[* font-idx *\]*\ \ glyph-id\ \ *`l`|`r`|`n`* points\
     > *\[* font-idx *\]*\ \ glyph-id\ \ *`p`* points\ \ *\[* *`x`* x-shift *\]*\ \ *\[* *`y`* y-shift *\]*\ \ *`@`* ppems
 
     *font-idx* gives the index of the font in a TrueType Collection.  If
@@ -524,26 +525,44 @@ bytecode larger.
     specified in decimal, octal, or hexadecimal format, the latter two
     indicated by the prefixes `0` and `0x`, respectively.
 
+    The mutually exclusive parameters '`l`', '`r`', or\ '`n`' indicate that
+    the following points have left, right, or no direction, respectively,
+    overriding ttfautohint's algorithm for setting point directions.  The
+    'direction of a point' is the direction of the outline controlled by
+    this point.  By changing a point's direction from 'no direction' to
+    either left or right, you can create a one-point segment with the given
+    direction so that ttfautohint handles the point similar to other
+    segments.  Setting a point's direction to 'no direction', ttfautohint no
+    longer considers it as part of a segment, thus treating it as a 'weak'
+    point.  Changed point directions don't directly modify the outlines;
+    they only influence the hinting process.
+
+    Parameter '`p`' makes ttfautohint apply delta exceptions for the given
+    points, shifting the points by the given values.  Note that those delta
+    exceptions are applied *after* the final `IP` instructions in the
+    bytecode; as a consequence, they are (partially) ignored by rasterizers
+    if in ClearType mode.
+
     Both *points* and *ppems* are number ranges, see ['x Height Snapping
     Exceptions'](#x-height-snapping-exceptions) for the syntax.
 
     *x-shift* and *y-shift* represent real numbers that get rounded to
-    multiples of 1/8 pixels.  The entries for `x` and `y` are optional; if
-    missing, the corresponding value is set to zero.
+    multiples of 1/8 pixels.  The entries for '`x`' and '`y`' are optional;
+    if missing, the corresponding value is set to zero.
 
     Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0]. 
     Values for *ppems* must be in the range [6;53].  Values for *points* are
     limited by the number of points in the glyph.
 
     Similar to the Bourne shell (`sh` or `bash`), a comment starts with
-    character `#`; the rest of the line is ignored.  An empty line is
+    character '`#`'; the rest of the line is ignored.  An empty line is
     ignored also.  Both the newline character and '`;`' can be used as a
-    separator between exception entries.  A trailing '`\`' at the end of
+    separator between exception entries.  A trailing '`\`' at the end of a
     line continues the current line on the next one.
 
     In case there are multiple shift entries for the same (*font idx*,
     *glyph-id*, *point-idx*, *ppem-value*) quadruplet, the first entry in
-    the delta exceptions file wins.
+    the control instructions file wins.
 
     Note that only character '`.`' is recognized as a decimal point, and a
     thousands separator is not accepted.
@@ -556,13 +575,13 @@ bytecode larger.
         Aacute  p 2-4  y 0.25  @ 12, 13
     ```
 
-    in a delta exceptions file.
+    in a control instructions file.
 
 ### Miscellaneous
 
 Watch input files (GUI only)
 :   If this checkbox is set, automatically regenerate the output file as
-    soon as an input file (either the font or the delta exceptions file)
+    soon as an input file (either the font or the control instructions file)
     gets modified.
 
     Pressing the 'Run' button starts watching.  If an error occurs, watching

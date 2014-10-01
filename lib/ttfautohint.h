@@ -272,31 +272,31 @@ typedef int
  *     can be specified in decimal, octal, or hexadecimal format, the latter
  *     two indicated by the prefixes `0` and `0x`, respectively.
  *
- *     The mutually exclusive parameters `l`, `r`, or\ `n` indicate that the
- *     following points have left, right, or no direction, respectively,
- *     overriding ttfautohint's algorithm for setting point directions.  The
- *     'direction of a point' is the direction of the outline controlled by
- *     this point.  By changing a point's direction from 'no direction' to
- *     either left or right, you can create a one-point segment with the
- *     given direction so that ttfautohint handles the point similar to
- *     other segments.  Setting a point's direction to 'no direction',
- *     ttfautohint no longer considers it as part of a segment, thus
- *     treating it as a 'weak' point.  Changed point directions don't
- *     directly modify the outlines; they only influence the hinting
- *     process.
+ *     The mutually exclusive parameters '`l`', '`r`', or\ '`n`' indicate
+ *     that the following points have left, right, or no direction,
+ *     respectively, overriding ttfautohint's algorithm for setting point
+ *     directions.  The 'direction of a point' is the direction of the
+ *     outline controlled by this point.  By changing a point's direction
+ *     from 'no direction' to either left or right, you can create a
+ *     one-point segment with the given direction so that ttfautohint
+ *     handles the point similar to other segments.  Setting a point's
+ *     direction to 'no direction', ttfautohint no longer considers it as
+ *     part of a segment, thus treating it as a 'weak' point.  Changed point
+ *     directions don't directly modify the outlines; they only influence
+ *     the hinting process.
  *
- *     Parameter `p` makes ttfautohint apply delta exceptions for the given
- *     points, shifting the points by the given values.  Note that those
- *     delta exceptions are applied *after* the final `IP` instructions in
- *     the bytecode; as a consequence, they are (partially) ignored by
- *     rasterizers if in ClearType mode.
+ *     Parameter '`p`' makes ttfautohint apply delta exceptions for the
+ *     given points, shifting the points by the given values.  Note that
+ *     those delta exceptions are applied *after* the final `IP`
+ *     instructions in the bytecode; as a consequence, they are (partially)
+ *     ignored by rasterizers if in ClearType mode.
  *
  *     Both *points* and *ppems* are number ranges, similar to the
  *     `x-height-snapping-exceptions` syntax.
  *
  *     *x-shift* and *y-shift* represent real numbers that get rounded to
- *     multiples of 1/8 pixels.  The entries for `x` and `y` are optional;
- *     if missing, the corresponding value is set to zero.
+ *     multiples of 1/8 pixels.  The entries for '`x`' and '`y`' are
+ *     optional; if missing, the corresponding value is set to zero.
  *
  *     Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0].
  *     Values for *ppems* must be in the range [6;53].  Values for *points*
@@ -307,8 +307,8 @@ typedef int
  *     next line by ending it with backslash character ('`\`').  A backslash
  *     followed by a newline gets treated similar to a whitespace character.
  *
- *     A comment starts with character `#`; the rest of the line is ignored.
- *     An empty line is ignored also.
+ *     A comment starts with character '`#`'; the rest of the line is
+ *     ignored.  An empty line is ignored also.
  *
  *     Note that only character '`.`' is recognized as a decimal point, and
  *     a thousands separator is not accepted.

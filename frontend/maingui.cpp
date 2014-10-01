@@ -1190,10 +1190,13 @@ Main_GUI::create_layout(bool horizontal_layout)
   control_button = new QPushButton(tr("Browse..."));
   control_label->setBuddy(control_line);
   control_label->setToolTip(
-    tr("<p>An optional control instructions file to fine-tune"
-       " point positions after hinting, using DELTAP TrueType instructions."
-       "  This text file contains entries of the form<br>"
+    tr("<p>An optional control instructions file to tweak hinting."
+       "  This text file contains entries"
+       " of one of the following syntax forms<br>"
        "&nbsp;<br>"
+       "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
+       "&nbsp;&nbsp;<i>glyph-id</i>"
+       "&nbsp;&nbsp;<tt>l</tt>|<tt>r</tt>|<tt>n</tt>&nbsp;<i>points</i><br>"
        "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
        "&nbsp;&nbsp;<i>glyph-id</i>"
        "&nbsp;&nbsp;<tt>p</tt>&nbsp;<i>points</i>"
@@ -1202,10 +1205,16 @@ Main_GUI::create_layout(bool horizontal_layout)
        "&nbsp;&nbsp;<tt>@</tt>&nbsp;<i>ppems</i><br>"
        "&nbsp;<br>"
        "<i>subfont-idx</i> gives the subfont index in a TTC,"
-       " <i>glyph-id</i> is a glyph name or index,"
-       " the x and y <i>shift</i> values are in the range [-1;1],"
-       " rounded to multiples of 1/8px,"
-       " <i>points</i> and <i>ppems</i> are ranges for point indices"
+       " <i>glyph-id</i> is a glyph name or index.<br>"
+       "<tt>l</tt> (<tt>r</tt>, <tt>n</tt>) force point directions"
+       " to be left (right, no direction).<br>"
+       "<tt>p</tt> defines delta exceptions"
+       " (to be applied <i>after</i> the final"
+       " <tt>IP</tt> bytecode instructions;"
+       " this usually fails in ClearType mode).<br>"
+       "x and y <i>shift</i> values are in the range [-1;1],"
+       " rounded to multiples of 1/8px.<br>"
+       "<i>points</i> and <i>ppems</i> are ranges for point indices"
        " and ppem values as with x&nbsp;height snapping exceptions.<br>"
        "Control instruction entries are separated"
        " by character&nbsp;<tt>;</tt> or by a newline.<br>"
@@ -1214,7 +1223,8 @@ Main_GUI::create_layout(bool horizontal_layout)
        "<tt>#</tt> starts a line comment, which gets ignored."
        "  Empty lines are ignored, too.</p>"
        ""
-       "Example:<br>"
+       "Examples:<br>"
+       "&nbsp;&nbsp;<tt>Q l 38</tt><br>"
        "&nbsp;&nbsp;<tt>Adieresis p 3-6 y 0.25 @ 13</tt>"));
   control_line->setCompleter(completer);
 
