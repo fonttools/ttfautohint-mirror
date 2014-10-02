@@ -444,7 +444,7 @@ void
 TA_control_free_tree(FONT* font)
 {
   control_data* control_data_head = (control_data*)font->control_data_head;
-  number_range* control_point_dirs = font->control_point_dirs;
+  number_range* control_segment_dirs = font->control_segment_dirs;
 
   Node* node;
   Node* next_node;
@@ -463,7 +463,7 @@ TA_control_free_tree(FONT* font)
   }
 
   free(control_data_head);
-  number_set_free(control_point_dirs);
+  number_set_free(control_segment_dirs);
 }
 
 
@@ -475,8 +475,8 @@ TA_control_build_tree(FONT* font)
   int emit_newline = 0;
 
 
-  font->control_point_dirs = NULL;
-  font->control_point_dir_iter.range = NULL;
+  font->control_segment_dirs = NULL;
+  font->control_segment_dir_iter.range = NULL;
 
   /* nothing to do if no data */
   if (!control)
@@ -629,21 +629,21 @@ TA_control_get_ctrl(FONT* font)
 
 
 TA_Error
-TA_control_point_dir_collect(FONT* font,
-                             long font_idx,
-                             long glyph_idx)
+TA_control_segment_dir_collect(FONT* font,
+                               long font_idx,
+                               long glyph_idx)
 {
-  number_range* control_point_dirs = font->control_point_dirs;
+  number_range* control_segment_dirs = font->control_segment_dirs;
 
 
   /* nothing to do if no data */
   if (!font->control_data_head)
     return TA_Err_Ok;
 
-  if (control_point_dirs)
+  if (control_segment_dirs)
   {
-    number_set_free(control_point_dirs);
-    control_point_dirs = NULL;
+    number_set_free(control_segment_dirs);
+    control_segment_dirs = NULL;
   }
 
   /*
@@ -685,44 +685,44 @@ TA_control_point_dir_collect(FONT* font,
     elem = number_set_new(point_idx, point_idx, point_idx, point_idx);
     if (elem == NUMBERSET_ALLOCATION_ERROR)
     {
-      number_set_free(control_point_dirs);
+      number_set_free(control_segment_dirs);
       return TA_Err_Control_Allocation_Error;
     }
-    control_point_dirs = number_set_prepend(control_point_dirs, elem);
+    control_segment_dirs = number_set_prepend(control_segment_dirs, elem);
 
     TA_control_get_next(font);
   }
 
-  font->control_point_dirs = number_set_reverse(control_point_dirs);
+  font->control_segment_dirs = number_set_reverse(control_segment_dirs);
 
   return TA_Err_Ok;
 }
 
 
 int
-TA_control_point_dir_get_next(FONT* font,
-                              int* point_idx,
-                              TA_Direction* dir)
+TA_control_segment_dir_get_next(FONT* font,
+                                int* point_idx,
+                                TA_Direction* dir)
 {
-  number_range* control_point_dirs = font->control_point_dirs;
-  number_set_iter* control_point_dir_iter = &font->control_point_dir_iter;
+  number_range* control_segment_dirs = font->control_segment_dirs;
+  number_set_iter* control_segment_dir_iter = &font->control_segment_dir_iter;
   int pd_idx;
 
 
-  if (!control_point_dir_iter->range)
+  if (!control_segment_dir_iter->range)
   {
-    control_point_dir_iter->range = control_point_dirs;
-    pd_idx = number_set_get_first(control_point_dir_iter);
+    control_segment_dir_iter->range = control_segment_dirs;
+    pd_idx = number_set_get_first(control_segment_dir_iter);
   }
   else
-    pd_idx = number_set_get_next(control_point_dir_iter);
+    pd_idx = number_set_get_next(control_segment_dir_iter);
 
   *point_idx = pd_idx >> 2;
   *dir = pd_idx % 4 == 0 ? TA_DIR_LEFT
            : pd_idx % 4 == 1 ? TA_DIR_RIGHT
              : TA_DIR_NONE;
 
-  return control_point_dir_iter->range != NULL;
+  return control_segment_dir_iter->range != NULL;
 }
 
 /* end of tacontrol.c */

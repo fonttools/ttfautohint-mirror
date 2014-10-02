@@ -236,9 +236,9 @@ struct FONT_
   void* control_data_head;
   void* control_data_cur;
 
-  /* two fields for handling forced point directions */
-  number_range* control_point_dirs;
-  number_set_iter control_point_dir_iter;
+  /* two fields for handling one-point segment directions */
+  number_range* control_segment_dirs;
+  number_set_iter control_segment_dir_iter;
 
   TA_LoaderRec loader[1]; /* the interface to the autohinter */
 

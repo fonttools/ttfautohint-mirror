@@ -897,8 +897,8 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
 
     font = hints->metrics->globals->font;
 
-    /* start conditions are set with `TA_control_point_dir_collect' */
-    while (TA_control_point_dir_get_next(font, &idx, &dir))
+    /* start conditions are set with `TA_control_segment_dir_collect' */
+    while (TA_control_segment_dir_get_next(font, &idx, &dir))
     {
       TA_Point point = &points[idx];
 

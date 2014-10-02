@@ -316,25 +316,25 @@ TA_control_get_ctrl(FONT* font);
 
 
 /*
- * Collect forced point directions and store them in
- * `font->control_point_dirs'.
+ * Collect one-point segment directions and store them in
+ * `font->control_segment_dirs'.
  */
 
 TA_Error
-TA_control_point_dir_collect(FONT* font,
-                             long font_idx,
-                             long glyph_idx);
+TA_control_segment_dir_collect(FONT* font,
+                               long font_idx,
+                               long glyph_idx);
 
 /*
- * Access next forced point direction.  Returns 1 on success or 0 if no more
- * data.  In the latter case, it resets the internal iterator so that
+ * Access next one-point segment direction.  Returns 1 on success or 0 if no
+ * more data.  In the latter case, it resets the internal iterator so that
  * calling this function another time starts at the beginning again.
  */
 
 int
-TA_control_point_dir_get_next(FONT* font,
-                              int* point_idx,
-                              TA_Direction* dir);
+TA_control_segment_dir_get_next(FONT* font,
+                                int* point_idx,
+                                TA_Direction* dir);
 
 
 #ifdef __cplusplus

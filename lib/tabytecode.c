@@ -2268,7 +2268,8 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
 
   /* this data is needed for `ta_glyph_hints_reload' (in file `tahints.c') */
   /* to modify `out' directions of points at the user's request */
-  error = TA_control_point_dir_collect(font, face->face_index, idx);
+  /* (which will eventually become single-point segments) */
+  error = TA_control_segment_dir_collect(font, face->face_index, idx);
   if (error)
     return error;
 
