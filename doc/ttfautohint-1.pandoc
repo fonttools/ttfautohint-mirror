@@ -567,15 +567,39 @@ bytecode larger.
     Note that only character '`.`' is recognized as a decimal point, and a
     thousands separator is not accepted.
 
-    As an example, let's assume that you want to shift points 2, 3, and\ 4
-    in glyph `Aacute' at ppem sizes 12 and\ 13 by a vertical amount of 0.25
-    pixels.  This corresponds to the line
+    As an example for delta instructions, let's assume that you want to
+    shift points 2, 3, and\ 4 in glyph `Aacute' at ppem sizes 12 and\ 13 by
+    a vertical amount of 0.25 pixels.  This corresponds to the line
 
     ```
         Aacute  p 2-4  y 0.25  @ 12, 13
     ```
 
     in a control instructions file.
+
+    The following images display glyphs from the font
+    [Halant-Regular](http://www.google.com/fonts/specimen/Halant).
+
+    ![The outlines of glyphs 'O' and 'Q', as displayed in
+      FontForge.  They are sufficiently similar to expect ttfautohint
+      hinting them equal.  However, this is not the
+      case.](img/Halant-Regular-O-Q.png)
+
+    ![The same glyphs, shown at 12px before hinting – please ignore the
+      outline distortion in the upper right of glyph 'O'; this is a bug in
+      FontForge while running the TrueType
+      debugger.](img/Halant-Regular-O-Q-unhinted-12px.png)
+
+    ![Using only ttfautohint's '`-w gGD`' parameter to force strong stem
+      width and positioning, the hinting of glyph 'Q' is really bad, making
+      the glyph vertically two pixels larger!  Reason is that this glyph
+      doesn't contain a horizontal segment at the baseline blue zone
+      (*y*\ =\ 1; this corresponds to the segment 13-14 in the 'O' glyph).
+      Normally, segment 1-2 would form a 'stem' with the baseline segment
+      (as segment 7-8 does in glyph 'O').  Instead, it forms a stem with
+      segment 19-20, which gets moved down (*y*\ =\ -1) because the whole
+      glyph appears to be
+      stretched.](img/Halant-Regular-O-good-Q-badly-hinted-12px.png)
 
 ### Miscellaneous
 

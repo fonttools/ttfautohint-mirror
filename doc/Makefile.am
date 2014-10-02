@@ -36,7 +36,10 @@ DOCIMGPNG = img/ttfautohintGUI.png \
             img/e-17px-x14.png \
             img/e-17px-x17.png \
             img/ff-g-26px.png \
-            img/ff-g-26px-wD.png
+            img/ff-g-26px-wD.png \
+            img/Halant-Regular-O-Q.png \
+            img/Halant-Regular-O-Q-unhinted-12px.png \
+            img/Halant-Regular-O-good-Q-badly-hinted-12px.png
 
 DOC = ttfautohint.html \
       ttfautohint.pdf \
