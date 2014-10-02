@@ -1384,8 +1384,9 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
           if (point->flags & TA_FLAG_CONTROL)
             segment->flags |= TA_EDGE_ROUND;
 
-          segment->min_coord = (FT_Short)point->v;
-          segment->max_coord = (FT_Short)point->v;
+          /* artificially extend the horizontal size if requested */
+          segment->min_coord = (FT_Short)point->v + point->left_offset;
+          segment->max_coord = (FT_Short)point->v + point->right_offset;
           segment->height = 0;
 
           on_edge = 0;

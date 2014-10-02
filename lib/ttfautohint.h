@@ -256,7 +256,8 @@ typedef int
  *     An entry in a control instructions file or buffer has one of the
  *     following syntax forms:
  *
- *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`l`|`r`|`n`* points\
+ *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`l`|`r`* points\ \ *\[* *`(`* left-offset *`,`* right-offset *`)`* *\]*\
+ *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`n`* points\
  *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`p`* points\ \ *\[* *`x`* x-shift *\]*\ \ *\[* *`y`* y-shift *\]*\ \ *`@`* ppems
  *
  *     *font-idx* gives the index of the font in a TrueType Collection.  If
@@ -272,22 +273,30 @@ typedef int
  *     can be specified in decimal, octal, or hexadecimal format, the latter
  *     two indicated by the prefixes `0` and `0x`, respectively.
  *
- *     The mutually exclusive parameters '`l`', '`r`', or\ '`n`' indicate
- *     that the following points have left, right, or no direction,
- *     respectively, overriding ttfautohint's algorithm for setting point
- *     directions.  The 'direction of a point' is the direction of the
- *     outline controlled by this point.  By changing a point's direction
- *     from 'no direction' to either left or right, you can create a
- *     one-point segment with the given direction so that ttfautohint
- *     handles the point similar to other segments.  Setting a point's
- *     direction to 'no direction', ttfautohint no longer considers it as
- *     part of a segment, thus treating it as a 'weak' point.  Changed point
- *     directions don't directly modify the outlines; they only influence
- *     the hinting process.
+ *     The mutually exclusive parameters '`l`' and '`r`' indicate that the
+ *     following points have left or right 'out' direction, respectively,
+ *     overriding ttfautohint's algorithm for setting point directions.  The
+ *     'out direction' of a point is the direction of the outline *leaving*
+ *     the point (or passing the control point).  If the specified direction
+ *     is identical to what ttfautohint computes, nothing special happens.
+ *     Otherwise, a one-point segment with the specified direction gets
+ *     created.  By default, its length is zero.  Setting *left-offset* and
+ *     *right-offset*, you can change the segment's horizontal start and end
+ *     position relative to the point position.  *left-offset* and
+ *     *right-offset* are integers measured in font units.
+ *
+ *     Parameter '`n`' sets the 'out' direction of the following points to
+ *     'no direction'.  If the specified direction is identical to what
+ *     ttfautohint computes, nothing special happens.  Otherwise,
+ *     ttfautohint no longer considers those points as part of horizontal
+ *     segments, thus treating them as 'weak' points.
+ *
+ *     Modifying or adding segments don't directly modify the outlines; it
+ *     only influences the hinting process.
  *
  *     Parameter '`p`' makes ttfautohint apply delta exceptions for the
  *     given points, shifting the points by the given values.  Note that
- *     those delta exceptions are applied *after* the final `IP`
+ *     those delta exceptions are applied *after* the final `IUP`
  *     instructions in the bytecode; as a consequence, they are (partially)
  *     ignored by rasterizers if in ClearType mode.
  *

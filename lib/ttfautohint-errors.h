@@ -95,19 +95,21 @@ TA_ERRORDEF_(Control_Invalid_Character,    0x205,
              "invalid character")
 TA_ERRORDEF_(Control_Invalid_Shift,        0x206,
              "invalid shift")
-TA_ERRORDEF_(Control_Invalid_Range,        0x207,
+TA_ERRORDEF_(Control_Invalid_Offset,       0x207,
+             "invalid offset")
+TA_ERRORDEF_(Control_Invalid_Range,        0x208,
              "invalid range")
-TA_ERRORDEF_(Control_Invalid_Glyph,        0x208,
+TA_ERRORDEF_(Control_Invalid_Glyph,        0x209,
              "invalid glyph")
-TA_ERRORDEF_(Control_Overflow,             0x209,
+TA_ERRORDEF_(Control_Overflow,             0x20A,
              "overflow")
-TA_ERRORDEF_(Control_Overlapping_Ranges,   0x20A,
+TA_ERRORDEF_(Control_Overlapping_Ranges,   0x20B,
              "overlapping ranges")
-TA_ERRORDEF_(Control_Ranges_Not_Ascending, 0x20B,
+TA_ERRORDEF_(Control_Ranges_Not_Ascending, 0x20C,
              "ranges not ascending")
-TA_ERRORDEF_(Control_Allocation_Error,     0x20C,
+TA_ERRORDEF_(Control_Allocation_Error,     0x20D,
              "allocation error")
-TA_ERRORDEF_(Control_Flex_Error,           0x20D,
+TA_ERRORDEF_(Control_Flex_Error,           0x20E,
              "internal flex error")
 
 #ifdef TA_ERROR_END_LIST

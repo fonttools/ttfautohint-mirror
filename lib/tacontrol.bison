@@ -59,6 +59,7 @@
 }
 
 %{
+#include <limits.h>
 #include "tacontrol-flex.h"
 
 void
@@ -94,6 +95,7 @@ store_error_data(const YYLTYPE *locp,
 %type <range> left_limited
 %type <range> none_dir_set
 %type <range> number_set
+%type <integer> offset
 %type <range> point_set
 %type <range> ppem_set
 %type <range> range
@@ -103,6 +105,7 @@ store_error_data(const YYLTYPE *locp,
 %type <range> right_dir_set
 %type <range> right_limited
 %type <real> shift
+%type <integer> signed_integer
 %type <range> unlimited
 %type <real> x_shift
 %type <real> y_shift
@@ -185,6 +188,21 @@ entry:
         YYABORT;
       }
     }
+| font_idx glyph_idx left_dir_set '(' offset[left] ',' offset[right] ')' EOE
+    {
+      $entry = TA_control_new(Control_Segment_Left,
+                              $font_idx,
+                              $glyph_idx,
+                              $left_dir_set,
+                              $left,
+                              $right,
+                              NULL);
+      if (!$entry)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
 | font_idx glyph_idx right_dir_set EOE
     {
       $entry = TA_control_new(Control_Segment_Right,
@@ -193,6 +211,21 @@ entry:
                               $right_dir_set,
                               0,
                               0,
+                              NULL);
+      if (!$entry)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+| font_idx glyph_idx right_dir_set '(' offset[left] ',' offset[right] ')' EOE
+    {
+      $entry = TA_control_new(Control_Segment_Right,
+                              $font_idx,
+                              $glyph_idx,
+                              $right_dir_set,
+                              $left,
+                              $right,
                               NULL);
       if (!$entry)
       {
@@ -469,6 +502,18 @@ shift:
     }
 ;
 
+offset:
+  signed_integer
+    {
+      if ($signed_integer < SHRT_MIN || $signed_integer > SHRT_MAX)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Offset);
+        YYABORT;
+      }
+      $offset = $signed_integer;
+    }
+;
+
 ppem_set:
   '@'
     {
@@ -495,9 +540,18 @@ integer:
     }
 ;
 
-real[result]:
+signed_integer:
   integer
-    { $result = $integer; }
+    { $signed_integer = $integer; }
+| '+' integer
+    { $signed_integer = $integer; }
+| '-' integer
+    { $signed_integer = -$integer; }
+;
+
+real:
+  signed_integer
+    { $real = $signed_integer; }
 | REAL
     {
       if (context->error)
@@ -507,12 +561,12 @@ real[result]:
         YYABORT;
       }
 
-      $result = $REAL;
+      $real = $REAL;
     }
-| '+' real[unsigned]
-    { $result = $unsigned; }
-| '-' real[unsigned]
-    { $result = -$unsigned; }
+| '+' REAL
+    { $real = $REAL; }
+| '-' REAL
+    { $real = -$REAL; }
 ;
 
 number_set:

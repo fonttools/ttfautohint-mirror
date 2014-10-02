@@ -15,6 +15,7 @@
 #include "ta.h"
 
 #include <locale.h>
+#include <limits.h>
 #include <errno.h>
 #include <ctype.h>
 #include <math.h>
@@ -50,14 +51,19 @@ TA_control_new(Control_Type type,
   case Control_Delta_before_IUP:
   case Control_Delta_after_IUP:
     /* we round shift values to multiples of 1/(2^CONTROL_DELTA_SHIFT) */
-    control->x_shift = (char)(x_shift * CONTROL_DELTA_FACTOR
-                              + (x_shift > 0 ? 0.5 : -0.5));
-    control->y_shift = (char)(y_shift * CONTROL_DELTA_FACTOR
-                              + (y_shift > 0 ? 0.5 : -0.5));
+    control->x_shift = (int)(x_shift * CONTROL_DELTA_FACTOR
+                             + (x_shift > 0 ? 0.5 : -0.5));
+    control->y_shift = (int)(y_shift * CONTROL_DELTA_FACTOR
+                             + (y_shift > 0 ? 0.5 : -0.5));
     break;
 
   case Control_Segment_Left:
   case Control_Segment_Right:
+    /* offsets */
+    control->x_shift = x_shift;
+    control->y_shift = y_shift;
+    break;
+
   case Control_Segment_None:
     control->x_shift = 0;
     control->y_shift = 0;
@@ -187,23 +193,35 @@ control_show_line(FONT* font,
 
   case Control_Segment_Left:
   case Control_Segment_Right:
-  case Control_Segment_None:
     /* display glyph index if we don't have a glyph name */
     if (*glyph_name_buf)
       s = sdscatprintf(s, "%ld %s %c %s",
                        control->font_idx,
                        glyph_name_buf,
-                       control->type == Control_Segment_Left ? 'l'
-                         : control->type == Control_Segment_Right ? 'r'
-                           : 'n',
+                       control->type == Control_Segment_Left ? 'l' : 'r',
                        points_buf);
     else
       s = sdscatprintf(s, "%ld %ld %c %s",
                        control->font_idx,
                        control->glyph_idx,
-                       control->type == Control_Segment_Left ? 'l'
-                         : control->type == Control_Segment_Right ? 'r'
-                           : 'n',
+                       control->type == Control_Segment_Left ? 'l' : 'r',
+                       points_buf);
+
+    if (control->x_shift || control->y_shift)
+      s = sdscatprintf(s, " (%d,%d)", control->x_shift, control->y_shift);
+    break;
+
+  case Control_Segment_None:
+    /* display glyph index if we don't have a glyph name */
+    if (*glyph_name_buf)
+      s = sdscatprintf(s, "%ld %s n %s",
+                       control->font_idx,
+                       glyph_name_buf,
+                       points_buf);
+    else
+      s = sdscatprintf(s, "%ld %ld n %s",
+                       control->font_idx,
+                       control->glyph_idx,
                        points_buf);
     break;
   }
@@ -359,6 +377,10 @@ Fail:
         sprintf(auxbuf, " (valid interval is [%g;%g])",
                 CONTROL_DELTA_SHIFT_MIN,
                 CONTROL_DELTA_SHIFT_MAX);
+      else if (context.error == TA_Err_Control_Invalid_Offset)
+        sprintf(auxbuf, " (valid interval is [%d;%d])",
+                SHRT_MIN,
+                SHRT_MAX);
       else if (context.error == TA_Err_Control_Invalid_Range)
         sprintf(auxbuf, " (values must be within [%ld;%ld])",
                 context.number_set_min,
@@ -497,8 +519,8 @@ TA_control_build_tree(FONT* font)
     Control_Type type = control->type;
     long font_idx = control->font_idx;
     long glyph_idx = control->glyph_idx;
-    char x_shift = control->x_shift;
-    char y_shift = control->y_shift;
+    int x_shift = control->x_shift;
+    int y_shift = control->y_shift;
 
     number_set_iter ppems_iter;
     int ppem;
@@ -507,6 +529,7 @@ TA_control_build_tree(FONT* font)
     ppems_iter.range = control->ppems;
     ppem = number_set_get_first(&ppems_iter);
 
+    /* ppem is always zero for one-point segments */
     if (type == Control_Segment_Left
         || type == Control_Segment_Right
         || type == Control_Segment_None)
@@ -704,7 +727,9 @@ TA_control_segment_dir_collect(FONT* font,
 int
 TA_control_segment_dir_get_next(FONT* font,
                                 int* point_idx,
-                                TA_Direction* dir)
+                                TA_Direction* dir,
+                                int* left_offset,
+                                int* right_offset)
 {
   Control* control_segment_dirs_head = (Control*)font->control_segment_dirs_head;
   Control* control_segment_dirs_cur = (Control*)font->control_segment_dirs_cur;
@@ -727,6 +752,8 @@ TA_control_segment_dir_get_next(FONT* font,
            : control_segment_dirs_cur->type == Control_Segment_Right
              ? TA_DIR_RIGHT
              : TA_DIR_NONE;
+  *left_offset = control_segment_dirs_cur->x_shift;
+  *right_offset = control_segment_dirs_cur->y_shift;
 
   font->control_segment_dirs_cur = control_segment_dirs_cur->next;
 

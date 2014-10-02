@@ -539,7 +539,7 @@ bytecode larger.
 
     Parameter '`p`' makes ttfautohint apply delta exceptions for the given
     points, shifting the points by the given values.  Note that those delta
-    exceptions are applied *after* the final `IP` instructions in the
+    exceptions are applied *after* the final `IUP` instructions in the
     bytecode; as a consequence, they are (partially) ignored by rasterizers
     if in ClearType mode.
 

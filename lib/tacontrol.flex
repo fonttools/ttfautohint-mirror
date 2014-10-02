@@ -164,7 +164,7 @@ TA_control_scanner_fatal_error(const char* msg,
 }
 
 
-(?x: [lnprxy@,]
+(?x: [lnprxy@,()]
 ) {
   /* delimiters */
   return yytext[0];

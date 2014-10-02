@@ -888,6 +888,8 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
     FONT* font;
     FT_Int idx;
     TA_Direction dir;
+    int left_offset;
+    int right_offset;
 
 
     /* `globals' is not set up while initializing metrics, */
@@ -898,7 +900,8 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
     font = hints->metrics->globals->font;
 
     /* start conditions are set with `TA_control_segment_dir_collect' */
-    while (TA_control_segment_dir_get_next(font, &idx, &dir))
+    while (TA_control_segment_dir_get_next(font, &idx, &dir,
+                                           &left_offset, &right_offset))
     {
       TA_Point point = &points[idx];
 
@@ -908,6 +911,8 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
         point->flags |= TA_FLAG_WEAK_INTERPOLATION;
       else
         point->flags &= ~TA_FLAG_WEAK_INTERPOLATION;
+      point->left_offset = (FT_Short)left_offset;
+      point->right_offset = (FT_Short)right_offset;
     }
   }
 

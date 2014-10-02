@@ -244,6 +244,9 @@ typedef struct TA_PointRec_
   FT_Pos x, y; /* current position */
   FT_Pos u, v; /* current (x,y) or (y,x) depending on context */
 
+  FT_Short left_offset; /* left offset in one-point segments */
+  FT_Short right_offset; /* right offset in one-point segments */
+
   TA_Point next; /* next point in contour */
   TA_Point prev; /* previous point in contour */
 } TA_PointRec;

@@ -70,7 +70,8 @@ typedef enum Control_Type_
  * gets allocated by a successful call to `TA_control_parse_buffer'.  Use
  * `TA_control_free' to deallocate the list.
  *
- * `x_shift' and `y_shift' are always in the range [-8;8].
+ * `x_shift' and `y_shift' are in the range [-8;8] for delta exceptions
+ * and in the range [SHRT_MIN;SHRT_MAX] for one-point segment offsets.
  *
  * The `Control' typedef is in `ta.h'.
  */
@@ -82,8 +83,8 @@ struct Control_
   long font_idx;
   long glyph_idx;
   number_range* points;
-  char x_shift;
-  char y_shift;
+  int x_shift;
+  int y_shift;
   number_range* ppems;
 
   struct Control_* next;
@@ -103,8 +104,8 @@ typedef struct Ctrl_
   int ppem;
   int point_idx;
 
-  char x_shift;
-  char y_shift;
+  int x_shift;
+  int y_shift;
 } Ctrl;
 
 
@@ -316,7 +317,7 @@ TA_control_get_ctrl(FONT* font);
 
 
 /*
- * Collect one-point segment directions and store them in
+ * Collect one-point segment data for a given glyph index and store them in
  * `font->control_segment_dirs'.
  */
 
@@ -326,15 +327,17 @@ TA_control_segment_dir_collect(FONT* font,
                                long glyph_idx);
 
 /*
- * Access next one-point segment direction.  Returns 1 on success or 0 if no
- * more data.  In the latter case, it resets the internal iterator so that
+ * Access next one-point segment data.  Returns 1 on success or 0 if no more
+ * data.  In the latter case, it resets the internal iterator so that
  * calling this function another time starts at the beginning again.
  */
 
 int
 TA_control_segment_dir_get_next(FONT* font,
                                 int* point_idx,
-                                TA_Direction* dir);
+                                TA_Direction* dir,
+                                int* left_offset,
+                                int* right_offset);
 
 
 #ifdef __cplusplus
