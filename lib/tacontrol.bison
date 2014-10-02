@@ -172,11 +172,11 @@ entry:
     }
 | font_idx glyph_idx left_dir_set EOE
     {
-      $entry = TA_control_new(Control_Point_Dir,
+      $entry = TA_control_new(Control_Segment_Left,
                               $font_idx,
                               $glyph_idx,
                               $left_dir_set,
-                              TA_DIR_LEFT,
+                              0,
                               0,
                               NULL);
       if (!$entry)
@@ -187,11 +187,11 @@ entry:
     }
 | font_idx glyph_idx right_dir_set EOE
     {
-      $entry = TA_control_new(Control_Point_Dir,
+      $entry = TA_control_new(Control_Segment_Right,
                               $font_idx,
                               $glyph_idx,
                               $right_dir_set,
-                              TA_DIR_RIGHT,
+                              0,
                               0,
                               NULL);
       if (!$entry)
@@ -202,11 +202,11 @@ entry:
     }
 | font_idx glyph_idx none_dir_set EOE
     {
-      $entry = TA_control_new(Control_Point_Dir,
+      $entry = TA_control_new(Control_Segment_None,
                               $font_idx,
                               $glyph_idx,
                               $none_dir_set,
-                              TA_DIR_NONE,
+                              0,
                               0,
                               NULL);
       if (!$entry)

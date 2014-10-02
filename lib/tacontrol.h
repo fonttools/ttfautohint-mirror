@@ -59,7 +59,9 @@ typedef enum Control_Type_
 {
   Control_Delta_before_IUP,
   Control_Delta_after_IUP,
-  Control_Point_Dir
+  Control_Segment_Left,
+  Control_Segment_Right,
+  Control_Segment_None
 } Control_Type;
 
 

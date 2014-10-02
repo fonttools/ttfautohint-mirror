@@ -56,9 +56,10 @@ TA_control_new(Control_Type type,
                               + (y_shift > 0 ? 0.5 : -0.5));
     break;
 
-  case Control_Point_Dir:
-    /* values -1, 1, and 4 mean `left', `right', and `none', respectively */
-    control->x_shift = x_shift;
+  case Control_Segment_Left:
+  case Control_Segment_Right:
+  case Control_Segment_None:
+    control->x_shift = 0;
     control->y_shift = 0;
     break;
   }
@@ -184,22 +185,24 @@ control_show_line(FONT* font,
                        ppems_buf);
     break;
 
-  case Control_Point_Dir:
+  case Control_Segment_Left:
+  case Control_Segment_Right:
+  case Control_Segment_None:
     /* display glyph index if we don't have a glyph name */
     if (*glyph_name_buf)
       s = sdscatprintf(s, "%ld %s %c %s",
                        control->font_idx,
                        glyph_name_buf,
-                       control->x_shift == TA_DIR_LEFT ? 'l'
-                         : control->x_shift == TA_DIR_RIGHT ? 'r'
+                       control->type == Control_Segment_Left ? 'l'
+                         : control->type == Control_Segment_Right ? 'r'
                            : 'n',
                        points_buf);
     else
       s = sdscatprintf(s, "%ld %ld %c %s",
                        control->font_idx,
                        control->glyph_idx,
-                       control->x_shift == TA_DIR_LEFT ? 'l'
-                         : control->x_shift == TA_DIR_RIGHT ? 'r'
+                       control->type == Control_Segment_Left ? 'l'
+                         : control->type == Control_Segment_Right ? 'r'
                            : 'n',
                        points_buf);
     break;
@@ -504,7 +507,9 @@ TA_control_build_tree(FONT* font)
     ppems_iter.range = control->ppems;
     ppem = number_set_get_first(&ppems_iter);
 
-    if (type == Control_Point_Dir)
+    if (type == Control_Segment_Left
+        || type == Control_Segment_Right
+        || type == Control_Segment_None)
       goto Points_Loop;
 
     while (ppems_iter.range)
@@ -659,7 +664,9 @@ TA_control_point_dir_collect(FONT* font,
       break;
 
     /* check type */
-    if (ctrl->type != Control_Point_Dir)
+    if (!(ctrl->type == Control_Segment_Left
+          || ctrl->type == Control_Segment_Right
+          || ctrl->type == Control_Segment_None))
       break;
 
     /* too large values of font and glyph indices in `ctrl' */
@@ -670,8 +677,8 @@ TA_control_point_dir_collect(FONT* font,
 
     /* we store point index and direction together */
     point_idx = (ctrl->point_idx << 2)
-                + (ctrl->x_shift == TA_DIR_LEFT ? 0
-                     : ctrl->x_shift == TA_DIR_RIGHT ? 1
+                + (ctrl->type == Control_Segment_Left ? 0
+                     : ctrl->type == Control_Segment_Right ? 1
                        : 2);
 
     /* don't care about checking valid point indices */
