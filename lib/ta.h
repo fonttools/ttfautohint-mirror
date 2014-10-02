@@ -237,8 +237,9 @@ struct FONT_
   void* control_data_cur;
 
   /* two fields for handling one-point segment directions */
-  number_range* control_segment_dirs;
-  number_set_iter control_segment_dir_iter;
+  /* of the current glyph */
+  void* control_segment_dirs_head;
+  void* control_segment_dirs_cur;
 
   TA_LoaderRec loader[1]; /* the interface to the autohinter */
 

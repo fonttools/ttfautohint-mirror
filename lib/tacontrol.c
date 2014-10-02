@@ -444,7 +444,7 @@ void
 TA_control_free_tree(FONT* font)
 {
   control_data* control_data_head = (control_data*)font->control_data_head;
-  number_range* control_segment_dirs = font->control_segment_dirs;
+  Control* control_segment_dirs_head = (Control*)font->control_segment_dirs_head;
 
   Node* node;
   Node* next_node;
@@ -463,7 +463,7 @@ TA_control_free_tree(FONT* font)
   }
 
   free(control_data_head);
-  number_set_free(control_segment_dirs);
+  TA_control_free(control_segment_dirs_head);
 }
 
 
@@ -475,8 +475,8 @@ TA_control_build_tree(FONT* font)
   int emit_newline = 0;
 
 
-  font->control_segment_dirs = NULL;
-  font->control_segment_dir_iter.range = NULL;
+  font->control_segment_dirs_head = NULL;
+  font->control_segment_dirs_cur = NULL;
 
   /* nothing to do if no data */
   if (!control)
@@ -633,17 +633,17 @@ TA_control_segment_dir_collect(FONT* font,
                                long font_idx,
                                long glyph_idx)
 {
-  number_range* control_segment_dirs = font->control_segment_dirs;
+  Control* control_segment_dirs_head = (Control*)font->control_segment_dirs_head;
 
 
   /* nothing to do if no data */
   if (!font->control_data_head)
     return TA_Err_Ok;
 
-  if (control_segment_dirs)
+  if (control_segment_dirs_head)
   {
-    number_set_free(control_segment_dirs);
-    control_segment_dirs = NULL;
+    TA_control_free(control_segment_dirs_head);
+    control_segment_dirs_head = NULL;
   }
 
   /*
@@ -656,8 +656,7 @@ TA_control_segment_dir_collect(FONT* font,
   for (;;)
   {
     const Ctrl* ctrl = TA_control_get_ctrl(font);
-    number_range* elem;
-    int point_idx;
+    Control* elem;
 
 
     if (!ctrl)
@@ -675,25 +674,28 @@ TA_control_segment_dir_collect(FONT* font,
         || glyph_idx < ctrl->glyph_idx)
       break;
 
-    /* we store point index and direction together */
-    point_idx = (ctrl->point_idx << 2)
-                + (ctrl->type == Control_Segment_Left ? 0
-                     : ctrl->type == Control_Segment_Right ? 1
-                       : 2);
-
-    /* don't care about checking valid point indices */
-    elem = number_set_new(point_idx, point_idx, point_idx, point_idx);
-    if (elem == NUMBERSET_ALLOCATION_ERROR)
+    /* we simply use the `Control' structure again, */
+    /* abusing the `glyph_idx' field for the point index */
+    elem = TA_control_new(ctrl->type,
+                          0,
+                          ctrl->point_idx,
+                          NULL,
+                          ctrl->x_shift,
+                          ctrl->y_shift,
+                          NULL);
+    if (!elem)
     {
-      number_set_free(control_segment_dirs);
+      TA_control_free(control_segment_dirs_head);
       return TA_Err_Control_Allocation_Error;
     }
-    control_segment_dirs = number_set_prepend(control_segment_dirs, elem);
+    control_segment_dirs_head = TA_control_prepend(control_segment_dirs_head,
+                                                   elem);
 
     TA_control_get_next(font);
   }
 
-  font->control_segment_dirs = number_set_reverse(control_segment_dirs);
+  font->control_segment_dirs_head = TA_control_reverse(control_segment_dirs_head);
+  font->control_segment_dirs_cur = font->control_segment_dirs_head;
 
   return TA_Err_Ok;
 }
@@ -704,25 +706,31 @@ TA_control_segment_dir_get_next(FONT* font,
                                 int* point_idx,
                                 TA_Direction* dir)
 {
-  number_range* control_segment_dirs = font->control_segment_dirs;
-  number_set_iter* control_segment_dir_iter = &font->control_segment_dir_iter;
-  int pd_idx;
+  Control* control_segment_dirs_head = (Control*)font->control_segment_dirs_head;
+  Control* control_segment_dirs_cur = (Control*)font->control_segment_dirs_cur;
 
 
-  if (!control_segment_dir_iter->range)
+  /* nothing to do if no data */
+  if (!control_segment_dirs_head)
+    return 0;
+
+  if (!control_segment_dirs_cur)
   {
-    control_segment_dir_iter->range = control_segment_dirs;
-    pd_idx = number_set_get_first(control_segment_dir_iter);
+    font->control_segment_dirs_cur = control_segment_dirs_head;
+    return 0;
   }
-  else
-    pd_idx = number_set_get_next(control_segment_dir_iter);
 
-  *point_idx = pd_idx >> 2;
-  *dir = pd_idx % 4 == 0 ? TA_DIR_LEFT
-           : pd_idx % 4 == 1 ? TA_DIR_RIGHT
+  /* the `glyph_idx' field gets abused for `point_idx' */
+  *point_idx = control_segment_dirs_cur->glyph_idx;
+  *dir = control_segment_dirs_cur->type == Control_Segment_Left
+           ? TA_DIR_LEFT
+           : control_segment_dirs_cur->type == Control_Segment_Right
+             ? TA_DIR_RIGHT
              : TA_DIR_NONE;
 
-  return control_segment_dir_iter->range != NULL;
+  font->control_segment_dirs_cur = control_segment_dirs_cur->next;
+
+  return control_segment_dirs_cur != NULL;
 }
 
 /* end of tacontrol.c */
