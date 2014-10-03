@@ -591,8 +591,8 @@ bytecode larger.
     [Halant-Regular](http://www.google.com/fonts/specimen/Halant).
 
     ![The outlines of glyphs 'O' and 'Q', as displayed in
-      FontForge.  They are sufficiently similar to expect ttfautohint
-      hinting them equal.  However, this is not the
+      FontForge.  They are sufficiently similar to expect that ttfautohint
+      hints them equally.  However, this is not the
       case.](img/Halant-Regular-O-Q.png)
 
     ![The same glyphs, shown at 12px before hinting – please ignore the
@@ -610,6 +610,30 @@ bytecode larger.
       segment 19-20, which gets moved down (*y*\ =\ -1) because the whole
       glyph appears to be
       stretched.](img/Halant-Regular-O-good-Q-badly-hinted-12px.png)
+
+    ![To fix the problem, we change the direction of point\ 38 to 'left' by
+      writing a line '`Q l 38`' (without the quotes) to a control
+      description file `Halant-Regular.txt`.  Adding option '`-m
+      Halant-Regular.txt`' to ttfautohint, we get the shown image as a
+      result, which is much better: Segment 1-2 now properly forms a stem
+      with our artificial one-point segment\ 38, and the 'O'-like shape is
+      properly positioned.  However, there is still room for improvement:
+      Segment 19-20 is also positioned at the baseline, making the
+      connection between the 'O' shape and the tail too
+      thin.](img/Halant-Regular-O-good-Q-better-hinted-12px.png)
+
+    ![By giving the one-point segment\ 38 a horizontal width, we can prevent
+      that segment 19-20 gets positioned at the baseline: Replace the line
+      in the previous image description with '`Q l 38 (-70,20)`', making the
+      segment extend 70 font units to the left and 20 to the right of
+      point\ 38.  The exact offset values don't matter; it's only important
+      to start left of point\ 19.  Another solution to the problem is to
+      artificially change the direction of segment 19-20 by adding a second
+      line '`Q r 19-20`' to the control instructions file; for our 'Q'
+      glyph, this produces almost exactly the same hinting results.  Note
+      that such direction changes only influence the hinting process; an
+      outline's direction won't be changed at
+      all.](img/Halant-Regular-O-good-Q-well-hinted-12px.png)
 
 ### Miscellaneous
 
