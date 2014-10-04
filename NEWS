@@ -1,9 +1,24 @@
-New in Version 1.2 (2014-XXX-XX)
+New in Version 1.2 (2014-Oct-XX)
 --------------------------------
+
+* It is now possible to control the hinting process at a very low level
+  using a 'control instructions' file.  Right now, two modes are supported:
+
+    - Adding segments and changing segment directions.
+
+    - Applying delta exceptions.  Note that this doesn't really work in
+      ClearType.
+
+  Please see the documentation for a description and a small tutorial.
+
+  In the TTY front-end, use option `--control-file` to load such a file.
 
 * Support for input file watching in ttfautohintGUI: If the 'Watch Input
   File' box is checked, the program automatically regenerates the output
-  file as soon as the input file gets modified.
+  file as soon as the input font or control instructions file gets modified.
+
+  The idea is to dock ttfautohintGUI to your favourite font and text editor
+  instead of adding a cheap text editor to ttfautohintGUI itself.
 
 * With the new option `--fallback-stem-width` it is now possible to set a
   default stem width for all scripts that lack proper standard characters in
@@ -12,10 +27,24 @@ New in Version 1.2 (2014-XXX-XX)
 * Add alias `--adjust-subglyphs` for option `--pre-hinting` to better
   describe its functionality.  The short form `-p` stays unchanged.
 
+* New option `--ttfa-table` to add an SFNT table `TTFA` to the output font,
+  containing an ASCII dump of all used ttfautohint parameters (including
+  control instructions).  Right now, this is mainly for archiving purposes. 
+  Forthcoming versions of ttfautohint will be able to re-use this data if a
+  font gets re-processed.
+
 * A harmless buglet was fixed that made the `glyf` table too large by one
   byte under some circumstances.
 
 * A bug fix taken from FreeType, correcting a crash for unusual outlines.
+
+* Better handling of TTC files.
+
+* New library options `error-callback` and `error-callback-data` for
+  improved diagnostics.  [No change in the front-ends except better error
+  messages.]
+
+* Many other, minor fixes and improvements.
 
 
 New in Version 1.1 (2014-May-05)
@@ -103,7 +132,7 @@ New in Version 0.96 (2013-Aug-06)
 * Better support for glyphs where some points have almost the same position
   (for example glyph 'Oslash' in font 'Roboto-Thin').
 
-* Better support for glyphs which use explicit 'on' points around round
+* Better support for glyphs that use explicit 'on' points around round
   extrema.
 
 
@@ -121,7 +150,7 @@ New in Version 0.95 (2013-Mar-07)
 New in Version 0.94 (2012-Nov-29)
 ---------------------------------
 
-* New option `--windows-compatibility` which adds two artificial blue zones
+* New option `--windows-compatibility` that adds two artificial blue zones
   at vertical positions given by 'usWinAscent' and 'usWinDescent'.  This
   helps ttfautohint's hinting algorithm reduce the possibility of clipping
   if those two values are very tight.
@@ -269,7 +298,7 @@ New in Version 0.3 (2011-Sep-09)
 New in Version 0.2 (2011-Jul-19)
 --------------------------------
 
-* Fix bytecode bugs which prevented correct rendering on some platforms.
+* Fix bytecode bugs that prevented correct rendering on some platforms.
 
 
 New in Version 0.1 (2011-Jun-30)
