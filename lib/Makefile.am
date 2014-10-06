@@ -10,7 +10,9 @@
 # The file `COPYING' mentioned in the previous paragraph is distributed
 # with the ttfautohint library.
 
-AM_CPPFLAGS = $(FREETYPE_CPPFLAGS) \
+AM_CPPFLAGS = -I$(top_builddir)/gnulib/src \
+              -I$(top_srcdir)/gnulib/src \
+              $(FREETYPE_CPPFLAGS) \
               $(HARFBUZZ_CFLAGS)
 
 noinst_LTLIBRARIES = \
