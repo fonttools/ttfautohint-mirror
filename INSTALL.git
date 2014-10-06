@@ -1,6 +1,6 @@
 
 building and installing ttfautohint from git
---------------------------------------------
+============================================
 
 Building ttfautohint from the git repository needs some tools which are not
 required when building from a release:
@@ -31,11 +31,15 @@ Say
   ./bootstrap
 
 to clone the `gnulib' repository (which gets installed as a git submodule),
-to build the `configure' script, and to set up necessary auxiliary files. 
+to build the `configure' script, and to set up necessary auxiliary files.
 Then you can proceed with the instructions given in the `INSTALL' file with
 the exception that parellel builds with `make -j' are not supported yet.
 
-Some additional remarks for compilation within the MinGW environment.
+
+compilation within the MinGW environment (on Windows)
+-----------------------------------------------------
+
+[http://mingw.org]
 
   o Since MSYS, the shell of MinGW, uses LF as line endings, `git checkout'
     should not convert files to CRLF.  Before checking out the FreeType and
@@ -49,7 +53,22 @@ Some additional remarks for compilation within the MinGW environment.
     (in particular mingwrt-4.0.3; the gcc version is 4.8.1) contains a
     number of bugs that need work-arounds.  For this reason, you should use
     FreeType version 2.5.3 (or the git repository) and HarfBuzz version
-    0.9.27.  The configuration scripts work just fine in an MSYS shell.
+    0.9.27 or newer.  The configuration scripts work just fine in an MSYS
+    shell.
+
+  o Only a very special functionality of HarfBuzz is needed; you might thus
+    reduce dependencies by adding the following options to its `configure'
+    script:
+
+      --with-glib=no
+      --with-gobject=no
+      --with-cairo=no
+      --with-icu=no
+
+  o You need bison 2.5 or newer.  MinGW doesn't offer this, but you can
+    download a MinGW port of version 3.0.2 from
+
+      https://sourceforge.net/projects/ezwinports/files/
 
   o To compile a stand-alone version of ttfautohintGUI we must compile a
     static version of Qt 4 first.  I've successfully followed these
@@ -80,11 +99,118 @@ Some additional remarks for compilation within the MinGW environment.
   o Now configure and compile ttfautohint (within an MSYS shell) using
 
       configure \
+        CXX='g++ -static-libgcc' \
         --with-qt=<DIR> \
         --with-doc=no \
         ac_cv_func__set_invalid_parameter_handler=no
       make LDFLAGS=-all-static
 
-    (The `ac_cv_func...' argument is another work-around for a MinGW bug).
+    (The `ac_cv_func...' argument is another work-around for a MinGW bug,
+    the `CXX' line is a fix for libtool).
+
+
+compilation with mxe (on Unix, for Windows)
+-------------------------------------------
+
+[http://mxe.cc]
+
+  o Check out the mxe git repository.
+
+  o Apply the following two patches to get smaller ttfautohint binaries.
+
+diff --git a/src/harfbuzz.mk b/src/harfbuzz.mk
+index 6b299da..bb56456 100644
+--- a/src/harfbuzz.mk
++++ b/src/harfbuzz.mk
+@@ -20,6 +20,10 @@ endef
+ define $(PKG)_BUILD
+     cd '$(1)' && ./configure \
+         $(MXE_CONFIGURE_OPTS) \
++        --with-glib=no \
++        --with-gobject=no \
++        --with-cairo=no \
++        --with-icu=no \
+         LIBS='-lstdc++'
+     $(MAKE) -C '$(1)' -j '$(JOBS)' install
+ endef
+diff --git a/src/qt.mk b/src/qt.mk
+index 889394e..aaf59f7 100644
+--- a/src/qt.mk
++++ b/src/qt.mk
+@@ -32,13 +32,16 @@ define $(PKG)_BUILD
+         -device-option PKG_CONFIG='$(TARGET)-pkg-config' \
+         -force-pkg-config \
+         -release \
+-        -exceptions \
++        -no-exceptions \
++        -no-qt3support \
+         -static \
+         -prefix '$(PREFIX)/$(TARGET)/qt' \
+         -prefix-install \
+         -script \
++        -no-scripttools \
++        -no-stl \
+         -no-iconv \
+-        -opengl desktop \
++        -no-opengl \
+         -no-webkit \
+         -no-glib \
+         -no-gstreamer \
+@@ -51,11 +54,7 @@ define $(PKG)_BUILD
+         -nomake demos \
+         -nomake docs \
+         -nomake examples \
+-        -qt-sql-sqlite \
+-        -qt-sql-odbc \
+-        -qt-sql-psql \
+-        -no-sql-mysql \
+-        -qt-sql-tds -D Q_USE_SYBASE \
++        -no-sql-sqlite \
+         -system-zlib \
+         -system-libpng \
+         -system-libjpeg \
+
+  o Put the following patch into a file called `qt-2.patch' and add it to
+    mxe's `src' directory.  This also helps reduce the size of the `qt'
+    libraries.
+
+--- a/mkspecs/win32-g++/qmake.conf
++++ b/mkspecs/win32-g++/qmake.conf
+@@ -31,7 +31,7 @@
+ QMAKE_CFLAGS_DEPS	= -M
+ QMAKE_CFLAGS_WARN_ON	= -Wall -Wextra
+ QMAKE_CFLAGS_WARN_OFF	= -w
+-QMAKE_CFLAGS_RELEASE	= -O2
++QMAKE_CFLAGS_RELEASE	= -Os -momit-leaf-frame-pointer
+ QMAKE_CFLAGS_DEBUG	= -g
+ QMAKE_CFLAGS_YACC	= -Wno-unused -Wno-parentheses
+
+  o Now build the necessary mxe infrastructure with
+
+      make build-requirements
+      make qt
+      make freetype
+
+    These calls download packages with a total size of approx. 530 MByte.
+    Compilation easily takes some hours on a slower computer; it finally
+    occupies slightly more than 2GBytes on the harddisk.
+
+  o You are now ready to build ttfautohint from the git repository with
+
+      export PATH=/your/path/to/git/mxe/usr/bin:$PATH
+
+      mkdir out
+
+      ./bootstrap
+      ./configure \
+        --host=i686-w64-mingw32.static \
+        --with-qt=/your/path/to/git/mxe/usr/i686-w64-mingw32.static/qt/bin \
+        --disable-shared \
+        --without-doc \
+        --prefix=`pwd`/out
+      make
+      make install-strip
+
+    Binaries can be found in `out/bin'.
 
 EOF
