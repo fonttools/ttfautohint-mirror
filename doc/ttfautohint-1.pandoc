@@ -531,7 +531,7 @@ bytecode larger.
     overriding ttfautohint's algorithm for setting point directions.  The
     'out direction' of a point is the direction of the outline *leaving* the
     point (or passing the control point).  If the specified direction is
-    identical to what ttfautohint computes, nothing special happens. 
+    identical to what ttfautohint computes, nothing special happens.
     Otherwise, a one-point segment with the specified direction gets
     created.  By default, its length is zero.  Setting *left-offset* and
     *right-offset*, you can change the segment's horizontal start and end
@@ -560,7 +560,7 @@ bytecode larger.
     multiples of 1/8 pixels.  The entries for '`x`' and '`y`' are optional;
     if missing, the corresponding value is set to zero.
 
-    Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0]. 
+    Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0].
     Values for *ppems* must be in the range [6;53].  Values for *points* are
     limited by the number of points in the glyph.
 
@@ -738,6 +738,9 @@ Table: script-specific standard characters of the 'latin' writing system
   ----------  ---------------------
   `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
               'О', U+041E, CYRILLIC CAPITAL LETTER O
+  `deva`      'ठ', U+0920, DEVANAGARI LETTER TTHA
+              'व', U+0935, DEVANAGARI LETTER VA
+              'ट', U+091F, DEVANAGARI LETTER TTA
   `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
               'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
@@ -787,7 +790,7 @@ Table: `latn` blue zones
   6     bottom of descenders of small letters  pqgjy
 
 
-The 'round' characters (e.g. 'OCQS') from Zones 1, 2, and 5 are also used to
+The 'round' characters (e.g. 'OCQS') from Zones 1, 2, and\ 5 are also used to
 control the overshoot handling; to improve rendering at small sizes, zone\ 4
 gets adjusted to be on the pixel grid; cf. the [`--increase-x-height`
 option](#x-height-increase-limit).
@@ -814,6 +817,21 @@ Table: `cyrl` blue zones
   3     top of small letters                   хпншезос
   4     bottom of small letters                хпншезос
   5     bottom of descenders of small letters  руф
+
+
+Table: `deva` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     baseline (flat glyphs only)            क न म उ छ ट ठ ड
+  2     top of ascenders                       ई ऐ ओ औ ि ी ो ौ
+  3     top of baseline                        क म अ आ थ ध भ श
+  4     bottom of descenders                   ु ृ
+
+Contrary to scripts like latin, the baseline in Devanagari is on the top.
+Note that some fonts have extreme variation in the height of the round
+elements in Zone\ 3; for this reason we also define Zone\ 1, which must be
+always present.
 
 
 Table: `hebr` blue zones
@@ -1064,6 +1082,14 @@ Table: `cyrl` character ranges
   `0xA640` - `0xA69F`    Cyrillic Extended-B
 
 
+Table: `deva` character ranges
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0900` - `0x097F`    Devanagari
+  `0x20B9`               (new) Rupee sign
+
+
 Table: `hebr` character ranges
 
      Character range     Description
@@ -1240,7 +1266,7 @@ Normally, a segment has a horizontal length of at least 20\ font units
 width of a segment must be at least 20 font units, and the height multiplied
 by\ 14 must not exceed the length.  Thus (19,1) is also a valid minimum
 (length,height) pair, while (18,2) isn't.  The value\ 20 is heuristic and
-hard-coded, as is the value\ 14 (corresponding to a slope of approx. 
+hard-coded, as is the value\ 14 (corresponding to a slope of approx.
 4.1°).].  Using a [Control Instructions File](#control-instructions-file),
 however, it is possible to define additional segments at arbitrary points
 that help overcome this restriction, making it possible to fix (most) of

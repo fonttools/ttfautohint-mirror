@@ -216,10 +216,11 @@ if test x"$with_doc" != x"no"; then
   fi
 
   # PDF documentation
-  AC_CHECK_PROGS([LATEX], [lualatex xelatex], [no])
+  # To support Devanagari properly, we currently can use XeTeX only.
+  AC_CHECK_PROGS([LATEX], [xelatex], [no])
   if test x"$PDFLATEX" == x"no"; then
     TA_DOC([$pdf_file],
-           [Need lualatex or xelatex to create documentation in PDF format])
+           [Need xelatex to create documentation in PDF format])
   fi
 fi
 

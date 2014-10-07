@@ -1,5 +1,5 @@
-% This template only works with luatex or XeTeX if you use non-ASCII
-% characters.
+% For non-ASCII characters, this template only works with luatex or XeTeX.
+% Devanagari support currently works with XeTeX only.
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$%
                $if(lang)$$lang$,$endif$%
@@ -9,6 +9,15 @@
 \usepackage[T1]{fontenc}
 \usepackage{fixltx2e}
 \usepackage{libertine}
+
+\ifxetex
+  \usepackage{ucharclasses}
+
+  \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
+
+  \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
+  \setTransitionFrom{Devanagari}{\endgroup}
+\fi
 
 % Libertine Mono is too ugly; we use lmodern instead
 \renewcommand{\ttfamily}{\fontfamily{lmtt}\selectfont}
