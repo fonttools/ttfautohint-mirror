@@ -595,10 +595,10 @@ bytecode larger.
       hints them equally.  However, this is not the
       case.](img/Halant-Regular-O-Q.png)
 
-    ![The same glyphs, shown at 12px before hinting – please ignore the
+    ![The same glyphs, shown at 12px before hinting.  [Please ignore the
       outline distortion in the upper right of glyph 'O'; this is a bug in
       FontForge while running the TrueType
-      debugger.](img/Halant-Regular-O-Q-unhinted-12px.png)
+      debugger.]](img/Halant-Regular-O-Q-unhinted-12px.png)
 
     ![Using only ttfautohint's '`-w gGD`' parameter to force strong stem
       width and positioning, the hinting of glyph 'Q' is really bad, making
