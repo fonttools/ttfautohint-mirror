@@ -51,6 +51,7 @@
 
 %union {
   char character;
+  Control_Type type;
   long integer;
   char* name;
   number_range* range;
@@ -82,27 +83,34 @@ store_error_data(const YYLTYPE *locp,
 %token <integer> INTEGER "integer number"
 %token INTERNAL_FLEX_ERROR "internal flex error"
 %token <character> INVALID_CHARACTER "invalid character"
+%token <name> LEFT "left"
 %token <name> NAME "glyph name"
+%token <name> NODIR "no direction"
+%token <name> POINT "point"
 %token <real> REAL "real number"
+%token <name> RIGHT "right"
+%token <name> XSHIFT "x shift"
+%token <name> YSHIFT "y shift"
 
 %type <control> entry
 %type <integer> font_idx
 %type <integer> glyph_idx
 %type <name> glyph_name
+%type <name> glyph_name_
 %type <control> input
 %type <integer> integer
-%type <range> left_dir_set
+%type <type> left_right
+%type <type> left_right_
+%type <type> point
 %type <range> left_limited
-%type <range> none_dir_set
+%type <type> no_dir
 %type <range> number_set
 %type <integer> offset
-%type <range> point_set
 %type <range> ppem_set
 %type <range> range
 %type <range> range_elem
 %type <range> range_elems
 %type <real> real
-%type <range> right_dir_set
 %type <range> right_limited
 %type <real> shift
 %type <integer> signed_integer
@@ -158,12 +166,12 @@ input[result]:
 entry:
   EOE
     { $entry = NULL; }
-| font_idx glyph_idx point_set x_shift y_shift ppem_set EOE
+| font_idx glyph_idx point number_set x_shift y_shift ppem_set EOE
     {
-      $entry = TA_control_new(Control_Delta_after_IUP,
+      $entry = TA_control_new($point,
                               $font_idx,
                               $glyph_idx,
-                              $point_set,
+                              $number_set,
                               $x_shift,
                               $y_shift,
                               $ppem_set);
@@ -173,12 +181,12 @@ entry:
         YYABORT;
       }
     }
-| font_idx glyph_idx left_dir_set EOE
+| font_idx glyph_idx left_right number_set EOE
     {
-      $entry = TA_control_new(Control_Segment_Left,
+      $entry = TA_control_new($left_right,
                               $font_idx,
                               $glyph_idx,
-                              $left_dir_set,
+                              $number_set,
                               0,
                               0,
                               NULL);
@@ -188,12 +196,12 @@ entry:
         YYABORT;
       }
     }
-| font_idx glyph_idx left_dir_set '(' offset[left] ',' offset[right] ')' EOE
+| font_idx glyph_idx left_right number_set '(' offset[left] ',' offset[right] ')' EOE
     {
-      $entry = TA_control_new(Control_Segment_Left,
+      $entry = TA_control_new($left_right,
                               $font_idx,
                               $glyph_idx,
-                              $left_dir_set,
+                              $number_set,
                               $left,
                               $right,
                               NULL);
@@ -203,42 +211,12 @@ entry:
         YYABORT;
       }
     }
-| font_idx glyph_idx right_dir_set EOE
+| font_idx glyph_idx no_dir number_set EOE
     {
-      $entry = TA_control_new(Control_Segment_Right,
+      $entry = TA_control_new($no_dir,
                               $font_idx,
                               $glyph_idx,
-                              $right_dir_set,
-                              0,
-                              0,
-                              NULL);
-      if (!$entry)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
-        YYABORT;
-      }
-    }
-| font_idx glyph_idx right_dir_set '(' offset[left] ',' offset[right] ')' EOE
-    {
-      $entry = TA_control_new(Control_Segment_Right,
-                              $font_idx,
-                              $glyph_idx,
-                              $right_dir_set,
-                              $left,
-                              $right,
-                              NULL);
-      if (!$entry)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
-        YYABORT;
-      }
-    }
-| font_idx glyph_idx none_dir_set EOE
-    {
-      $entry = TA_control_new(Control_Segment_None,
-                              $font_idx,
-                              $glyph_idx,
-                              $none_dir_set,
+                              $number_set,
                               0,
                               0,
                               NULL);
@@ -311,63 +289,9 @@ glyph_idx:
 ;
 
 glyph_name:
-  'l'
+  glyph_name_
     {
-      $glyph_name = strdup("l");
-      if ($glyph_name)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
-        YYABORT;
-      }
-    }
-| 'n'
-    {
-      $glyph_name = strdup("n");
-      if ($glyph_name)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
-        YYABORT;
-      }
-    }
-| 'p'
-    {
-      $glyph_name = strdup("p");
-      if ($glyph_name)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
-        YYABORT;
-      }
-    }
-| 'r'
-    {
-      $glyph_name = strdup("r");
-      if ($glyph_name)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
-        YYABORT;
-      }
-    }
-| 'x'
-    {
-      $glyph_name = strdup("x");
-      if ($glyph_name)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
-        YYABORT;
-      }
-    }
-| 'y'
-    {
-      $glyph_name = strdup("y");
-      if ($glyph_name)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
-        YYABORT;
-      }
-    }
-| NAME
-    {
-      /* `$NAME' was allocated in the lexer */
+      /* `$glyph_name_' was allocated in the lexer */
       if (context->error)
       {
         /* lexing error */
@@ -375,12 +299,22 @@ glyph_name:
         YYABORT;
       }
 
-      $glyph_name = $NAME;
+      $glyph_name = $glyph_name_;
     }
 ;
 
-point_set:
-  'p'
+glyph_name_:
+  LEFT
+| NAME
+| NODIR
+| POINT
+| RIGHT
+| XSHIFT
+| YSHIFT
+;
+
+point:
+  POINT
     {
       FT_Error error;
       FT_Face face = context->font->sfnts[context->font_idx].face;
@@ -398,13 +332,14 @@ point_set:
 
       context->number_set_min = 0;
       context->number_set_max = num_points - 1;
+
+      $point = Control_Delta_after_IUP;
+      free($POINT);
     }
-  number_set
-    { $point_set = $number_set; }
 ;
 
-left_dir_set:
-  'l'
+left_right:
+  left_right_
     {
       FT_Error error;
       FT_Face face = context->font->sfnts[context->font_idx].face;
@@ -422,13 +357,26 @@ left_dir_set:
 
       context->number_set_min = 0;
       context->number_set_max = num_points - 1;
+
+      $left_right = $left_right_;
     }
-  number_set
-    { $left_dir_set = $number_set; }
 ;
 
-right_dir_set:
-  'r'
+left_right_:
+  LEFT
+    {
+      $left_right_ = Control_Segment_Left;
+      free($LEFT);
+    }
+| RIGHT
+    {
+      $left_right_ = Control_Segment_Right;
+      free($RIGHT);
+    }
+;
+
+no_dir:
+  NODIR
     {
       FT_Error error;
       FT_Face face = context->font->sfnts[context->font_idx].face;
@@ -446,48 +394,31 @@ right_dir_set:
 
       context->number_set_min = 0;
       context->number_set_max = num_points - 1;
+
+      $no_dir = Control_Segment_None;
+      free($NODIR);
     }
-  number_set
-    { $right_dir_set = $number_set; }
-;
-
-none_dir_set:
-  'n'
-    {
-      FT_Error error;
-      FT_Face face = context->font->sfnts[context->font_idx].face;
-      int num_points;
-
-
-      error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
-      if (error)
-      {
-        store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph);
-        YYABORT;
-      }
-
-      num_points = face->glyph->outline.n_points;
-
-      context->number_set_min = 0;
-      context->number_set_max = num_points - 1;
-    }
-  number_set
-    { $none_dir_set = $number_set; }
 ;
 
 
 x_shift:
   /* empty */
     { $x_shift = 0; }
-| 'x' shift
-    { $x_shift = $shift; }
+| XSHIFT shift
+    {
+      $x_shift = $shift;
+      free($XSHIFT);
+    }
 ;
 
 y_shift:
   /* empty */
     { $y_shift = 0; }
-| 'y' shift
-    { $y_shift = $shift; }
+| YSHIFT shift
+    {
+      $y_shift = $shift;
+      free($YSHIFT);
+    }
 ;
 
 shift:

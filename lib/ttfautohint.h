@@ -254,60 +254,62 @@ typedef int
  *     Mutually exclusive with `control-buffer`.
  *
  *     An entry in a control instructions file or buffer has one of the
- *     following syntax forms:
+ *     following syntax forms (with brackets showing optional elements):
  *
- *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`l`|`r`* points\ \ *\[* *`(`* left-offset *`,`* right-offset *`)`* *\]*\
- *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`n`* points\
- *     > *\[* font-idx *\]*\ \ glyph-id\ \ *`p`* points\ \ *\[* *`x`* x-shift *\]*\ \ *\[* *`y`* y-shift *\]*\ \ *`@`* ppems
+ *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`l`\[`eft`\]|`r`\[`ight`\]*\ points\ \ *\[*\ *`(`*\ left‑offset\ *`,`*\ right‑offset\ *`)`*\ *\]*\
+ *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`n`\[`odir`\]*\ points\
+ *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`p`\[`oint`\]*\ points\ \ *\[*\ *`x`\[`shift`\]*\ x‑shift\ *\]*\ \ *\[*\ *`y`\[`shift`\]*\ y‑shift\ *\]*\ \ *`@`*\ ppems
  *
- *     *font-idx* gives the index of the font in a TrueType Collection.  If
+ *     *font‑idx* gives the index of the font in a TrueType Collection.  If
  *     missing, it is set to zero.  For normal TrueType fonts, only value
  *     zero is valid.  If starting with `0x` the number is interpreted as
  *     hexadecimal.  If starting with `0` it gets interpreted as an octal
  *     value, and as a decimal value otherwise.
  *
- *     *glyph-id* is a glyph's name as listed in the `post` SFNT table or a
+ *     *glyph‑id* is a glyph's name as listed in the `post` SFNT table or a
  *     glyph index.  A glyph name consists of characters from the set
  *     '`A-Za-z0-9._`' only and does not start with a digit or period, with
  *     the exceptions of the names '`.notdef`' and '`.null`'.  A glyph index
  *     can be specified in decimal, octal, or hexadecimal format, the latter
  *     two indicated by the prefixes `0` and `0x`, respectively.
  *
- *     The mutually exclusive parameters '`l`' and '`r`' indicate that the
+ *     The mutually exclusive parameters `left` and `right` (which can be
+ *     abbreviated as '`l`' and '`r`', respectively) indicate that the
  *     following points have left or right 'out' direction, respectively,
  *     overriding ttfautohint's algorithm for setting point directions.  The
  *     'out direction' of a point is the direction of the outline *leaving*
  *     the point (or passing the control point).  If the specified direction
  *     is identical to what ttfautohint computes, nothing special happens.
  *     Otherwise, a one-point segment with the specified direction gets
- *     created.  By default, its length is zero.  Setting *left-offset* and
- *     *right-offset*, you can change the segment's horizontal start and end
- *     position relative to the point position.  *left-offset* and
- *     *right-offset* are integers measured in font units.
+ *     created.  By default, its length is zero.  Setting *left‑offset* and
+ *     *right‑offset*, you can change the segment's horizontal start and end
+ *     position relative to the point position.  *left‑offset* and
+ *     *right‑offset* are integers measured in font units.
  *
- *     Parameter '`n`' sets the 'out' direction of the following points to
- *     'no direction'.  If the specified direction is identical to what
- *     ttfautohint computes, nothing special happens.  Otherwise,
- *     ttfautohint no longer considers those points as part of horizontal
- *     segments, thus treating them as 'weak' points.
+ *     Parameter `nodir` (or '`n`') sets the 'out' direction of the
+ *     following points to 'no direction'.  If the specified direction is
+ *     identical to what ttfautohint computes, nothing special happens.
+ *     Otherwise, ttfautohint no longer considers those points as part of
+ *     horizontal segments, thus treating them as 'weak' points.
  *
  *     Modifying or adding segments don't directly modify the outlines; it
  *     only influences the hinting process.
  *
- *     Parameter '`p`' makes ttfautohint apply delta exceptions for the
- *     given points, shifting the points by the given values.  Note that
- *     those delta exceptions are applied *after* the final `IUP`
+ *     Parameter `point` (or '`p`') makes ttfautohint apply delta exceptions
+ *     for the given points, shifting the points by the given values.  Note
+ *     that those delta exceptions are applied *after* the final `IUP`
  *     instructions in the bytecode; as a consequence, they are (partially)
  *     ignored by rasterizers if in ClearType mode.
  *
  *     Both *points* and *ppems* are number ranges, similar to the
  *     `x-height-snapping-exceptions` syntax.
  *
- *     *x-shift* and *y-shift* represent real numbers that get rounded to
- *     multiples of 1/8 pixels.  The entries for '`x`' and '`y`' are
- *     optional; if missing, the corresponding value is set to zero.
+ *     *x‑shift* and *y‑shift* represent real numbers that get rounded to
+ *     multiples of 1/8 pixels.  The entries for `xshift` ('`x`') and
+ *     `yshift` ('`y`') are optional; if missing, the corresponding value is
+ *     set to zero.
  *
- *     Values for *x-shift* and *y-shift* must be in the range [-1.0;1.0].
+ *     Values for *x‑shift* and *y‑shift* must be in the range [−1.0;1.0].
  *     Values for *ppems* must be in the range [6;53].  Values for *points*
  *     are limited by the number of points in the glyph.
  *

@@ -428,6 +428,9 @@ show_help(bool
 "<points> and <ppems> are integer ranges as with option `-X'.\n"
 "`#' starts a line comment, which gets ignored.\n"
 "Empty lines are ignored, too.\n"
+"\n"
+"Key letters `l', `r', `n', `p', `x', and `y' have the verbose aliases\n"
+"`left', `right', `nodir', `point', `xshift', and `yshift', respectively.\n"
 #endif
 "\n"
 #ifdef BUILD_GUI

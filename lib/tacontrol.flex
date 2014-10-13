@@ -82,6 +82,14 @@
 
 #define YY_EXIT_FAILURE ((void)yyscanner, 2)
 
+#define NAME_ASSIGN \
+          do \
+          { \
+            yylval->name = strdup(yytext); \
+            if (!yylval->name) \
+              yyextra->error = TA_Err_Control_Allocation_Error; \
+          } while (0)
+
 void
 TA_control_scanner_fatal_error(const char* msg,
                                yyscan_t yyscanner);
@@ -164,20 +172,57 @@ TA_control_scanner_fatal_error(const char* msg,
 }
 
 
-(?x: [lnprxy@,()]
+(?x: [@,()]
 ) {
   /* delimiters */
   return yytext[0];
 }
 
+(?x:   "point"
+     | "p"
+) {
+  NAME_ASSIGN;
+  return POINT;
+}
+
+(?x:   "xshift"
+     | "x"
+) {
+  NAME_ASSIGN;
+  return XSHIFT;
+}
+
+(?x:   "yshift"
+     | "y"
+) {
+  NAME_ASSIGN;
+  return YSHIFT;
+}
+
+(?x:   "left"
+     | "l"
+) {
+  NAME_ASSIGN;
+  return LEFT;
+}
+
+(?x:   "right"
+     | "r"
+) {
+  NAME_ASSIGN;
+  return RIGHT;
+}
+
+(?x:   "nodir"
+     | "n"
+) {
+  NAME_ASSIGN;
+  return NODIR;
+}
+
 (?x: [A-Za-z._] [A-Za-z0-9._]*
 ) {
-  yylval->name = strdup(yytext);
-  if (!yylval->name)
-  {
-    /* allocation error */
-    yyextra->error = TA_Err_Control_Allocation_Error;
-  }
+  NAME_ASSIGN;
   return NAME;
 }
 

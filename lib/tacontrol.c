@@ -174,7 +174,7 @@ control_show_line(FONT* font,
   case Control_Delta_after_IUP:
     /* display glyph index if we don't have a glyph name */
     if (*glyph_name_buf)
-      s = sdscatprintf(s, "%ld %s p %s x %.20g y %.20g @ %s",
+      s = sdscatprintf(s, "%ld %s point %s xshift %.20g yshift %.20g @ %s",
                        control->font_idx,
                        glyph_name_buf,
                        points_buf,
@@ -182,7 +182,7 @@ control_show_line(FONT* font,
                        (double)control->y_shift / CONTROL_DELTA_FACTOR,
                        ppems_buf);
     else
-      s = sdscatprintf(s, "%ld %ld p %s x %.20g y %.20g @ %s",
+      s = sdscatprintf(s, "%ld %ld point %s xshift %.20g yshift %.20g @ %s",
                        control->font_idx,
                        control->glyph_idx,
                        points_buf,
@@ -195,16 +195,18 @@ control_show_line(FONT* font,
   case Control_Segment_Right:
     /* display glyph index if we don't have a glyph name */
     if (*glyph_name_buf)
-      s = sdscatprintf(s, "%ld %s %c %s",
+      s = sdscatprintf(s, "%ld %s %s %s",
                        control->font_idx,
                        glyph_name_buf,
-                       control->type == Control_Segment_Left ? 'l' : 'r',
+                       control->type == Control_Segment_Left ? "left"
+                                                             : "right",
                        points_buf);
     else
-      s = sdscatprintf(s, "%ld %ld %c %s",
+      s = sdscatprintf(s, "%ld %ld %s %s",
                        control->font_idx,
                        control->glyph_idx,
-                       control->type == Control_Segment_Left ? 'l' : 'r',
+                       control->type == Control_Segment_Left ? "left"
+                                                             : "right",
                        points_buf);
 
     if (control->x_shift || control->y_shift)
@@ -214,12 +216,12 @@ control_show_line(FONT* font,
   case Control_Segment_None:
     /* display glyph index if we don't have a glyph name */
     if (*glyph_name_buf)
-      s = sdscatprintf(s, "%ld %s n %s",
+      s = sdscatprintf(s, "%ld %s nodir %s",
                        control->font_idx,
                        glyph_name_buf,
                        points_buf);
     else
-      s = sdscatprintf(s, "%ld %ld n %s",
+      s = sdscatprintf(s, "%ld %ld nodir %s",
                        control->font_idx,
                        control->glyph_idx,
                        points_buf);
