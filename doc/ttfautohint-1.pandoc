@@ -1265,13 +1265,13 @@ for the particular glyph.
 
 Normally, a segment has a horizontal length of at least 20\ font units
 (assuming 2048 units per EM)^[To be more precise, the sum of the height and
-width of a segment must be at least 20 font units, and the height multiplied
+length of a segment must be at least 20 font units, and the height multiplied
 by\ 14 must not exceed the length.  Thus (19,1) is also a valid minimum
 (length,height) pair, while (18,2) isn't.  The value\ 20 is heuristic and
 hard-coded, as is the value\ 14 (corresponding to a slope of approx.
 4.1°).].  Using a [Control Instructions File](#control-instructions-file),
 however, it is possible to define additional segments at arbitrary points
-that help overcome this restriction, making it possible to fix (most) of
+that help overcome this restriction, making it possible to fix (most of)
 such problems.
 
 ### Diagonals
