@@ -1193,7 +1193,7 @@ Main_GUI::create_layout(bool horizontal_layout)
     tr("<p>An optional control instructions file to tweak hinting."
        "  This text file contains entries"
        " of one of the following syntax forms"
-       " (with brackets indication optional elements).<br>"
+       " (with brackets indicating optional elements).<br>"
        "&nbsp;<br>"
        "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
        "&nbsp;&nbsp;<i>glyph-id</i>"
