@@ -749,6 +749,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `latn`      'o', U+006F, LATIN SMALL LETTER O
               'O', U+004F, LATIN CAPITAL LETTER O
               '0', U+0030, DIGIT ZERO
+  `telu`      'ఙ', U+0C19, TELUGU LETTER NGA
+              'ఒ', U+0C12, TELUGU LETTER O
 
 
   * Glyph Analysis
@@ -780,36 +782,6 @@ code.  Since the auto-hinter takes mean values it is not necessary that all
 characters of a zone are present.
 
 
-Table: `latn` blue zones
-
-  ID    Blue zone                              Characters
-  ----  -----------                            ------------
-  1     top of capital letters                 THEZOCQS
-  2     bottom of capital letters              HEZLOCUS
-  3     top of 'small f' like letters          fijkdbh
-  4     top of small letters                   xzroesc
-  5     bottom of small letters                xzroesc
-  6     bottom of descenders of small letters  pqgjy
-
-
-The 'round' characters (e.g. 'OCQS') from Zones 1, 2, and\ 5 are also used to
-control the overshoot handling; to improve rendering at small sizes, zone\ 4
-gets adjusted to be on the pixel grid; cf. the [`--increase-x-height`
-option](#x-height-increase-limit).
-
-
-Table: `grek` blue zones
-
-  ID    Blue zone                              Characters
-  ----  -----------                            ------------
-  1     top of capital letters                 ΓΒΕΖΘΟΩ
-  2     bottom of capital letters              ΒΔΖΞΘΟ
-  3     top of 'small beta' like letters       βθδζλξ
-  4     top of small letters                   αειοπστω
-  5     bottom of small letters                αειοπστω
-  6     bottom of descenders of small letters  βγημρφχψ
-
-
 Table: `cyrl` blue zones
 
   ID    Blue zone                              Characters
@@ -836,6 +808,18 @@ elements in Zone\ 3; for this reason we also define Zone\ 1, which must be
 always present.
 
 
+Table: `grek` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 ΓΒΕΖΘΟΩ
+  2     bottom of capital letters              ΒΔΖΞΘΟ
+  3     top of 'small beta' like letters       βθδζλξ
+  4     top of small letters                   αειοπστω
+  5     bottom of small letters                αειοπστω
+  6     bottom of descenders of small letters  βγημρφχψ
+
+
 Table: `hebr` blue zones
 
   ID    Blue zone                              Characters
@@ -843,6 +827,31 @@ Table: `hebr` blue zones
   1     top of letters                         בדהחךכםס
   2     bottom of letters                      בטכםסצ
   3     bottom of descenders of letters        קךןףץ
+
+
+Table: `latn` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 THEZOCQS
+  2     bottom of capital letters              HEZLOCUS
+  3     top of 'small f' like letters          fijkdbh
+  4     top of small letters                   xzroesc
+  5     bottom of small letters                xzroesc
+  6     bottom of descenders of small letters  pqgjy
+
+The 'round' characters (e.g. 'OCQS') from Zones 1, 2, and\ 5 are also used to
+control the overshoot handling; to improve rendering at small sizes, zone\ 4
+gets adjusted to be on the pixel grid; cf. the [`--increase-x-height`
+option](#x-height-increase-limit).
+
+
+Table: `telu` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top                                    ఇ ఌ ఙ ఞ ణ ఱ ౯
+  2     bottom                                 అ క చ ర ఽ ౨ ౬
 
 
 ![This image shows the relevant glyph terms for vertical blue zone
@@ -1038,6 +1047,40 @@ In ttfautohint, scripts are identified by four-character tags.  The value
 `none` indicates 'no script'.
 
 
+Table: `cyrl` character ranges
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0400` - `0x04FF`    Cyrillic
+  `0x0500` - `0x052F`    Cyrillic Supplement
+  `0x2DE0` - `0x2DFF`    Cyrillic Extended-A
+  `0xA640` - `0xA69F`    Cyrillic Extended-B
+
+
+Table: `deva` character ranges
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0900` - `0x097F`    Devanagari
+  `0x20B9`               (new) Rupee sign
+
+
+Table: `grek` character ranges
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0370` - `0x03FF`    Greek and Coptic
+  `0x1F00` - `0x1FFF`    Greek Extended
+
+
+Table: `hebr` character ranges
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0590` - `0x05FF`    Hebrew
+  `0xFB1D` - `0xFB4F`    Alphabetic Presentation Forms (Hebrew)
+
+
 Table: `latn` character ranges
 
      Character range     Description
@@ -1066,38 +1109,11 @@ Table: `latn` character ranges
   `0x1F100` - `0x1F1FF`  Enclosed Alphanumeric Supplement
 
 
-Table: `grek` character ranges
+Table: `telu` character ranges
 
      Character range     Description
   ---------------------  -------------
-  `0x0370` - `0x03FF`    Greek and Coptic
-  `0x1F00` - `0x1FFF`    Greek Extended
-
-
-Table: `cyrl` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0400` - `0x04FF`    Cyrillic
-  `0x0500` - `0x052F`    Cyrillic Supplement
-  `0x2DE0` - `0x2DFF`    Cyrillic Extended-A
-  `0xA640` - `0xA69F`    Cyrillic Extended-B
-
-
-Table: `deva` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0900` - `0x097F`    Devanagari
-  `0x20B9`               (new) Rupee sign
-
-
-Table: `hebr` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0590` - `0x05FF`    Hebrew
-  `0xFB1D` - `0xFB4F`    Alphabetic Presentation Forms (Hebrew)
+  `0x0C00` - `0x0C7F`    Telugu
 
 
 If a glyph's character code is not covered by a script range, it is not

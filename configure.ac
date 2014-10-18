@@ -216,7 +216,8 @@ if test x"$with_doc" != x"no"; then
   fi
 
   # PDF documentation
-  # To support Devanagari properly, we currently can use XeTeX only.
+  # To support Devanagari and other Indic scripts properly,
+  # we currently can use XeTeX only.
   AC_CHECK_PROGS([LATEX], [xelatex], [no])
   if test x"$PDFLATEX" == x"no"; then
     TA_DOC([$pdf_file],

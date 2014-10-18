@@ -1,5 +1,5 @@
 % For non-ASCII characters, this template only works with luatex or XeTeX.
-% Devanagari support currently works with XeTeX only.
+% Devanagari and Telugu support currently works with XeTeX only.
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$%
                $if(lang)$$lang$,$endif$%
@@ -14,9 +14,12 @@
   \usepackage{ucharclasses}
 
   \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
+  \newfontfamily{\telugufont}[Script=Telugu]{Pothana2000}
 
   \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
   \setTransitionFrom{Devanagari}{\endgroup}
+  \setTransitionTo{Telugu}{\begingroup\telugufont}
+  \setTransitionFrom{Telugu}{\endgroup}
 \fi
 
 % Libertine Mono is too ugly; we use lmodern instead
