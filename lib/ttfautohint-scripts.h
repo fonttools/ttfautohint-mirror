@@ -53,6 +53,11 @@ SCRIPT(latn, LATN,
        HB_SCRIPT_LATIN,
        'o', 'O', '0')
 
+SCRIPT(telu, TELU,
+       "Telugu",
+       HB_SCRIPT_TELUGU,
+       0xC19, 0xC12, 0x0) /* ఙ ఒ */
+
 SCRIPT(none, NONE,
        "no script",
        HB_SCRIPT_INVALID,

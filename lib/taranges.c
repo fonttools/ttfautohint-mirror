@@ -29,9 +29,19 @@ const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
+/* there are some characters in the Devanagari Unicode block that are */
+/* generic to Indic scripts; we omit them so that their presence doesn't */
+/* trigger Devanagari */
+
 const TA_Script_UniRangeRec ta_deva_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0900UL, 0x097FUL), /* Devanagari */
+  TA_UNIRANGE_REC(0x0900UL, 0x093BUL), /* Devanagari */
+  /* omitting U+093C nukta */
+  TA_UNIRANGE_REC(0x093DUL, 0x0950UL),
+  /* omitting U+0951 udatta, U+0952 anudatta */
+  TA_UNIRANGE_REC(0x0953UL, 0x0963UL),
+  /* omitting U+0964 danda, U+0965 double danda */
+  TA_UNIRANGE_REC(0x0966UL, 0x097FUL),
   TA_UNIRANGE_REC(0x20B9UL, 0x20B9UL), /* (new) Rupee sign */
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
@@ -76,6 +86,12 @@ const TA_Script_UniRangeRec ta_latn_uniranges[] =
   TA_UNIRANGE_REC(0x1D400UL, 0x1D7FFUL), /* Mathematical Alphanumeric Symbols */
   TA_UNIRANGE_REC(0x1F100UL, 0x1F1FFUL), /* Enclosed Alphanumeric Supplement */
   TA_UNIRANGE_REC(      0UL,       0UL)
+};
+
+const TA_Script_UniRangeRec ta_telu_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0C00UL, 0x0C7FUL), /* Telugu */
+  TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
 const TA_Script_UniRangeRec ta_none_uniranges[] =

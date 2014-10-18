@@ -122,6 +122,13 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_LATIN_SMALL_DESCENDER
     "pqgjy"
 
+  // we separate the letters with spaces to avoid ligatures;
+  // this is just for convenience to simplify reading
+  TA_BLUE_STRING_TELUGU_TOP
+    "ఇ ఌ ఙ ఞ ణ ఱ ౯"
+
+  TA_BLUE_STRING_TELUGU_BOTTOM
+    "అ క చ ర ఽ ౨ ౬"
 
 // The blue zone stringsets, as used in the script styles, cf. `tastyles.h'.
 //
@@ -235,5 +242,10 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_LATIN_SMALL,           0                                 }
     { TA_BLUE_STRING_LATIN_SMALL_DESCENDER, 0                                 }
     { TA_BLUE_STRING_MAX,                   0                                 }
+
+  TA_BLUE_STRINGSET_TELU
+    { TA_BLUE_STRING_TELUGU_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
+    { TA_BLUE_STRING_TELUGU_BOTTOM, 0                          }
+    { TA_BLUE_STRING_MAX,           0                          }
 
 // END

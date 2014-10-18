@@ -113,6 +113,13 @@ STYLE(ltn2_dflt, LTN2_DFLT,
       TA_COVERAGE_DEFAULT)
 #endif
 
+STYLE(telu_dflt, TELU_DFLT,
+      "Telugu default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_TELU,
+      TA_BLUE_STRINGSET_TELU,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(none_dflt, NONE_DFLT,
       "no style",
       TA_WRITING_SYSTEM_DUMMY,
