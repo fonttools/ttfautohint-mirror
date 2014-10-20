@@ -712,6 +712,8 @@ Main_GUI::open_files(const QString& input_name,
       return 0;
     }
   }
+  else
+    *control = NULL;
 
   return 1;
 }
