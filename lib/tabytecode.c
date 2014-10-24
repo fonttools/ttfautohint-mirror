@@ -684,8 +684,8 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   FT_UShort num_stack_elements;
 
   /* DELTAP[1-3] stacks for both x and y directions */
-  FT_UInt* delta_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
-  int num_delta_args[6] = {0, 0, 0, 0, 0, 0};
+  FT_UInt* delta_after_IUP_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+  int num_delta_after_IUP_args[6] = {0, 0, 0, 0, 0, 0};
   FT_UInt* args = NULL;
 
   FT_Bool need_words = 0;
@@ -722,9 +722,9 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
         /* see the comment on allocating `ins_buf' in function */
         /* `TA_sfnt_build_glyph_instructions' for more on the array sizes; */
         /* we have to increase by 1 for the number of argument pairs */
-        delta_args[i] = (FT_UInt*)malloc((16 * 2 * num_points + 1)
-                                         * sizeof (FT_UInt));
-        if (!delta_args[i])
+        delta_after_IUP_args[i] = (FT_UInt*)malloc((16 * 2 * num_points + 1)
+                                                   * sizeof (FT_UInt));
+        if (!delta_after_IUP_args[i])
         {
           bufp = NULL;
           goto Done;
@@ -738,7 +738,9 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
     /* and the control instruction entries have the same order, */
     /* we don't need to test for equality of font and glyph indices: */
     /* at this very point in the code we certainly have a hit */
-    build_delta_exception(ctrl, delta_args, num_delta_args);
+    build_delta_exception(ctrl,
+                          delta_after_IUP_args,
+                          num_delta_after_IUP_args);
 
     if (ctrl->point_idx > 255)
       need_words = 1;
@@ -753,16 +755,16 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   /* add number of argument pairs to the stacks */
   for (i = 0; i < 6; i++)
   {
-    if (num_delta_args[i])
+    if (num_delta_after_IUP_args[i])
     {
-      int n = num_delta_args[i] >> 1;
+      int n = num_delta_after_IUP_args[i] >> 1;
 
 
       if (n > 255)
         need_word_counts = 1;
 
-      *(delta_args[i] + num_delta_args[i]) = n;
-      num_delta_args[i]++;
+      *(delta_after_IUP_args[i] + num_delta_after_IUP_args[i]) = n;
+      num_delta_after_IUP_args[i]++;
     }
   }
 
@@ -779,10 +781,10 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       FT_UInt num_args_new;
 
 
-      if (!num_delta_args[i])
+      if (!num_delta_after_IUP_args[i])
         continue;
 
-      num_args_new = num_args + num_delta_args[i];
+      num_args_new = num_args + num_delta_after_IUP_args[i];
       args_new = (FT_UInt*)realloc(args, num_args_new * sizeof (FT_UInt));
       if (!args_new)
       {
@@ -791,8 +793,8 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       }
 
       memcpy(args_new + num_args,
-             delta_args[i],
-             num_delta_args[i] * sizeof (FT_UInt));
+             delta_after_IUP_args[i],
+             num_delta_after_IUP_args[i] * sizeof (FT_UInt));
 
       args = args_new;
       num_args = num_args_new;
@@ -812,13 +814,13 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       int num_delta_arg;
 
 
-      if (!num_delta_args[i])
+      if (!num_delta_after_IUP_args[i])
         continue;
 
-      num_delta_arg = num_delta_args[i] - 1;
+      num_delta_arg = num_delta_after_IUP_args[i] - 1;
 
       bufp = TA_build_push(bufp,
-                           delta_args[i],
+                           delta_after_IUP_args[i],
                            num_delta_arg,
                            need_words,
                            1);
@@ -833,26 +835,28 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   }
 
   /* emit the DELTA opcodes */
-  if (num_delta_args[5])
+  if (num_delta_after_IUP_args[5])
     BCI(DELTAP3);
-  if (num_delta_args[4])
+  if (num_delta_after_IUP_args[4])
     BCI(DELTAP2);
-  if (num_delta_args[3])
+  if (num_delta_after_IUP_args[3])
     BCI(DELTAP1);
 
-  if (num_delta_args[2] || num_delta_args[1] || num_delta_args[0])
+  if (num_delta_after_IUP_args[2]
+      || num_delta_after_IUP_args[1]
+      || num_delta_after_IUP_args[0])
     BCI(SVTCA_x);
 
-  if (num_delta_args[2])
+  if (num_delta_after_IUP_args[2])
     BCI(DELTAP3);
-  if (num_delta_args[1])
+  if (num_delta_after_IUP_args[1])
     BCI(DELTAP2);
-  if (num_delta_args[0])
+  if (num_delta_after_IUP_args[0])
     BCI(DELTAP1);
 
 Done:
   for (i = 0; i < 6; i++)
-    free(delta_args[i]);
+    free(delta_after_IUP_args[i]);
   free(args);
 
   if (num_stack_elements > sfnt->max_stack_elements)
