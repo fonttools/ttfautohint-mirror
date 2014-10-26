@@ -64,7 +64,8 @@ Authors
 =======
 
 Copyright © 2011-2014 by [Werner Lemberg](mailto:wl@gnu.org).\
-Copyright © 2011-2014 by [Dave Crossland](mailto:dave@understandingfonts.com).
+Portions Copyright © 2011-2014 by [Dave Crossland](mailto:dave@understandingfonts.com).\
+Portions Copyright © 2014 by [Adam Twardoch](mailto:adam@twardoch.com).
 
 This file is part of the ttfautohint library, and may only be used,
 modified, and distributed under the terms given in
@@ -79,6 +80,7 @@ the ttfautohint library.
 [Dalton Maag Ltd]: http://daltonmaag.com
 [DejaVu]: http://dejavu-fonts.org
 [FontForge]: http://fontforge.sf.net
+[FontLab Studio]: http://www.fontlab.com/font-editor/fontlab-studio
 [FreeType]: http://freetype.org
 [HarfBuzz]: http://harfbuzz.org
 [Infinality]: http://infinality.net

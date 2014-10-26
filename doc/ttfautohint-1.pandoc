@@ -145,6 +145,38 @@ The goal of the project is to generate a 'first pass' of hinting that font
 developers can refine further for ultimate quality.
 
 
+'Smooth' hinting
+----------------
+
+Fundamentally, there are two approaches to hinting. The older approach,
+let's call it 'sharp', popular when text was rendered in pure
+black-and-white, was to make all stems round to full pixels so that in a
+text line, all stems would be either one pixel or (at a larger point size)
+two pixels.  When grayscale antialiasing came about, this approach actually
+started harming the rendering rather than helping it, because the horizontal
+and vertical stems would render very dark but round or diagonal stems would
+render very light.
+
+So a new approach was developed, let's call it 'fuzzy', where all stems and
+other elements are equalized so that in grayscale (or ClearType) rendering,
+they all are of roughly equal color.  This means that stems are not rounded
+to full pixels but in fact to fractions of a pixel.  However, with
+black-and-white renderers, this approach yields poor results because in
+black-and-white you cannot render a fraction of a pixel, so some stems
+become one pixel and some become two.
+
+The TrueType autohinters in [FontForge] and [FontLab Studio], to name two
+well-known font editors, take the 'sharp' approach, while the TrueType
+autohinter in ttfautohint takes the 'fuzzy' approach.
+
+In theory, a hybrid approach is possible, using TrueType conditional hints:
+If the rasterizer is black-and-white, 'sharp' rendering could happen, while
+if the rasterizer is ClearType, the 'fuzzy' rendering could be used.  It is
+not intended to add black-and-white auto-hinting to ttfautohint.  However,
+it is planned to develop an interface so that ttfautohint can cooperate with
+font editors, providing this hybrid hinting.
+
+
 
 `ttfautohint` and `ttfautohintGUI`
 ==================================
