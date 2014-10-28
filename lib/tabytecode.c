@@ -180,6 +180,19 @@ FT_Byte ttfautohint_glyph_bytecode[7] =
 };
 
 
+/* if we have delta exceptions before IUP, this code gets inserted */
+
+FT_Byte ins_extra_buf[4] =
+{
+
+  0,
+  0,
+  0,
+  0,
+
+};
+
+
 /*
  * convert array `args' into a sequence of NPUSHB, NPUSHW, PUSHB_X, and
  * PUSHW_X instructions to be stored in `bufp' (the latter two instructions

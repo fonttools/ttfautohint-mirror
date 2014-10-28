@@ -844,7 +844,8 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
   {
     /* glyph records should have offsets which are multiples of 4 */
     len = (len + 3) & ~3;
-    len += glyph->len1 + glyph->len2 + glyph->ins_len;
+    len += glyph->len1 + glyph->len2
+           + glyph->ins_extra_len + glyph->ins_len;
     /* add two bytes for the instructionLength field */
     if (glyph->len2 || glyph->ins_len)
       len += 2;
@@ -864,7 +865,8 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
   glyph = data->glyphs;
   for (i = 0; i < data->num_glyphs; i++, glyph++)
   {
-    len = glyph->len1 + glyph->len2 + glyph->ins_len;
+    len = glyph->len1 + glyph->len2
+          + glyph->ins_extra_len + glyph->ins_len;
     if (glyph->len2 || glyph->ins_len)
       len += 2;
 
@@ -877,8 +879,13 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
       {
         /* simple glyph */
         p += glyph->len1;
-        *(p++) = HIGH(glyph->ins_len);
-        *(p++) = LOW(glyph->ins_len);
+        *(p++) = HIGH(glyph->ins_extra_len + glyph->ins_len);
+        *(p++) = LOW(glyph->ins_extra_len + glyph->ins_len);
+        if (glyph->ins_extra_len)
+        {
+          memcpy(p, ins_extra_buf, glyph->ins_extra_len);
+          p += glyph->ins_extra_len;
+        }
         memcpy(p, glyph->ins_buf, glyph->ins_len);
         p += glyph->ins_len;
         memcpy(p, glyph->buf + glyph->len1, glyph->len2);
@@ -891,8 +898,13 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
         {
           *(p + glyph->flags_offset) |= (WE_HAVE_INSTR >> 8);
           p += glyph->len1;
-          *(p++) = HIGH(glyph->ins_len);
-          *(p++) = LOW(glyph->ins_len);
+          *(p++) = HIGH(glyph->ins_extra_len + glyph->ins_len);
+          *(p++) = LOW(glyph->ins_extra_len + glyph->ins_len);
+          if (glyph->ins_extra_len)
+          {
+            memcpy(p, ins_extra_buf, glyph->ins_extra_len);
+            p += glyph->ins_extra_len;
+          }
           memcpy(p, glyph->ins_buf, glyph->ins_len);
           p += glyph->ins_len;
         }
@@ -1121,6 +1133,7 @@ TA_create_glyph_data(FT_Outline* outline,
   memcpy(p, header, 10);
   p += 10;
 
+  glyph->ins_extra_len = 0; /* does nothing yet */
   glyph->ins_len = 0;
   glyph->ins_buf = NULL;
 

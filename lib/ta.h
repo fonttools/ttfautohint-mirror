@@ -110,6 +110,8 @@ typedef struct GLYPH_
   FT_Byte* buf; /* extracted glyph data (without instruction related data) */
   FT_ULong flags_offset; /* offset to last flag in a composite glyph */
 
+  FT_Byte ins_extra_len; /* number of extra instructions; */
+                         /* see `ins_extra_buf' in `tabytecode.h' */
   FT_ULong ins_len; /* number of new instructions */
   FT_Byte* ins_buf; /* new instruction data */
 

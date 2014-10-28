@@ -45,7 +45,8 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
   {
     /* glyph records should have offsets which are multiples of 4 */
     offset = (offset + 3) & ~3;
-    offset += glyph->len1 + glyph->len2 + glyph->ins_len;
+    offset += glyph->len1 + glyph->len2
+              + glyph->ins_extra_len + glyph->ins_len;
     /* add two bytes for the instructionLength field */
     if (glyph->len2 || glyph->ins_len)
       offset += 2;
@@ -83,7 +84,8 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
       *(p++) = BYTE3(offset);
       *(p++) = BYTE4(offset);
 
-      offset += glyph->len1 + glyph->len2 + glyph->ins_len;
+      offset += glyph->len1 + glyph->len2
+                + glyph->ins_extra_len + glyph->ins_len;
       if (glyph->len2 || glyph->ins_len)
         offset += 2;
     }
@@ -116,7 +118,8 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
       *(p++) = HIGH(offset);
       *(p++) = LOW(offset);
 
-      offset += (glyph->len1 + glyph->len2 + glyph->ins_len + 1) >> 1;
+      offset += (glyph->len1 + glyph->len2
+                 + glyph->ins_extra_len + glyph->ins_len + 1) >> 1;
       if (glyph->len2 || glyph->ins_len)
         offset += 1;
     }
