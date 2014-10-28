@@ -694,16 +694,16 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   int num_points;
   int i;
 
-  FT_UShort num_stack_elements;
+  FT_UShort num_after_IUP_stack_elements;
 
   /* DELTAP[1-3] stacks for both x and y directions */
   FT_UInt* delta_after_IUP_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
   int num_delta_after_IUP_args[6] = {0, 0, 0, 0, 0, 0};
   FT_UInt* args = NULL;
 
-  FT_Bool need_words = 0;
-  FT_Bool need_word_counts = 0;
-  FT_Bool allocated = 0;
+  FT_Bool need_after_IUP_words = 0;
+  FT_Bool need_after_IUP_word_counts = 0;
+  FT_Bool allocated_after_IUP = 0;
 
 
   num_points = font->loader->gloader->base.outline.n_points;
@@ -728,7 +728,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
         || idx < ctrl->glyph_idx)
       break;
 
-    if (!allocated)
+    if (!allocated_after_IUP)
     {
       for (i = 0; i < 6; i++)
       {
@@ -744,7 +744,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
         }
       }
 
-      allocated = 1;
+      allocated_after_IUP = 1;
     }
 
     /* since we walk sequentially over all glyphs (with points), */
@@ -756,13 +756,13 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
                           num_delta_after_IUP_args);
 
     if (ctrl->point_idx > 255)
-      need_words = 1;
+      need_after_IUP_words = 1;
 
     TA_control_get_next(font);
   }
 
   /* nothing to do if no control instructions */
-  if (!allocated)
+  if (!allocated_after_IUP)
     return bufp;
 
   /* add number of argument pairs to the stacks */
@@ -774,7 +774,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
 
 
       if (n > 255)
-        need_word_counts = 1;
+        need_after_IUP_word_counts = 1;
 
       *(delta_after_IUP_args[i] + num_delta_after_IUP_args[i]) = n;
       num_delta_after_IUP_args[i]++;
@@ -782,8 +782,8 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   }
 
   /* merge delta stacks into a single one */
-  if (need_words
-      || (!need_words && !need_word_counts))
+  if (need_after_IUP_words
+      || (!need_after_IUP_words && !need_after_IUP_word_counts))
   {
     FT_UInt num_args = 0;
 
@@ -813,13 +813,13 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       num_args = num_args_new;
     }
 
-    num_stack_elements = num_args;
+    num_after_IUP_stack_elements = num_args;
 
-    bufp = TA_build_push(bufp, args, num_args, need_words, 1);
+    bufp = TA_build_push(bufp, args, num_args, need_after_IUP_words, 1);
   }
   else
   {
-    num_stack_elements = 0;
+    num_after_IUP_stack_elements = 0;
 
     /* stack elements are bytes, but counts need words */
     for (i = 0; i < 6; i++)
@@ -835,10 +835,10 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       bufp = TA_build_push(bufp,
                            delta_after_IUP_args[i],
                            num_delta_arg,
-                           need_words,
+                           need_after_IUP_words,
                            1);
 
-      num_stack_elements += num_delta_arg + 1;
+      num_after_IUP_stack_elements += num_delta_arg + 1;
 
       num_delta_arg >>= 1;
       BCI(PUSHW_1);
@@ -872,8 +872,8 @@ Done:
     free(delta_after_IUP_args[i]);
   free(args);
 
-  if (num_stack_elements > sfnt->max_stack_elements)
-    sfnt->max_stack_elements = num_stack_elements;
+  if (num_after_IUP_stack_elements > sfnt->max_stack_elements)
+    sfnt->max_stack_elements = num_after_IUP_stack_elements;
   return bufp;
 }
 
