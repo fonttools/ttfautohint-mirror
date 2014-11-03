@@ -180,15 +180,16 @@ FT_Byte ttfautohint_glyph_bytecode[7] =
 };
 
 
-/* if we have delta exceptions before IUP, this code gets inserted */
+/* if we have y delta exceptions before IUP_y, this code gets inserted */
 
 FT_Byte ins_extra_buf[4] =
 {
 
-  0,
-  0,
-  0,
-  0,
+  /* tell bci_{scale,scale_composite,hint}_glyph to not call IUP_y */
+  PUSHB_2,
+    cvtl_do_iup_y,
+    0,
+  WCVTP,
 
 };
 
@@ -689,20 +690,30 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
                                FT_Long idx,
                                FT_Byte* bufp)
 {
+  SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
+  glyf_Data* data = (glyf_Data*)glyf_table->data;
+  GLYPH* glyph = &data->glyphs[idx];
+
   FT_Face face = font->loader->face;
 
   int num_points;
   int i;
 
+  FT_UShort num_before_IUP_stack_elements;
   FT_UShort num_after_IUP_stack_elements;
 
   /* DELTAP[1-3] stacks for both x and y directions */
+  FT_UInt* delta_before_IUP_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
   FT_UInt* delta_after_IUP_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+  int num_delta_before_IUP_args[6] = {0, 0, 0, 0, 0, 0};
   int num_delta_after_IUP_args[6] = {0, 0, 0, 0, 0, 0};
   FT_UInt* args = NULL;
 
+  FT_Bool need_before_IUP_words = 0;
   FT_Bool need_after_IUP_words = 0;
+  FT_Bool need_before_IUP_word_counts = 0;
   FT_Bool need_after_IUP_word_counts = 0;
+  FT_Bool allocated_before_IUP = 0;
   FT_Bool allocated_after_IUP = 0;
 
 
@@ -728,13 +739,34 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
         || idx < ctrl->glyph_idx)
       break;
 
-    if (!allocated_after_IUP)
+    if (ctrl->type == Control_Delta_before_IUP
+        && !allocated_before_IUP)
     {
       for (i = 0; i < 6; i++)
       {
         /* see the comment on allocating `ins_buf' in function */
         /* `TA_sfnt_build_glyph_instructions' for more on the array sizes; */
+        /* we have to increase by 2 to push the number of argument pairs */
+        /* and the function for a LOOPCALL instruction */
+        delta_before_IUP_args[i] = (FT_UInt*)malloc((16 * 2 * num_points + 2)
+                                                    * sizeof (FT_UInt));
+        if (!delta_before_IUP_args[i])
+        {
+          bufp = NULL;
+          goto Done;
+        }
+      }
+
+      allocated_before_IUP = 1;
+    }
+
+    if (ctrl->type == Control_Delta_after_IUP
+        && !allocated_after_IUP)
+    {
+      for (i = 0; i < 6; i++)
+      {
         /* we have to increase by 1 for the number of argument pairs */
+        /* as needed by the DELTA instructions */
         delta_after_IUP_args[i] = (FT_UInt*)malloc((16 * 2 * num_points + 1)
                                                    * sizeof (FT_UInt));
         if (!delta_after_IUP_args[i])
@@ -751,19 +783,51 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
     /* and the control instruction entries have the same order, */
     /* we don't need to test for equality of font and glyph indices: */
     /* at this very point in the code we certainly have a hit */
-    build_delta_exception(ctrl,
-                          delta_after_IUP_args,
-                          num_delta_after_IUP_args);
+    if (ctrl->type == Control_Delta_before_IUP)
+    {
+      build_delta_exception(ctrl,
+                            delta_before_IUP_args,
+                            num_delta_before_IUP_args);
 
-    if (ctrl->point_idx > 255)
-      need_after_IUP_words = 1;
+      if (ctrl->point_idx > 255)
+        need_before_IUP_words = 1;
+    }
+    else
+    {
+      build_delta_exception(ctrl,
+                            delta_after_IUP_args,
+                            num_delta_after_IUP_args);
+
+      if (ctrl->point_idx > 255)
+        need_after_IUP_words = 1;
+    }
 
     TA_control_get_next(font);
   }
 
   /* nothing to do if no control instructions */
-  if (!allocated_after_IUP)
+  if (!(allocated_before_IUP || allocated_after_IUP))
     return bufp;
+
+  /* add number of argument pairs and function number to the stacks */
+  for (i = 0; i < 6; i++)
+  {
+    if (num_delta_before_IUP_args[i])
+    {
+      int n = num_delta_before_IUP_args[i] >> 1;
+
+
+      if (n > 255)
+        need_before_IUP_word_counts = 1;
+
+      *(delta_before_IUP_args[i] + num_delta_before_IUP_args[i]) = n;
+      num_delta_before_IUP_args[i]++;
+
+      *(delta_before_IUP_args[i] + num_delta_before_IUP_args[i]) =
+        bci_deltap1 + (i % 3);
+      num_delta_before_IUP_args[i]++;
+    }
+  }
 
   /* add number of argument pairs to the stacks */
   for (i = 0; i < 6; i++)
@@ -781,7 +845,108 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
     }
   }
 
-  /* merge delta stacks into a single one */
+  /* merge `before IUP' delta stacks into a single one */
+  if (need_before_IUP_words
+      || (!need_before_IUP_words && !need_before_IUP_word_counts))
+  {
+    FT_UInt num_args = 0;
+
+
+    for (i = 0; i < 6; i++)
+    {
+      FT_UInt* args_new;
+      FT_UInt num_args_new;
+
+
+      if (!num_delta_before_IUP_args[i])
+        continue;
+
+      num_args_new = num_args + num_delta_before_IUP_args[i];
+      args_new = (FT_UInt*)realloc(args, num_args_new * sizeof (FT_UInt));
+      if (!args_new)
+      {
+        bufp = NULL;
+        goto Done;
+      }
+
+      memcpy(args_new + num_args,
+             delta_before_IUP_args[i],
+             num_delta_before_IUP_args[i] * sizeof (FT_UInt));
+
+      args = args_new;
+      num_args = num_args_new;
+    }
+
+    num_before_IUP_stack_elements = num_args;
+
+    bufp = TA_build_push(bufp, args, num_args, need_before_IUP_words, 1);
+  }
+  else
+  {
+    num_before_IUP_stack_elements = 0;
+
+    /* stack elements are bytes, but counts need words */
+    for (i = 0; i < 6; i++)
+    {
+      int num_delta_arg;
+
+
+      if (!num_delta_before_IUP_args[i])
+        continue;
+
+      num_delta_arg = num_delta_before_IUP_args[i] - 2;
+
+      bufp = TA_build_push(bufp,
+                           delta_before_IUP_args[i],
+                           num_delta_arg,
+                           need_before_IUP_words,
+                           1);
+
+      num_before_IUP_stack_elements += num_delta_arg + 2;
+
+      num_delta_arg >>= 1;
+      BCI(PUSHW_1);
+      BCI(HIGH(num_delta_arg));
+      BCI(LOW(num_delta_arg));
+
+      /* the function number */
+      BCI(PUSHB_1);
+      BCI(delta_before_IUP_args[i][num_delta_before_IUP_args[i] - 1]);
+    }
+  }
+
+  /* emit y DELTA opcodes (via `bci_deltap[1-3]' functions) */
+  if (num_delta_before_IUP_args[5])
+    BCI(LOOPCALL);
+  if (num_delta_before_IUP_args[4])
+    BCI(LOOPCALL);
+  if (num_delta_before_IUP_args[3])
+    BCI(LOOPCALL);
+
+  if (num_delta_before_IUP_args[2]
+      || num_delta_before_IUP_args[1]
+      || num_delta_before_IUP_args[0])
+    BCI(SVTCA_x);
+
+  /* emit x DELTA opcodes */
+  if (num_delta_before_IUP_args[2])
+    BCI(LOOPCALL);
+  if (num_delta_before_IUP_args[1])
+    BCI(LOOPCALL);
+  if (num_delta_before_IUP_args[0])
+    BCI(LOOPCALL);
+
+  if (num_delta_before_IUP_args[2]
+      || num_delta_before_IUP_args[1]
+      || num_delta_before_IUP_args[0])
+    BCI(SVTCA_y);
+
+  if (num_delta_before_IUP_args[5]
+      || num_delta_before_IUP_args[4]
+      || num_delta_before_IUP_args[3])
+    BCI(IUP_y);
+
+  /* merge `after IUP' delta stacks into a single one */
   if (need_after_IUP_words
       || (!need_after_IUP_words && !need_after_IUP_word_counts))
   {
@@ -847,7 +1012,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
     }
   }
 
-  /* emit the DELTA opcodes */
+  /* emit y DELTA opcodes */
   if (num_delta_after_IUP_args[5])
     BCI(DELTAP3);
   if (num_delta_after_IUP_args[4])
@@ -860,6 +1025,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       || num_delta_after_IUP_args[0])
     BCI(SVTCA_x);
 
+  /* emit x DELTA opcodes */
   if (num_delta_after_IUP_args[2])
     BCI(DELTAP3);
   if (num_delta_after_IUP_args[1])
@@ -867,13 +1033,36 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   if (num_delta_after_IUP_args[0])
     BCI(DELTAP1);
 
+  /* we need to insert a few extra bytecode instructions */
+  /* if we have y delta exceptions before IUP */
+  if (num_delta_before_IUP_args[5]
+      || num_delta_before_IUP_args[4]
+      || num_delta_before_IUP_args[3])
+  {
+    /* set `cvtl_do_iup_y' to zero at the beginning of the bytecode */
+    /* by activating `ins_extra_buf' */
+    glyph->ins_extra_len = sizeof (ins_extra_buf) / sizeof (FT_Byte);
+
+    /* reset `cvtl_do_iup_y' for next glyph */
+    BCI(PUSHB_2);
+    BCI(cvtl_do_iup_y);
+    BCI(100);
+    BCI(WCVTP);
+  }
+
 Done:
   for (i = 0; i < 6; i++)
+  {
+    free(delta_before_IUP_args[i]);
     free(delta_after_IUP_args[i]);
+  }
   free(args);
 
+  if (num_before_IUP_stack_elements > sfnt->max_stack_elements)
+    sfnt->max_stack_elements = num_before_IUP_stack_elements;
   if (num_after_IUP_stack_elements > sfnt->max_stack_elements)
     sfnt->max_stack_elements = num_after_IUP_stack_elements;
+
   return bufp;
 }
 

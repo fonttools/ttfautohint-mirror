@@ -258,7 +258,7 @@ typedef int
  *
  *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`l`\[`eft`\]|`r`\[`ight`\]*\ points\ \ *\[*\ *`(`*\ left‑offset\ *`,`*\ right‑offset\ *`)`*\ *\]*\
  *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`n`\[`odir`\]*\ points\
- *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`p`\[`oint`\]*\ points\ \ *\[*\ *`x`\[`shift`\]*\ x‑shift\ *\]*\ \ *\[*\ *`y`\[`shift`\]*\ y‑shift\ *\]*\ \ *`@`*\ ppems
+ *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`t`\[`ouch`\]|`p`\[`oint`\]*\ points\ \ *\[*\ *`x`\[`shift`\]*\ x‑shift\ *\]*\ \ *\[*\ *`y`\[`shift`\]*\ y‑shift\ *\]*\ \ *`@`*\ ppems
  *
  *     *font‑idx* gives the index of the font in a TrueType Collection.  If
  *     missing, it is set to zero.  For normal TrueType fonts, only value
@@ -295,11 +295,17 @@ typedef int
  *     Modifying or adding segments don't directly modify the outlines; it
  *     only influences the hinting process.
  *
- *     Parameter `point` (or '`p`') makes ttfautohint apply delta exceptions
- *     for the given points, shifting the points by the given values.  Note
- *     that those delta exceptions are applied *after* the final `IUP`
- *     instructions in the bytecode; as a consequence, they are (partially)
- *     ignored by rasterizers if in ClearType mode.
+ *     The mutually exclusive parameters `touch` and `point` (which can be
+ *     abbreviated as '`t`' and '`p`', respectively) make ttfautohint apply
+ *     delta exceptions for the given points, shifting them by the given
+ *     values.  Delta exceptions entered with `touch` are applied before the
+ *     final `IUP` instructions in a glyph's bytecode, exceptions entered
+ *     with `point` after `IUP`.  Additionally, the `touch` parameter makes
+ *     the bytecode *touch* the affected points; such points are no longer
+ *     affected by `IUP` at all.  Note that in ClearType mode all deltas
+ *     along the x\ axis are discarded, and deltas along the y\ axis are
+ *     only executed for touched points.  As a consequence, vertical delta
+ *     exceptions entered with `point` should not be used in ClearType mode.
  *
  *     Both *points* and *ppems* are number ranges, similar to the
  *     `x-height-snapping-exceptions` syntax.
@@ -307,7 +313,8 @@ typedef int
  *     *x‑shift* and *y‑shift* represent real numbers that get rounded to
  *     multiples of 1/8 pixels.  The entries for `xshift` ('`x`') and
  *     `yshift` ('`y`') are optional; if missing, the corresponding value is
- *     set to zero.
+ *     set to zero.  If both values are zero, the delta exception entry is
+ *     ignored as a whole.
  *
  *     Values for *x‑shift* and *y‑shift* must be in the range [−1.0;1.0].
  *     Values for *ppems* must be in the range [6;53].  Values for *points*
