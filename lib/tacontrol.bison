@@ -89,6 +89,7 @@ store_error_data(const YYLTYPE *locp,
 %token <name> POINT "point"
 %token <real> REAL "real number"
 %token <name> RIGHT "right"
+%token <name> TOUCH "touch"
 %token <name> XSHIFT "x shift"
 %token <name> YSHIFT "y shift"
 
@@ -101,7 +102,8 @@ store_error_data(const YYLTYPE *locp,
 %type <integer> integer
 %type <type> left_right
 %type <type> left_right_
-%type <type> point
+%type <type> point_touch
+%type <type> point_touch_
 %type <range> left_limited
 %type <type> no_dir
 %type <range> number_set
@@ -166,9 +168,9 @@ input[result]:
 entry:
   EOE
     { $entry = NULL; }
-| font_idx glyph_idx point number_set x_shift y_shift ppem_set EOE
+| font_idx glyph_idx point_touch number_set x_shift y_shift ppem_set EOE
     {
-      $entry = TA_control_new($point,
+      $entry = TA_control_new($point_touch,
                               $font_idx,
                               $glyph_idx,
                               $number_set,
@@ -309,12 +311,13 @@ glyph_name_:
 | NODIR
 | POINT
 | RIGHT
+| TOUCH
 | XSHIFT
 | YSHIFT
 ;
 
-point:
-  POINT
+point_touch:
+  point_touch_
     {
       FT_Error error;
       FT_Face face = context->font->sfnts[context->font_idx].face;
@@ -333,8 +336,20 @@ point:
       context->number_set_min = 0;
       context->number_set_max = num_points - 1;
 
-      $point = Control_Delta_after_IUP;
+      $point_touch = $point_touch_;
+    }
+;
+
+point_touch_:
+  POINT
+    {
+      $point_touch_ = Control_Delta_after_IUP;
       free($POINT);
+    }
+| TOUCH
+    {
+      $point_touch_ = Control_Delta_before_IUP;
+      free($TOUCH);
     }
 ;
 

@@ -168,15 +168,14 @@ control_show_line(FONT* font,
   switch (control->type)
   {
   case Control_Delta_before_IUP:
-    /* not implemented yet */
-    break;
-
   case Control_Delta_after_IUP:
     /* display glyph index if we don't have a glyph name */
     if (*glyph_name_buf)
-      s = sdscatprintf(s, "%ld %s point %s xshift %.20g yshift %.20g @ %s",
+      s = sdscatprintf(s, "%ld %s %s %s xshift %.20g yshift %.20g @ %s",
                        control->font_idx,
                        glyph_name_buf,
+                       control->type == Control_Delta_before_IUP ? "touch"
+                                                                 : "point",
                        points_buf,
                        (double)control->x_shift / CONTROL_DELTA_FACTOR,
                        (double)control->y_shift / CONTROL_DELTA_FACTOR,

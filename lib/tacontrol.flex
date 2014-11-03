@@ -185,6 +185,13 @@ TA_control_scanner_fatal_error(const char* msg,
   return POINT;
 }
 
+(?x:   "touch"
+     | "t"
+) {
+  NAME_ASSIGN;
+  return TOUCH;
+}
+
 (?x:   "xshift"
      | "x"
 ) {
