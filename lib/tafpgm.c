@@ -2026,6 +2026,74 @@ unsigned char FPGM(bci_create_segments_9) [] =
 
 
 /*
+ * bci_deltapX
+ *
+ *   Wrapper functions around DELTAP[123] that touch the affected points
+ *   before applying the delta.  This is necessary for ClearType.
+ *
+ *   While DELTAP[123] implicitly do a loop, we have to process the
+ *   arguments sequentially by calling `bci_deltaX' with LOOPCALL.
+ *
+ * in: point
+ *     arg
+ */
+
+unsigned char FPGM(bci_deltap1) [] =
+{
+
+  PUSHB_1,
+    bci_deltap1,
+  FDEF,
+
+  DUP,
+  MDAP_noround, /* touch `point' */
+
+  PUSHB_1,
+    1,
+  DELTAP1, /* process one `(point,arg)' pair */
+
+  ENDF,
+
+};
+
+unsigned char FPGM(bci_deltap2) [] =
+{
+
+  PUSHB_1,
+    bci_deltap2,
+  FDEF,
+
+  DUP,
+  MDAP_noround, /* touch `point' */
+
+  PUSHB_1,
+    1,
+  DELTAP2, /* process one `(point,arg)' pair */
+
+  ENDF,
+
+};
+
+unsigned char FPGM(bci_deltap3) [] =
+{
+
+  PUSHB_1,
+    bci_deltap3,
+  FDEF,
+
+  DUP,
+  MDAP_noround, /* touch `point' */
+
+  PUSHB_1,
+    1,
+  DELTAP3, /* process one `(point,arg)' pair */
+
+  ENDF,
+
+};
+
+
+/*
  * bci_create_segments_composite
  *
  *   The same as `bci_create_segments'.
@@ -2506,6 +2574,7 @@ unsigned char FPGM(bci_scale_contour) [] =
  *       max_point_N
  *
  * CVT: cvtl_is_subglyph
+ *      cvtl_do_iup_y
  *
  * uses: bci_scale_contour
  */
@@ -2535,10 +2604,14 @@ unsigned char FPGM(bci_scale_glyph) [] =
       bci_scale_contour,
     LOOPCALL,
 
-    PUSHB_1,
+    PUSHB_2,
+      cvtl_do_iup_y,
       1,
     SZP2, /* set zp2 to normal zone 1 */
-    IUP_y,
+    RCVT,
+    IF,
+      IUP_y,
+    EIF,
 
   ELSE,
     CLEAR,
@@ -2556,6 +2629,7 @@ unsigned char FPGM(bci_scale_glyph) [] =
  *   It also decrements the composite component counter.
  *
  * CVT: cvtl_is_subglyph
+ *      cvtl_do_iup_y
  *
  * uses: bci_decrement_component_counter
  *       bci_scale_contour
@@ -2590,10 +2664,14 @@ unsigned char FPGM(bci_scale_composite_glyph) [] =
       bci_scale_contour,
     LOOPCALL,
 
-    PUSHB_1,
+    PUSHB_2,
+      cvtl_do_iup_y,
       1,
     SZP2, /* set zp2 to normal zone 1 */
-    IUP_y,
+    RCVT,
+    IF,
+      IUP_y,
+    EIF,
 
   ELSE,
     CLEAR,
@@ -5523,6 +5601,7 @@ unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
  *
  * CVT: cvtl_is_subglyph
  *      cvtl_use_strong_functions
+ *      cvtl_do_iup_y
  *
  * sal: sal_stem_width_function
  *
@@ -5622,10 +5701,14 @@ unsigned char FPGM(bci_hint_glyph) [] =
   LT,
   JROT, /* goto start_loop */
 
-  PUSHB_1,
+  PUSHB_2,
+    cvtl_do_iup_y,
     1,
   SZP2, /* set zp2 to normal zone 1 */
-  IUP_y,
+  RCVT,
+  IF,
+    IUP_y,
+  EIF,
 
   ENDF,
 
@@ -5707,6 +5790,10 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_create_segments_7))
             + sizeof (FPGM(bci_create_segments_8))
             + sizeof (FPGM(bci_create_segments_9))
+
+            + sizeof (FPGM(bci_deltap1))
+            + sizeof (FPGM(bci_deltap2))
+            + sizeof (FPGM(bci_deltap3))
 
             + sizeof (FPGM(bci_create_segments_composite_a))
             + 1
@@ -5886,6 +5973,10 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_create_segments_7);
   COPY_FPGM(bci_create_segments_8);
   COPY_FPGM(bci_create_segments_9);
+
+  COPY_FPGM(bci_deltap1);
+  COPY_FPGM(bci_deltap2);
+  COPY_FPGM(bci_deltap3);
 
   COPY_FPGM(bci_create_segments_composite_a);
   *(bufp++) = (unsigned char)data->num_used_styles;

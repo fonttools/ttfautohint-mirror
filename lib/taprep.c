@@ -387,6 +387,25 @@ unsigned char PREP(adjust_delta_exceptions) [] =
 };
 
 
+unsigned char PREP(do_iup_y) [] =
+{
+
+  /* We set a default value for `cvtl_do_iup_y'. */
+  /* If we have delta exceptions before IUP_y, */
+  /* the glyph's bytecode sets this CVT value temporarily to zero */
+  /* and manually inserts IUP_y afterwards. */
+  /* It would be more elegant to use a storage area location instead, */
+  /* however, it is not possible to have a default value for them */
+  /* since storage area locations might be reset on a per-glyph basis */
+  /* (this is dependent on the bytecode interpreter implementation). */
+  PUSHB_2,
+    cvtl_do_iup_y,
+    100,
+  WCVTP,
+
+};
+
+
 /* this function allocates `buf', parsing `number_set' to create bytecode */
 /* which eventually sets CVT index `cvtl_is_element' */
 /* (in functions `bci_number_set_is_element' and */
@@ -633,6 +652,7 @@ TA_table_build_prep(FT_Byte** prep,
   buf_new_len += sizeof (PREP(reset_component_counter));
   if (font->control_data_head)
     buf_new_len += sizeof (PREP(adjust_delta_exceptions));
+  buf_new_len += sizeof (PREP(do_iup_y));
 
   /* buffer length must be a multiple of four */
   len = (buf_new_len + 3) & ~3;
@@ -807,6 +827,7 @@ TA_table_build_prep(FT_Byte** prep,
   COPY_PREP(reset_component_counter);
   if (font->control_data_head)
     COPY_PREP(adjust_delta_exceptions);
+  COPY_PREP(do_iup_y);
 
   *prep = buf;
   *prep_len = buf_new_len;
