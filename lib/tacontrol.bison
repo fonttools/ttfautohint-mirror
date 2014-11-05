@@ -29,6 +29,8 @@
  * was extremely helpful in writing this code.
  */
 
+%require "2.5" /* we use named references */
+
 %output "tacontrol-bison.c"
 %defines "tacontrol-bison.h"
 
@@ -40,7 +42,6 @@
 %locations
 %name-prefix "TA_control_"
 %parse-param { Control_Context* context }
-%require "2.5" /* note that some versions < 2.7 use `//' in comments */
 
 %code requires {
 #include "ta.h"
