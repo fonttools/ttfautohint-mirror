@@ -19,7 +19,7 @@
 #define PREP(snippet_name) prep_ ## snippet_name
 
 
-unsigned char PREP(hinting_limit_a) [] =
+const unsigned char PREP(hinting_limit_a) [] =
 {
 
   /* all our measurements are taken along the y axis, */
@@ -34,7 +34,7 @@ unsigned char PREP(hinting_limit_a) [] =
 
 /*  %d, hinting size limit */
 
-unsigned char PREP(hinting_limit_b) [] =
+const unsigned char PREP(hinting_limit_b) [] =
 {
 
   GT,
@@ -50,7 +50,7 @@ unsigned char PREP(hinting_limit_b) [] =
 /* we store 0x10000 in CVT index `cvtl_funits_to_pixels' as a scaled value */
 /* to have a conversion factor from FUnits to pixels */
 
-unsigned char PREP(store_funits_to_pixels) [] =
+const unsigned char PREP(store_funits_to_pixels) [] =
 {
 
   PUSHB_1,
@@ -69,7 +69,7 @@ unsigned char PREP(store_funits_to_pixels) [] =
 
 /* if the current ppem value is an exception, don't apply scaling */
 
-unsigned char PREP(test_exception_a) [] =
+const unsigned char PREP(test_exception_a) [] =
 {
 
   PUSHB_1,
@@ -82,7 +82,7 @@ unsigned char PREP(test_exception_a) [] =
 
 /* provide scaling factors for all styles */
 
-unsigned char PREP(align_top_a) [] =
+const unsigned char PREP(align_top_a) [] =
 {
 
     PUSHB_2,
@@ -98,7 +98,7 @@ unsigned char PREP(align_top_a) [] =
 /*    %c, style 0's x height blue zone idx */
 /*    %c, num_used_styles */
 
-unsigned char PREP(align_top_b) [] =
+const unsigned char PREP(align_top_b) [] =
 {
 
       bci_align_top,
@@ -106,7 +106,7 @@ unsigned char PREP(align_top_b) [] =
 
 };
 
-unsigned char PREP(loop_cvt_a) [] =
+const unsigned char PREP(loop_cvt_a) [] =
 {
 
     /* loop over (almost all) vertical CVT entries of all styles, part 1 */
@@ -127,7 +127,7 @@ unsigned char PREP(loop_cvt_a) [] =
 /*        (std. width, widths, flat blues zones without artifical ones) */
 /*    %c, num_used_styles */
 
-unsigned char PREP(loop_cvt_b) [] =
+const unsigned char PREP(loop_cvt_b) [] =
 {
 
       bci_cvt_rescale_range,
@@ -149,7 +149,7 @@ unsigned char PREP(loop_cvt_b) [] =
 /*    %c, style 0's number of round blue zones (without artificial ones) */
 /*    %c, num_used_styles */
 
-unsigned char PREP(loop_cvt_c) [] =
+const unsigned char PREP(loop_cvt_c) [] =
 {
 
       bci_cvt_rescale_range,
@@ -157,14 +157,14 @@ unsigned char PREP(loop_cvt_c) [] =
 
 };
 
-unsigned char PREP(test_exception_b) [] =
+const unsigned char PREP(test_exception_b) [] =
 {
 
   EIF,
 
 };
 
-unsigned char PREP(store_vwidth_data_a) [] =
+const unsigned char PREP(store_vwidth_data_a) [] =
 {
 
   PUSHB_2,
@@ -174,7 +174,7 @@ unsigned char PREP(store_vwidth_data_a) [] =
 
 /*  %c, offset to vertical width offset data in CVT */
 
-unsigned char PREP(store_vwidth_data_b) [] =
+const unsigned char PREP(store_vwidth_data_b) [] =
 {
 
   WS,
@@ -187,7 +187,7 @@ unsigned char PREP(store_vwidth_data_b) [] =
 /*  %d, style 0's first vertical width index (in multiples of 64) */
 /*  %d, num_used_styles */
 
-unsigned char PREP(store_vwidth_data_c) [] =
+const unsigned char PREP(store_vwidth_data_c) [] =
 {
 
     0x00, /* high byte */
@@ -201,7 +201,7 @@ unsigned char PREP(store_vwidth_data_c) [] =
 
 /*  %c, offset to vertical width size data in CVT */
 
-unsigned char PREP(store_vwidth_data_d) [] =
+const unsigned char PREP(store_vwidth_data_d) [] =
 {
 
   WS,
@@ -214,7 +214,7 @@ unsigned char PREP(store_vwidth_data_d) [] =
 /*  %d, style 0's number of vertical widths (in multiples of 64) */
 /*  %d, num_used_styles */
 
-unsigned char PREP(store_vwidth_data_e) [] =
+const unsigned char PREP(store_vwidth_data_e) [] =
 {
 
     0x00, /* high byte */
@@ -223,7 +223,7 @@ unsigned char PREP(store_vwidth_data_e) [] =
 
 };
 
-unsigned char PREP(set_smooth_or_strong_a) [] =
+const unsigned char PREP(set_smooth_or_strong_a) [] =
 {
 
   /*
@@ -251,7 +251,7 @@ unsigned char PREP(set_smooth_or_strong_a) [] =
 
 /*  %c, either 0 or 100 */
 
-unsigned char PREP(set_smooth_or_strong_b) [] =
+const unsigned char PREP(set_smooth_or_strong_b) [] =
 {
 
   WCVTP,
@@ -277,7 +277,7 @@ unsigned char PREP(set_smooth_or_strong_b) [] =
 
 /*      %c, either 0 or 100 */
 
-unsigned char PREP(set_smooth_or_strong_c) [] =
+const unsigned char PREP(set_smooth_or_strong_c) [] =
 {
 
       WCVTP,
@@ -314,7 +314,7 @@ unsigned char PREP(set_smooth_or_strong_c) [] =
 
 /*          %c, either 0 or 100 */
 
-unsigned char PREP(set_smooth_or_strong_d) [] =
+const unsigned char PREP(set_smooth_or_strong_d) [] =
 {
 
           WCVTP,
@@ -333,7 +333,7 @@ unsigned char PREP(set_smooth_or_strong_d) [] =
 /*  %c, style 0's number of blue ref indices */
 /*  %c, num_used_styles */
 
-unsigned char PREP(round_blues) [] =
+const unsigned char PREP(round_blues) [] =
 {
 
     bci_blue_round_range,
@@ -341,7 +341,7 @@ unsigned char PREP(round_blues) [] =
 
 };
 
-unsigned char PREP(set_dropout_mode) [] =
+const unsigned char PREP(set_dropout_mode) [] =
 {
 
   PUSHW_1,
@@ -354,7 +354,7 @@ unsigned char PREP(set_dropout_mode) [] =
 
 };
 
-unsigned char PREP(reset_component_counter) [] =
+const unsigned char PREP(reset_component_counter) [] =
 {
 
   /* In case an application tries to render `.ttfautohint' */
@@ -376,7 +376,7 @@ unsigned char PREP(reset_component_counter) [] =
 
 };
 
-unsigned char PREP(adjust_delta_exceptions) [] =
+const unsigned char PREP(adjust_delta_exceptions) [] =
 {
 
   /* set delta base */
@@ -387,7 +387,7 @@ unsigned char PREP(adjust_delta_exceptions) [] =
 };
 
 
-unsigned char PREP(do_iup_y) [] =
+const unsigned char PREP(do_iup_y) [] =
 {
 
   /* We set a default value for `cvtl_do_iup_y'. */
