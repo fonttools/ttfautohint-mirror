@@ -2,10 +2,16 @@ New in Version 1.3 (XXXX-XXX-XX)
 --------------------------------
 
 * Keywords in control instruction files can be more verbose to increase
-  readability.  You can now use `left`, `right`, `nodir`, `point`, `xshift`,
-  and `yshift` for `l`, `r`, `n`, `p`, `x`, and `y`, respectively.
+  readability.  You can now use `left`, `right`, `nodir`, `point`, `touch`,
+  `xshift`, and `yshift` for `l`, `r`, `n`, `p`, `t, `x`, and `y`,
+  respectively.
+
+* A new control instruction keyword `touch` was added to apply delta
+  instructions before the final IUP bytecode commands.
 
 * Support for the Telugu script.
+
+* ttfautohintGUI crashed if not used with a control instruction file.
 
 
 New in Version 1.2 (2014-Oct-06)
