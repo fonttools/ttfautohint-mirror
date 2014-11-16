@@ -1070,7 +1070,7 @@ main(int argc,
     // if the vertical size of our window is too large,
     // select a horizontal layout
     QRect screen(QApplication::desktop()->availableGeometry());
-    if (dummy.frameGeometry().height() > screen.width())
+    if (dummy.frameGeometry().height() > screen.height())
       alternative_layout = true;
   }
 
