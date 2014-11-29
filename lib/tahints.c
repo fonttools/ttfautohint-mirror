@@ -206,7 +206,7 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
           " |  xfit |  yfit | flags ]\n"));
 
   for (point = points; point < limit; point++)
-    TA_LOG(("  [ %5d | %5d | %5d | %6.2f | %6.2f"
+    TA_LOG(("  [ %5ld | %5d | %5d | %6.2f | %6.2f"
             " | %5.2f | %5.2f |   %c   ]\n",
             point - points,
             point->fx,
@@ -279,8 +279,8 @@ ta_glyph_hints_dump_segments(TA_GlyphHints hints)
       TA_LOG(("  (none)\n"));
 
     for (seg = segments; seg < limit; seg++)
-      TA_LOG(("  [ %5d | %5.2g | %5s | %4d"
-              " | %4d | %4d | %5d | %4d"
+      TA_LOG(("  [ %5ld | %5.2g | %5s | %4ld"
+              " | %4ld | %4ld | %5ld | %4ld"
               " | %6d | %5d | %11s ]\n",
               seg - segments,
               dimension == TA_DIMENSION_HORZ ? (int)seg->first->ox / 64.0
@@ -329,8 +329,8 @@ ta_glyph_hints_dump_edges(TA_GlyphHints hints)
       TA_LOG(("  (none)\n"));
 
     for (edge = edges; edge < limit; edge++)
-      TA_LOG(("  [ %5d | %5.2g | %5s | %4d"
-              " | %5d |   %c  | %5.2f | %5.2f | %11s ]\n",
+      TA_LOG(("  [ %5ld | %5.2g | %5s | %4ld"
+              " | %5ld |   %c  | %5.2f | %5.2f | %11s ]\n",
               edge - edges,
               (int)edge->opos / 64.0,
               ta_dir_str((TA_Direction)edge->dir),

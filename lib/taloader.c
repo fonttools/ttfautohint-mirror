@@ -145,8 +145,8 @@ ta_loader_load_g(TA_Loader loader,
     loader->trans_delta = internal->glyph_delta;
 
     inverse = loader->trans_matrix;
-    FT_Matrix_Invert(&inverse);
-    FT_Vector_Transform(&loader->trans_delta, &inverse);
+    if (!FT_Matrix_Invert(&inverse))
+      FT_Vector_Transform(&loader->trans_delta, &inverse);
   }
 #endif
 
@@ -507,7 +507,7 @@ ta_loader_load_glyph(FONT* font,
 
 
   if (!size)
-    return FT_Err_Invalid_Argument;
+    return FT_Err_Invalid_Size_Handle;
 
   memset(&scaler, 0, sizeof (TA_ScalerRec));
 
