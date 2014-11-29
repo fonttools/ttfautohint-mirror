@@ -20,13 +20,21 @@ static FT_Error
 TA_sfnt_build_glyf_hints(SFNT* sfnt,
                          FONT* font)
 {
-  FT_Face face = sfnt->face;
+  SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
+  glyf_Data* data = (glyf_Data*)glyf_table->data;
+
   FT_Long idx;
   FT_Error error;
 
+  FT_UShort loop_count;
+
 
   /* this loop doesn't include the artificial `.ttfautohint' glyph */
-  for (idx = 0; idx < face->num_glyphs; idx++)
+  loop_count = data->num_glyphs;
+  if (sfnt->max_components && font->hint_composites)
+    loop_count--;
+
+  for (idx = 0; idx < loop_count; idx++)
   {
     error = TA_sfnt_build_glyph_instructions(sfnt, font, idx);
     if (error)
@@ -36,7 +44,7 @@ TA_sfnt_build_glyf_hints(SFNT* sfnt,
       FT_Int ret;
 
 
-      ret = font->progress(idx, face->num_glyphs,
+      ret = font->progress(idx, loop_count,
                            sfnt - font->sfnts, font->num_sfnts,
                            font->progress_data);
       if (ret)
