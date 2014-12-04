@@ -280,8 +280,8 @@ bytecode larger.
 `--fallback-script=`*s*, `-f`\ *s*
 :   Set fallback script to tag *s*, which is a string consisting of four
     characters like `latn` or `dflt`.  It gets used for for all glyphs that
-    can't be assigned to a script automatically.  See [below](#scripts) for
-    more details.
+    can't be assigned to a script automatically.  The default value is
+    `none`.  See [below](#scripts) for more details.
 
 ### Hinting Limit
 
@@ -317,7 +317,9 @@ bytecode larger.
     x\ height to the pixel grid in general, either partially or completely,
     see '[x Height Snapping Exceptions](#x-height-snapping-exceptions)'.
 
-    The following images again use the font 'Mertz Bold'.
+    The following FontForge snapshot images use the font '[Mertz
+    Bold](http://code.newtypography.co.uk/mertz-sans/)' (still under
+    development) from [Vernon Adams].
 
     ![At 17px, without option `-x` and '`-w ""`', the hole in glyph 'e'
       looks very grey in the FontForge snapshot, and the GDI ClearType
@@ -442,9 +444,11 @@ bytecode larger.
     it from a script's set of standard characters (for the latin script, one
     of them is character 'o').
 
-    Use this option (usually in combination with option `--fallback-script`)
-    to hint symbol or dingbat fonts or math glyphs, for example, at the
-    expense of possibly poor hinting results at small sizes.
+    Use this option (usually in combination with the
+    [`--fallback-script`](#fallback-script) and/or
+    [`--fallback-stem-width`](#fallback-stem-width) option) to hint symbol
+    or dingbat fonts or math glyphs, for example, at the expense of possibly
+    poor hinting results at small sizes.
 
 ### Dehint
 
@@ -521,9 +525,7 @@ bytecode larger.
     width routine for a given rendering target.  If you unset the check box,
     the smooth width routine gets used.
 
-    The following FontForge snapshot images use the font '[Mertz
-    Bold](http://code.newtypography.co.uk/mertz-sans/)' (still under
-    development) from [Vernon Adams].
+    The following images again use the font 'Mertz Bold'.
 
     ![The left part shows the glyph 'g' unhinted at 26px, the right part
      with hints, using the 'smooth' stem algorithm.](img/ff-g-26px.png)
@@ -588,9 +590,14 @@ bytecode larger.
     `point` after `IUP`.  Additionally, the `touch` parameter makes the
     bytecode *touch* the affected points; such points are no longer affected
     by `IUP` at all.  Note that in ClearType mode all deltas along the
+
     x\ axis are discarded, and deltas along the y\ axis are only executed
     for touched points.  As a consequence, vertical delta exceptions entered
-    with `point` should not be used in ClearType mode.
+    with `point` should not be used in ClearType mode.^[Unfortunately, there
+    is a bug in FreeType prior to version 2.5.4 (released in December 2014)
+    that completely disables vertical delta exceptions if subpixel hinting
+    is activated.  For this reason you should expect that the `touch`
+    parameter fails on older GNU/Linux distributions.]
 
     Both *points* and *ppems* are number ranges, see '[x Height Snapping
     Exceptions](#x-height-snapping-exceptions)' for the syntax.
