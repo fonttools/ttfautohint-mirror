@@ -15,7 +15,7 @@ AC_INIT([ttfautohint],
         [freetype-devel@nongnu.org])
 AC_CONFIG_AUX_DIR([gnulib])
 
-AM_INIT_AUTOMAKE([-Wall -Werror]
+AM_INIT_AUTOMAKE([-Wall -Werror tar-ustar]
                  m4_bmatch(m4_defn([AC_PACKAGE_VERSION]),
                            [-], [gnu],
                            [gnits]))
