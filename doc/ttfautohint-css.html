@@ -18,20 +18,27 @@
   /* width and offsets must be synchronized with col2 below */
   #TOC {
     position: fixed;
-    font-size: 115%;
+    overflow: auto;
+    height: 100%;
+    /* use smaller font size for TOC */
+    font-size: 80%;
+    line-height: 120%;
     left: 0em;
-    width: 13em; }
+    width: 17em; }
   /* don't display list markers in TOC */
   #TOC ul {
     list-style: none; }
-  #TOC ul li {
+  #TOC li {
+    /* reduce indentation of nesting levels */
+    margin-left: -1.5em;
     /* negative indentation for the first line of a TOC entry */
-    text-indent: -1em;
+    text-indent: -0.5em;
     /* leave some vertical space between TOC entries */
     margin-bottom: 1ex; }
-  /* only display first-level TOC entries */
-  #TOC ul li ul {
-    display: none; }
+  /* since nested `ul' groups are directly embedded into `li' tags, */
+  /* handle first element specially to get vertical space here, too */
+  #TOC ul li:first-child {
+    margin-top: 1ex; }
   /* no link color necessary for TOC entries */
   #TOC a {
     color: black; }
@@ -83,7 +90,7 @@
     /* overflow: hidden; */ }
   .leftmenu .col2 {
     float: left;
-    width: 13em; /* wd2 */
+    width: 17em; /* wd2 */
     position: relative;
     right: 14em; } /* wd2 + pad2_r */
 
