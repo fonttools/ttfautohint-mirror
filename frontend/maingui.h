@@ -50,7 +50,8 @@ public:
            bool, int,
            const char*, int,
            bool, bool, bool,
-           bool, bool, const char*, const char*,
+           bool, bool, bool,
+           const char*, const char*,
            bool, bool, bool);
   ~Main_GUI();
 
@@ -95,6 +96,7 @@ private:
   int adjust_subglyphs;
   int hint_composites;
   int no_info;
+  int detailed_info;
   int default_script_idx;
   int fallback_script_idx;
   int symbol;
@@ -189,7 +191,8 @@ private:
   QCheckBox* hint_box;
   QCheckBox* symbol_box;
   QCheckBox* dehint_box;
-  QCheckBox* info_box;
+  QLabel* info_label;
+  QComboBox* info_box;
   QCheckBox* TTFA_box;
 
   QCheckBox* watch_box;

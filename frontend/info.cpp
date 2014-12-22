@@ -50,10 +50,13 @@ build_version_string(Info_Data* idata)
   d = sdsempty();
 
   d = sdscatprintf(d, TTFAUTOHINT_STRING " (v%s)", VERSION);
+  if (!idata->detailed)
+    goto Skip;
+
   if (idata->dehint)
   {
     d = sdscat(d, " -d");
-    goto Dehint_only;
+    goto Skip;
   }
   d = sdscatprintf(d, " -l %d", idata->hinting_range_min);
   d = sdscatprintf(d, " -r %d", idata->hinting_range_max);
@@ -126,7 +129,7 @@ build_version_string(Info_Data* idata)
     d = sdscatprintf(d, " -X \"%s\"", s);
   }
 
-Dehint_only:
+Skip:
   if (!d)
   {
     ret = 1;

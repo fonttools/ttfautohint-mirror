@@ -44,6 +44,7 @@ typedef struct Info_Data_
   char fallback_script[5];
   bool symbol;
   bool dehint;
+  bool detailed;
   bool TTFA_info;
 
   const char* control_name;

@@ -14,6 +14,10 @@ New in Version 1.3 (XXXX-XXX-XX)
 
 * Support for the Telugu script.
 
+* The amount of information about ttfautohint and its parameters that gets
+  added to the `name` table by default has been reduced.  A new option
+  `--detailed-info` restores the previous behaviour.
+
 * ttfautohintGUI crashed if not used with a control instruction file.
 
 * ttfautohintGUI now correctly switches to a horizontal two-column layout if

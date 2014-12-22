@@ -457,14 +457,27 @@ bytecode larger.
     other hinting options are ignored.  This option is intended for testing
     purposes.
 
-### Add ttfautohint Info
+### ttfautohint Info
 
 `--no-info`, `-n`
 :   Don't add ttfautohint version and command line information to the
-    version string or strings (with name ID\ 5) in the font's `name` table.
-    In the GUI it is similar: If you uncheck the 'Add ttfautohint info' box,
-    information is not added to the `name` table.  Except for testing and
-    development purposes it is strongly recommended to not use this option.
+    version string or strings (with name ID\ 5) in the font's `name` table. 
+    In the GUI, it corresponds to value 'None' in the 'ttfautohint
+    info' combo box.
+
+    This option is mutually exclusive with option `-I`.
+
+`--detailed-info`, `-I`
+:   Add ttfautohint version and command line information to the version
+    string or strings (with name ID\ 5) in the font's `name` table.  In the
+    GUI, it corresponds to value 'Version and Parameters' in the
+    'ttfautohint info' combo box.
+
+    This option is mutually exclusive with option `-n`.
+
+If neither `-n` nor `-I` is set, the string '`ttfautohint (vNNN)`' gets
+added to the `name` table (with *NNN* the current version); this correponds
+to value 'Version' in the 'ttfautohint info' combo box.
 
 ### Add TTFA Info Table
 

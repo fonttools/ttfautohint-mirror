@@ -285,6 +285,8 @@ show_help(bool
 "      --help-all             show Qt and X11 specific options also\n"
 #endif
 "  -i, --ignore-restrictions  override font license restrictions\n"
+"  -I, --detailed-info        add detailed ttfautohint info\n"
+"                             to the version string(s) in the `name' table\n"
 "  -l, --hinting-range-min=N  the minimum PPEM value for hint sets\n"
 "                             (default: %d)\n"
 #ifndef BUILD_GUI
@@ -440,6 +442,7 @@ show_help(bool
 #endif
 "\n"
 "Report bugs to: freetype-devel@nongnu.org\n"
+"\n"
 "ttfautohint home page: <http://www.freetype.org/ttfautohint>\n");
 
   if (is_error)
@@ -493,6 +496,7 @@ main(int argc,
   bool adjust_subglyphs = false;
   bool hint_composites = false;
   bool no_info = false;
+  bool detailed_info = false;
   bool TTFA_info = false;
   bool symbol = false;
 
@@ -554,6 +558,7 @@ main(int argc,
 #endif
       {"default-script", required_argument, NULL, 'D'},
       {"dehint", no_argument, NULL, 'd'},
+      {"detailed-info", no_argument, NULL, 'I'},
       {"fallback-script", required_argument, NULL, 'f'},
       {"fallback-stem-width", required_argument, NULL, 'H'},
       {"hinting-limit", required_argument, NULL, 'G'},
@@ -603,9 +608,9 @@ main(int argc,
     int option_index;
     int c = getopt_long_only(argc, argv,
 #ifdef BUILD_GUI
-                             "cdD:f:G:hH:il:npr:stVvw:Wx:X:",
+                             "cdD:f:G:hH:iIl:npr:stVvw:Wx:X:",
 #else
-                             "cdD:f:G:hH:il:m:npr:stVvw:Wx:X:",
+                             "cdD:f:G:hH:iIl:m:npr:stVvw:Wx:X:",
 #endif
                              long_options, &option_index);
     if (c == -1)
@@ -651,6 +656,11 @@ main(int argc,
       ignore_restrictions = true;
       break;
 
+    case 'I':
+      detailed_info = true;
+      no_info = false;
+      break;
+
     case 'l':
       hinting_range_min = atoi(optarg);
       have_hinting_range_min = true;
@@ -664,6 +674,7 @@ main(int argc,
 
     case 'n':
       no_info = true;
+      detailed_info = false;
       break;
 
     case 'p':
@@ -958,6 +969,7 @@ main(int argc,
             fallback_script,
             sizeof (info_data.fallback_script));
 
+    info_data.detailed = detailed_info;
     info_data.dehint = dehint;
 
     int ret = build_version_string(&info_data);
@@ -1061,7 +1073,8 @@ main(int argc,
                    dw_cleartype_strong_stem_width, increase_x_height,
                    x_height_snapping_exceptions_string, fallback_stem_width,
                    ignore_restrictions, windows_compatibility, adjust_subglyphs,
-                   hint_composites, no_info, default_script, fallback_script,
+                   hint_composites, no_info, detailed_info,
+                   default_script, fallback_script,
                    symbol, dehint, TTFA_info);
 
     dummy.move(-50000, -50000);
@@ -1080,7 +1093,8 @@ main(int argc,
                dw_cleartype_strong_stem_width, increase_x_height,
                x_height_snapping_exceptions_string, fallback_stem_width,
                ignore_restrictions, windows_compatibility, adjust_subglyphs,
-               hint_composites, no_info, default_script, fallback_script,
+               hint_composites, no_info, detailed_info,
+               default_script, fallback_script,
                symbol, dehint, TTFA_info);
   gui.show();
 

@@ -104,6 +104,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
                    bool adjust,
                    bool composites,
                    bool no,
+                   bool detailed,
                    const char* dflt,
                    const char* fallback,
                    bool symb,
@@ -123,6 +124,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   adjust_subglyphs(adjust),
   hint_composites(composites),
   no_info(no),
+  detailed_info(detailed),
   symbol(symb),
   dehint(dh),
   TTFA_info(TTFA)
@@ -1035,6 +1037,7 @@ again:
   info_data.adjust_subglyphs = adjust_box->isChecked();
   info_data.hint_composites = hint_box->isChecked();
   info_data.symbol = symbol_box->isChecked();
+  info_data.detailed = info_box->currentIndex() == 2;
   info_data.dehint = dehint_box->isChecked();
   info_data.TTFA_info = TTFA_box->isChecked();
 
@@ -1045,7 +1048,7 @@ again:
           script_names[fallback_box->currentIndex()].tag,
           sizeof (info_data.fallback_script));
 
-  if (info_box->isChecked())
+  if (info_box->currentIndex())
   {
     int ret = build_version_string(&info_data);
     if (ret == 1)
@@ -1120,7 +1123,7 @@ again:
                  info_data.default_script, info_data.fallback_script,
                  info_data.symbol, info_data.dehint, info_data.TTFA_info);
 
-  if (info_box->isChecked())
+  if (info_box->currentIndex())
   {
     free(info_data.data);
     free(info_data.data_wide);
@@ -1450,11 +1453,16 @@ Main_GUI::create_layout(bool horizontal_layout)
     tr("If set, remove all hints from the font.<br>"
        "For testing only."));
 
-  info_box = new QCheckBox(tr("Add ttf&autohint Info"), this);
-  info_box->setToolTip(
-    tr("If switched on, information about <b>TTFautohint</b>"
-       " and its calling parameters are added to the version string(s)"
+  info_label = new QLabel(tr("ttf&autohint Info:"));
+  info_box = new QComboBox;
+  info_label->setBuddy(info_box);
+  info_label->setToolTip(
+    tr("Specify which information about <b>TTFautohint</b>"
+       " and its calling parameters gets added to the version string(s)"
        " (name ID&nbsp;5) in the <i>name</i> table."));
+  info_box->insertItem(0, tr("None"));
+  info_box->insertItem(1, tr("Version"));
+  info_box->insertItem(2, tr("Version and Parameters"));
 
   TTFA_box = new QCheckBox(tr("Add TTFA Info Ta&ble"), this);
   TTFA_box->setToolTip(
@@ -1619,7 +1627,8 @@ Main_GUI::create_vertical_layout()
   gui_layout->addWidget(hint_box, row++, 1);
   gui_layout->addWidget(symbol_box, row++, 1);
   gui_layout->addWidget(dehint_box, row++, 1);
-  gui_layout->addWidget(info_box, row++, 1);
+  gui_layout->addWidget(info_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(info_box, row++, 1, Qt::AlignLeft);
   gui_layout->addWidget(TTFA_box, row++, 1);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
@@ -1748,7 +1757,8 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(hint_box, row++, 4);
   gui_layout->addWidget(symbol_box, row++, 4);
   gui_layout->addWidget(dehint_box, row++, 4);
-  gui_layout->addWidget(info_box, row++, 4);
+  gui_layout->addWidget(info_label, row, 3, Qt::AlignRight);
+  gui_layout->addWidget(info_box, row++, 4, Qt::AlignLeft);
   gui_layout->addWidget(TTFA_box, row++, 4);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
@@ -1914,10 +1924,14 @@ Main_GUI::set_defaults()
     symbol_box->setChecked(true);
   if (dehint)
     dehint_box->setChecked(true);
-  if (!no_info)
-    info_box->setChecked(true);
+  if (no_info)
+    info_box->setCurrentIndex(0);
+  else if (detailed_info)
+    info_box->setCurrentIndex(2);
+  else
+    info_box->setCurrentIndex(1);
   if (TTFA_info)
-    info_box->setChecked(true);
+    TTFA_box->setChecked(true);
 
   if (gray_strong_stem_width)
     gray_box->setChecked(true);
