@@ -50,7 +50,7 @@ DOC = ttfautohint.html \
       $(DOCIMGSVG) \
       $(DOCIMGPDF) \
       footnote-popup.js \
-      jquery-1.11.0.min.js
+      jquery-1.11.2.min.js
 
 EXTRA_DIST = c2pandoc.sed \
              make-snapshot.sh \
