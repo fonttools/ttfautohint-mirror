@@ -191,7 +191,7 @@ Both the GUI and console version share the same features, to be discussed in
 the next subsection.
 
 **Warning: ttfautohint cannot always process a font a second time.**
-If the font contains composite glyphs, and [option `-c`](#hint-composites)
+If the font contains composite glyphs, and option [`-c`](#hint-composites)
 is used, reprocessing with ttfautohint will fail.  For this reason it is
 strongly recommended to *not* delete the original, unhinted font so that you
 can always rerun ttfautohint.
@@ -461,7 +461,7 @@ bytecode larger.
 
 `--no-info`, `-n`
 :   Don't add ttfautohint version and command line information to the
-    version string or strings (with name ID\ 5) in the font's `name` table. 
+    version string or strings (with name ID\ 5) in the font's `name` table.
     In the GUI, it corresponds to value 'None' in the 'ttfautohint
     info' combo box.
 
@@ -603,7 +603,6 @@ to value 'Version' in the 'ttfautohint info' combo box.
     `point` after `IUP`.  Additionally, the `touch` parameter makes the
     bytecode *touch* the affected points; such points are no longer affected
     by `IUP` at all.  Note that in ClearType mode all deltas along the
-
     x\ axis are discarded, and deltas along the y\ axis are only executed
     for touched points.  As a consequence, vertical delta exceptions entered
     with `point` should not be used in ClearType mode.^[Unfortunately, there
@@ -902,10 +901,10 @@ Table: `latn` blue zones
   5     bottom of small letters                xzroesc
   6     bottom of descenders of small letters  pqgjy
 
-The 'round' characters (e.g. 'OCQS') from Zones 1, 2, and\ 5 are also used to
-control the overshoot handling; to improve rendering at small sizes, zone\ 4
-gets adjusted to be on the pixel grid; cf. the [`--increase-x-height`
-option](#x-height-increase-limit).
+The 'round' characters (e.g. 'OCQS') from Zones 1, 2, and\ 5 are also used
+to control the overshoot handling; to improve rendering at small sizes,
+zone\ 4 gets adjusted to be on the pixel grid; cf. the
+[`--increase-x-height`](#x-height-increase-limit) option.
 
 
 Table: `telu` blue zones
@@ -1019,8 +1018,8 @@ Composite Glyphs
 ----------------
 
 The ttfautohint library (and programs) supports two solutions for handling
-composite glyphs, to be controlled with [option
-`--composites`](#hint-composites).  This section contains some general
+composite glyphs, to be controlled with option
+[`--composites`](#hint-composites).  This section contains some general
 information, then covers the case where the option if off, while the next
 section describes how ttfautohint behaves if this option is activated.
 
@@ -1040,7 +1039,7 @@ applied to all subglyphs in its original, unshifted positions.
 The '\.ttfautohint' Glyph
 -------------------------
 
-If [option `--composites`](#hint-composites) is used, ttfautohint doesn't
+If option [`--composites`](#hint-composites) is used, ttfautohint doesn't
 hint subglyphs of composite glyphs separately.  Instead, it hints the whole
 glyph, this is, composites get recursively expanded internally so that they
 form simple glyphs, then hints are applied -- this is the normal working
@@ -1181,7 +1180,7 @@ Table: `telu` character ranges
 If a glyph's character code is not covered by a script range, it is not
 hinted (or rather, it gets hinted by the 'dummy' auto-hinting module that
 essentially does nothing).  This can be changed by specifying a *fallback
-script*; see [option `--fallback-script`](#fallback-script).
+script*; see option [`--fallback-script`](#fallback-script).
 
 
 OpenType Features
@@ -1250,7 +1249,7 @@ Note that a font might still contain some features not covered yet: OpenType
 has the concept of a *default script*; its data gets used for all scripts
 that aren't explicitly handled in a font.  By default, ttfautohint unifies
 all affected glyphs from default script features with the `latn` script.
-This can be changed with [option `--default-script`](#default-script), if
+This can be changed with option [`--default-script`](#default-script), if
 necessary.
 
 
