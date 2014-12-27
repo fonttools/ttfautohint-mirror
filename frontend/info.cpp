@@ -185,16 +185,13 @@ Fail:
 }
 
 
-int
-info(unsigned short platform_id,
-     unsigned short encoding_id,
-     unsigned short /* language_id */,
-     unsigned short name_id,
-     unsigned short* len,
-     unsigned char** str,
-     void* user)
+static int
+info_name_id_5(unsigned short platform_id,
+               unsigned short encoding_id,
+               unsigned short* len,
+               unsigned char** str,
+               Info_Data* idata)
 {
-  Info_Data* idata = (Info_Data*)user;
   unsigned char ttfautohint_string[] = TTFAUTOHINT_STRING;
   unsigned char ttfautohint_string_wide[] = TTFAUTOHINT_STRING_WIDE;
 
@@ -207,10 +204,6 @@ info(unsigned short platform_id,
   unsigned char* s;
   size_t s_len;
   size_t offset;
-
-  // if it is a version string, append our data
-  if (name_id != 5)
-    return 0;
 
   if (platform_id == 1
       || (platform_id == 3 && !(encoding_id == 1
@@ -278,6 +271,25 @@ info(unsigned short platform_id,
   *str = str_new;
   memcpy(*str + *len, v, v_len);
   *len = len_new;
+
+  return 0;
+}
+
+
+int
+info(unsigned short platform_id,
+     unsigned short encoding_id,
+     unsigned short /* language_id */,
+     unsigned short name_id,
+     unsigned short* len,
+     unsigned char** str,
+     void* user)
+{
+  Info_Data* idata = (Info_Data*)user;
+
+  // if it is a version string, append our data
+  if (name_id == 5)
+    return info_name_id_5(platform_id, encoding_id, len, str, idata);
 
   return 0;
 }
