@@ -37,8 +37,8 @@ int
 build_version_string(Info_Data* idata)
 {
   // since we use `goto' we have to initialize variables before the jumps
-  unsigned char* data;
-  unsigned char* data_wide;
+  unsigned char* info_string;
+  unsigned char* info_string_wide;
   unsigned char* dt;
   unsigned char* dtw;
   char* s = NULL;
@@ -136,31 +136,31 @@ Skip:
     goto Fail;
   }
 
-  data = (unsigned char*)malloc(sdslen(d) + 1);
-  if (!data)
+  info_string = (unsigned char*)malloc(sdslen(d) + 1);
+  if (!info_string)
   {
     ret = 1;
     goto Fail;
   }
-  memcpy(data, d, sdslen(d) + 1);
+  memcpy(info_string, d, sdslen(d) + 1);
 
-  idata->data = data;
-  idata->data_len = (unsigned short)sdslen(d);
+  idata->info_string = info_string;
+  idata->info_string_len = (unsigned short)sdslen(d);
 
   // prepare UTF16-BE version data
-  idata->data_wide_len = 2 * idata->data_len;
-  data_wide = (unsigned char*)realloc(idata->data_wide,
-                                      idata->data_wide_len);
-  if (!data_wide)
+  idata->info_string_wide_len = 2 * idata->info_string_len;
+  info_string_wide = (unsigned char*)realloc(idata->info_string_wide,
+                                             idata->info_string_wide_len);
+  if (!info_string_wide)
   {
     ret = 1;
     goto Fail;
   }
-  idata->data_wide = data_wide;
+  idata->info_string_wide = info_string_wide;
 
-  dt = idata->data;
-  dtw = idata->data_wide;
-  for (unsigned short i = 0; i < idata->data_len; i++)
+  dt = idata->info_string;
+  dtw = idata->info_string_wide;
+  for (unsigned short i = 0; i < idata->info_string_len; i++)
   {
     *(dtw++) = '\0';
     *(dtw++) = *(dt++);
@@ -173,13 +173,13 @@ Exit:
   return ret;
 
 Fail:
-  free(idata->data);
-  free(idata->data_wide);
+  free(idata->info_string);
+  free(idata->info_string_wide);
 
-  idata->data = NULL;
-  idata->data_wide = NULL;
-  idata->data_len = 0;
-  idata->data_wide_len = 0;
+  idata->info_string = NULL;
+  idata->info_string_wide = NULL;
+  idata->info_string_len = 0;
+  idata->info_string_wide_len = 0;
 
   goto Exit;
 }
@@ -210,8 +210,8 @@ info_name_id_5(unsigned short platform_id,
                                 || encoding_id == 10)))
   {
     // one-byte or multi-byte encodings
-    v = idata->data;
-    v_len = idata->data_len;
+    v = idata->info_string;
+    v_len = idata->info_string_len;
     s = ttfautohint_string;
     s_len = ttfautohint_string_len;
     offset = 2;
@@ -219,8 +219,8 @@ info_name_id_5(unsigned short platform_id,
   else
   {
     // (two-byte) UTF-16BE for everything else
-    v = idata->data_wide;
-    v_len = idata->data_wide_len;
+    v = idata->info_string_wide;
+    v_len = idata->info_string_wide_len;
     s = ttfautohint_string_wide;
     s_len = ttfautohint_string_wide_len;
     offset = 4;

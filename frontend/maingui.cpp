@@ -1007,10 +1007,10 @@ again:
 
   Info_Data info_data;
 
-  info_data.data = NULL; // must be deallocated after use
-  info_data.data_wide = NULL; // must be deallocated after use
-  info_data.data_len = 0;
-  info_data.data_wide_len = 0;
+  info_data.info_string = NULL; // must be deallocated after use
+  info_data.info_string_wide = NULL; // must be deallocated after use
+  info_data.info_string_len = 0;
+  info_data.info_string_wide_len = 0;
 
   info_data.control_name = qPrintable(fileinfo_control_file.fileName());
 
@@ -1125,8 +1125,8 @@ again:
 
   if (info_box->currentIndex())
   {
-    free(info_data.data);
-    free(info_data.data_wide);
+    free(info_data.info_string);
+    free(info_data.info_string_wide);
   }
 
   fclose(input);

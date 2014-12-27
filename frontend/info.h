@@ -20,10 +20,10 @@ extern "C" {
 
 typedef struct Info_Data_
 {
-  unsigned char* data;
-  unsigned char* data_wide;
-  unsigned short data_len;
-  unsigned short data_wide_len;
+  unsigned char* info_string;
+  unsigned char* info_string_wide;
+  unsigned short info_string_len;
+  unsigned short info_string_wide_len;
 
   int hinting_range_min;
   int hinting_range_max;
