@@ -27,12 +27,11 @@
 #define TTFAUTOHINT_STRING "; ttfautohint"
 #define TTFAUTOHINT_STRING_WIDE "\0;\0 \0t\0t\0f\0a\0u\0t\0o\0h\0i\0n\0t"
 
-// build string that gets appended to the `Version' field(s)
 
 extern "C" {
 
+// build string that gets appended to the `Version' field(s)
 // return value 1 means allocation error, value 2 too long a string
-
 int
 build_version_string(Info_Data* idata)
 {

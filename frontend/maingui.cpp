@@ -77,7 +77,7 @@ const Script_Names script_names[] =
 //   m: Hint Co&mposites
 //   n: Hint Set Range Mi&nimum
 //   o: &Output File
-//   p: Windows Comp&patibility
+//   p: Windows Com&patibility
 //   q: --
 //   r: &Run
 //   s: Fallback &Script
@@ -1466,7 +1466,7 @@ Main_GUI::create_layout(bool horizontal_layout)
 
   TTFA_box = new QCheckBox(tr("Add TTFA Info Ta&ble"), this);
   TTFA_box->setToolTip(
-    tr("If switched on, an SFNT table called <tt>TTFA</tt>"
+    tr("If switched on, an SFNT table called <i>TTFA</i>"
        " gets added to the output font,"
        " holding a dump of all parameters."
        "  In particular, it lists all control instructions."));
@@ -1627,6 +1627,7 @@ Main_GUI::create_vertical_layout()
   gui_layout->addWidget(hint_box, row++, 1);
   gui_layout->addWidget(symbol_box, row++, 1);
   gui_layout->addWidget(dehint_box, row++, 1);
+
   gui_layout->addWidget(info_label, row, 0, Qt::AlignRight);
   gui_layout->addWidget(info_box, row++, 1, Qt::AlignLeft);
   gui_layout->addWidget(TTFA_box, row++, 1);
@@ -1757,6 +1758,7 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(hint_box, row++, 4);
   gui_layout->addWidget(symbol_box, row++, 4);
   gui_layout->addWidget(dehint_box, row++, 4);
+
   gui_layout->addWidget(info_label, row, 3, Qt::AlignRight);
   gui_layout->addWidget(info_box, row++, 4, Qt::AlignLeft);
   gui_layout->addWidget(TTFA_box, row++, 4);
