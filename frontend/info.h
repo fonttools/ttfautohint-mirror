@@ -20,6 +20,8 @@ extern "C" {
 
 typedef struct Info_Data_
 {
+  bool no_info;
+  bool detailed_info;
   unsigned char* info_string;
   unsigned char* info_string_wide;
   unsigned short info_string_len;
@@ -44,7 +46,6 @@ typedef struct Info_Data_
   char fallback_script[5];
   bool symbol;
   bool dehint;
-  bool detailed_info;
   bool TTFA_info;
 
   const char* control_name;

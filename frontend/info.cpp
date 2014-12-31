@@ -287,7 +287,7 @@ info(unsigned short platform_id,
   Info_Data* idata = (Info_Data*)user;
 
   // if it is a version string, append our data
-  if (name_id == 5)
+  if (!idata->no_info && name_id == 5)
     return info_name_id_5(platform_id, encoding_id, len, str, idata);
 
   return 0;

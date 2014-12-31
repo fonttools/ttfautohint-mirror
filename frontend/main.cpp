@@ -934,44 +934,43 @@ main(int argc,
   Error_Data error_data = {control_name};
   Info_Data info_data;
 
-  if (no_info)
-    info_func = NULL;
-  else
+  info_data.no_info = no_info;
+  info_data.detailed_info = detailed_info;
+  info_data.info_string = NULL; // must be deallocated after use
+  info_data.info_string_wide = NULL; // must be deallocated after use
+  info_data.info_string_len = 0;
+  info_data.info_string_wide_len = 0;
+
+  info_data.control_name = control_name;
+
+  info_data.hinting_range_min = hinting_range_min;
+  info_data.hinting_range_max = hinting_range_max;
+  info_data.hinting_limit = hinting_limit;
+
+  info_data.gray_strong_stem_width = gray_strong_stem_width;
+  info_data.gdi_cleartype_strong_stem_width = gdi_cleartype_strong_stem_width;
+  info_data.dw_cleartype_strong_stem_width = dw_cleartype_strong_stem_width;
+
+  info_data.windows_compatibility = windows_compatibility;
+  info_data.adjust_subglyphs = adjust_subglyphs;
+  info_data.hint_composites = hint_composites;
+  info_data.increase_x_height = increase_x_height;
+  info_data.x_height_snapping_exceptions_string = x_height_snapping_exceptions_string;
+  info_data.fallback_stem_width = fallback_stem_width;
+  info_data.symbol = symbol;
+  info_data.TTFA_info = TTFA_info;
+
+  strncpy(info_data.default_script,
+          default_script,
+          sizeof (info_data.default_script));
+  strncpy(info_data.fallback_script,
+          fallback_script,
+          sizeof (info_data.fallback_script));
+
+  info_data.dehint = dehint;
+
+  if (!no_info)
   {
-    info_data.info_string = NULL; // must be deallocated after use
-    info_data.info_string_wide = NULL; // must be deallocated after use
-    info_data.info_string_len = 0;
-    info_data.info_string_wide_len = 0;
-
-    info_data.control_name = control_name;
-
-    info_data.hinting_range_min = hinting_range_min;
-    info_data.hinting_range_max = hinting_range_max;
-    info_data.hinting_limit = hinting_limit;
-
-    info_data.gray_strong_stem_width = gray_strong_stem_width;
-    info_data.gdi_cleartype_strong_stem_width = gdi_cleartype_strong_stem_width;
-    info_data.dw_cleartype_strong_stem_width = dw_cleartype_strong_stem_width;
-
-    info_data.windows_compatibility = windows_compatibility;
-    info_data.adjust_subglyphs = adjust_subglyphs;
-    info_data.hint_composites = hint_composites;
-    info_data.increase_x_height = increase_x_height;
-    info_data.x_height_snapping_exceptions_string = x_height_snapping_exceptions_string;
-    info_data.fallback_stem_width = fallback_stem_width;
-    info_data.symbol = symbol;
-    info_data.TTFA_info = TTFA_info;
-
-    strncpy(info_data.default_script,
-            default_script,
-            sizeof (info_data.default_script));
-    strncpy(info_data.fallback_script,
-            fallback_script,
-            sizeof (info_data.fallback_script));
-
-    info_data.detailed_info = detailed_info;
-    info_data.dehint = dehint;
-
     int ret = build_version_string(&info_data);
     if (ret == 1)
       fprintf(stderr, "Warning: Can't allocate memory"
