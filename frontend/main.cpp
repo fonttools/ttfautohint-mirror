@@ -969,7 +969,7 @@ main(int argc,
             fallback_script,
             sizeof (info_data.fallback_script));
 
-    info_data.detailed = detailed_info;
+    info_data.detailed_info = detailed_info;
     info_data.dehint = dehint;
 
     int ret = build_version_string(&info_data);

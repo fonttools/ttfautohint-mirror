@@ -49,7 +49,7 @@ build_version_string(Info_Data* idata)
   d = sdsempty();
 
   d = sdscatprintf(d, TTFAUTOHINT_STRING " (v%s)", VERSION);
-  if (!idata->detailed)
+  if (!idata->detailed_info)
     goto Skip;
 
   if (idata->dehint)

@@ -1037,7 +1037,7 @@ again:
   info_data.adjust_subglyphs = adjust_box->isChecked();
   info_data.hint_composites = hint_box->isChecked();
   info_data.symbol = symbol_box->isChecked();
-  info_data.detailed = info_box->currentIndex() == 2;
+  info_data.detailed_info = info_box->currentIndex() == 2;
   info_data.dehint = dehint_box->isChecked();
   info_data.TTFA_info = TTFA_box->isChecked();
 
