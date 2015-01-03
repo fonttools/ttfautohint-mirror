@@ -23,6 +23,15 @@ Version 1.3 (XXXX-XXX-XX)
 * ttfautohintGUI now correctly switches to a horizontal two-column layout if
   the standard one-column layout would exceed the screen height.
 
+* A new option `--family-suffix` makes it possible to append a suffix to a
+  font's family name in the `name` table.  This can be useful during the
+  development process: It helps the operating system to simultaneously
+  display several instances of a font that are processed with different
+  ttfautohint parameters.
+
+* The new library option `info-post-callback` helps in processing data from
+  the `name` table.
+
 
 Version 1.2 (2014-Oct-06)
 -------------------------

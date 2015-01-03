@@ -507,8 +507,8 @@ to value 'Version' in the 'ttfautohint info' combo box.
     uses the suffix with space characters removed (for example 'Foo1Bold').
 
     This option is mainly for testing purposes, enabling the operating
-    system to display fonts simultaneously that are hinted with different
-    ttfautohint parameters.
+    system to simultaneously display several instances of a font that are
+    processed with different ttfautohint parameters.
 
 ### Strong Stem Width and Positioning
 
