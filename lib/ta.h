@@ -249,6 +249,7 @@ struct FONT_
   TA_Progress_Func progress;
   void* progress_data;
   TA_Info_Func info;
+  TA_Info_Post_Func info_post;
   void* info_data;
   FT_UInt hinting_range_min;
   FT_UInt hinting_range_max;

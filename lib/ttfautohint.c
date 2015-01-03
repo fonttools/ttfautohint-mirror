@@ -88,6 +88,7 @@ TTF_autohint(const char* options,
   TA_Error_Func err = NULL;
   void* err_data = NULL;
   TA_Info_Func info = NULL;
+  TA_Info_Post_Func info_post = NULL;
   void* info_data = NULL;
 
   FT_Bool windows_compatibility = 0;
@@ -215,6 +216,8 @@ TTF_autohint(const char* options,
       info = va_arg(ap, TA_Info_Func);
     else if (COMPARE("info-callback-data"))
       info_data = va_arg(ap, void*);
+    else if (COMPARE("info-post-callback"))
+      info_post = va_arg(ap, TA_Info_Post_Func);
     else if (COMPARE("out-buffer"))
     {
       out_file = NULL;
@@ -403,6 +406,7 @@ No_check:
   font->progress = progress;
   font->progress_data = progress_data;
   font->info = info;
+  font->info_post = info_post;
   font->info_data = info_data;
 
   font->debug = debug;

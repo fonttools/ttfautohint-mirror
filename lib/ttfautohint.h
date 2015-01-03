@@ -153,7 +153,12 @@ typedef void
  * Callback: `TA_Info_Func`
  * ------------------------
  *
- * A callback function to manipulate strings in the `name` table.
+ * A callback function to access or modify strings in the `name` table; it
+ * is called in a loop that iterates over all `name` table entries.  If
+ * defined, [`TA_Info_Post_Func`](#callback-ta_info_post_func) gets executed
+ * after this loop so that the collected data can be written back to the
+ * `name` table.
+ *
  * *platform_id*, *encoding_id*, *language_id*, and *name_id* are the
  * identifiers of a `name` table entry pointed to by *str* with a length
  * pointed to by *str_len* (in bytes; the string has no trailing NULL byte).
@@ -183,6 +188,40 @@ typedef int
                 unsigned short* str_len,
                 unsigned char** str,
                 void* info_data);
+
+/*
+ * ```
+ *
+ */
+
+
+/*
+ * Callback: `TA_Info_Post_Func`
+ * -----------------------------
+ *
+ * A callback function, giving the application the possibility to access or
+ * modify strings in the `name` table after
+ * [`TA_Info_Func`](#callback-ta_info_func) has iterated over all `name`
+ * table entries.
+ *
+ * It is expected that `TA_Info_Func` stores pointers to the `name` table
+ * entries it wants to access or modify; the only parameter is thus
+ * *info_data*, which is a void pointer to the user-supplied data already
+ * provided to `TA_Info_Func`.  Obviously, calling `TA_Info_Post_Func` with
+ * `TA_Info_Func` undefined has no effect.
+ *
+ * The `name` table strings are allocated with `malloc`; the application
+ * should reallocate the data if necessary, ensuring that no string length
+ * exceeds 0xFFFF.
+ *
+ * If an error occurs, return a non-zero value and don't modify the affected
+ * string and string length (such errors are handled as non-fatal).
+ *
+ * ```C
+ */
+
+typedef int
+(*TA_Info_Post_Func)(void* info_data);
 
 /*
  * ```
@@ -374,11 +413,18 @@ typedef int
  * :   A pointer of type [`TA_Info_Func`](#callback-ta_info_func),
  *     specifying a callback function for manipulating the `name` table.
  *     This function gets called for each `name` table entry.  If not set or
- *     set to NULL, the table data stays unmodified.
+ *     set to NULL, `TA_Info_Func` is not called.
+ *
+ * `info-post-callback`
+ * :   A pointer of type [`TA_Info_Post_Func`](#callback-ta_info_post_func),
+ *     specifying a callback function for manipulating the `name` table.  It
+ *     is called after the function specified with `info-callback` has
+ *     iterated over all `name` table entries.  If not set or set to NULL,
+ *     `TA_Info_Post_Func` is not called.
  *
  * `info-callback-data`
  * :   A pointer of type `void*` to user data that is passed to the info
- *     callback function.
+ *     callback functions.
  *
  * `debug`
  * :   If this integer is set to\ 1, lots of debugging information is print

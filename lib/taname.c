@@ -200,17 +200,23 @@ parse_name_records(FT_Byte** curp,
 
     if (font->info)
     {
-      if (font->info(r->platform_id,
-                     r->encoding_id,
-                     r->language_id,
-                     r->name_id,
-                     &r->len,
-                     &r->str,
-                     font->info_data))
-        continue;
+      /* we ignore the return value of `font->info' */
+      font->info(r->platform_id,
+                 r->encoding_id,
+                 r->language_id,
+                 r->name_id,
+                 &r->len,
+                 &r->str,
+                 font->info_data);
     }
+
     count++;
   }
+
+  /* let the user modify `name' table entries */
+  if (font->info && font->info_post)
+    /* we ignore the return value of `font->info_post' */
+    font->info_post(font->info_data);
 
   /* shrink name record array if necessary */
   n->name_records = (Name_Record*)realloc(n->name_records,
