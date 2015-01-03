@@ -528,7 +528,7 @@ info(unsigned short platform_id,
 // If `name' isn't a substring of `str', append `suffix' to `str'.
 // Do nothing in case of allocation error or if resulting string is too long.
 
-void
+static void
 insert_suffix(sds suffix,
               sds name,
               unsigned short* len,
