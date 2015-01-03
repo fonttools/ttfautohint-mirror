@@ -499,7 +499,7 @@ to value 'Version' in the 'ttfautohint info' combo box.
 `--family-suffix=`*string*, `-F`\ *string*
 :   A string that gets appended to the family name in entries with IDs 1, 4,
     6, 16, and\ 21 in the font's `name` table.  Allowed input is ASCII in
-    the range 0x20-0x7E except characters from the string `%()/<>[]{}`.
+    the range 0x20-0x7E except characters `%()/<>[]{}`.
 
     Assuming an input family name 'Foo', a full name 'Foo Bold', and a
     family suffix '\ 1', the output family name will be 'Foo 1' and the
