@@ -1382,7 +1382,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   increase_box = new QSpinBox;
   increase_label->setBuddy(increase_box);
   increase_label->setToolTip(
-    tr("For PPEM values in the range 5&nbsp;&lt; PPEM &lt;&nbsp;<i>n</i>,"
+    tr("For PPEM values in the range 6&nbsp;&le; PPEM &le;&nbsp;<i>n</i>,"
        " where <i>n</i> is the value selected by this spin box,"
        " round up the font's x&nbsp;height much more often than normally.<br>"
        "Use this if holes in letters like <i>e</i> get filled,"
