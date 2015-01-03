@@ -15,6 +15,8 @@
 #define __INFO_H__
 
 #include <ttfautohint.h>
+#include <stdbool.h> // for llrb.h
+#include <llrb.h>
 
 extern "C" {
 
@@ -26,6 +28,9 @@ typedef struct Info_Data_
   unsigned char* info_string_wide;
   unsigned short info_string_len;
   unsigned short info_string_wide_len;
+
+  const char* family_suffix;
+  void* family_data_head; // a red-black tree
 
   int hinting_range_min;
   int hinting_range_max;
@@ -52,10 +57,13 @@ typedef struct Info_Data_
 } Info_Data;
 
 
+char*
+check_family_suffix(const char* s);
+
 int
 build_version_string(Info_Data* idata);
 
-TA_Error
+int
 info(unsigned short platform_id,
      unsigned short encoding_id,
      unsigned short language_id,
@@ -63,6 +71,9 @@ info(unsigned short platform_id,
      unsigned short* str_len,
      unsigned char** str,
      void* user);
+
+int
+info_post(void* user);
 
 } // extern "C"
 

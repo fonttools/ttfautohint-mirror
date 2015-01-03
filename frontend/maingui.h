@@ -51,7 +51,7 @@ public:
            const char*, int,
            bool, bool, bool,
            bool, bool, bool,
-           const char*, const char*,
+           const char*, const char*, const char*,
            bool, bool, bool);
   ~Main_GUI();
 
@@ -74,6 +74,7 @@ private slots:
   void absolute_output();
   void absolute_control();
   void check_number_set();
+  void check_family_suffix();
   void clear_status_bar();
   void check_watch();
   void watch_files();
@@ -99,6 +100,7 @@ private:
   int detailed_info;
   int default_script_idx;
   int fallback_script_idx;
+  QString family_suffix;
   int symbol;
   int dehint;
   int TTFA_info;
@@ -177,6 +179,8 @@ private:
 
   QLabel* snapping_label;
   Tooltip_Line_Edit* snapping_line;
+  QLabel* family_suffix_label;
+  Tooltip_Line_Edit* family_suffix_line;
 
   QLabel* stem_width_label;
   QString stem_width_label_text_with_key;

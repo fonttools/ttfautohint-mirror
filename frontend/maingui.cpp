@@ -107,6 +107,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
                    bool detailed,
                    const char* dflt,
                    const char* fallback,
+                   const char* suffix,
                    bool symb,
                    bool dh,
                    bool TTFA)
@@ -125,6 +126,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   hint_composites(composites),
   no_info(no),
   detailed_info(detailed),
+  family_suffix(suffix),
   symbol(symb),
   dehint(dh),
   TTFA_info(TTFA)
@@ -234,6 +236,7 @@ Main_GUI::browse_input()
                    tr("Open Input File"),
                    QDir::homePath(),
                    "");
+
   if (!file.isEmpty())
     input_line->setText(QDir::toNativeSeparators(file));
 }
@@ -584,6 +587,23 @@ Main_GUI::check_number_set()
                                     6, 0x7FFF);
     snapping_line->setText(new_str);
     free(new_str);
+  }
+}
+
+
+void
+Main_GUI::check_family_suffix()
+{
+  QString text = family_suffix_line->text();
+  const char* s = qPrintable(text);
+
+  if (const char* pos = ::check_family_suffix(s))
+  {
+    statusBar()->setStyleSheet("color: red;");
+    statusBar()->showMessage(
+      tr("invalid character (use printable ASCII except %()/<>[]{})"));
+    family_suffix_line->setFocus(Qt::OtherFocusReason);
+    family_suffix_line->setCursorPosition(pos - s);
   }
 }
 
@@ -998,6 +1018,7 @@ again:
   dialog.setWindowModality(Qt::WindowModal);
 
   TA_Info_Func info_func = info;
+  TA_Info_Post_Func info_post_func = info_post;
   GUI_Progress_Data gui_progress_data = {-1, true, &dialog};
   GUI_Error_Data gui_error_data = {this, locale, output_name, control_name,
                                    &ignore_restrictions, false};
@@ -1029,6 +1050,11 @@ again:
                                 : increase_box->value();
   info_data.x_height_snapping_exceptions_string =
     qPrintable(x_height_snapping_exceptions_string);
+
+  info_data.family_suffix =
+    family_suffix_line->text().toLocal8Bit().constData();
+  info_data.family_data_head = NULL;
+
   info_data.fallback_stem_width = default_stem_width_box->isChecked()
                                   ? 0
                                   : stem_width_box->value();
@@ -1070,6 +1096,9 @@ again:
         QMessageBox::Ok);
   }
 
+  if (!*info_data.family_suffix)
+    info_post_func = NULL;
+
   if (info_data.symbol
       && info_data.fallback_stem_width
       && !strcmp(info_data.fallback_script, "none"))
@@ -1095,7 +1124,7 @@ again:
                  "dw-cleartype-strong-stem-width,"
                  "progress-callback, progress-callback-data,"
                  "error-callback, error-callback-data,"
-                 "info-callback, info-callback-data,"
+                 "info-callback, info-post-callback, info-callback-data,"
                  "ignore-restrictions,"
                  "windows-compatibility,"
                  "adjust-subglyphs,"
@@ -1112,7 +1141,7 @@ again:
                  info_data.dw_cleartype_strong_stem_width,
                  gui_progress, &gui_progress_data,
                  gui_error, &gui_error_data,
-                 info_func, &info_data,
+                 info_func, info_post_func, &info_data,
                  ignore_restrictions,
                  info_data.windows_compatibility,
                  info_data.adjust_subglyphs,
@@ -1387,6 +1416,20 @@ Main_GUI::create_layout(bool horizontal_layout)
        "&nbsp;&nbsp;<tt>-</tt> (meaning all possible PPEM values)"));
 
   //
+  // family suffix
+  //
+  family_suffix_label = new QLabel(tr("Family Suffix&:"));
+  family_suffix_line = new Tooltip_Line_Edit;
+  family_suffix_label->setBuddy(family_suffix_line);
+  family_suffix_label->setToolTip(
+    tr("A string that gets appended to the family name entries"
+       " (name IDs 1, 4, 6, 16, and&nbsp;21)"
+       " in the font's <i>name</i> table.<br>"
+       "Mainly for testing purposes, enabling the operating system"
+       " to display fonts simultaneously that are hinted"
+       " with different <b>TTFautohint</b> parameters."));
+
+  //
   // fallback stem width
   //
   stem_width_label_text_with_key = tr("Fallbac&k Stem Width:");
@@ -1630,6 +1673,8 @@ Main_GUI::create_vertical_layout()
   gui_layout->addWidget(info_label, row, 0, Qt::AlignRight);
   gui_layout->addWidget(info_box, row++, 1, Qt::AlignLeft);
   gui_layout->addWidget(TTFA_box, row++, 1);
+  gui_layout->addWidget(family_suffix_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(family_suffix_line, row++, 1, Qt::AlignLeft);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
@@ -1761,6 +1806,8 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(info_label, row, 3, Qt::AlignRight);
   gui_layout->addWidget(info_box, row++, 4, Qt::AlignLeft);
   gui_layout->addWidget(TTFA_box, row++, 4);
+  gui_layout->addWidget(family_suffix_label, row, 3, Qt::AlignRight);
+  gui_layout->addWidget(family_suffix_line, row++, 4, Qt::AlignLeft);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
@@ -1826,6 +1873,11 @@ Main_GUI::create_connections()
   connect(snapping_line, SIGNAL(editingFinished()), this,
           SLOT(check_number_set()));
   connect(snapping_line, SIGNAL(textEdited(QString)), this,
+          SLOT(clear_status_bar()));
+
+  connect(family_suffix_line, SIGNAL(editingFinished()), this,
+          SLOT(check_family_suffix()));
+  connect(family_suffix_line, SIGNAL(textEdited(QString)), this,
           SLOT(clear_status_bar()));
 
   connect(default_stem_width_box, SIGNAL(clicked()), this,
@@ -1906,6 +1958,7 @@ Main_GUI::set_defaults()
   }
 
   snapping_line->setText(x_height_snapping_exceptions_string);
+  family_suffix_line->setText(family_suffix);
 
   if (fallback_stem_width)
     stem_width_box->setValue(fallback_stem_width);

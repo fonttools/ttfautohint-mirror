@@ -494,6 +494,22 @@ to value 'Version' in the 'ttfautohint info' combo box.
     this data so that a font can be processed another time with exactly the
     same parameters, thus providing a means for round-tripping fonts.
 
+### Family Suffix
+
+`--family-suffix=`*string*, `-F`\ *string*
+:   A string that gets appended to the family name in entries with IDs 1, 4,
+    6, 16, and\ 21 in the font's `name` table.  Allowed input is ASCII in
+    the range 0x20-0x7E except characters from the string `%()/<>[]{}`.
+
+    Assuming an input family name 'Foo', a full name 'Foo Bold', and a
+    family suffix '\ 1', the output family name will be 'Foo 1' and the
+    full name 'Foo 1 Bold'.  For the PostScript name in ID\ 6, ttfautohint
+    uses the suffix with space characters removed (for example 'Foo1Bold').
+
+    This option is mainly for testing purposes, enabling the operating
+    system to display fonts simultaneously that are hinted with different
+    ttfautohint parameters.
+
 ### Strong Stem Width and Positioning
 
 `--strong-stem-width=`*string*, `-w`\ *string*

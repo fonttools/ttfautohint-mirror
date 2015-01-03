@@ -275,6 +275,8 @@ show_help(bool
 "  -d, --dehint               remove all hints\n"
 "  -D, --default-script=S     set default OpenType script (default: latn)\n"
 "  -f, --fallback-script=S    set fallback script (default: none)\n"
+"  -F, --family-suffix=S      append suffix to the family name string(s)\n"
+"                             in the `name' table\n"
 "  -G, --hinting-limit=N      switch off hinting above this PPEM value\n"
 "                             (default: %d); value 0 means no limit\n"
 "  -h, --help                 display this help and exit\n"
@@ -506,6 +508,8 @@ main(int argc,
   bool have_fallback_script = false;
   const char* x_height_snapping_exceptions_string = NULL;
   bool have_x_height_snapping_exceptions_string = false;
+  const char* family_suffix = NULL;
+  bool have_family_suffix = false;
 
   bool dehint = false;
 
@@ -515,6 +519,7 @@ main(int argc,
   TA_Progress_Func progress_func = NULL;
   TA_Error_Func err_func = err;
   TA_Info_Func info_func = info;
+  TA_Info_Post_Func info_post_func = info_post;
 
   const char* control_name = NULL;
 #endif
@@ -561,6 +566,7 @@ main(int argc,
       {"detailed-info", no_argument, NULL, 'I'},
       {"fallback-script", required_argument, NULL, 'f'},
       {"fallback-stem-width", required_argument, NULL, 'H'},
+      {"family-suffix", required_argument, NULL, 'F'},
       {"hinting-limit", required_argument, NULL, 'G'},
       {"hinting-range-max", required_argument, NULL, 'r'},
       {"hinting-range-min", required_argument, NULL, 'l'},
@@ -608,9 +614,9 @@ main(int argc,
     int option_index;
     int c = getopt_long_only(argc, argv,
 #ifdef BUILD_GUI
-                             "cdD:f:G:hH:iIl:npr:stVvw:Wx:X:",
+                             "cdD:f:F:G:hH:iIl:npr:stVvw:Wx:X:",
 #else
-                             "cdD:f:G:hH:iIl:m:npr:stVvw:Wx:X:",
+                             "cdD:f:F:G:hH:iIl:m:npr:stVvw:Wx:X:",
 #endif
                              long_options, &option_index);
     if (c == -1)
@@ -634,6 +640,11 @@ main(int argc,
     case 'f':
       fallback_script = optarg;
       have_fallback_script = true;
+      break;
+
+    case 'F':
+      family_suffix = optarg;
+      have_family_suffix = true;
       break;
 
     case 'G':
@@ -787,6 +798,8 @@ main(int argc,
     x_height_snapping_exceptions_string = "";
   if (!have_fallback_stem_width)
     fallback_stem_width = 0; /* redundant, but avoids a compiler warning */
+  if (!have_family_suffix)
+    family_suffix = "";
 
 #ifndef BUILD_GUI
 
@@ -859,6 +872,17 @@ main(int argc,
     fprintf(stderr,
             "Warning: Setting a fallback stem width for a symbol font\n"
             "         without setting a fallback script has no effect\n");
+
+  if (const char* pos = check_family_suffix(family_suffix))
+  {
+    fprintf(stderr,
+            "Invalid character in family suffix:\n"
+            "  %s\n"
+            "  %*s\n",
+            family_suffix,
+            int(pos - family_suffix + 1), "^");
+    exit(EXIT_FAILURE);
+  }
 
   int num_args = argc - optind;
 
@@ -934,6 +958,9 @@ main(int argc,
   Error_Data error_data = {control_name};
   Info_Data info_data;
 
+  if (!*family_suffix)
+    info_post_func = NULL;
+
   info_data.no_info = no_info;
   info_data.detailed_info = detailed_info;
   info_data.info_string = NULL; // must be deallocated after use
@@ -956,6 +983,8 @@ main(int argc,
   info_data.hint_composites = hint_composites;
   info_data.increase_x_height = increase_x_height;
   info_data.x_height_snapping_exceptions_string = x_height_snapping_exceptions_string;
+  info_data.family_suffix = family_suffix;
+  info_data.family_data_head = NULL;
   info_data.fallback_stem_width = fallback_stem_width;
   info_data.symbol = symbol;
   info_data.TTFA_info = TTFA_info;
@@ -992,7 +1021,7 @@ main(int argc,
                  "dw-cleartype-strong-stem-width,"
                  "progress-callback, progress-callback-data,"
                  "error-callback, error-callback-data,"
-                 "info-callback, info-callback-data,"
+                 "info-callback, info-post-callback, info-callback-data,"
                  "ignore-restrictions, windows-compatibility,"
                  "adjust-subglyphs, hint-composites,"
                  "increase-x-height, x-height-snapping-exceptions,"
@@ -1004,7 +1033,7 @@ main(int argc,
                  dw_cleartype_strong_stem_width,
                  progress_func, &progress_data,
                  err_func, &error_data,
-                 info_func, &info_data,
+                 info_func, info_post_func, &info_data,
                  ignore_restrictions, windows_compatibility,
                  adjust_subglyphs, hint_composites,
                  increase_x_height, x_height_snapping_exceptions_string,
@@ -1073,7 +1102,7 @@ main(int argc,
                    x_height_snapping_exceptions_string, fallback_stem_width,
                    ignore_restrictions, windows_compatibility, adjust_subglyphs,
                    hint_composites, no_info, detailed_info,
-                   default_script, fallback_script,
+                   default_script, fallback_script, family_suffix,
                    symbol, dehint, TTFA_info);
 
     dummy.move(-50000, -50000);
@@ -1093,7 +1122,7 @@ main(int argc,
                x_height_snapping_exceptions_string, fallback_stem_width,
                ignore_restrictions, windows_compatibility, adjust_subglyphs,
                hint_composites, no_info, detailed_info,
-               default_script, fallback_script,
+               default_script, fallback_script, family_suffix,
                symbol, dehint, TTFA_info);
   gui.show();
 
