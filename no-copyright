@@ -32,12 +32,17 @@ pledgies
 no-copyright
 update-copyright
 #
+doc/footnote-popup.js
 doc/c2pandoc.sed
 doc/img
+doc/longtable-patched.sty
+doc/jquery-1.11.2.min.js
 doc/strip-comments.sh
 doc/template.html
 doc/template.tex
+doc/toc-unfold.js
 doc/ttfautohint-css.html
+doc/ttfautohint-js.html
 #
 lib/afblue.pl
 lib/llrb.h
