@@ -1141,7 +1141,7 @@ TA_create_glyph_data(FT_Outline* outline,
   memcpy(p, header, 10);
   p += 10;
 
-  glyph->ins_extra_len = 0; /* does nothing yet */
+  glyph->ins_extra_len = 0;
   glyph->ins_len = 0;
   glyph->ins_buf = NULL;
 
