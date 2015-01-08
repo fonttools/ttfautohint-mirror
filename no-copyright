@@ -1,7 +1,7 @@
-# Files which don't get a copyright, or which are taken from elsewhere.
+# Files that don't get a copyright, or which are taken from elsewhere.
 #
 # All lines in this file are patterns, including the comment lines; this
-# means that e.g. `bootstrap' matches all files which have this string in
+# means that e.g. `bootstrap' matches all files that have this string in
 # the file name (including the path relative to the current directory,
 # always starting with `./').
 #

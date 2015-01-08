@@ -4,11 +4,11 @@ ttfautohint 1.3
 by Werner Lemberg <wl@gnu.org>
 
 
-This project provides a library which takes a TrueType font as the input,
+This project provides a library that takes a TrueType font as the input,
 removes its bytecode instructions (if any), and returns a new font where all
 glyphs are bytecode hinted using the information given by FreeType's
 auto-hinting module.  The idea is to provide the excellent quality of the
-auto-hinter on platforms which don't use FreeType.
+auto-hinter on platforms that don't use FreeType.
 
 The library has a single API function, `TTF_autohint'; see
 `lib/ttfautohint.h' for a detailed description.  Note that the library

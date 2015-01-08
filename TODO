@@ -34,7 +34,7 @@ user-defined blue zones?
 
 control the width of blue zones
 
-add control over character ranges which define a script; in particular, add
+add control over character ranges that define a script; in particular, add
   support for the PUA
 
 handle normal and bold fonts differently; cf. Infinality patches;
@@ -53,10 +53,10 @@ make switching between smooth and strong hinting dependent on user-defined
 
 improve `adjust-subglyphs' by making the used PPEM value configurable
 
-allow hinting of single glyphs, using a config file which holds the global
+allow hinting of single glyphs, using a config file that holds the global
   settings
 
-better handling of `incomplete' fonts (this is, fonts which lack the minimum
+better handling of `incomplete' fonts (this is, fonts that lack the minimum
   set of glyphs necessary to determine the blue zones)
 
 add second-pass analysis to improve positioning of composite glyphs
@@ -65,7 +65,7 @@ add second-pass analysis to improve positioning of composite glyphs
 minor improvements
 ------------------
 
-reject fonts which are `hopeless' (for example, `Lipstick')
+reject fonts that are `hopeless' (for example, `Lipstick')
 
 correctly set `lowestRecPPEM' field in `head'
 
@@ -84,7 +84,7 @@ reduce output size of option -p:
   2. adjust subglyphs only if result of item 1 differs more than given
      threshold (default 0.5%?)
 
-make it possible to hint fonts which aren't alphabetic at all, for example,
+make it possible to hint fonts that aren't alphabetic at all, for example,
   icons; to do so, provide means to skip the global feature analysis
 
 better control of -i output

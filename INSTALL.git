@@ -2,7 +2,7 @@
 building and installing ttfautohint from git
 ============================================
 
-Building ttfautohint from the git repository needs some tools which are not
+Building ttfautohint from the git repository needs some tools that are not
 required when building from a release:
 
   autoconf (2.65)
