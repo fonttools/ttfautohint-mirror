@@ -34,7 +34,15 @@ ta_axis_hints_new_segment(TA_AxisHints axis,
   TA_Segment segment = NULL;
 
 
-  if (axis->num_segments >= axis->max_segments)
+  if (axis->num_segments < TA_SEGMENTS_EMBEDDED)
+  {
+    if (axis->segments == NULL)
+    {
+      axis->segments = axis->embedded.segments;
+      axis->max_segments = TA_SEGMENTS_EMBEDDED;
+    }
+  }
+  else if (axis->num_segments >= axis->max_segments)
   {
     TA_Segment segments_new;
 
@@ -54,12 +62,24 @@ ta_axis_hints_new_segment(TA_AxisHints axis,
         || new_max > big_max)
       new_max = big_max;
 
-    segments_new = (TA_Segment)realloc(axis->segments,
-                                       new_max * sizeof (TA_SegmentRec));
-    if (!segments_new)
-      return FT_Err_Out_Of_Memory;
+    if (axis->segments == axis->embedded.segments)
+    {
+      axis->segments = (TA_Segment)malloc(new_max * sizeof (TA_SegmentRec));
+      if (!axis->segments)
+        return FT_Err_Out_Of_Memory;
 
-    axis->segments = segments_new;
+      memcpy(axis->segments, axis->embedded.segments,
+             sizeof (axis->embedded.segments));
+    }
+    else
+    {
+      segments_new = (TA_Segment)realloc(axis->segments,
+                                         new_max * sizeof (TA_SegmentRec));
+      if (!segments_new)
+        return FT_Err_Out_Of_Memory;
+      axis->segments = segments_new;
+    }
+
     axis->max_segments = new_max;
   }
 
@@ -85,7 +105,15 @@ ta_axis_hints_new_edge(TA_AxisHints axis,
   TA_Edge edges;
 
 
-  if (axis->num_edges >= axis->max_edges)
+  if (axis->num_edges < TA_EDGES_EMBEDDED)
+  {
+    if (axis->edges == NULL)
+    {
+      axis->edges = axis->embedded.edges;
+      axis->max_edges = TA_EDGES_EMBEDDED;
+    }
+  }
+  else if (axis->num_edges >= axis->max_edges)
   {
     TA_Edge edges_new;
 
@@ -105,12 +133,24 @@ ta_axis_hints_new_edge(TA_AxisHints axis,
         || new_max > big_max)
       new_max = big_max;
 
-    edges_new = (TA_Edge)realloc(axis->edges,
-                                 new_max * sizeof (TA_EdgeRec));
-    if (!edges_new)
-      return FT_Err_Out_Of_Memory;
+    if (axis->edges == axis->embedded.edges)
+    {
+      axis->edges = (TA_Edge)malloc(new_max * sizeof (TA_EdgeRec));
+      if (!axis->edges)
+        return FT_Err_Out_Of_Memory;
 
-    axis->edges = edges_new;
+      memcpy(axis->edges, axis->embedded.edges,
+             sizeof (axis->embedded.edges));
+    }
+    else
+    {
+      edges_new = (TA_Edge)realloc(axis->edges,
+                                   new_max * sizeof (TA_EdgeRec));
+      if (!edges_new)
+        return FT_Err_Out_Of_Memory;
+      axis->edges = edges_new;
+    }
+
     axis->max_edges = new_max;
   }
 
@@ -424,13 +464,19 @@ ta_glyph_hints_done(TA_GlyphHints hints)
 
     axis->num_segments = 0;
     axis->max_segments = 0;
-    free(axis->segments);
-    axis->segments = NULL;
+    if (axis->segments != axis->embedded.segments)
+    {
+      free(axis->segments);
+      axis->segments = NULL;
+    }
 
     axis->num_edges = 0;
     axis->max_edges = 0;
-    free(axis->edges);
-    axis->edges = NULL;
+    if (axis->edges != axis->embedded.edges)
+    {
+      free(axis->edges);
+      axis->edges = NULL;
+    }
   }
 
   if (hints->contours != hints->embedded.contours)

@@ -299,6 +299,9 @@ typedef struct TA_EdgeRec_
 } TA_EdgeRec;
 
 
+#define TA_SEGMENTS_EMBEDDED 18 /* number of embedded segments */
+#define TA_EDGES_EMBEDDED 12 /* number of embedded edges */
+
 typedef struct TA_AxisHintsRec_
 {
   FT_Int num_segments; /* number of used segments */
@@ -313,6 +316,13 @@ typedef struct TA_AxisHintsRec_
   TA_Edge edges; /* edges array */
 
   TA_Direction major_dir; /* either vertical or horizontal */
+
+  /* two arrays to avoid allocation penalty */
+  struct
+  {
+    TA_SegmentRec segments[TA_SEGMENTS_EMBEDDED];
+    TA_EdgeRec edges[TA_EDGES_EMBEDDED];
+  } embedded;
 } TA_AxisHintsRec, *TA_AxisHints;
 
 
