@@ -401,7 +401,8 @@ ta_direction_compute(FT_Pos dx,
 void
 ta_glyph_hints_init(TA_GlyphHints hints)
 {
-  memset(hints, 0, sizeof (TA_GlyphHintsRec));
+  /* no need to initialize the embedded items */
+  memset(hints, 0, sizeof (*hints) - sizeof (hints->embedded));
 }
 
 
@@ -432,15 +433,21 @@ ta_glyph_hints_done(TA_GlyphHints hints)
     axis->edges = NULL;
   }
 
-  free(hints->contours);
-  hints->contours = NULL;
+  if (hints->contours != hints->embedded.contours)
+  {
+    free(hints->contours);
+    hints->contours = NULL;
+  }
   hints->max_contours = 0;
   hints->num_contours = 0;
 
-  free(hints->points);
-  hints->points = NULL;
-  hints->num_points = 0;
+  if (hints->points != hints->embedded.points)
+  {
+    free(hints->points);
+    hints->points = NULL;
+  }
   hints->max_points = 0;
+  hints->num_points = 0;
 }
 
 
@@ -523,10 +530,16 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
   /* first of all, reallocate the contours array if necessary */
   new_max = (FT_UInt)outline->n_contours;
   old_max = hints->max_contours;
-  if (new_max > old_max)
+
+  if (new_max <= TA_CONTOURS_EMBEDDED)
+    hints->contours = hints->embedded.contours;
+  else if (new_max > old_max)
   {
     TA_Point* contours_new;
 
+
+    if (hints->contours == hints->embedded.contours)
+      hints->contours = NULL;
 
     new_max = (new_max + 3) & ~3; /* round up to a multiple of 4 */
 
@@ -543,10 +556,16 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
   /* two additional point positions, used to hint metrics appropriately */
   new_max = (FT_UInt)(outline->n_points + 2);
   old_max = hints->max_points;
-  if (new_max > old_max)
+
+  if (new_max <= TA_POINTS_EMBEDDED)
+    hints->points = hints->embedded.points;
+  else if (new_max > old_max)
   {
     TA_Point points_new;
 
+
+    if (hints->points == hints->embedded.points)
+      hints->points = NULL;
 
     new_max = (new_max + 2 + 7) & ~7; /* round up to a multiple of 8 */
 

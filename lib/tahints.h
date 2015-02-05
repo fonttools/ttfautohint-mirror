@@ -392,6 +392,10 @@ typedef void
                      TA_Edge lower_bound,
                      TA_Edge upper_bound);
 
+
+#define TA_POINTS_EMBEDDED 96 /* number of embedded points */
+#define TA_CONTOURS_EMBEDDED 8 /* number of embedded contours */
+
 typedef struct TA_GlyphHintsRec_
 {
   FT_Fixed x_scale;
@@ -419,6 +423,14 @@ typedef struct TA_GlyphHintsRec_
 
   TA_Hints_Recorder recorder;
   void* user;
+
+  /* two arrays to avoid allocation penalty; */
+  /* the `embedded' structure must be the last element! */
+  struct
+  {
+    TA_Point contours[TA_CONTOURS_EMBEDDED];
+    TA_PointRec points[TA_POINTS_EMBEDDED];
+  } embedded;
 } TA_GlyphHintsRec;
 
 
