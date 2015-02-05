@@ -94,6 +94,12 @@ const TA_Script_UniRangeRec ta_telu_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
+const TA_Script_UniRangeRec ta_thai_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0E00UL, 0x0E7FUL), /* Thai */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
 const TA_Script_UniRangeRec ta_none_uniranges[] =
 {
   TA_UNIRANGE_REC(0UL, 0UL)

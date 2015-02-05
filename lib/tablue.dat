@@ -126,9 +126,23 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   // this is just for convenience to simplify reading
   TA_BLUE_STRING_TELUGU_TOP
     "ఇ ఌ ఙ ఞ ణ ఱ ౯"
-
   TA_BLUE_STRING_TELUGU_BOTTOM
     "అ క చ ర ఽ ౨ ౬"
+
+  TA_BLUE_STRING_THAI_TOP
+    "บ เ แ อ ก า"
+  TA_BLUE_STRING_THAI_BOTTOM
+    "บ ป ษ ฯ อ ย ฮ"
+  TA_BLUE_STRING_THAI_ASCENDER
+    "ป ฝ ฟ"
+  TA_BLUE_STRING_THAI_LARGE_ASCENDER
+    "โ ใ ไ"
+  TA_BLUE_STRING_THAI_DESCENDER
+    "ฎ ฏ ฤ ฦ"
+  TA_BLUE_STRING_THAI_LARGE_DESCENDER
+    "ญ ฐ"
+  TA_BLUE_STRING_THAI_DIGIT_TOP
+    "๐ ๑ ๓"
 
 // The blue zone stringsets, as used in the script styles, cf. `tastyles.h'.
 //
@@ -247,5 +261,16 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_TELUGU_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
     { TA_BLUE_STRING_TELUGU_BOTTOM, 0                          }
     { TA_BLUE_STRING_MAX,           0                          }
+
+  TA_BLUE_STRINGSET_THAI
+    { TA_BLUE_STRING_THAI_TOP,             TA_BLUE_PROPERTY_LATIN_TOP      |
+                                           TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_THAI_BOTTOM,          0                                 }
+    { TA_BLUE_STRING_THAI_ASCENDER,        TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_THAI_LARGE_ASCENDER,  TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_THAI_DESCENDER,       0                                 }
+    { TA_BLUE_STRING_THAI_LARGE_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_THAI_DIGIT_TOP,       0                                 }
+    { TA_BLUE_STRING_MAX,                  0                                 }
 
 // END

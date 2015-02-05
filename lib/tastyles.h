@@ -120,6 +120,13 @@ STYLE(telu_dflt, TELU_DFLT,
       TA_BLUE_STRINGSET_TELU,
       TA_COVERAGE_DEFAULT)
 
+STYLE(thai_dflt, THAI_DFLT,
+      "Thai default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_THAI,
+      TA_BLUE_STRINGSET_THAI,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(none_dflt, NONE_DFLT,
       "no style",
       TA_WRITING_SYSTEM_DUMMY,

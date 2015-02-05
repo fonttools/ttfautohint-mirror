@@ -58,6 +58,11 @@ SCRIPT(telu, TELU,
        HB_SCRIPT_TELUGU,
        0xC19, 0xC12, 0x0) /* ఙ ఒ */
 
+SCRIPT(thai, THAI,
+       "Thai",
+       HB_SCRIPT_THAI,
+       0xE32, 0xE45, 0xE50) /* า ๅ ๐ */
+
 SCRIPT(none, NONE,
        "no script",
        HB_SCRIPT_INVALID,
