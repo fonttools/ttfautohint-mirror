@@ -189,7 +189,7 @@ err(TA_Error error,
   {
     if (error < 0x100)
       fprintf(stderr, "An error with code 0x%02x occurred"
-                        " while autohinting fonts",
+                        " while autohinting fonts\n",
                       error);
     else if (error >= 0x100 && error < 0x200)
     {
