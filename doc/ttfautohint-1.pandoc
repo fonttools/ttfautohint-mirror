@@ -828,6 +828,9 @@ Table: script-specific standard characters of the 'latin' writing system
               '0', U+0030, DIGIT ZERO
   `telu`      'ఙ', U+0C19, TELUGU LETTER NGA
               'ఒ', U+0C12, TELUGU LETTER O
+  `thai`      'า', U+0E32, THAI CHARACTER SARA AA
+              'ๅ', U+0E45, THAI CHARACTER LAKKHANGYAO
+              '๐', U+0E50, THAI DIGIT ZERO
 
 
   * Glyph Analysis
@@ -929,6 +932,19 @@ Table: `telu` blue zones
   ----  -----------                            ------------
   1     top                                    ఇ ఌ ఙ ఞ ణ ఱ ౯
   2     bottom                                 అ క చ ర ఽ ౨ ౬
+
+
+Table: `thai` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top                                    บ เ แ อ ก า
+  2     bottom                                 บ ป ษ ฯ อ ย ฮ
+  3     ascender                               ป ฝ ฟ
+  4     large ascender                         โ ใ ไ
+  5     descender                              ฎ ฏ ฤ ฦ
+  6     large descender                        ญ ฐ
+  7     top of Thai digits                     ๐ ๑ ๓
 
 
 ![This image shows the relevant glyph terms for vertical blue zone
@@ -1191,6 +1207,13 @@ Table: `telu` character ranges
      Character range     Description
   ---------------------  -------------
   `0x0C00` - `0x0C7F`    Telugu
+
+
+Table: `thai` character ranges
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0E00` - `0x0E7F`    Thai
 
 
 If a glyph's character code is not covered by a script range, it is not
