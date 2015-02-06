@@ -578,7 +578,13 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
   old_max = hints->max_contours;
 
   if (new_max <= TA_CONTOURS_EMBEDDED)
-    hints->contours = hints->embedded.contours;
+  {
+    if (hints->contours == NULL)
+    {
+      hints->contours = hints->embedded.contours;
+      hints->max_contours = TA_CONTOURS_EMBEDDED;
+    }
+  }
   else if (new_max > old_max)
   {
     TA_Point* contours_new;
@@ -604,7 +610,13 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
   old_max = hints->max_points;
 
   if (new_max <= TA_POINTS_EMBEDDED)
-    hints->points = hints->embedded.points;
+  {
+    if (hints->points == NULL)
+    {
+      hints->points = hints->embedded.points;
+      hints->max_points = TA_POINTS_EMBEDDED;
+    }
+  }
   else if (new_max > old_max)
   {
     TA_Point points_new;
