@@ -25,7 +25,7 @@ typedef const struct TA_error_
   const char* err_msg;
 } TA_error;
 
-TA_error TA_Errors[] =
+static TA_error TA_Errors[] =
 
 #undef __FTERRORS_H__
 #define FT_ERRORDEF(e, v, s) { e, s },

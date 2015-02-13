@@ -163,7 +163,7 @@
  *             gets incremented by 1 after execution)
  */
 
-const unsigned char FPGM(bci_align_top_a) [] =
+static const unsigned char FPGM(bci_align_top_a) [] =
 {
 
   PUSHB_1,
@@ -186,7 +186,7 @@ const unsigned char FPGM(bci_align_top_a) [] =
 /* if (font->increase_x_height) */
 /* { */
 
-const unsigned char FPGM(bci_align_top_b1a) [] =
+static const unsigned char FPGM(bci_align_top_b1a) [] =
 {
 
   /* apply much `stronger' rounding up of x height for */
@@ -198,7 +198,7 @@ const unsigned char FPGM(bci_align_top_b1a) [] =
 
 /*  %d, x height increase limit */
 
-const unsigned char FPGM(bci_align_top_b1b) [] =
+static const unsigned char FPGM(bci_align_top_b1b) [] =
 {
 
   LTEQ,
@@ -226,7 +226,7 @@ const unsigned char FPGM(bci_align_top_b1b) [] =
 /* if (!font->increase_x_height) */
 /* { */
 
-const unsigned char FPGM(bci_align_top_b2) [] =
+static const unsigned char FPGM(bci_align_top_b2) [] =
 {
 
   PUSHB_1,
@@ -238,7 +238,7 @@ const unsigned char FPGM(bci_align_top_b2) [] =
 
 /* } */
 
-const unsigned char FPGM(bci_align_top_c) [] =
+static const unsigned char FPGM(bci_align_top_c) [] =
 {
 
   DUP, /* s: blue blue fitted fitted */
@@ -297,7 +297,7 @@ const unsigned char FPGM(bci_align_top_c) [] =
  * out: ROUND(val)
  */
 
-const unsigned char FPGM(bci_round) [] =
+static const unsigned char FPGM(bci_round) [] =
 {
 
   PUSHB_1,
@@ -374,7 +374,7 @@ const unsigned char FPGM(bci_round) [] =
  * uses: bci_round
  */
 
-const unsigned char FPGM(bci_smooth_stem_width) [] =
+static const unsigned char FPGM(bci_smooth_stem_width) [] =
 {
 
   PUSHB_1,
@@ -556,7 +556,7 @@ const unsigned char FPGM(bci_smooth_stem_width) [] =
  * CVT: widths[]
  */
 
-const unsigned char FPGM(bci_get_best_width) [] =
+static const unsigned char FPGM(bci_get_best_width) [] =
 {
 
   PUSHB_1,
@@ -651,7 +651,7 @@ const unsigned char FPGM(bci_get_best_width) [] =
  *       bci_round
  */
 
-const unsigned char FPGM(bci_strong_stem_width_a) [] =
+static const unsigned char FPGM(bci_strong_stem_width_a) [] =
 {
 
   PUSHB_1,
@@ -693,7 +693,7 @@ const unsigned char FPGM(bci_strong_stem_width_a) [] =
 
 /*  %c, number of used styles */
 
-const unsigned char FPGM(bci_strong_stem_width_b) [] =
+static const unsigned char FPGM(bci_strong_stem_width_b) [] =
 {
 
   ADD,
@@ -778,7 +778,7 @@ const unsigned char FPGM(bci_strong_stem_width_b) [] =
  * uses: func[sal_func]
  */
 
-const unsigned char FPGM(bci_loop_do) [] =
+static const unsigned char FPGM(bci_loop_do) [] =
 {
 
   PUSHB_1,
@@ -820,7 +820,7 @@ const unsigned char FPGM(bci_loop_do) [] =
  * uses: bci_loop_do
  */
 
-const unsigned char FPGM(bci_loop) [] =
+static const unsigned char FPGM(bci_loop) [] =
 {
 
   PUSHB_1,
@@ -870,7 +870,7 @@ const unsigned char FPGM(bci_loop) [] =
  * sal: sal_scale
  */
 
-const unsigned char FPGM(bci_cvt_rescale) [] =
+static const unsigned char FPGM(bci_cvt_rescale) [] =
 {
 
   PUSHB_1,
@@ -910,7 +910,7 @@ const unsigned char FPGM(bci_cvt_rescale) [] =
  * uses: bci_cvt_rescale
  */
 
-const unsigned char FPGM(bci_cvt_rescale_range) [] =
+static const unsigned char FPGM(bci_cvt_rescale_range) [] =
 {
 
   PUSHB_1,
@@ -955,7 +955,7 @@ const unsigned char FPGM(bci_cvt_rescale_range) [] =
  *             gets incremented by 1 after execution)
  */
 
-const unsigned char FPGM(bci_vwidth_data_store) [] =
+static const unsigned char FPGM(bci_vwidth_data_store) [] =
 {
 
   PUSHB_1,
@@ -1012,7 +1012,7 @@ const unsigned char FPGM(bci_vwidth_data_store) [] =
  * uses: bci_round
  */
 
-const unsigned char FPGM(bci_smooth_blue_round) [] =
+static const unsigned char FPGM(bci_smooth_blue_round) [] =
 {
 
   PUSHB_1,
@@ -1125,7 +1125,7 @@ const unsigned char FPGM(bci_smooth_blue_round) [] =
  * uses: bci_round
  */
 
-const unsigned char FPGM(bci_strong_blue_round) [] =
+static const unsigned char FPGM(bci_strong_blue_round) [] =
 {
 
   PUSHB_1,
@@ -1212,7 +1212,7 @@ const unsigned char FPGM(bci_strong_blue_round) [] =
  *       bci_strong_blue_round
  */
 
-const unsigned char FPGM(bci_blue_round_range) [] =
+static const unsigned char FPGM(bci_blue_round_range) [] =
 {
 
   PUSHB_1,
@@ -1255,7 +1255,7 @@ const unsigned char FPGM(bci_blue_round_range) [] =
  * CVT: cvtl_is_subglyph
  */
 
-const unsigned char FPGM(bci_decrement_component_counter) [] =
+static const unsigned char FPGM(bci_decrement_component_counter) [] =
 {
 
   PUSHB_1,
@@ -1290,7 +1290,7 @@ const unsigned char FPGM(bci_decrement_component_counter) [] =
  *      sal_point_max
  */
 
-const unsigned char FPGM(bci_get_point_extrema) [] =
+static const unsigned char FPGM(bci_get_point_extrema) [] =
 {
 
   PUSHB_1,
@@ -1357,7 +1357,7 @@ const unsigned char FPGM(bci_get_point_extrema) [] =
  */
 
 
-const unsigned char FPGM(bci_nibbles) [] =
+static const unsigned char FPGM(bci_nibbles) [] =
 {
   PUSHB_1,
     bci_nibbles,
@@ -1415,7 +1415,7 @@ const unsigned char FPGM(bci_nibbles) [] =
  * CVT: cvtl_is_element
  */
 
-const unsigned char FPGM(bci_number_set_is_element) [] =
+static const unsigned char FPGM(bci_number_set_is_element) [] =
 {
 
   PUSHB_1,
@@ -1460,7 +1460,7 @@ const unsigned char FPGM(bci_number_set_is_element) [] =
  * CVT: cvtl_is_element
  */
 
-const unsigned char FPGM(bci_number_set_is_element2) [] =
+static const unsigned char FPGM(bci_number_set_is_element2) [] =
 {
 
   PUSHB_1,
@@ -1525,7 +1525,7 @@ const unsigned char FPGM(bci_number_set_is_element2) [] =
  * delta values in nibbles (without a wrap-around segment).
  */
 
-const unsigned char FPGM(bci_create_segment) [] =
+static const unsigned char FPGM(bci_create_segment) [] =
 {
 
   PUSHB_1,
@@ -1760,7 +1760,7 @@ const unsigned char FPGM(bci_create_segment) [] =
  *
  */
 
-const unsigned char FPGM(bci_create_segments_a) [] =
+static const unsigned char FPGM(bci_create_segments_a) [] =
 {
 
   PUSHB_1,
@@ -1798,7 +1798,7 @@ const unsigned char FPGM(bci_create_segments_a) [] =
 
 /*  %c, number of used styles */
 
-const unsigned char FPGM(bci_create_segments_b) [] =
+static const unsigned char FPGM(bci_create_segments_b) [] =
 {
 
     ADD,
@@ -1837,7 +1837,7 @@ const unsigned char FPGM(bci_create_segments_b) [] =
 
 /* used if we have delta exceptions */
 
-const unsigned char FPGM(bci_create_segments_c) [] =
+static const unsigned char FPGM(bci_create_segments_c) [] =
 {
 
     PUSHB_1,
@@ -1846,7 +1846,7 @@ const unsigned char FPGM(bci_create_segments_c) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_d) [] =
+static const unsigned char FPGM(bci_create_segments_d) [] =
 {
 
   ELSE,
@@ -1864,7 +1864,7 @@ const unsigned char FPGM(bci_create_segments_d) [] =
  * Top-level routines for calling `bci_create_segments'.
  */
 
-const unsigned char FPGM(bci_create_segments_0) [] =
+static const unsigned char FPGM(bci_create_segments_0) [] =
 {
 
   PUSHB_1,
@@ -1880,7 +1880,7 @@ const unsigned char FPGM(bci_create_segments_0) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_1) [] =
+static const unsigned char FPGM(bci_create_segments_1) [] =
 {
 
   PUSHB_1,
@@ -1896,7 +1896,7 @@ const unsigned char FPGM(bci_create_segments_1) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_2) [] =
+static const unsigned char FPGM(bci_create_segments_2) [] =
 {
 
   PUSHB_1,
@@ -1912,7 +1912,7 @@ const unsigned char FPGM(bci_create_segments_2) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_3) [] =
+static const unsigned char FPGM(bci_create_segments_3) [] =
 {
 
   PUSHB_1,
@@ -1928,7 +1928,7 @@ const unsigned char FPGM(bci_create_segments_3) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_4) [] =
+static const unsigned char FPGM(bci_create_segments_4) [] =
 {
 
   PUSHB_1,
@@ -1944,7 +1944,7 @@ const unsigned char FPGM(bci_create_segments_4) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_5) [] =
+static const unsigned char FPGM(bci_create_segments_5) [] =
 {
 
   PUSHB_1,
@@ -1960,7 +1960,7 @@ const unsigned char FPGM(bci_create_segments_5) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_6) [] =
+static const unsigned char FPGM(bci_create_segments_6) [] =
 {
 
   PUSHB_1,
@@ -1976,7 +1976,7 @@ const unsigned char FPGM(bci_create_segments_6) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_7) [] =
+static const unsigned char FPGM(bci_create_segments_7) [] =
 {
 
   PUSHB_1,
@@ -1992,7 +1992,7 @@ const unsigned char FPGM(bci_create_segments_7) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_8) [] =
+static const unsigned char FPGM(bci_create_segments_8) [] =
 {
 
   PUSHB_1,
@@ -2008,7 +2008,7 @@ const unsigned char FPGM(bci_create_segments_8) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_9) [] =
+static const unsigned char FPGM(bci_create_segments_9) [] =
 {
 
   PUSHB_1,
@@ -2038,7 +2038,7 @@ const unsigned char FPGM(bci_create_segments_9) [] =
  *     arg
  */
 
-const unsigned char FPGM(bci_deltap1) [] =
+static const unsigned char FPGM(bci_deltap1) [] =
 {
 
   PUSHB_1,
@@ -2056,7 +2056,7 @@ const unsigned char FPGM(bci_deltap1) [] =
 
 };
 
-const unsigned char FPGM(bci_deltap2) [] =
+static const unsigned char FPGM(bci_deltap2) [] =
 {
 
   PUSHB_1,
@@ -2074,7 +2074,7 @@ const unsigned char FPGM(bci_deltap2) [] =
 
 };
 
-const unsigned char FPGM(bci_deltap3) [] =
+static const unsigned char FPGM(bci_deltap3) [] =
 {
 
   PUSHB_1,
@@ -2111,7 +2111,7 @@ const unsigned char FPGM(bci_deltap3) [] =
  *       bci_hint_glyph
  */
 
-const unsigned char FPGM(bci_create_segments_composite_a) [] =
+static const unsigned char FPGM(bci_create_segments_composite_a) [] =
 {
 
   PUSHB_1,
@@ -2153,7 +2153,7 @@ const unsigned char FPGM(bci_create_segments_composite_a) [] =
 
 /*  %c, number of used styles */
 
-const unsigned char FPGM(bci_create_segments_composite_b) [] =
+static const unsigned char FPGM(bci_create_segments_composite_b) [] =
 {
 
     ADD,
@@ -2192,7 +2192,7 @@ const unsigned char FPGM(bci_create_segments_composite_b) [] =
 
 /* used if we have delta exceptions */
 
-const unsigned char FPGM(bci_create_segments_composite_c) [] =
+static const unsigned char FPGM(bci_create_segments_composite_c) [] =
 {
 
     PUSHB_1,
@@ -2201,7 +2201,7 @@ const unsigned char FPGM(bci_create_segments_composite_c) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_d) [] =
+static const unsigned char FPGM(bci_create_segments_composite_d) [] =
 {
 
   ELSE,
@@ -2219,7 +2219,7 @@ const unsigned char FPGM(bci_create_segments_composite_d) [] =
  * Top-level routines for calling `bci_create_segments_composite'.
  */
 
-const unsigned char FPGM(bci_create_segments_composite_0) [] =
+static const unsigned char FPGM(bci_create_segments_composite_0) [] =
 {
 
   PUSHB_1,
@@ -2235,7 +2235,7 @@ const unsigned char FPGM(bci_create_segments_composite_0) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_1) [] =
+static const unsigned char FPGM(bci_create_segments_composite_1) [] =
 {
 
   PUSHB_1,
@@ -2251,7 +2251,7 @@ const unsigned char FPGM(bci_create_segments_composite_1) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_2) [] =
+static const unsigned char FPGM(bci_create_segments_composite_2) [] =
 {
 
   PUSHB_1,
@@ -2267,7 +2267,7 @@ const unsigned char FPGM(bci_create_segments_composite_2) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_3) [] =
+static const unsigned char FPGM(bci_create_segments_composite_3) [] =
 {
 
   PUSHB_1,
@@ -2283,7 +2283,7 @@ const unsigned char FPGM(bci_create_segments_composite_3) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_4) [] =
+static const unsigned char FPGM(bci_create_segments_composite_4) [] =
 {
 
   PUSHB_1,
@@ -2299,7 +2299,7 @@ const unsigned char FPGM(bci_create_segments_composite_4) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_5) [] =
+static const unsigned char FPGM(bci_create_segments_composite_5) [] =
 {
 
   PUSHB_1,
@@ -2315,7 +2315,7 @@ const unsigned char FPGM(bci_create_segments_composite_5) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_6) [] =
+static const unsigned char FPGM(bci_create_segments_composite_6) [] =
 {
 
   PUSHB_1,
@@ -2331,7 +2331,7 @@ const unsigned char FPGM(bci_create_segments_composite_6) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_7) [] =
+static const unsigned char FPGM(bci_create_segments_composite_7) [] =
 {
 
   PUSHB_1,
@@ -2347,7 +2347,7 @@ const unsigned char FPGM(bci_create_segments_composite_7) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_8) [] =
+static const unsigned char FPGM(bci_create_segments_composite_8) [] =
 {
 
   PUSHB_1,
@@ -2363,7 +2363,7 @@ const unsigned char FPGM(bci_create_segments_composite_8) [] =
 
 };
 
-const unsigned char FPGM(bci_create_segments_composite_9) [] =
+static const unsigned char FPGM(bci_create_segments_composite_9) [] =
 {
 
   PUSHB_1,
@@ -2390,7 +2390,7 @@ const unsigned char FPGM(bci_create_segments_composite_9) [] =
  * out: point+1
  */
 
-const unsigned char FPGM(bci_align_point) [] =
+static const unsigned char FPGM(bci_align_point) [] =
 {
 
   PUSHB_1,
@@ -2422,7 +2422,7 @@ const unsigned char FPGM(bci_align_point) [] =
  * uses: bci_align_point
  */
 
-const unsigned char FPGM(bci_align_segment) [] =
+static const unsigned char FPGM(bci_align_segment) [] =
 {
 
   PUSHB_1,
@@ -2479,7 +2479,7 @@ const unsigned char FPGM(bci_align_segment) [] =
  * uses: bci_align_segment
  */
 
-const unsigned char FPGM(bci_align_segments) [] =
+static const unsigned char FPGM(bci_align_segments) [] =
 {
 
   PUSHB_1,
@@ -2513,7 +2513,7 @@ const unsigned char FPGM(bci_align_segments) [] =
  * sal: sal_scale
  */
 
-const unsigned char FPGM(bci_scale_contour) [] =
+static const unsigned char FPGM(bci_scale_contour) [] =
 {
 
   PUSHB_1,
@@ -2579,7 +2579,7 @@ const unsigned char FPGM(bci_scale_contour) [] =
  * uses: bci_scale_contour
  */
 
-const unsigned char FPGM(bci_scale_glyph) [] =
+static const unsigned char FPGM(bci_scale_glyph) [] =
 {
 
   PUSHB_1,
@@ -2635,7 +2635,7 @@ const unsigned char FPGM(bci_scale_glyph) [] =
  *       bci_scale_contour
  */
 
-const unsigned char FPGM(bci_scale_composite_glyph) [] =
+static const unsigned char FPGM(bci_scale_composite_glyph) [] =
 {
 
   PUSHB_1,
@@ -2695,7 +2695,7 @@ const unsigned char FPGM(bci_scale_composite_glyph) [] =
  * out: contour+1
  */
 
-const unsigned char FPGM(bci_shift_contour) [] =
+static const unsigned char FPGM(bci_shift_contour) [] =
 {
 
   PUSHB_1,
@@ -2750,7 +2750,7 @@ const unsigned char FPGM(bci_shift_contour) [] =
  *       bci_shift_contour
  */
 
-const unsigned char FPGM(bci_shift_subglyph_a) [] =
+static const unsigned char FPGM(bci_shift_subglyph_a) [] =
 {
 
   PUSHB_1,
@@ -2810,7 +2810,7 @@ const unsigned char FPGM(bci_shift_subglyph_a) [] =
 
 /* used if we have delta exceptions */
 
-const unsigned char FPGM(bci_shift_subglyph_b) [] =
+static const unsigned char FPGM(bci_shift_subglyph_b) [] =
 {
 
   PUSHB_1,
@@ -2819,7 +2819,7 @@ const unsigned char FPGM(bci_shift_subglyph_b) [] =
 
 };
 
-const unsigned char FPGM(bci_shift_subglyph_c) [] =
+static const unsigned char FPGM(bci_shift_subglyph_c) [] =
 {
 
   ENDF,
@@ -2842,7 +2842,7 @@ const unsigned char FPGM(bci_shift_subglyph_c) [] =
  *      sal_scale
  */
 
-const unsigned char FPGM(bci_ip_outer_align_point) [] =
+static const unsigned char FPGM(bci_ip_outer_align_point) [] =
 {
 
   PUSHB_1,
@@ -2879,7 +2879,7 @@ const unsigned char FPGM(bci_ip_outer_align_point) [] =
  *       point_N
  */
 
-const unsigned char FPGM(bci_ip_on_align_points) [] =
+static const unsigned char FPGM(bci_ip_on_align_points) [] =
 {
 
   PUSHB_1,
@@ -2911,7 +2911,7 @@ const unsigned char FPGM(bci_ip_on_align_points) [] =
  *      sal_scale
  */
 
-const unsigned char FPGM(bci_ip_between_align_point) [] =
+static const unsigned char FPGM(bci_ip_between_align_point) [] =
 {
 
   PUSHB_1,
@@ -2958,7 +2958,7 @@ const unsigned char FPGM(bci_ip_between_align_point) [] =
  * uses: bci_ip_between_align_point
  */
 
-const unsigned char FPGM(bci_ip_between_align_points) [] =
+static const unsigned char FPGM(bci_ip_between_align_points) [] =
 {
 
   PUSHB_1,
@@ -3028,7 +3028,7 @@ const unsigned char FPGM(bci_ip_between_align_points) [] =
  * uses: bci_ip_outer_align_point
  */
 
-const unsigned char FPGM(bci_action_ip_before) [] =
+static const unsigned char FPGM(bci_action_ip_before) [] =
 {
 
   PUSHB_1,
@@ -3082,7 +3082,7 @@ const unsigned char FPGM(bci_action_ip_before) [] =
  * uses: bci_ip_outer_align_point
  */
 
-const unsigned char FPGM(bci_action_ip_after) [] =
+static const unsigned char FPGM(bci_action_ip_after) [] =
 {
 
   PUSHB_1,
@@ -3149,7 +3149,7 @@ const unsigned char FPGM(bci_action_ip_after) [] =
  * uses: bci_ip_on_align_points
  */
 
-const unsigned char FPGM(bci_action_ip_on) [] =
+static const unsigned char FPGM(bci_action_ip_on) [] =
 {
 
   PUSHB_1,
@@ -3203,7 +3203,7 @@ const unsigned char FPGM(bci_action_ip_on) [] =
  * uses: bci_ip_between_align_points
  */
 
-const unsigned char FPGM(bci_action_ip_between) [] =
+static const unsigned char FPGM(bci_action_ip_between) [] =
 {
 
   PUSHB_1,
@@ -3227,7 +3227,7 @@ const unsigned char FPGM(bci_action_ip_between) [] =
  * uses: func[sal_stem_width_function]
  */
 
-const unsigned char FPGM(bci_adjust_common) [] =
+static const unsigned char FPGM(bci_adjust_common) [] =
 {
 
   PUSHB_1,
@@ -3284,7 +3284,7 @@ const unsigned char FPGM(bci_adjust_common) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_adjust_bound) [] =
+static const unsigned char FPGM(bci_adjust_bound) [] =
 {
 
   PUSHB_1,
@@ -3331,7 +3331,7 @@ const unsigned char FPGM(bci_adjust_bound) [] =
  * Higher-level routines for calling `bci_adjust_bound'.
  */
 
-const unsigned char FPGM(bci_action_adjust_bound) [] =
+static const unsigned char FPGM(bci_action_adjust_bound) [] =
 {
 
   PUSHB_1,
@@ -3348,7 +3348,7 @@ const unsigned char FPGM(bci_action_adjust_bound) [] =
 
 };
 
-const unsigned char FPGM(bci_action_adjust_bound_serif) [] =
+static const unsigned char FPGM(bci_action_adjust_bound_serif) [] =
 {
 
   PUSHB_1,
@@ -3365,7 +3365,7 @@ const unsigned char FPGM(bci_action_adjust_bound_serif) [] =
 
 };
 
-const unsigned char FPGM(bci_action_adjust_bound_round) [] =
+static const unsigned char FPGM(bci_action_adjust_bound_round) [] =
 {
 
   PUSHB_1,
@@ -3382,7 +3382,7 @@ const unsigned char FPGM(bci_action_adjust_bound_round) [] =
 
 };
 
-const unsigned char FPGM(bci_action_adjust_bound_round_serif) [] =
+static const unsigned char FPGM(bci_action_adjust_bound_round_serif) [] =
 {
 
   PUSHB_1,
@@ -3416,7 +3416,7 @@ const unsigned char FPGM(bci_action_adjust_bound_round_serif) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_adjust) [] =
+static const unsigned char FPGM(bci_adjust) [] =
 {
 
   PUSHB_1,
@@ -3449,7 +3449,7 @@ const unsigned char FPGM(bci_adjust) [] =
  * Higher-level routines for calling `bci_adjust'.
  */
 
-const unsigned char FPGM(bci_action_adjust) [] =
+static const unsigned char FPGM(bci_action_adjust) [] =
 {
 
   PUSHB_1,
@@ -3466,7 +3466,7 @@ const unsigned char FPGM(bci_action_adjust) [] =
 
 };
 
-const unsigned char FPGM(bci_action_adjust_serif) [] =
+static const unsigned char FPGM(bci_action_adjust_serif) [] =
 {
 
   PUSHB_1,
@@ -3483,7 +3483,7 @@ const unsigned char FPGM(bci_action_adjust_serif) [] =
 
 };
 
-const unsigned char FPGM(bci_action_adjust_round) [] =
+static const unsigned char FPGM(bci_action_adjust_round) [] =
 {
 
   PUSHB_1,
@@ -3500,7 +3500,7 @@ const unsigned char FPGM(bci_action_adjust_round) [] =
 
 };
 
-const unsigned char FPGM(bci_action_adjust_round_serif) [] =
+static const unsigned char FPGM(bci_action_adjust_round_serif) [] =
 {
 
   PUSHB_1,
@@ -3541,7 +3541,7 @@ const unsigned char FPGM(bci_action_adjust_round_serif) [] =
 #undef sal_edge2
 #define sal_edge2 sal_temp3
 
-const unsigned char FPGM(bci_stem_common) [] =
+static const unsigned char FPGM(bci_stem_common) [] =
 {
 
   PUSHB_1,
@@ -3821,7 +3821,7 @@ const unsigned char FPGM(bci_stem_common) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_stem_bound) [] =
+static const unsigned char FPGM(bci_stem_bound) [] =
 {
 
   PUSHB_1,
@@ -3888,7 +3888,7 @@ const unsigned char FPGM(bci_stem_bound) [] =
  * Higher-level routines for calling `bci_stem_bound'.
  */
 
-const unsigned char FPGM(bci_action_stem_bound) [] =
+static const unsigned char FPGM(bci_action_stem_bound) [] =
 {
 
   PUSHB_1,
@@ -3905,7 +3905,7 @@ const unsigned char FPGM(bci_action_stem_bound) [] =
 
 };
 
-const unsigned char FPGM(bci_action_stem_bound_serif) [] =
+static const unsigned char FPGM(bci_action_stem_bound_serif) [] =
 {
 
   PUSHB_1,
@@ -3922,7 +3922,7 @@ const unsigned char FPGM(bci_action_stem_bound_serif) [] =
 
 };
 
-const unsigned char FPGM(bci_action_stem_bound_round) [] =
+static const unsigned char FPGM(bci_action_stem_bound_round) [] =
 {
 
   PUSHB_1,
@@ -3939,7 +3939,7 @@ const unsigned char FPGM(bci_action_stem_bound_round) [] =
 
 };
 
-const unsigned char FPGM(bci_action_stem_bound_round_serif) [] =
+static const unsigned char FPGM(bci_action_stem_bound_round_serif) [] =
 {
 
   PUSHB_1,
@@ -3980,7 +3980,7 @@ const unsigned char FPGM(bci_action_stem_bound_round_serif) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_stem) [] =
+static const unsigned char FPGM(bci_stem) [] =
 {
 
   PUSHB_1,
@@ -4031,7 +4031,7 @@ const unsigned char FPGM(bci_stem) [] =
  * Higher-level routines for calling `bci_stem'.
  */
 
-const unsigned char FPGM(bci_action_stem) [] =
+static const unsigned char FPGM(bci_action_stem) [] =
 {
 
   PUSHB_1,
@@ -4048,7 +4048,7 @@ const unsigned char FPGM(bci_action_stem) [] =
 
 };
 
-const unsigned char FPGM(bci_action_stem_serif) [] =
+static const unsigned char FPGM(bci_action_stem_serif) [] =
 {
 
   PUSHB_1,
@@ -4065,7 +4065,7 @@ const unsigned char FPGM(bci_action_stem_serif) [] =
 
 };
 
-const unsigned char FPGM(bci_action_stem_round) [] =
+static const unsigned char FPGM(bci_action_stem_round) [] =
 {
 
   PUSHB_1,
@@ -4082,7 +4082,7 @@ const unsigned char FPGM(bci_action_stem_round) [] =
 
 };
 
-const unsigned char FPGM(bci_action_stem_round_serif) [] =
+static const unsigned char FPGM(bci_action_stem_round_serif) [] =
 {
 
   PUSHB_1,
@@ -4115,7 +4115,7 @@ const unsigned char FPGM(bci_action_stem_round_serif) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_link) [] =
+static const unsigned char FPGM(bci_link) [] =
 {
 
   PUSHB_1,
@@ -4170,7 +4170,7 @@ const unsigned char FPGM(bci_link) [] =
  * Higher-level routines for calling `bci_link'.
  */
 
-const unsigned char FPGM(bci_action_link) [] =
+static const unsigned char FPGM(bci_action_link) [] =
 {
 
   PUSHB_1,
@@ -4187,7 +4187,7 @@ const unsigned char FPGM(bci_action_link) [] =
 
 };
 
-const unsigned char FPGM(bci_action_link_serif) [] =
+static const unsigned char FPGM(bci_action_link_serif) [] =
 {
 
   PUSHB_1,
@@ -4204,7 +4204,7 @@ const unsigned char FPGM(bci_action_link_serif) [] =
 
 };
 
-const unsigned char FPGM(bci_action_link_round) [] =
+static const unsigned char FPGM(bci_action_link_round) [] =
 {
 
   PUSHB_1,
@@ -4221,7 +4221,7 @@ const unsigned char FPGM(bci_action_link_round) [] =
 
 };
 
-const unsigned char FPGM(bci_action_link_round_serif) [] =
+static const unsigned char FPGM(bci_action_link_round_serif) [] =
 {
 
   PUSHB_1,
@@ -4295,7 +4295,7 @@ const unsigned char FPGM(bci_action_link_round_serif) [] =
 #undef sal_org_len
 #define sal_org_len sal_temp3
 
-const unsigned char FPGM(bci_anchor) [] =
+static const unsigned char FPGM(bci_anchor) [] =
 {
 
   PUSHB_1,
@@ -4465,7 +4465,7 @@ const unsigned char FPGM(bci_anchor) [] =
  * Higher-level routines for calling `bci_anchor'.
  */
 
-const unsigned char FPGM(bci_action_anchor) [] =
+static const unsigned char FPGM(bci_action_anchor) [] =
 {
 
   PUSHB_1,
@@ -4482,7 +4482,7 @@ const unsigned char FPGM(bci_action_anchor) [] =
 
 };
 
-const unsigned char FPGM(bci_action_anchor_serif) [] =
+static const unsigned char FPGM(bci_action_anchor_serif) [] =
 {
 
   PUSHB_1,
@@ -4499,7 +4499,7 @@ const unsigned char FPGM(bci_action_anchor_serif) [] =
 
 };
 
-const unsigned char FPGM(bci_action_anchor_round) [] =
+static const unsigned char FPGM(bci_action_anchor_round) [] =
 {
 
   PUSHB_1,
@@ -4516,7 +4516,7 @@ const unsigned char FPGM(bci_action_anchor_round) [] =
 
 };
 
-const unsigned char FPGM(bci_action_anchor_round_serif) [] =
+static const unsigned char FPGM(bci_action_anchor_round_serif) [] =
 {
 
   PUSHB_1,
@@ -4550,7 +4550,7 @@ const unsigned char FPGM(bci_action_anchor_round_serif) [] =
  * uses: bci_action_blue
  */
 
-const unsigned char FPGM(bci_action_blue_anchor) [] =
+static const unsigned char FPGM(bci_action_blue_anchor) [] =
 {
 
   PUSHB_1,
@@ -4584,7 +4584,7 @@ const unsigned char FPGM(bci_action_blue_anchor) [] =
  * uses: bci_align_segments
  */
 
-const unsigned char FPGM(bci_action_blue) [] =
+static const unsigned char FPGM(bci_action_blue) [] =
 {
 
   PUSHB_1,
@@ -4626,7 +4626,7 @@ const unsigned char FPGM(bci_action_blue) [] =
  *   Common code for bci_action_serif routines.
  */
 
-const unsigned char FPGM(bci_serif_common) [] =
+static const unsigned char FPGM(bci_serif_common) [] =
 {
 
   PUSHB_1,
@@ -4666,7 +4666,7 @@ const unsigned char FPGM(bci_serif_common) [] =
  * uses: bci_align_segments
  */
 
-const unsigned char FPGM(bci_lower_bound) [] =
+static const unsigned char FPGM(bci_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -4711,7 +4711,7 @@ const unsigned char FPGM(bci_lower_bound) [] =
  * uses: bci_align_segments
  */
 
-const unsigned char FPGM(bci_upper_bound) [] =
+static const unsigned char FPGM(bci_upper_bound) [] =
 {
 
   PUSHB_1,
@@ -4757,7 +4757,7 @@ const unsigned char FPGM(bci_upper_bound) [] =
  * uses: bci_align_segments
  */
 
-const unsigned char FPGM(bci_upper_lower_bound) [] =
+static const unsigned char FPGM(bci_upper_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -4818,7 +4818,7 @@ const unsigned char FPGM(bci_upper_lower_bound) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_action_serif) [] =
+static const unsigned char FPGM(bci_action_serif) [] =
 {
 
   PUSHB_1,
@@ -4857,7 +4857,7 @@ const unsigned char FPGM(bci_action_serif) [] =
  *       bci_lower_bound
  */
 
-const unsigned char FPGM(bci_action_serif_lower_bound) [] =
+static const unsigned char FPGM(bci_action_serif_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -4892,7 +4892,7 @@ const unsigned char FPGM(bci_action_serif_lower_bound) [] =
  *       bci_upper_bound
  */
 
-const unsigned char FPGM(bci_action_serif_upper_bound) [] =
+static const unsigned char FPGM(bci_action_serif_upper_bound) [] =
 {
 
   PUSHB_1,
@@ -4928,7 +4928,7 @@ const unsigned char FPGM(bci_action_serif_upper_bound) [] =
  *       bci_upper_lower_bound
  */
 
-const unsigned char FPGM(bci_action_serif_upper_lower_bound) [] =
+static const unsigned char FPGM(bci_action_serif_upper_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -4962,7 +4962,7 @@ const unsigned char FPGM(bci_action_serif_upper_lower_bound) [] =
  * uses: bci_round
  */
 
-const unsigned char FPGM(bci_serif_anchor_common) [] =
+static const unsigned char FPGM(bci_serif_anchor_common) [] =
 {
 
   PUSHB_1,
@@ -5010,7 +5010,7 @@ const unsigned char FPGM(bci_serif_anchor_common) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_action_serif_anchor) [] =
+static const unsigned char FPGM(bci_action_serif_anchor) [] =
 {
 
   PUSHB_1,
@@ -5049,7 +5049,7 @@ const unsigned char FPGM(bci_action_serif_anchor) [] =
  *       bci_lower_bound
  */
 
-const unsigned char FPGM(bci_action_serif_anchor_lower_bound) [] =
+static const unsigned char FPGM(bci_action_serif_anchor_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -5084,7 +5084,7 @@ const unsigned char FPGM(bci_action_serif_anchor_lower_bound) [] =
  *       bci_upper_bound
  */
 
-const unsigned char FPGM(bci_action_serif_anchor_upper_bound) [] =
+static const unsigned char FPGM(bci_action_serif_anchor_upper_bound) [] =
 {
 
   PUSHB_1,
@@ -5120,7 +5120,7 @@ const unsigned char FPGM(bci_action_serif_anchor_upper_bound) [] =
  *       bci_upper_lower_bound
  */
 
-const unsigned char FPGM(bci_action_serif_anchor_upper_lower_bound) [] =
+static const unsigned char FPGM(bci_action_serif_anchor_upper_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -5146,7 +5146,7 @@ const unsigned char FPGM(bci_action_serif_anchor_upper_lower_bound) [] =
  *   Common code for bci_action_serif_link1 routines.
  */
 
-const unsigned char FPGM(bci_serif_link1_common) [] =
+static const unsigned char FPGM(bci_serif_link1_common) [] =
 {
 
   PUSHB_1,
@@ -5262,7 +5262,7 @@ const unsigned char FPGM(bci_serif_link1_common) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_action_serif_link1) [] =
+static const unsigned char FPGM(bci_action_serif_link1) [] =
 {
 
   PUSHB_1,
@@ -5303,7 +5303,7 @@ const unsigned char FPGM(bci_action_serif_link1) [] =
  *       bci_lower_bound
  */
 
-const unsigned char FPGM(bci_action_serif_link1_lower_bound) [] =
+static const unsigned char FPGM(bci_action_serif_link1_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -5340,7 +5340,7 @@ const unsigned char FPGM(bci_action_serif_link1_lower_bound) [] =
  *       bci_upper_bound
  */
 
-const unsigned char FPGM(bci_action_serif_link1_upper_bound) [] =
+static const unsigned char FPGM(bci_action_serif_link1_upper_bound) [] =
 {
 
   PUSHB_1,
@@ -5378,7 +5378,7 @@ const unsigned char FPGM(bci_action_serif_link1_upper_bound) [] =
  *       bci_upper_lower_bound
  */
 
-const unsigned char FPGM(bci_action_serif_link1_upper_lower_bound) [] =
+static const unsigned char FPGM(bci_action_serif_link1_upper_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -5406,7 +5406,7 @@ const unsigned char FPGM(bci_action_serif_link1_upper_lower_bound) [] =
  * sal: sal_anchor
  */
 
-const unsigned char FPGM(bci_serif_link2_common) [] =
+static const unsigned char FPGM(bci_serif_link2_common) [] =
 {
 
   PUSHB_1,
@@ -5457,7 +5457,7 @@ const unsigned char FPGM(bci_serif_link2_common) [] =
  *       bci_align_segments
  */
 
-const unsigned char FPGM(bci_action_serif_link2) [] =
+static const unsigned char FPGM(bci_action_serif_link2) [] =
 {
 
   PUSHB_1,
@@ -5496,7 +5496,7 @@ const unsigned char FPGM(bci_action_serif_link2) [] =
  *       bci_lower_bound
  */
 
-const unsigned char FPGM(bci_action_serif_link2_lower_bound) [] =
+static const unsigned char FPGM(bci_action_serif_link2_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -5531,7 +5531,7 @@ const unsigned char FPGM(bci_action_serif_link2_lower_bound) [] =
  *       bci_upper_bound
  */
 
-const unsigned char FPGM(bci_action_serif_link2_upper_bound) [] =
+static const unsigned char FPGM(bci_action_serif_link2_upper_bound) [] =
 {
 
   PUSHB_1,
@@ -5567,7 +5567,7 @@ const unsigned char FPGM(bci_action_serif_link2_upper_bound) [] =
  *       bci_upper_lower_bound
  */
 
-const unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
+static const unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
 {
 
   PUSHB_1,
@@ -5665,7 +5665,7 @@ const unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
  *       bci_action_serif_link2_upper_lower_bound
  */
 
-const unsigned char FPGM(bci_hint_glyph) [] =
+static const unsigned char FPGM(bci_hint_glyph) [] =
 {
 
   PUSHB_1,

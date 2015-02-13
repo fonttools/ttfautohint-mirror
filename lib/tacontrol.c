@@ -132,7 +132,7 @@ TA_control_free(Control* control)
 }
 
 
-sds
+static sds
 control_show_line(FONT* font,
                   Control* control)
 {

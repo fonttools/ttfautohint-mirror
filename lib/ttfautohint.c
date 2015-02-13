@@ -28,7 +28,7 @@
            && !strncmp(start, str, sizeof (str) - 1))
 
 
-void
+static void
 TA_sfnt_set_properties(SFNT* sfnt,
                        FONT* font)
 {

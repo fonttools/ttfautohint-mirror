@@ -270,7 +270,7 @@ TA_build_push(FT_Byte* bufp,
  * if possible
  */
 
-FT_Byte*
+static FT_Byte*
 TA_optimize_push(FT_Byte* buf,
                  FT_Byte** pos)
 {

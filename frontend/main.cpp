@@ -92,7 +92,7 @@ typedef struct Progress_Data_
 } Progress_Data;
 
 
-int
+static int
 progress(long curr_idx,
          long num_glyphs,
          long curr_sfnt,
@@ -139,7 +139,7 @@ typedef struct Error_Data_
 } Error_Data;
 
 
-void
+static void
 err(TA_Error error,
     const char* error_string,
     unsigned int errlinenum,

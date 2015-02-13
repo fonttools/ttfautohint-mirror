@@ -782,7 +782,7 @@ struct GUI_Progress_Data
 #undef TRDOMAIN
 #define TRDOMAIN "GuiProgress"
 
-int
+static int
 gui_progress(long curr_idx,
              long num_glyphs,
              long curr_sfnt,
@@ -847,7 +847,7 @@ struct GUI_Error_Data
 #undef TRDOMAIN
 #define TRDOMAIN "GuiError"
 
-void
+static void
 gui_error(TA_Error error,
           const char* error_string,
           unsigned int errlinenum,

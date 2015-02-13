@@ -227,7 +227,7 @@ parse_name_records(FT_Byte** curp,
 }
 
 
-FT_Error
+static FT_Error
 parse_lang_tag_records(FT_Byte** curp,
                        Naming_Table* n,
                        FT_Byte* buf,
