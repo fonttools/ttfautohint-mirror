@@ -851,7 +851,7 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
   for (i = 0; i < data->num_glyphs; i++, glyph++)
   {
     /* glyph records should have offsets which are multiples of 4 */
-    len = (len + 3) & ~3;
+    len = (len + 3) & ~3U;
     len += glyph->len1 + glyph->len2
            + glyph->ins_extra_len + glyph->ins_len;
     /* add two bytes for the instructionLength field */
@@ -861,9 +861,9 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
 
   /* to make the short format of the `loca' table always work, */
   /* assure an even length of the `glyf' table */
-  glyf_table->len = (len + 1) & ~1;
+  glyf_table->len = (len + 1) & ~1U;
 
-  buf_new = (FT_Byte*)realloc(glyf_table->buf, (len + 3) & ~3);
+  buf_new = (FT_Byte*)realloc(glyf_table->buf, (len + 3) & ~3U);
   if (!buf_new)
     return FT_Err_Out_Of_Memory;
   else

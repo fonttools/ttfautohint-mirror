@@ -35,7 +35,7 @@ TA_table_build_TTFA(FT_Byte** TTFA,
   buf_len = strlen((char*)buf);
 
   /* buffer length must be a multiple of four */
-  len = (buf_len + 3) & ~3;
+  len = (buf_len + 3) & ~3U;
   buf_new = (FT_Byte*)realloc(buf, len);
   if (!buf_new)
   {

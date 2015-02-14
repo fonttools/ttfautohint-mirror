@@ -167,7 +167,7 @@ TA_font_compute_table_offsets(FONT* font,
 
     /* table offsets must be multiples of 4; */
     /* this also fits the actual buffer lengths */
-    offset += (table->len + 3) & ~3;
+    offset += (table->len + 3) & ~3U;
   }
 }
 

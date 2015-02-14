@@ -59,7 +59,7 @@
 #define GASP_LEN 8
 
 /* an empty slot in the table info array */
-#define MISSING (FT_ULong)~0
+#define MISSING ~0U
 
 /* the offset to the loca table format in the `head' table */
 #define LOCA_FORMAT_OFFSET 51

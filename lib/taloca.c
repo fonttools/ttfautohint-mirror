@@ -44,7 +44,7 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
   for (i = 0; i < data->num_glyphs; i++, glyph++)
   {
     /* glyph records should have offsets which are multiples of 4 */
-    offset = (offset + 3) & ~3;
+    offset = (offset + 3) & ~3U;
     offset += glyph->len1 + glyph->len2
               + glyph->ins_extra_len + glyph->ins_len;
     /* add two bytes for the instructionLength field */
@@ -54,7 +54,7 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
 
   /* to make the short format of the `loca' table always work, */
   /* the `glyf' table's length is adjusted to an even value */
-  offset = (offset + 1) & ~1;
+  offset = (offset + 1) & ~1U;
 
   if (offset > 0xFFFF * 2)
     loca_format = 1;
@@ -77,7 +77,7 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
 
     for (i = 0; i < data->num_glyphs; i++, glyph++)
     {
-      offset = (offset + 3) & ~3;
+      offset = (offset + 3) & ~3U;
 
       *(p++) = BYTE1(offset);
       *(p++) = BYTE2(offset);
@@ -91,7 +91,7 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
     }
 
     /* last element holds the size of the `glyf' table */
-    offset = (offset + 1) & ~1;
+    offset = (offset + 1) & ~1U;
     *(p++) = BYTE1(offset);
     *(p++) = BYTE2(offset);
     *(p++) = BYTE3(offset);
@@ -101,7 +101,7 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
   {
     loca_table->len = (data->num_glyphs + 1) * 2;
     buf_new = (FT_Byte*)realloc(loca_table->buf,
-                                (loca_table->len + 3) & ~3);
+                                (loca_table->len + 3) & ~3U);
     if (!buf_new)
       return FT_Err_Out_Of_Memory;
     else
@@ -113,7 +113,7 @@ TA_sfnt_build_loca_table(SFNT* sfnt,
 
     for (i = 0; i < data->num_glyphs; i++, glyph++)
     {
-      offset = (offset + 1) & ~1;
+      offset = (offset + 1) & ~1U;
 
       *(p++) = HIGH(offset);
       *(p++) = LOW(offset);

@@ -655,7 +655,7 @@ TA_table_build_prep(FT_Byte** prep,
   buf_new_len += sizeof (PREP(do_iup_y));
 
   /* buffer length must be a multiple of four */
-  len = (buf_new_len + 3) & ~3;
+  len = (buf_new_len + 3) & ~3U;
   buf_new = (FT_Byte*)realloc(buf, len);
   if (!buf_new)
   {

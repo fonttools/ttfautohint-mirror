@@ -90,7 +90,7 @@ TA_sfnt_update_post_table(SFNT* sfnt,
     buf_new_len = post_table->len + 2 + TTFAUTOHINT_GLYPH_LEN;
 
     /* make the allocated buffer length a multiple of 4 */
-    len = (buf_new_len + 3) & ~3;
+    len = (buf_new_len + 3) & ~3U;
     buf_new = (FT_Byte*)malloc(len);
     if (!buf_new)
       return FT_Err_Out_Of_Memory;

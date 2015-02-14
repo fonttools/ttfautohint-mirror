@@ -183,7 +183,7 @@ parse_name_records(FT_Byte** curp,
       /* (two-byte) UTF-16BE for everything else */
 
       /* we need an even number of bytes */
-      r->len &= ~1;
+      r->len &= ~1U;
 
       /* ignore entries which contain only NULL bytes */
       for (l = 0; l < r->len; l++)
@@ -390,7 +390,7 @@ build_name_table(Naming_Table* n,
   /* reallocate the buffer to fit its real size */
   buf_new_len += data_len;
   /* make the allocated buffer length a multiple of 4 */
-  len = (buf_new_len + 3) & ~3;
+  len = (buf_new_len + 3) & ~3U;
 
   buf_new_resized = (FT_Byte*)realloc(buf_new, len);
   if (!buf_new_resized)

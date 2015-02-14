@@ -274,7 +274,7 @@ TA_font_build_TTF(FONT* font)
 
   /* get font length from last SFNT table array element */
   font->out_len = tables[num_tables - 1].offset
-                  + ((tables[num_tables - 1].len + 3) & ~3);
+                  + ((tables[num_tables - 1].len + 3) & ~3U);
   font->out_buf = (FT_Byte*)malloc(font->out_len);
   if (!font->out_buf)
   {
@@ -291,7 +291,7 @@ TA_font_build_TTF(FONT* font)
 
     /* buffer length is a multiple of 4 */
     memcpy(font->out_buf + table->offset,
-           table->buf, (table->len + 3) & ~3);
+           table->buf, (table->len + 3) & ~3U);
   }
 
   error = TA_Err_Ok;

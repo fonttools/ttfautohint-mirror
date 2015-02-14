@@ -92,7 +92,7 @@ TA_sfnt_split_into_SFNT_tables(SFNT* sfnt,
     }
 
     /* make the allocated buffer length a multiple of 4 */
-    buf_len = (len + 3) & ~3;
+    buf_len = (len + 3) & ~3U;
     buf = (FT_Byte*)malloc(buf_len);
     if (!buf)
       return FT_Err_Out_Of_Memory;

@@ -225,7 +225,7 @@ TA_table_build_cvt(FT_Byte** cvt,
   buf_len <<= 1; /* we have 16bit values */
 
   /* buffer length must be a multiple of four */
-  len = (buf_len + 3) & ~3;
+  len = (buf_len + 3) & ~3U;
   buf = (FT_Byte*)malloc(len);
   if (!buf)
     return FT_Err_Out_Of_Memory;
