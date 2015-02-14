@@ -75,7 +75,7 @@ TA_sfnt_update_post_table(SFNT* sfnt,
       FT_UShort idx;
 
 
-      idx = TA_NEXT_USHORT(p);
+      idx = NEXT_USHORT(p);
       if (idx >= 258)
       {
         idx -= 257;

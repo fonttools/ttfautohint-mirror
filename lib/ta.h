@@ -37,6 +37,7 @@
 #define TTFAUTOHINT_GLYPH_FIRST_BYTE "\x0C" /* first byte is string length */
 #define TTFAUTOHINT_GLYPH_LEN 13
 
+
 /* these macros convert 16bit and 32bit numbers into single bytes */
 /* using the byte order needed within SFNT files */
 
@@ -47,6 +48,17 @@
 #define BYTE2(x) (FT_Byte)(((x) & 0x00FF0000UL) >> 16);
 #define BYTE3(x) (FT_Byte)(((x) & 0x0000FF00UL) >> 8);
 #define BYTE4(x) ((x) & 0x000000FFUL);
+
+/* utility macros to get data from a pointer (with auto-increment) */
+
+#define NEXT_USHORT(buffer) \
+          ((FT_UShort)(buffer += 2, buffer[-2] << 8 \
+                                    | buffer[-1]))
+#define NEXT_ULONG(buffer) \
+          ((FT_ULong)(buffer += 4, buffer[-4] << 24 \
+                                   | buffer[-3] << 16 \
+                                   | buffer[-2] << 8 \
+                                   | buffer[-1]))
 
 
 /* an SFNT tag for our information table */
@@ -99,17 +111,6 @@
 #define REPEAT 0x08
 #define SAME_X 0x10
 #define SAME_Y 0x20
-
-
-/* utility macros to get data from a pointer (with auto-increment) */
-#define TA_NEXT_USHORT(buffer) \
-          ((FT_UShort)(buffer += 2, buffer[-2] << 8 \
-                                    | buffer[-1]))
-#define TA_NEXT_ULONG(buffer) \
-          ((FT_ULong)(buffer += 4, buffer[-4] << 24 \
-                                   | buffer[-3] << 16 \
-                                   | buffer[-2] << 8 \
-                                   | buffer[-1]))
 
 
 /* a single glyph */

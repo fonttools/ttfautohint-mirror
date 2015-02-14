@@ -53,7 +53,7 @@ TA_table_compute_checksum(FT_Byte* buf,
   /* we expect that the length of `buf' is a multiple of 4 */
 
   while (buf < end_buf)
-    checksum += TA_NEXT_ULONG(buf);
+    checksum += NEXT_ULONG(buf);
 
   return checksum;
 }

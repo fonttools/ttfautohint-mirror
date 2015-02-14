@@ -19,8 +19,8 @@
 /* the code below contains many redundancies; */
 /* it has been written for clarity */
 
-#define VALUE(val, p) val = TA_NEXT_USHORT(p)
-#define OFFSET(val, base, p) val = base + TA_NEXT_USHORT(p)
+#define VALUE(val, p) val = NEXT_USHORT(p)
+#define OFFSET(val, base, p) val = base + NEXT_USHORT(p)
 
 
 /* this simple `Coverage_table' structure wastes memory... */

@@ -62,9 +62,9 @@ parse_name_header(FT_Byte** curp,
 
   p = *curp;
 
-  n->format = TA_NEXT_USHORT(p);
-  n->name_count = TA_NEXT_USHORT(p);
-  n->string_offset = TA_NEXT_USHORT(p);
+  n->format = NEXT_USHORT(p);
+  n->name_count = NEXT_USHORT(p);
+  n->string_offset = NEXT_USHORT(p);
 
   n->name_records = NULL;
   n->lang_tag_records = NULL;
@@ -83,7 +83,7 @@ parse_name_header(FT_Byte** curp,
     if (q + 2 > endp)
       return FT_Err_Invalid_Table;
 
-    n->lang_tag_count = TA_NEXT_USHORT(q);
+    n->lang_tag_count = NEXT_USHORT(q);
 
     startp += 2 + 4 * n->lang_tag_count;
   }
@@ -135,14 +135,14 @@ parse_name_records(FT_Byte** curp,
     FT_UShort l;
 
 
-    r->platform_id = TA_NEXT_USHORT(p);
-    r->encoding_id = TA_NEXT_USHORT(p);
-    r->language_id = TA_NEXT_USHORT(p);
-    r->name_id = TA_NEXT_USHORT(p);
+    r->platform_id = NEXT_USHORT(p);
+    r->encoding_id = NEXT_USHORT(p);
+    r->language_id = NEXT_USHORT(p);
+    r->name_id = NEXT_USHORT(p);
 
-    r->len = TA_NEXT_USHORT(p);
+    r->len = NEXT_USHORT(p);
 
-    offset = TA_NEXT_USHORT(p);
+    offset = NEXT_USHORT(p);
 
     s = buf + n->string_offset + offset;
 
@@ -248,9 +248,9 @@ parse_lang_tag_records(FT_Byte** curp,
     FT_Byte* s;
 
 
-    r->len = TA_NEXT_USHORT(p);
+    r->len = NEXT_USHORT(p);
 
-    offset = TA_NEXT_USHORT(p);
+    offset = NEXT_USHORT(p);
 
     s = buf + n->string_offset + offset;
 
