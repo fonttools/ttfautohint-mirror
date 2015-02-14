@@ -492,24 +492,28 @@ TA_sfnt_build_number_set(SFNT* sfnt,
   nr = number_set;
   while (nr)
   {
-    if (nr->start == nr->end)
+    FT_UInt start = (FT_UInt)nr->start;
+    FT_UInt end = (FT_UInt)nr->end;
+
+
+    if (start == end)
     {
-      if (nr->start < 256)
-        *(single_arg--) = nr->start;
+      if (start < 256)
+        *(single_arg--) = start;
       else
-        *(single2_arg--) = nr->start;
+        *(single2_arg--) = start;
     }
     else
     {
-      if (nr->start < 256 && nr->end < 256)
+      if (start < 256 && end < 256)
       {
-        *(range_arg--) = nr->start;
-        *(range_arg--) = nr->end;
+        *(range_arg--) = start;
+        *(range_arg--) = end;
       }
       else
       {
-        *(range2_arg--) = nr->start;
-        *(range2_arg--) = nr->end;
+        *(range2_arg--) = start;
+        *(range2_arg--) = end;
       }
     }
     nr = nr->next;
@@ -573,6 +577,8 @@ TA_table_build_prep(FT_Byte** prep,
 {
   SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
   glyf_Data* data = (glyf_Data*)glyf_table->data;
+  /* XXX: make this work for more than 256 styles */
+  FT_Byte num_used_styles = (FT_Byte)data->num_used_styles;
 
   FT_Int i;
 
@@ -607,18 +613,15 @@ TA_table_build_prep(FT_Byte** prep,
     buf_new_len += sizeof (PREP(test_exception_a));
 
   buf_new_len += sizeof (PREP(align_top_a))
-                 + (data->num_used_styles > 6
-                      ? data->num_used_styles + 3
-                      : data->num_used_styles + 2)
+                 + (num_used_styles > 6 ? num_used_styles + 3
+                                        : num_used_styles + 2)
                  + sizeof (PREP(align_top_b));
   buf_new_len += sizeof (PREP(loop_cvt_a))
-                 + (data->num_used_styles > 3
-                     ? 2 * data->num_used_styles + 3
-                     : 2 * data->num_used_styles + 2)
+                 + (num_used_styles > 3 ? 2 * num_used_styles + 3
+                                        : 2 * num_used_styles + 2)
                  + sizeof (PREP(loop_cvt_b))
-                 + (data->num_used_styles > 3
-                     ? 2 * data->num_used_styles + 3
-                     : 2 * data->num_used_styles + 2)
+                 + (num_used_styles > 3 ? 2 * num_used_styles + 3
+                                        : 2 * num_used_styles + 2)
                  + sizeof (PREP(loop_cvt_c));
 
   if (font->x_height_snapping_exceptions)
@@ -627,15 +630,13 @@ TA_table_build_prep(FT_Byte** prep,
   buf_new_len += sizeof (PREP(store_vwidth_data_a))
                  + 1
                  + sizeof (PREP(store_vwidth_data_b))
-                 + (data->num_used_styles > 6
-                      ? 2 * (data->num_used_styles + 1) + 2
-                      : 2 * (data->num_used_styles + 1) + 1)
+                 + (num_used_styles > 6 ? 2 * (num_used_styles + 1) + 2
+                                        : 2 * (num_used_styles + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_c))
                  + 1
                  + sizeof (PREP(store_vwidth_data_d))
-                 + (data->num_used_styles > 6
-                      ? 2 * (data->num_used_styles + 1) + 2
-                      : 2 * (data->num_used_styles + 1) + 1)
+                 + (num_used_styles > 6 ? 2 * (num_used_styles + 1) + 2
+                                        : 2 * (num_used_styles + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_e));
   buf_new_len += sizeof (PREP(set_smooth_or_strong_a))
                  + 1
@@ -644,9 +645,8 @@ TA_table_build_prep(FT_Byte** prep,
                  + sizeof (PREP(set_smooth_or_strong_c))
                  + 1
                  + sizeof (PREP(set_smooth_or_strong_d));
-  buf_new_len += (data->num_used_styles > 3
-                     ? 2 * data->num_used_styles + 3
-                     : 2 * data->num_used_styles + 2)
+  buf_new_len += (num_used_styles > 3 ? 2 * num_used_styles + 3
+                                      : 2 * num_used_styles + 2)
                  + sizeof (PREP(round_blues));
   buf_new_len += sizeof (PREP(set_dropout_mode));
   buf_new_len += sizeof (PREP(reset_component_counter));
@@ -687,13 +687,13 @@ TA_table_build_prep(FT_Byte** prep,
     COPY_PREP(test_exception_a);
 
   COPY_PREP(align_top_a);
-  if (data->num_used_styles > 6)
+  if (num_used_styles > 6)
   {
     BCI(NPUSHB);
-    BCI(data->num_used_styles + 2);
+    BCI(num_used_styles + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + data->num_used_styles + 2);
+    BCI(PUSHB_1 - 1 + num_used_styles + 2);
   /* XXX: make this work for offsets > 255 */
   for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
@@ -704,17 +704,17 @@ TA_table_build_prep(FT_Byte** prep,
                   ? 0
                   : (unsigned char)CVT_X_HEIGHT_BLUE_OFFSET(i);
   }
-  *(bufp++) = data->num_used_styles;
+  *(bufp++) = num_used_styles;
   COPY_PREP(align_top_b);
 
   COPY_PREP(loop_cvt_a);
-  if (data->num_used_styles > 3)
+  if (num_used_styles > 3)
   {
     BCI(NPUSHB);
-    BCI(2 * data->num_used_styles + 2);
+    BCI(2 * num_used_styles + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + 2 * data->num_used_styles + 2);
+    BCI(PUSHB_1 - 1 + 2 * num_used_styles + 2);
   /* XXX: make this work for offsets > 255 */
   for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
@@ -728,15 +728,15 @@ TA_table_build_prep(FT_Byte** prep,
                   + CVT_VERT_WIDTHS_SIZE(i)
                   + (CVT_BLUES_SIZE(i) > 1 ? CVT_BLUES_SIZE(i) - 2 : 0));
   }
-  *(bufp++) = data->num_used_styles;
+  *(bufp++) = num_used_styles;
   COPY_PREP(loop_cvt_b);
-  if (data->num_used_styles > 3)
+  if (num_used_styles > 3)
   {
     BCI(NPUSHB);
-    BCI(2 * data->num_used_styles + 2);
+    BCI(2 * num_used_styles + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + 2 * data->num_used_styles + 2);
+    BCI(PUSHB_1 - 1 + 2 * num_used_styles + 2);
   /* XXX: make this work for offsets > 255 */
   for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
@@ -748,7 +748,7 @@ TA_table_build_prep(FT_Byte** prep,
     *(bufp++) = (unsigned char)(
                   CVT_BLUES_SIZE(i) > 1 ? CVT_BLUES_SIZE(i) - 2 : 0);
   }
-  *(bufp++) = data->num_used_styles;
+  *(bufp++) = num_used_styles;
   COPY_PREP(loop_cvt_c);
 
   if (font->x_height_snapping_exceptions)
@@ -757,13 +757,13 @@ TA_table_build_prep(FT_Byte** prep,
   COPY_PREP(store_vwidth_data_a);
   *(bufp++) = (unsigned char)CVT_VWIDTH_OFFSET_DATA(0);
   COPY_PREP(store_vwidth_data_b);
-  if (data->num_used_styles > 6)
+  if (num_used_styles > 6)
   {
     BCI(NPUSHW);
-    BCI(data->num_used_styles + 2);
+    BCI(num_used_styles + 2);
   }
   else
-    BCI(PUSHW_1 - 1 + data->num_used_styles + 2);
+    BCI(PUSHW_1 - 1 + num_used_styles + 2);
   for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
     if (data->style_ids[i] == 0xFFFFU)
@@ -772,18 +772,18 @@ TA_table_build_prep(FT_Byte** prep,
     *(bufp++) = HIGH(CVT_VERT_WIDTHS_OFFSET(i) * 64);
     *(bufp++) = LOW(CVT_VERT_WIDTHS_OFFSET(i) * 64);
   }
-  *(bufp++) = HIGH(data->num_used_styles);
-  *(bufp++) = LOW(data->num_used_styles);
+  *(bufp++) = HIGH(num_used_styles);
+  *(bufp++) = LOW(num_used_styles);
   COPY_PREP(store_vwidth_data_c);
   *(bufp++) = (unsigned char)CVT_VWIDTH_SIZE_DATA(0);
   COPY_PREP(store_vwidth_data_d);
-  if (data->num_used_styles > 6)
+  if (num_used_styles > 6)
   {
     BCI(NPUSHW);
-    BCI(data->num_used_styles + 2);
+    BCI(num_used_styles + 2);
   }
   else
-    BCI(PUSHW_1 - 1 + data->num_used_styles + 2);
+    BCI(PUSHW_1 - 1 + num_used_styles + 2);
   for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
     if (data->style_ids[i] == 0xFFFFU)
@@ -792,8 +792,8 @@ TA_table_build_prep(FT_Byte** prep,
     *(bufp++) = HIGH(CVT_VERT_WIDTHS_SIZE(i) * 64);
     *(bufp++) = LOW(CVT_VERT_WIDTHS_SIZE(i) * 64);
   }
-  *(bufp++) = HIGH(data->num_used_styles);
-  *(bufp++) = LOW(data->num_used_styles);
+  *(bufp++) = HIGH(num_used_styles);
+  *(bufp++) = LOW(num_used_styles);
   COPY_PREP(store_vwidth_data_e);
 
   COPY_PREP(set_smooth_or_strong_a);
@@ -804,13 +804,13 @@ TA_table_build_prep(FT_Byte** prep,
   *(bufp++) = font->dw_cleartype_strong_stem_width ? 100 : 0;
   COPY_PREP(set_smooth_or_strong_d);
 
-  if (data->num_used_styles > 3)
+  if (num_used_styles > 3)
   {
     BCI(NPUSHB);
-    BCI(2 * data->num_used_styles + 2);
+    BCI(2 * num_used_styles + 2);
   }
   else
-    BCI(PUSHB_1 - 1 + 2 * data->num_used_styles + 2);
+    BCI(PUSHB_1 - 1 + 2 * num_used_styles + 2);
   /* XXX: make this work for offsets > 255 */
   for (i = TA_STYLE_MAX - 1; i >= 0; i--)
   {
@@ -820,7 +820,7 @@ TA_table_build_prep(FT_Byte** prep,
     *(bufp++) = (unsigned char)CVT_BLUE_REFS_OFFSET(i);
     *(bufp++) = (unsigned char)CVT_BLUES_SIZE(i);
   }
-  *(bufp++) = data->num_used_styles;
+  *(bufp++) = num_used_styles;
   COPY_PREP(round_blues);
 
   COPY_PREP(set_dropout_mode);
