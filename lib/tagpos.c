@@ -251,7 +251,6 @@ TA_handle_cursive_lookup(FT_Byte* Lookup,
       FT_UShort glyph_idx = cov.glyph_idxs[i];
       FT_Byte* EntryAnchor;
       FT_Byte* ExitAnchor;
-      FT_Error error;
 
 
       OFFSET(EntryAnchor, CursivePosFormat1, q);
@@ -336,7 +335,6 @@ TA_handle_markbase_lookup(FT_Byte* Lookup,
     {
       FT_UShort glyph_idx = cov.glyph_idxs[i];
       FT_Byte* MarkAnchor;
-      FT_Error error;
 
 
       q += 2; /* skip Class */
@@ -372,7 +370,6 @@ TA_handle_markbase_lookup(FT_Byte* Lookup,
       for (; cc > 0; cc--)
       {
         FT_Byte* BaseAnchor;
-        FT_Error error;
 
 
         OFFSET(BaseAnchor, BaseArray, q);
@@ -453,7 +450,6 @@ TA_handle_marklig_lookup(FT_Byte* Lookup,
     {
       FT_UShort glyph_idx = cov.glyph_idxs[i];
       FT_Byte* MarkAnchor;
-      FT_Error error;
 
 
       q += 2; /* skip Class */
@@ -502,7 +498,6 @@ TA_handle_marklig_lookup(FT_Byte* Lookup,
         for (; cc > 0; cc--)
         {
           FT_Byte* LigatureAnchor;
-          FT_Error error;
 
 
           OFFSET(LigatureAnchor, LigatureAttach, r);
@@ -584,7 +579,6 @@ TA_handle_markmark_lookup(FT_Byte* Lookup,
     {
       FT_UShort glyph_idx = cov.glyph_idxs[i];
       FT_Byte* Mark1Anchor;
-      FT_Error error;
 
 
       q += 2; /* skip Class */
@@ -620,7 +614,6 @@ TA_handle_markmark_lookup(FT_Byte* Lookup,
       for (; cc > 0; cc--)
       {
         FT_Byte* Mark2Anchor;
-        FT_Error error;
 
 
         OFFSET(Mark2Anchor, Mark2Array, q);
