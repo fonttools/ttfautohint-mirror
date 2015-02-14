@@ -55,12 +55,18 @@ typedef char *sds;
  * suite, the replacement below should give the same offsets so that `sdslen'
  * and `sdavail' can stay as inline definitions. */
 struct sdshdr_h_ {
-    int len;
-    int free;
+    size_t len;
+    size_t free;
     char buf[1000];
 };
 
-static inline size_t sdslen(const sds s) {
+#ifdef _MSC_VER
+#  define INLINE __forceinline
+#else
+#  define INLINE inline
+#endif
+
+static INLINE size_t sdslen(const sds s) {
     struct sdshdr_h_ *sh = (struct sdshdr_h_*)
                              (s-(int)offsetof(struct sdshdr_h_, buf));
 
@@ -68,7 +74,7 @@ static inline size_t sdslen(const sds s) {
     return sh->len;
 }
 
-static inline size_t sdsavail(const sds s) {
+static INLINE size_t sdsavail(const sds s) {
     struct sdshdr_h_ *sh = (struct sdshdr_h_*)
                              (s-(int)offsetof(struct sdshdr_h_, buf));
 
