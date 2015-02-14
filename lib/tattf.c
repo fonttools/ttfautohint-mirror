@@ -73,7 +73,7 @@ TA_sfnt_build_TTF_header(SFNT* sfnt,
   /* auxiliary data */
   {
     FT_ULong search_range, entry_selector, range_shift;
-    FT_ULong i, j;
+    FT_ULong j;
 
 
     for (i = 1, j = 2; j <= num_tables_in_header; i++, j <<= 1)

@@ -324,9 +324,6 @@ TTF_autohint(const char* options,
 
   if (fallback_script_string)
   {
-    int i;
-
-
     for (i = 0; i < TA_STYLE_MAX; i++)
     {
       TA_StyleClass style_class = ta_style_classes[i];
@@ -348,9 +345,6 @@ TTF_autohint(const char* options,
 
   if (default_script_string)
   {
-    int i;
-
-
     for (i = 0; i < TA_SCRIPT_MAX; i++)
     {
       if (!strcmp(script_names[i], default_script_string))

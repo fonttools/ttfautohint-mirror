@@ -38,6 +38,7 @@
 #define MD_orig_ZP2_0 \
   MD_orig_fixed
 
+#if 0
 #define MD_orig_ZP2_1 \
   PUSHB_1, \
     0, \
@@ -46,6 +47,7 @@
   PUSHB_1, \
     1, \
   SZP2
+#endif
 
 
 /*
