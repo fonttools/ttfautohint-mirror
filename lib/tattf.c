@@ -80,7 +80,7 @@ TA_sfnt_build_TTF_header(SFNT* sfnt,
       ;
 
     entry_selector = i - 1;
-    search_range = 0x10 << entry_selector;
+    search_range = 0x10U << entry_selector;
     range_shift = (num_tables_in_header << 4) - search_range;
 
     buf[6] = HIGH(search_range);

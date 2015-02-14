@@ -139,7 +139,7 @@ TTF_autohint(const char* options,
     if (start == op)
       goto End;
 
-    len = op - start;
+    len = (size_t)(op - start);
 
     /* the `COMPARE' macro uses `len' and `start' */
 
@@ -465,8 +465,11 @@ No_check:
     FT_UInt idx;
 
 
-    error = FT_New_Memory_Face(font->lib, font->in_buf, font->in_len,
-                               i, &sfnt->face);
+    error = FT_New_Memory_Face(font->lib,
+                               font->in_buf,
+                               (FT_Long)font->in_len,
+                               i,
+                               &sfnt->face);
 
     /* assure that the font hasn't been already processed by ttfautohint; */
     /* another, more thorough check is done in TA_glyph_parse_simple */

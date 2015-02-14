@@ -41,10 +41,10 @@ TA_sfnt_update_post_table(SFNT* sfnt,
   if (post_table->processed)
     return TA_Err_Ok;
 
-  version = buf[0] << 24;
-  version += buf[1] << 16;
-  version += buf[2] << 8;
-  version += buf[3];
+  version = (FT_ULong)(buf[0] << 24
+                       | buf[1] << 16
+                       | buf[2] << 8
+                       | buf[3]);
 
   /* since we have to add a non-standard glyph name, */
   /* we must convert `name' tables in formats 1.0 and 2.5 into format 2.0 */
@@ -119,7 +119,7 @@ TA_sfnt_update_post_table(SFNT* sfnt,
     *(p_new + 1) = LOW(max_name_idx + 1 + 257);
     p_new += 2;
 
-    memcpy(p_new, p, buf + buf_len - p); /* names */
+    memcpy(p_new, p, (size_t)(buf + buf_len - p)); /* names */
     p_new += buf + buf_len - p;
 
     strncpy((char*)p_new, TTFAUTOHINT_GLYPH_FIRST_BYTE TTFAUTOHINT_GLYPH,

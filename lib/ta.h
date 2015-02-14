@@ -44,10 +44,10 @@
 #define HIGH(x) (FT_Byte)(((x) & 0xFF00) >> 8)
 #define LOW(x) ((x) & 0x00FF)
 
-#define BYTE1(x) (FT_Byte)(((x) & 0xFF000000UL) >> 24);
-#define BYTE2(x) (FT_Byte)(((x) & 0x00FF0000UL) >> 16);
-#define BYTE3(x) (FT_Byte)(((x) & 0x0000FF00UL) >> 8);
-#define BYTE4(x) ((x) & 0x000000FFUL);
+#define BYTE1(x) (FT_Byte)(((FT_ULong)(x) & 0xFF000000UL) >> 24);
+#define BYTE2(x) (FT_Byte)(((FT_ULong)(x) & 0x00FF0000UL) >> 16);
+#define BYTE3(x) (FT_Byte)(((FT_ULong)(x) & 0x0000FF00UL) >> 8);
+#define BYTE4(x) ((FT_ULong)(x) & 0x000000FFUL);
 
 /* utility macros to get data from a pointer (with auto-increment) */
 

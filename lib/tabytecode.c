@@ -452,8 +452,8 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
   num_packed_segments = 0;
   for (seg = segments; seg < seg_limit; seg++)
   {
-    FT_UInt first = seg->first - points;
-    FT_UInt last = seg->last - points;
+    FT_UInt first = (FT_UInt)(seg->first - points);
+    FT_UInt last = (FT_UInt)(seg->last - points);
 
 
     first = TA_adjust_point_index(recorder, first);
@@ -503,8 +503,8 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
   base = 0;
   for (seg = segments; seg < segments + num_packed_segments; seg++)
   {
-    FT_UInt first = seg->first - points;
-    FT_UInt last = seg->last - points;
+    FT_UInt first = (FT_UInt)(seg->first - points);
+    FT_UInt last = (FT_UInt)(seg->last - points);
     FT_UInt low_nibble;
     FT_UInt high_nibble;
 
@@ -522,8 +522,8 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 
   for (seg = segments + num_packed_segments; seg < seg_limit; seg++)
   {
-    FT_UInt first = seg->first - points;
-    FT_UInt last = seg->last - points;
+    FT_UInt first = (FT_UInt)(seg->first - points);
+    FT_UInt last = (FT_UInt)(seg->last - points);
 
 
     *(arg--) = TA_adjust_point_index(recorder, first);
@@ -562,8 +562,8 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
   /* so that edges can easily link to them */
   for (seg = segments; seg < seg_limit; seg++)
   {
-    FT_UInt first = seg->first - points;
-    FT_UInt last = seg->last - points;
+    FT_UInt first = (FT_UInt)(seg->first - points);
+    FT_UInt last = (FT_UInt)(seg->last - points);
 
 
     if (first > last)
@@ -617,7 +617,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 static void
 build_delta_exception(const Ctrl* ctrl,
                       FT_UInt** delta_args,
-                      int* num_delta_args)
+                      unsigned int* num_delta_args)
 {
   int offset;
   int ppem;
@@ -669,18 +669,18 @@ build_delta_exception(const Ctrl* ctrl,
   if (ctrl->x_shift)
   {
     *(delta_args[offset] + num_delta_args[offset]++) =
-      (ppem << 4) + x_shift;
+      (FT_UInt)((ppem << 4) + x_shift);
     *(delta_args[offset] + num_delta_args[offset]++) =
-      ctrl->point_idx;
+      (FT_UInt)ctrl->point_idx;
   }
 
   if (ctrl->y_shift)
   {
     offset += 3;
     *(delta_args[offset] + num_delta_args[offset]++) =
-      (ppem << 4) + y_shift;
+      (FT_UInt)((ppem << 4) + y_shift);
     *(delta_args[offset] + num_delta_args[offset]++) =
-      ctrl->point_idx;
+      (FT_UInt)ctrl->point_idx;
   }
 }
 
@@ -697,7 +697,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
 
   FT_Face face = font->loader->face;
 
-  int num_points;
+  unsigned int num_points;
   int i;
 
   FT_UShort num_before_IUP_stack_elements = 0;
@@ -706,8 +706,8 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   /* DELTAP[1-3] stacks for both x and y directions */
   FT_UInt* delta_before_IUP_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
   FT_UInt* delta_after_IUP_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
-  int num_delta_before_IUP_args[6] = {0, 0, 0, 0, 0, 0};
-  int num_delta_after_IUP_args[6] = {0, 0, 0, 0, 0, 0};
+  unsigned int num_delta_before_IUP_args[6] = {0, 0, 0, 0, 0, 0};
+  unsigned int num_delta_after_IUP_args[6] = {0, 0, 0, 0, 0, 0};
   FT_UInt* args = NULL;
 
   FT_Bool need_before_IUP_words = 0;
@@ -718,7 +718,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   FT_Bool allocated_after_IUP = 0;
 
 
-  num_points = font->loader->gloader->base.outline.n_points;
+  num_points = (unsigned int)font->loader->gloader->base.outline.n_points;
 
   /* loop over all fitting control instructions */
   for (;;)
@@ -815,7 +815,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   {
     if (num_delta_before_IUP_args[i])
     {
-      int n = num_delta_before_IUP_args[i] >> 1;
+      unsigned int n = num_delta_before_IUP_args[i] >> 1;
 
 
       if (n > 255)
@@ -835,7 +835,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   {
     if (num_delta_after_IUP_args[i])
     {
-      int n = num_delta_after_IUP_args[i] >> 1;
+      unsigned int n = num_delta_after_IUP_args[i] >> 1;
 
 
       if (n > 255)
@@ -889,7 +889,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
     /* stack elements are bytes, but counts need words */
     for (i = 0; i < 6; i++)
     {
-      int num_delta_arg;
+      FT_UInt num_delta_arg;
 
 
       if (!num_delta_before_IUP_args[i])
@@ -990,7 +990,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
     /* stack elements are bytes, but counts need words */
     for (i = 0; i < 6; i++)
     {
-      int num_delta_arg;
+      FT_UInt num_delta_arg;
 
 
       if (!num_delta_after_IUP_args[i])
@@ -1076,15 +1076,15 @@ TA_sfnt_build_glyph_scaler(SFNT* sfnt,
   FONT* font = recorder->font;
   FT_GlyphSlot glyph = sfnt->face->glyph;
   FT_Vector* points = glyph->outline.points;
-  FT_Int num_contours = glyph->outline.n_contours;
+  FT_UInt num_contours = (FT_UInt)glyph->outline.n_contours;
 
   FT_UInt* args;
   FT_UInt* arg;
   FT_UInt num_args;
 
   FT_Bool need_words = 0;
-  FT_Int p, q;
-  FT_Int start, end;
+  FT_UInt p, q;
+  FT_UInt start, end;
   FT_UShort num_storage;
   FT_UShort num_stack_elements;
 
@@ -1114,11 +1114,11 @@ TA_sfnt_build_glyph_scaler(SFNT* sfnt,
 
   for (p = 0; p < num_contours; p++)
   {
-    FT_Int max = start;
-    FT_Int min = start;
+    FT_UInt max = start;
+    FT_UInt min = start;
 
 
-    end = glyph->outline.contours[p];
+    end = (FT_UInt)glyph->outline.contours[p];
 
     for (q = start; q <= end; q++)
     {
@@ -1193,7 +1193,7 @@ TA_font_build_subglyph_shifter(FONT* font,
 
 
     /* load subglyph to get the number of contours */
-    error = FT_Load_Glyph(face, subglyph->index, FT_LOAD_NO_SCALE);
+    error = FT_Load_Glyph(face, (FT_UInt)subglyph->index, FT_LOAD_NO_SCALE);
     if (error)
       return NULL;
     num_contours = glyph->outline.n_contours;
@@ -2524,8 +2524,9 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
    * In summary, this is approx. 3*16 * 2*2 * 2 = 400 bytes per point,
    * adding some bytes for the necessary overhead.
    */
-  ins_len = hints->num_points
-            * (1000 + ((font->control_data_head != NULL) ? 400 : 0));
+  ins_len = (FT_UInt)(hints->num_points
+                      * (1000
+                         + ((font->control_data_head != NULL) ? 400 : 0)));
   ins_buf = (FT_Byte*)malloc(ins_len);
   if (!ins_buf)
     return FT_Err_Out_Of_Memory;
@@ -2576,7 +2577,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     char buf[256];
 
 
-    (void)FT_Get_Glyph_Name(face, idx, buf, 256);
+    (void)FT_Get_Glyph_Name(face, (FT_UInt)idx, buf, 256);
 
     num_chars = fprintf(stderr, "glyph %ld", idx);
     if (*buf)
@@ -2625,7 +2626,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     /* calling `ta_loader_load_glyph' uses the */
     /* `TA_hints_recorder' function as a callback, */
     /* modifying `hints_record' */
-    error = ta_loader_load_glyph(font, face, idx, load_flags);
+    error = ta_loader_load_glyph(font, face, (FT_UInt)idx, load_flags);
     if (error)
       goto Err;
 
@@ -2778,7 +2779,7 @@ Done1:
     }
   }
 
-  ins_len = bufp - ins_buf;
+  ins_len = (FT_UInt)(bufp - ins_buf);
 
   if (ins_len > sfnt->max_instructions)
     sfnt->max_instructions = (FT_UShort)ins_len;

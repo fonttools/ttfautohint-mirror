@@ -599,7 +599,7 @@ TA_table_build_prep(FT_Byte** prep,
       return FT_Err_Out_Of_Memory;
   }
 
-  buf_len = bufp - buf;
+  buf_len = (FT_UInt)(bufp - buf);
   buf_new_len = buf_len;
 
   if (font->hinting_limit)

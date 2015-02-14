@@ -34,14 +34,18 @@ TA_font_init(FONT* font)
     return TA_Err_Invalid_FreeType_Version;
 
   /* get number of faces (i.e. subfonts) */
-  error = FT_New_Memory_Face(font->lib, font->in_buf, font->in_len, -1, &f);
+  error = FT_New_Memory_Face(font->lib,
+                             font->in_buf,
+                             (FT_Long)font->in_len,
+                             -1,
+                             &f);
   if (error)
     return error;
   font->num_sfnts = f->num_faces;
   FT_Done_Face(f);
 
   /* it is a TTC if we have more than a single subfont */
-  font->sfnts = (SFNT*)calloc(1, font->num_sfnts * sizeof (SFNT));
+  font->sfnts = (SFNT*)calloc(1, (size_t)font->num_sfnts * sizeof (SFNT));
   if (!font->sfnts)
     return FT_Err_Out_Of_Memory;
 

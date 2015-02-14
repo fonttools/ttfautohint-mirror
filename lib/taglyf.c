@@ -213,7 +213,7 @@ TA_glyph_parse_composite(GLYPH* glyph,
   /* walk over component records */
   do
   {
-    flags_offset = q - glyph->buf;
+    flags_offset = (FT_ULong)(q - glyph->buf);
 
     *(q++) = *p;
     *(q++) = *(p + 1);
@@ -306,7 +306,7 @@ TA_glyph_parse_composite(GLYPH* glyph,
     }
   } while (flags & MORE_COMPONENTS);
 
-  glyph->len1 = q - glyph->buf;
+  glyph->len1 = (FT_ULong)(q - glyph->buf);
   /* glyph->len2 = 0; */
   glyph->flags_offset = flags_offset;
   glyph->buf = (FT_Byte*)realloc(glyph->buf, glyph->len1);
@@ -340,7 +340,7 @@ TA_glyph_parse_simple(GLYPH* glyph,
   p = buf;
   endp = buf + len;
 
-  ins_offset = 10 + glyph->num_contours * 2;
+  ins_offset = 10 + (FT_ULong)glyph->num_contours * 2;
 
   p += ins_offset;
 
@@ -414,7 +414,7 @@ TA_glyph_parse_simple(GLYPH* glyph,
   if (p + xy_size > endp)
     return FT_Err_Invalid_Table;
 
-  flags_size = p - flags_start;
+  flags_size = (FT_ULong)(p - flags_start);
 
   /* store the data before and after the bytecode instructions */
   /* in the same array */
@@ -672,7 +672,7 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
 
 
         /* use the last contour's end point to compute number of points */
-        off = 10 + (glyph->num_contours - 1) * 2;
+        off = 10 + ((FT_ULong)glyph->num_contours - 1) * 2;
         if (off >= len - 1)
           return FT_Err_Invalid_Table;
 
@@ -951,7 +951,7 @@ TA_create_glyph_data(FT_Outline* outline,
   /* we use `calloc' since we rely on the array */
   /* being initialized to zero; */
   /* additionally, we need one more byte for a test after the loop */
-  flags = (FT_Byte*)calloc(1, outline->n_points + 1);
+  flags = (FT_Byte*)calloc(1, (size_t)outline->n_points + 1);
   if (!flags)
   {
     error = FT_Err_Out_Of_Memory;
@@ -959,14 +959,14 @@ TA_create_glyph_data(FT_Outline* outline,
   }
 
   /* we have either one-byte or two-byte elements */
-  x = (FT_Byte*)malloc(2 * outline->n_points);
+  x = (FT_Byte*)malloc(2 * (size_t)outline->n_points);
   if (!x)
   {
     error = FT_Err_Out_Of_Memory;
     goto Exit;
   }
 
-  y = (FT_Byte*)malloc(2 * outline->n_points);
+  y = (FT_Byte*)malloc(2 * (size_t)outline->n_points);
   if (!y)
   {
     error = FT_Err_Out_Of_Memory;
@@ -1098,8 +1098,8 @@ TA_create_glyph_data(FT_Outline* outline,
 
   /* concatenate all arrays and fill needed GLYPH structure elements */
 
-  glyph->len1 = 10 + 2 * outline->n_contours;
-  glyph->len2 = (flagsp - flags) + (xp - x) + (yp - y);
+  glyph->len1 = (FT_ULong)(10 + 2 * outline->n_contours);
+  glyph->len2 = (FT_ULong)((flagsp - flags) + (xp - x) + (yp - y));
 
   glyph->buf = (FT_Byte*)malloc(glyph->len1 + glyph->len2);
   if (!glyph->buf)
@@ -1122,11 +1122,11 @@ TA_create_glyph_data(FT_Outline* outline,
     *(p++) = LOW(outline->contours[i]);
   }
 
-  memcpy(p, flags, flagsp - flags);
+  memcpy(p, flags, (size_t)(flagsp - flags));
   p += flagsp - flags;
-  memcpy(p, x, xp - x);
+  memcpy(p, x, (size_t)(xp - x));
   p += xp - x;
-  memcpy(p, y, yp - y);
+  memcpy(p, y, (size_t)(yp - y));
 
 Exit:
   free(flags);

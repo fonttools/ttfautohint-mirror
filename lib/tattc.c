@@ -37,7 +37,7 @@ TA_font_build_TTC_header(FONT* font,
   FT_Byte* p;
 
 
-  len = (font->have_DSIG ? 24 : 12) + 4 * num_sfnts;
+  len = (FT_ULong)((font->have_DSIG ? 24 : 12) + 4 * num_sfnts);
   buf = (FT_Byte*)malloc(len);
   if (!buf)
     return FT_Err_Out_Of_Memory;
@@ -198,11 +198,11 @@ TA_font_build_TTC(FONT* font)
   if (error)
     return error;
 
-  TTF_header_bufs = (FT_Byte**)calloc(1, num_sfnts * sizeof (FT_Byte*));
+  TTF_header_bufs = (FT_Byte**)calloc(1, (size_t)num_sfnts * sizeof (FT_Byte*));
   if (!TTF_header_bufs)
     goto Err;
 
-  TTF_header_lens = (FT_ULong*)malloc(num_sfnts * sizeof (FT_ULong));
+  TTF_header_lens = (FT_ULong*)malloc((size_t)num_sfnts * sizeof (FT_ULong));
   if (!TTF_header_lens)
     goto Err;
 

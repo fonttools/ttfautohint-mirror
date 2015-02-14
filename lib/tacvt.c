@@ -106,16 +106,16 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
      */
     if (gstyles[glyph_index] != style_idx)
     {
-      FT_Int i;
+      FT_ULong i;
 
 
-      for (i = 0; i < globals->glyph_count; i++)
+      for (i = 0; i < (FT_ULong)globals->glyph_count; i++)
       {
         if (gstyles[i] == style_idx)
           break;
       }
 
-      if (i == globals->glyph_count)
+      if (i == (FT_ULong)globals->glyph_count)
         return TA_Err_Missing_Glyph;
 
       glyph_index = i;
@@ -250,7 +250,7 @@ TA_table_build_cvt(FT_Byte** cvt,
                    + 2 * data->num_used_styles) * 2; i++)
     *(bufp++) = 0;
 
-  cvt_offset = bufp - buf;
+  cvt_offset = (FT_UInt)(bufp - buf);
 
   /* loop again over all styles and copy CVT data */
   for (i = 0; i < TA_STYLE_MAX; i++)

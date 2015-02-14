@@ -275,7 +275,7 @@ glyph_idx:
         $glyph_idx = 0;
       else
       {
-        $glyph_idx = FT_Get_Name_Index(face, $glyph_name);
+        $glyph_idx = (long)FT_Get_Name_Index(face, $glyph_name);
         if ($glyph_idx == 0)
           $glyph_idx = -1;
       }
@@ -325,7 +325,9 @@ point_touch:
       int num_points;
 
 
-      error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
+      error = FT_Load_Glyph(face,
+                            (FT_UInt)context->glyph_idx,
+                            FT_LOAD_NO_SCALE);
       if (error)
       {
         store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph);
@@ -362,7 +364,9 @@ left_right:
       int num_points;
 
 
-      error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
+      error = FT_Load_Glyph(face,
+                            (FT_UInt)context->glyph_idx,
+                            FT_LOAD_NO_SCALE);
       if (error)
       {
         store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph);
@@ -399,7 +403,9 @@ no_dir:
       int num_points;
 
 
-      error = FT_Load_Glyph(face, context->glyph_idx, FT_LOAD_NO_SCALE);
+      error = FT_Load_Glyph(face,
+                            (FT_UInt)context->glyph_idx,
+                            FT_LOAD_NO_SCALE);
       if (error)
       {
         store_error_data(&@$, context, TA_Err_Control_Invalid_Glyph);

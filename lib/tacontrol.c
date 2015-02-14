@@ -156,7 +156,7 @@ control_show_line(FONT* font,
   face = font->sfnts[control->font_idx].face;
   glyph_name_buf[0] = '\0';
   if (FT_HAS_GLYPH_NAMES(face))
-    FT_Get_Glyph_Name(face, control->glyph_idx, glyph_name_buf, 64);
+    FT_Get_Glyph_Name(face, (FT_UInt)control->glyph_idx, glyph_name_buf, 64);
 
   points_buf = number_set_show(control->points, -1, -1);
   if (!points_buf)
@@ -363,7 +363,7 @@ Fail:
           break;
         p_end++;
       }
-      *errline_p = strndup(p_start, p_end - p_start);
+      *errline_p = strndup(p_start, (size_t)(p_end - p_start));
 
       /* construct data for `error_string_p' */
       if (context.error == TA_Err_Control_Invalid_Font_Index)
@@ -401,7 +401,7 @@ Fail:
       else
         *errpos_p = NULL;
 
-      *errlinenum_p = context.errline_num;
+      *errlinenum_p = (unsigned int)context.errline_num;
     }
   }
   else
