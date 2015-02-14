@@ -60,8 +60,8 @@ TA_control_new(Control_Type type,
   case Control_Segment_Left:
   case Control_Segment_Right:
     /* offsets */
-    control->x_shift = x_shift;
-    control->y_shift = y_shift;
+    control->x_shift = (int)x_shift;
+    control->y_shift = (int)y_shift;
     break;
 
   case Control_Segment_None:

@@ -386,7 +386,7 @@ TTF_autohint(const char* options,
   font->hinting_range_min = (FT_UInt)hinting_range_min;
   font->hinting_range_max = (FT_UInt)hinting_range_max;
   font->hinting_limit = (FT_UInt)hinting_limit;
-  font->increase_x_height = increase_x_height;
+  font->increase_x_height = (FT_UInt)increase_x_height;
   font->x_height_snapping_exceptions = x_height_snapping_exceptions;
   font->fallback_stem_width = (FT_UInt)fallback_stem_width;
 

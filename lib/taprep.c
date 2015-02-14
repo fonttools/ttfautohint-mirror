@@ -544,9 +544,9 @@ TA_sfnt_build_number_set(SFNT* sfnt,
   if (have_range)
     BCI(CALL);
 
-  num_stack_elements = num_singles + num_singles2;
+  num_stack_elements = (FT_UShort)(num_singles + num_singles2);
   if (num_stack_elements > num_ranges + num_ranges2)
-    num_stack_elements = num_ranges + num_ranges2;
+    num_stack_elements = (FT_UShort)(num_ranges + num_ranges2);
   num_stack_elements += ADDITIONAL_STACK_ELEMENTS;
   if (num_stack_elements > sfnt->max_stack_elements)
     sfnt->max_stack_elements = num_stack_elements;

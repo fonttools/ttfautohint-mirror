@@ -63,8 +63,7 @@ TA_sfnt_update_post_table(SFNT* sfnt,
     FT_Byte* p_new;
 
 
-    num_glyphs = buf[32] << 8;
-    num_glyphs += buf[33];
+    num_glyphs = (FT_UShort)(buf[32] << 8 | buf[33]);
 
     p = buf + 34;
     max_name_idx = 0;

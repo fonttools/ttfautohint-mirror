@@ -131,8 +131,8 @@ TA_sfnt_split_into_SFNT_tables(SFNT* sfnt,
     {
       sfnt->maxp_idx = j;
 
-      sfnt->max_components = buf[MAXP_MAX_COMPONENTS_OFFSET] << 8;
-      sfnt->max_components += buf[MAXP_MAX_COMPONENTS_OFFSET + 1];
+      sfnt->max_components = (FT_UShort)(buf[MAXP_MAX_COMPONENTS_OFFSET] << 8
+                                         | buf[MAXP_MAX_COMPONENTS_OFFSET + 1]);
     }
     else if (tag == TTAG_name)
       sfnt->name_idx = j;

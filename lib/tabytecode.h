@@ -293,7 +293,7 @@
 
 
 /* a simple macro to emit bytecode instructions */
-#define BCI(code) *(bufp++) = (code)
+#define BCI(code) *(bufp++) = (FT_Byte)(code)
 
 /* we increase the stack depth by this amount */
 #define ADDITIONAL_STACK_ELEMENTS 20

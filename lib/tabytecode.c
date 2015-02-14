@@ -316,12 +316,12 @@ TA_optimize_push(FT_Byte* buf,
   {
     /* reduce three NPUSHB to two */
     new_size1 = 0xFF;
-    new_size2 = sum - 0xFF;
+    new_size2 = (FT_Byte)(sum - 0xFF);
   }
   else
   {
     /* reduce two or three NPUSHB to one */
-    new_size1 = sum;
+    new_size1 = (FT_Byte)sum;
     new_size2 = 0;
   }
 
@@ -443,7 +443,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 
 
   seg_limit = segments + axis->num_segments;
-  num_segments = axis->num_segments;
+  num_segments = (FT_UShort)axis->num_segments;
 
   /* to pack the data in the bytecode more tightly, */
   /* we store up to the first nine segments in nibbles if possible, */
@@ -602,8 +602,9 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 
   /* both this function and `TA_emit_hints_record' */
   /* push data onto the stack */
-  num_stack_elements = ADDITIONAL_STACK_ELEMENTS
-                       + recorder->num_stack_elements + num_args;
+  num_stack_elements = (FT_UShort)(ADDITIONAL_STACK_ELEMENTS
+                                   + recorder->num_stack_elements
+                                   + num_args);
   if (num_stack_elements > sfnt->max_stack_elements)
     sfnt->max_stack_elements = num_stack_elements;
 
@@ -699,8 +700,8 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   int num_points;
   int i;
 
-  FT_UShort num_before_IUP_stack_elements;
-  FT_UShort num_after_IUP_stack_elements;
+  FT_UShort num_before_IUP_stack_elements = 0;
+  FT_UShort num_after_IUP_stack_elements = 0;
 
   /* DELTAP[1-3] stacks for both x and y directions */
   FT_UInt* delta_before_IUP_args[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
@@ -877,7 +878,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       num_args = num_args_new;
     }
 
-    num_before_IUP_stack_elements = num_args;
+    num_before_IUP_stack_elements = (FT_UShort)num_args;
 
     bufp = TA_build_push(bufp, args, num_args, need_before_IUP_words, 1);
   }
@@ -978,7 +979,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       num_args = num_args_new;
     }
 
-    num_after_IUP_stack_elements = num_args;
+    num_after_IUP_stack_elements = (FT_UShort)num_args;
 
     bufp = TA_build_push(bufp, args, num_args, need_after_IUP_words, 1);
   }
@@ -1155,7 +1156,7 @@ TA_sfnt_build_glyph_scaler(SFNT* sfnt,
   if (num_storage > sfnt->max_storage)
     sfnt->max_storage = num_storage;
 
-  num_stack_elements = ADDITIONAL_STACK_ELEMENTS + num_args;
+  num_stack_elements = (FT_UShort)(ADDITIONAL_STACK_ELEMENTS + num_args);
   if (num_stack_elements > sfnt->max_stack_elements)
     sfnt->max_stack_elements = num_stack_elements;
 
@@ -1721,7 +1722,7 @@ TA_emit_hints_record(Recorder* recorder,
 
   /* collect stack depth data */
   if (num_arguments > recorder->num_stack_elements)
-    recorder->num_stack_elements = num_arguments;
+    recorder->num_stack_elements = (FT_UShort)num_arguments;
 
   return bufp;
 }
@@ -1800,7 +1801,7 @@ TA_hints_recorder_handle_segments(FT_Byte* bufp,
   FT_UShort* wrap;
 
 
-  seg_idx = edge->first - segments;
+  seg_idx = (FT_UShort)(edge->first - segments);
 
   /* we store everything as 16bit numbers */
   *(bufp++) = HIGH(seg_idx);
@@ -1843,7 +1844,7 @@ TA_hints_recorder_handle_segments(FT_Byte* bufp,
   seg = edge->first->edge_next;
   while (seg != edge->first)
   {
-    seg_idx = seg - segments;
+    seg_idx = (FT_UShort)(seg - segments);
 
     *(bufp++) = HIGH(seg_idx);
     *(bufp++) = LOW(seg_idx);
@@ -1908,7 +1909,7 @@ TA_hints_recorder(TA_Action action,
       before_node = (Node1*)malloc(sizeof (Node1));
       if (!before_node)
         return;
-      before_node->point = point - points;
+      before_node->point = (FT_UShort)(point - points);
 
       LLRB_INSERT(ip_before_points,
                   &recorder->ip_before_points_head,
@@ -1925,7 +1926,7 @@ TA_hints_recorder(TA_Action action,
       after_node = (Node1*)malloc(sizeof (Node1));
       if (!after_node)
         return;
-      after_node->point = point - points;
+      after_node->point = (FT_UShort)(point - points);
 
       LLRB_INSERT(ip_after_points,
                   &recorder->ip_after_points_head,
@@ -1943,8 +1944,8 @@ TA_hints_recorder(TA_Action action,
       on_node = (Node2*)malloc(sizeof (Node2));
       if (!on_node)
         return;
-      on_node->edge = edge - edges;
-      on_node->point = point - points;
+      on_node->edge = (FT_UShort)(edge - edges);
+      on_node->point = (FT_UShort)(point - points);
 
       LLRB_INSERT(ip_on_points,
                   &recorder->ip_on_points_head,
@@ -1963,9 +1964,9 @@ TA_hints_recorder(TA_Action action,
       between_node = (Node3*)malloc(sizeof (Node3));
       if (!between_node)
         return;
-      between_node->before_edge = before - edges;
-      between_node->after_edge = after - edges;
-      between_node->point = point - points;
+      between_node->before_edge = (FT_UShort)(before - edges);
+      between_node->after_edge = (FT_UShort)(after - edges);
+      between_node->point = (FT_UShort)(point - points);
 
       LLRB_INSERT(ip_between_points,
                   &recorder->ip_between_points_head,
@@ -2268,7 +2269,7 @@ TA_init_recorder(Recorder* recorder,
   recorder->sfnt = sfnt;
   recorder->font = font;
   recorder->glyph = glyph;
-  recorder->num_segments = axis->num_segments;
+  recorder->num_segments = (FT_UShort)axis->num_segments;
 
   LLRB_INIT(&recorder->ip_before_points_head);
   LLRB_INIT(&recorder->ip_after_points_head);
@@ -2294,7 +2295,7 @@ TA_init_recorder(Recorder* recorder,
   wrap_around_segment = recorder->wrap_around_segments;
   for (seg = segments; seg < seg_limit; seg++)
     if (seg->first > seg->last)
-      *(wrap_around_segment++) = seg - segments;
+      *(wrap_around_segment++) = (FT_UShort)(seg - segments);
 
   /* get number of strong points */
   for (point = points; point < point_limit; point++)
@@ -2780,7 +2781,7 @@ Done1:
   ins_len = bufp - ins_buf;
 
   if (ins_len > sfnt->max_instructions)
-    sfnt->max_instructions = ins_len;
+    sfnt->max_instructions = (FT_UShort)ins_len;
 
   glyph->ins_buf = (FT_Byte*)realloc(ins_buf, ins_len);
   glyph->ins_len = ins_len;

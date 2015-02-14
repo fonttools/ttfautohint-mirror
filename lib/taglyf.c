@@ -194,8 +194,8 @@ TA_glyph_parse_composite(GLYPH* glyph,
       *(q++) = ARGS_ARE_XY_VALUES | MORE_COMPONENTS;
       *(q++) = HIGH(num_glyphs - 1);
       *(q++) = LOW(num_glyphs - 1);
-      *(q++) = x_offset;
-      *(q++) = y_offset;
+      *(q++) = (FT_Byte)x_offset;
+      *(q++) = (FT_Byte)y_offset;
     }
     else
     {
@@ -272,8 +272,8 @@ TA_glyph_parse_composite(GLYPH* glyph,
       {
         glyph->buf[flags_offset + 1] &= ~ARGS_ARE_WORDS;
 
-        *(q++) = arg1;
-        *(q++) = arg2;
+        *(q++) = (FT_Byte)arg1;
+        *(q++) = (FT_Byte)arg2;
       }
       else
       {
@@ -595,8 +595,8 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
 
   loca_format = head_table->buf[LOCA_FORMAT_OFFSET];
 
-  data->num_glyphs = loca_format ? loca_table->len / 4
-                                 : loca_table->len / 2;
+  data->num_glyphs = (FT_UShort)(loca_format ? loca_table->len / 4
+                                             : loca_table->len / 2);
   loop_count = data->num_glyphs - 1;
 
   /* allocate one more glyph slot if we have composite glyphs */
@@ -676,8 +676,7 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
         if (off >= len - 1)
           return FT_Err_Invalid_Table;
 
-        glyph->num_points = buf[off] << 8;
-        glyph->num_points += buf[off + 1] + 1;
+        glyph->num_points = (FT_UShort)((buf[off] << 8) + buf[off + 1] + 1);
       }
     }
   }
@@ -1169,7 +1168,7 @@ TA_sfnt_create_glyf_data(SFNT* sfnt,
 
   glyf_table->data = data;
 
-  data->num_glyphs = face->num_glyphs;
+  data->num_glyphs = (FT_UShort)face->num_glyphs;
   data->glyphs = (GLYPH*)calloc(1, data->num_glyphs * sizeof (GLYPH));
   if (!data->glyphs)
     return FT_Err_Out_Of_Memory;

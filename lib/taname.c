@@ -309,7 +309,7 @@ build_name_table(Naming_Table* n,
   /* `offset to the start of string storage (from start of table)', */
   /* but this isn't enforced by the major rendering engines */
   /* as long as the final string offsets are valid */
-  string_offset = (buf_new_len <= 0xFFFF) ? buf_new_len : 0xFFFF;
+  string_offset = (buf_new_len <= 0xFFFF) ? (FT_UShort)buf_new_len : 0xFFFF;
 
   p = buf_new;
 
