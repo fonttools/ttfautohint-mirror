@@ -101,6 +101,17 @@
 #define SAME_Y 0x20
 
 
+/* utility macros to get data from a pointer (with auto-increment) */
+#define TA_NEXT_USHORT(buffer) \
+          ((FT_UShort)(buffer += 2, buffer[-2] << 8 \
+                                    | buffer[-1]))
+#define TA_NEXT_ULONG(buffer) \
+          ((FT_ULong)(buffer += 4, buffer[-4] << 24 \
+                                   | buffer[-3] << 16 \
+                                   | buffer[-2] << 8 \
+                                   | buffer[-1]))
+
+
 /* a single glyph */
 typedef struct GLYPH_
 {

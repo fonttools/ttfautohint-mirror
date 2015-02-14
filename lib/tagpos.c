@@ -19,11 +19,8 @@
 /* the code below contains many redundancies; */
 /* it has been written for clarity */
 
-#define VALUE(val, p) val = *(p++) << 8; \
-                      val += *(p++)
-#define OFFSET(val, base, p) val = base; \
-                             val += *(p++) << 8; \
-                             val += *(p++)
+#define VALUE(val, p) val = TA_NEXT_USHORT(p)
+#define OFFSET(val, base, p) val = base + TA_NEXT_USHORT(p)
 
 
 /* this simple `Coverage_table' structure wastes memory... */

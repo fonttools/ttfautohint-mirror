@@ -81,12 +81,10 @@ TA_glyph_get_components(GLYPH* glyph,
     if (p + 4 > endp)
       return FT_Err_Invalid_Table;
 
-    flags = *(p++) << 8;
-    flags += *(p++);
+    flags = TA_NEXT_USHORT(p);
 
     /* add component to list */
-    component = *(p++) << 8;
-    component += *(p++);
+    component = TA_NEXT_USHORT(p);
 
     glyph->num_components++;
     components_new = (FT_UShort*)realloc(glyph->components,
@@ -218,9 +216,8 @@ TA_glyph_parse_composite(GLYPH* glyph,
     flags_offset = q - glyph->buf;
 
     *(q++) = *p;
-    flags = *(p++) << 8;
-    *(q++) = *p;
-    flags += *(p++);
+    *(q++) = *(p + 1);
+    flags = TA_NEXT_USHORT(p);
 
     /* copy component */
     *(q++) = *(p++);
@@ -351,8 +348,7 @@ TA_glyph_parse_simple(GLYPH* glyph,
     return FT_Err_Invalid_Table;
 
   /* get number of instructions */
-  num_ins = *(p++) << 8;
-  num_ins += *(p++);
+  num_ins = TA_NEXT_USHORT(p);
 
   /* assure that we don't process a font */
   /* which already contains a `.ttfautohint' glyph */
@@ -620,16 +616,10 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
   p = loca_table->buf;
 
   if (loca_format)
-  {
-    offset_next = *(p++) << 24;
-    offset_next += *(p++) << 16;
-    offset_next += *(p++) << 8;
-    offset_next += *(p++);
-  }
+    offset_next = TA_NEXT_ULONG(p);
   else
   {
-    offset_next = *(p++) << 8;
-    offset_next += *(p++);
+    offset_next = TA_NEXT_USHORT(p);
     offset_next <<= 1;
   }
 
@@ -642,16 +632,10 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
     offset = offset_next;
 
     if (loca_format)
-    {
-      offset_next = *(p++) << 24;
-      offset_next += *(p++) << 16;
-      offset_next += *(p++) << 8;
-      offset_next += *(p++);
-    }
+      offset_next = TA_NEXT_ULONG(p);
     else
     {
-      offset_next = *(p++) << 8;
-      offset_next += *(p++);
+      offset_next = TA_NEXT_USHORT(p);
       offset_next <<= 1;
     }
 
@@ -710,16 +694,10 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
   p = loca_table->buf;
 
   if (loca_format)
-  {
-    offset_next = *(p++) << 24;
-    offset_next += *(p++) << 16;
-    offset_next += *(p++) << 8;
-    offset_next += *(p++);
-  }
+    offset_next = TA_NEXT_ULONG(p);
   else
   {
-    offset_next = *(p++) << 8;
-    offset_next += *(p++);
+    offset_next = TA_NEXT_USHORT(p);
     offset_next <<= 1;
   }
 
@@ -732,16 +710,10 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
     offset = offset_next;
 
     if (loca_format)
-    {
-      offset_next = *(p++) << 24;
-      offset_next += *(p++) << 16;
-      offset_next += *(p++) << 8;
-      offset_next += *(p++);
-    }
+      offset_next = TA_NEXT_ULONG(p);
     else
     {
-      offset_next = *(p++) << 8;
-      offset_next += *(p++);
+      offset_next = TA_NEXT_USHORT(p);
       offset_next <<= 1;
     }
 
