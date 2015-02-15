@@ -546,7 +546,7 @@ insert_suffix(sds suffix,
   // construct new string
   if (s_start)
   {
-    size_t substring_end = s_start - *str + sdslen(name);
+    size_t substring_end = size_t(s_start - *str) + sdslen(name);
 
     // everything up to the end of the substring
     s = sdscatlen(s, *str, substring_end);
@@ -566,7 +566,7 @@ insert_suffix(sds suffix,
 
   if (sdslen(s) <= 0xFFFF)
   {
-    unsigned short len_new = sdslen(s);
+    unsigned short len_new = (unsigned short)sdslen(s);
     unsigned char* str_new = (unsigned char*)realloc(*str, len_new);
     if (str_new)
     {
@@ -611,7 +611,7 @@ info_post(void* user)
     *(fsw++) = '\0';
     *(fsw++) = *(fs++);
   }
-  sdsIncrLen(family_suffix_wide, family_suffix_wide_len);
+  sdsIncrLen(family_suffix_wide, (int)family_suffix_wide_len);
 
   //
   // family_ps_suffix + family_ps_suffix_wide
@@ -652,7 +652,7 @@ info_post(void* user)
     *(fpsw++) = '\0';
     *(fpsw++) = *(fps++);
   }
-  sdsIncrLen(family_ps_suffix_wide, family_ps_suffix_wide_len);
+  sdsIncrLen(family_ps_suffix_wide, (int)family_ps_suffix_wide_len);
 
   // We try the following algorithm.
   //
@@ -756,7 +756,7 @@ info_post(void* user)
 
     size_t family_name_len = sdslen(family_name);
     if (is_wide)
-      family_name_len &= ~1; // ensure even value for the loop below
+      family_name_len &= ~1U; // ensure even value for the loop below
 
     // set sds to estimated size;
     // we later set the size to the actual value

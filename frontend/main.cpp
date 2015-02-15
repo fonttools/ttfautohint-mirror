@@ -1059,7 +1059,7 @@ main(int argc,
 
 #else // BUILD_GUI
 
-  int new_argc = new_arg_string.size();
+  int new_argc = (int)new_arg_string.size();
   char** new_argv = new char*[new_argc];
 
   // construct new argc and argv variables from collected data
