@@ -16,10 +16,10 @@ Compilation and Installation
 ============================
 
 Please read the files
-[`INSTALL`](http://repo.or.cz/w/ttfautohint.git/blob_plain/HEAD:/INSTALL)
+[`INSTALL`](http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;f=doc/INSTALL;hb=HEAD)
 and
 [`INSTALL.git`](http://repo.or.cz/w/ttfautohint.git/blob_plain/HEAD:/INSTALL.git)
-(part of the source code bundle) for generic instructions how to compile the
+(both part of the source code bundle) for instructions how to compile the
 ttfautohint library together with its front-ends using a POSIX compatible
 shell and compiler.
 
@@ -86,7 +86,7 @@ the ttfautohint library.
 [Infinality]: http://infinality.net
 [MinGW]: http://mingw.org
 [OpenType specification]: http://www.microsoft.com/typography/otspec
-[Qt]: http://qt-project.org
+[Qt]: http://qt.io
 [Vernon Adams]: http://code.newtypography.co.uk
 
 
