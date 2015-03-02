@@ -138,7 +138,7 @@ ta_face_globals_scan_composite(FT_Face face,
   if (nesting_level > 100)
     return FT_Err_Invalid_Table;
 
-  error = FT_Load_Glyph(face, gindex, FT_LOAD_NO_RECURSE);
+  error = FT_Load_Glyph(face, (FT_UInt)gindex, FT_LOAD_NO_RECURSE);
   if (error)
     return error;
 
@@ -216,7 +216,9 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
 
   /* the value TA_STYLE_UNASSIGNED means `uncovered glyph' */
-  memset(globals->glyph_styles, TA_STYLE_UNASSIGNED, globals->glyph_count);
+  memset(globals->glyph_styles,
+         TA_STYLE_UNASSIGNED,
+         (unsigned int)globals->glyph_count);
 
   error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
   if (error)
@@ -327,7 +329,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 Exit:
   /* by default, all uncovered glyphs are set to the fallback style */
   /* XXX: Shouldn't we disable hinting or do something similar? */
-  if (globals->font->fallback_style != TA_STYLE_UNASSIGNED)
+  if (globals->font->fallback_style != (TA_Style)TA_STYLE_UNASSIGNED)
   {
     FT_Long nn;
 

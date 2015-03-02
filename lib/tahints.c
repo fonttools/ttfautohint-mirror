@@ -64,7 +64,8 @@ ta_axis_hints_new_segment(TA_AxisHints axis,
 
     if (axis->segments == axis->embedded.segments)
     {
-      axis->segments = (TA_Segment)malloc(new_max * sizeof (TA_SegmentRec));
+      axis->segments = (TA_Segment)malloc(
+                         (size_t)new_max * sizeof (TA_SegmentRec));
       if (!axis->segments)
         return FT_Err_Out_Of_Memory;
 
@@ -73,8 +74,9 @@ ta_axis_hints_new_segment(TA_AxisHints axis,
     }
     else
     {
-      segments_new = (TA_Segment)realloc(axis->segments,
-                                         new_max * sizeof (TA_SegmentRec));
+      segments_new = (TA_Segment)realloc(
+                       axis->segments,
+                       (size_t)new_max * sizeof (TA_SegmentRec));
       if (!segments_new)
         return FT_Err_Out_Of_Memory;
       axis->segments = segments_new;
@@ -135,7 +137,7 @@ ta_axis_hints_new_edge(TA_AxisHints axis,
 
     if (axis->edges == axis->embedded.edges)
     {
-      axis->edges = (TA_Edge)malloc(new_max * sizeof (TA_EdgeRec));
+      axis->edges = (TA_Edge)malloc((size_t)new_max * sizeof (TA_EdgeRec));
       if (!axis->edges)
         return FT_Err_Out_Of_Memory;
 
@@ -145,7 +147,7 @@ ta_axis_hints_new_edge(TA_AxisHints axis,
     else
     {
       edges_new = (TA_Edge)realloc(axis->edges,
-                                   new_max * sizeof (TA_EdgeRec));
+                                   (size_t)new_max * sizeof (TA_EdgeRec));
       if (!edges_new)
         return FT_Err_Out_Of_Memory;
       axis->edges = edges_new;

@@ -964,7 +964,7 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
   /* (if we do x-height snapping for this ppem value) */
   if (!number_set_is_element(
         metrics->root.globals->font->x_height_snapping_exceptions,
-        ppem))
+        (int)ppem))
   {
     TA_LatinAxis Axis = &metrics->axis[TA_DIMENSION_VERT];
     TA_LatinBlue blue = NULL;

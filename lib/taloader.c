@@ -169,13 +169,13 @@ ta_loader_load_g(TA_Loader loader,
 
     memcpy(gloader->current.outline.points,
            slot->outline.points,
-           slot->outline.n_points * sizeof (FT_Vector));
+           (size_t)slot->outline.n_points * sizeof (FT_Vector));
     memcpy(gloader->current.outline.contours,
            slot->outline.contours,
-           slot->outline.n_contours * sizeof (short));
+           (size_t)slot->outline.n_contours * sizeof (short));
     memcpy(gloader->current.outline.tags,
            slot->outline.tags,
-           slot->outline.n_points * sizeof (char));
+           (size_t)slot->outline.n_points * sizeof (char));
 
     gloader->current.outline.n_points = slot->outline.n_points;
     gloader->current.outline.n_contours = slot->outline.n_contours;
@@ -286,7 +286,7 @@ ta_loader_load_g(TA_Loader loader,
       TA_SubGlyph subglyph;
 
 
-      start_point = gloader->base.outline.n_points;
+      start_point = (FT_UInt)gloader->base.outline.n_points;
 
       /* first of all, copy the subglyph descriptors in the glyph loader */
       error = TA_GlyphLoader_CheckSubGlyphs(gloader, num_subglyphs);
@@ -316,9 +316,9 @@ ta_loader_load_g(TA_Loader loader,
         pp1 = loader->pp1;
         pp2 = loader->pp2;
 
-        num_base_points = gloader->base.outline.n_points;
+        num_base_points = (FT_UInt)gloader->base.outline.n_points;
 
-        error = ta_loader_load_g(loader, scaler, subglyph->index,
+        error = ta_loader_load_g(loader, scaler, (FT_UInt)subglyph->index,
                                  load_flags, depth + 1);
         if (error)
           goto Exit;
@@ -332,7 +332,7 @@ ta_loader_load_g(TA_Loader loader,
           loader->pp2 = pp2;
         }
 
-        num_points = gloader->base.outline.n_points;
+        num_points = (FT_UInt)gloader->base.outline.n_points;
         num_new_points = num_points - num_base_points;
 
         /* now perform the transformation required for this subglyph */
@@ -351,14 +351,14 @@ ta_loader_load_g(TA_Loader loader,
         /* apply offset */
         if (!(subglyph->flags & FT_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES))
         {
-          FT_Int k = subglyph->arg1;
-          FT_UInt l = subglyph->arg2;
+          FT_UInt k = (FT_UInt)subglyph->arg1;
+          FT_UInt l = (FT_UInt)subglyph->arg2;
           FT_Vector* p1;
           FT_Vector* p2;
 
 
           if (start_point + k >= num_base_points
-              || l >= (FT_UInt)num_new_points)
+              || l >= num_new_points)
           {
             error = FT_Err_Invalid_Composite;
             goto Exit;
