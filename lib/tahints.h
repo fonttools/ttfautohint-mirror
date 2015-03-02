@@ -208,24 +208,24 @@ typedef enum TA_Direction_
 #define TA_FLAG_NONE 0
 
 /* point type flags */
-#define TA_FLAG_CONIC (1 << 0)
-#define TA_FLAG_CUBIC (1 << 1)
+#define TA_FLAG_CONIC (1U << 0)
+#define TA_FLAG_CUBIC (1U << 1)
 #define TA_FLAG_CONTROL (TA_FLAG_CONIC | TA_FLAG_CUBIC)
 
 /* point touch flags */
-#define TA_FLAG_TOUCH_X (1 << 2)
-#define TA_FLAG_TOUCH_Y (1 << 3)
+#define TA_FLAG_TOUCH_X (1U << 2)
+#define TA_FLAG_TOUCH_Y (1U << 3)
 
 /* candidates for weak interpolation have this flag set */
-#define TA_FLAG_WEAK_INTERPOLATION (1 << 4)
+#define TA_FLAG_WEAK_INTERPOLATION (1U << 4)
 
 
 /* edge hint flags */
 #define TA_EDGE_NORMAL 0
-#define TA_EDGE_ROUND (1 << 0)
-#define TA_EDGE_SERIF (1 << 1)
-#define TA_EDGE_DONE (1 << 2)
-#define TA_EDGE_NEUTRAL (1 << 3)
+#define TA_EDGE_ROUND (1U << 0)
+#define TA_EDGE_SERIF (1U << 1)
+#define TA_EDGE_DONE (1U << 2)
+#define TA_EDGE_NEUTRAL (1U << 3)
 
 
 typedef struct TA_PointRec_* TA_Point;

@@ -259,8 +259,8 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
 {
   FT_Pos flats[TA_BLUE_STRING_MAX_LEN];
   FT_Pos rounds[TA_BLUE_STRING_MAX_LEN];
-  FT_Int num_flats;
-  FT_Int num_rounds;
+  FT_UInt num_flats;
+  FT_UInt num_rounds;
 
   TA_LatinBlue blue;
   FT_Error error;
@@ -1912,7 +1912,7 @@ ta_latin_hints_detect_features(TA_GlyphHints hints,
 
 /* compute all edges which lie within blue zones */
 
-void
+static void
 ta_latin_hints_compute_blue_edges(TA_GlyphHints hints,
                                   TA_LatinMetrics metrics)
 {
@@ -2108,10 +2108,10 @@ ta_latin_hints_init(TA_GlyphHints hints,
 
 static FT_Pos
 ta_latin_snap_width(TA_Width widths,
-                    FT_Int count,
+                    FT_UInt count,
                     FT_Pos width)
 {
-  int n;
+  FT_UInt n;
   FT_Pos best = 64 + 32 + 2;
   FT_Pos reference = width;
   FT_Pos scaled;
@@ -2360,7 +2360,7 @@ ta_latin_align_serif_edge(TA_GlyphHints hints,
 
 /* the main grid-fitting routine */
 
-void
+static void
 ta_latin_hint_edges(TA_GlyphHints hints,
                     TA_Dimension dim)
 {

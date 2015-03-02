@@ -48,11 +48,11 @@ extern const TA_WritingSystemClassRec ta_latin_writing_system_class;
 #define TA_LATIN_MAX_WIDTHS 16
 
 
-#define TA_LATIN_BLUE_ACTIVE (1 << 0) /* set if zone height is <= 3/4px */
-#define TA_LATIN_BLUE_TOP (1 << 1) /* set if we have a top blue zone */
-#define TA_LATIN_BLUE_NEUTRAL (1 << 2) /* set if we have neutral blue zone */
-#define TA_LATIN_BLUE_ADJUSTMENT (1 << 3) /* used for scale adjustment */
-                                          /* optimization */
+#define TA_LATIN_BLUE_ACTIVE (1U << 0) /* set if zone height is <= 3/4px */
+#define TA_LATIN_BLUE_TOP (1U << 1) /* set if we have a top blue zone */
+#define TA_LATIN_BLUE_NEUTRAL (1U << 2) /* set if we have neutral blue zone */
+#define TA_LATIN_BLUE_ADJUSTMENT (1U << 3) /* used for scale adjustment */
+                                           /* optimization */
 
 
 typedef struct TA_LatinBlueRec_
@@ -110,11 +110,11 @@ ta_latin_metrics_check_digits(TA_LatinMetrics metrics,
                               FT_Face face);
 
 
-#define TA_LATIN_HINTS_HORZ_SNAP (1 << 0) /* enable stem width snapping */
-#define TA_LATIN_HINTS_VERT_SNAP (1 << 1) /* enable stem height snapping */
-#define TA_LATIN_HINTS_STEM_ADJUST (1 << 2) /* enable stem width/height */
-                                            /* adjustment */
-#define TA_LATIN_HINTS_MONO (1 << 3) /* indicate monochrome rendering */
+#define TA_LATIN_HINTS_HORZ_SNAP (1U << 0) /* enable stem width snapping */
+#define TA_LATIN_HINTS_VERT_SNAP (1U << 1) /* enable stem height snapping */
+#define TA_LATIN_HINTS_STEM_ADJUST (1U << 2) /* enable stem width/height */
+                                             /* adjustment */
+#define TA_LATIN_HINTS_MONO (1U << 3) /* indicate monochrome rendering */
 
 
 #define TA_LATIN_HINTS_DO_HORZ_SNAP(h) \

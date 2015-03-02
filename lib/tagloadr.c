@@ -189,7 +189,8 @@ TA_GlyphLoader_CheckPoints(TA_GlyphLoader loader,
 
 
   /* check points & tags */
-  new_max = base->n_points + current->n_points + n_points;
+  new_max = (FT_UInt)base->n_points + (FT_UInt)current->n_points
+            + n_points;
   old_max = loader->max_points;
 
   if (new_max > old_max)
@@ -240,7 +241,8 @@ TA_GlyphLoader_CheckPoints(TA_GlyphLoader loader,
 
   /* check contours */
   old_max = loader->max_contours;
-  new_max = base->n_contours + current->n_contours + n_contours;
+  new_max = (FT_UInt)base->n_contours + (FT_UInt)current->n_contours
+            + n_contours;
   if (new_max > old_max)
   {
     short* contours_new;
@@ -327,9 +329,9 @@ TA_GlyphLoader_Add(TA_GlyphLoader loader)
   TA_GlyphLoad base;
   TA_GlyphLoad current;
 
-  FT_UInt n_curr_contours;
-  FT_UInt n_base_points;
-  FT_UInt n;
+  FT_Int n_curr_contours;
+  FT_Int n_base_points;
+  FT_Int n;
 
 
   if (!loader)
@@ -363,8 +365,8 @@ TA_GlyphLoader_CopyPoints(TA_GlyphLoader target,
                           TA_GlyphLoader source)
 {
   FT_Error error;
-  FT_UInt num_points = source->base.outline.n_points;
-  FT_UInt num_contours = source->base.outline.n_contours;
+  FT_UInt num_points = (FT_UInt)source->base.outline.n_points;
+  FT_UInt num_contours = (FT_UInt)source->base.outline.n_contours;
 
 
   error = TA_GlyphLoader_CheckPoints(target, num_points, num_contours);

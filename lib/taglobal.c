@@ -403,8 +403,9 @@ ta_face_globals_new(FT_Face face,
   TA_FaceGlobals globals;
 
 
-  globals = (TA_FaceGlobals)calloc(1, sizeof (TA_FaceGlobalsRec) +
-                                      face->num_glyphs * sizeof (FT_Byte));
+  globals = (TA_FaceGlobals)calloc(
+              1, sizeof (TA_FaceGlobalsRec) +
+                 (FT_ULong)face->num_glyphs * sizeof (FT_Byte));
   if (!globals)
   {
     error = FT_Err_Out_Of_Memory;

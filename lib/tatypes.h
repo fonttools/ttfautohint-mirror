@@ -90,12 +90,23 @@ extern void* _ta_debug_hints;
 
 #define TA_ABS(a) ((a) < 0 ? -(a) : (a))
 
+/* from file `ftconfig.h' (2015-03-02) from FreeType */
+/* typeof condition taken from gnulib's `intprops.h' header file */
+#if (__GNUC__ >= 2 \
+     ||  defined(__IBM__TYPEOF__) \
+     || (__SUNPRO_C >= 0x5110 && !__STDC__))
+#define TYPEOF(type) (__typeof__ (type))
+#else
+#define TYPEOF(type) /* empty */
+#endif
+
 /* from file `ftobjs.h' from FreeType */
-#define TA_PAD_FLOOR(x, n) ((x) & ~((n) - 1))
+/* we use the TYPEOF macro to suppress signedness compilation warnings */
+#define TA_PAD_FLOOR(x, n) ((x) & ~TYPEOF(x)((n) - 1))
 #define TA_PAD_ROUND(x, n) TA_PAD_FLOOR((x) + ((n) / 2), n)
 #define TA_PAD_CEIL(x, n) TA_PAD_FLOOR((x) + ((n) - 1), n)
 
-#define TA_PIX_FLOOR(x) ((x) & ~63)
+#define TA_PIX_FLOOR(x) ((x) & ~TYPEOF(x)63)
 #define TA_PIX_ROUND(x) TA_PIX_FLOOR((x) + 32)
 #define TA_PIX_CEIL(x) TA_PIX_FLOOR((x) + 63)
 
@@ -140,9 +151,9 @@ typedef struct TA_GlyphHintsRec_* TA_GlyphHints;
 
 /* a scaler models the target pixel device that will receive */
 /* the auto-hinted glyph image */
-#define TA_SCALER_FLAG_NO_HORIZONTAL 0x01 /* disable horizontal hinting */
-#define TA_SCALER_FLAG_NO_VERTICAL 0x02 /* disable vertical hinting */
-#define TA_SCALER_FLAG_NO_ADVANCE 0x04 /* disable advance hinting */
+#define TA_SCALER_FLAG_NO_HORIZONTAL 0x01U /* disable horizontal hinting */
+#define TA_SCALER_FLAG_NO_VERTICAL 0x02U /* disable vertical hinting */
+#define TA_SCALER_FLAG_NO_ADVANCE 0x04U /* disable advance hinting */
 
 typedef struct TA_ScalerRec_
 {

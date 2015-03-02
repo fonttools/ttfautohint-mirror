@@ -575,7 +575,7 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
 
   /* first of all, reallocate the contours array if necessary */
   new_max = (FT_UInt)outline->n_contours;
-  old_max = hints->max_contours;
+  old_max = (FT_UInt)hints->max_contours;
 
   if (new_max <= TA_CONTOURS_EMBEDDED)
   {
@@ -593,7 +593,7 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
     if (hints->contours == hints->embedded.contours)
       hints->contours = NULL;
 
-    new_max = (new_max + 3) & ~3; /* round up to a multiple of 4 */
+    new_max = (new_max + 3) & ~3U; /* round up to a multiple of 4 */
 
     contours_new = (TA_Point*)realloc(hints->contours,
                                       new_max * sizeof (TA_Point));
@@ -601,13 +601,13 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
       return FT_Err_Out_Of_Memory;
 
     hints->contours = contours_new;
-    hints->max_contours = new_max;
+    hints->max_contours = (FT_Int)new_max;
   }
 
   /* reallocate the points arrays if necessary -- we reserve */
   /* two additional point positions, used to hint metrics appropriately */
   new_max = (FT_UInt)(outline->n_points + 2);
-  old_max = hints->max_points;
+  old_max = (FT_UInt)hints->max_points;
 
   if (new_max <= TA_POINTS_EMBEDDED)
   {
@@ -625,7 +625,7 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
     if (hints->points == hints->embedded.points)
       hints->points = NULL;
 
-    new_max = (new_max + 2 + 7) & ~7; /* round up to a multiple of 8 */
+    new_max = (new_max + 2 + 7) & ~7U; /* round up to a multiple of 8 */
 
     points_new = (TA_Point)realloc(hints->points,
                                    new_max * sizeof (TA_PointRec));
@@ -633,7 +633,7 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
       return FT_Err_Out_Of_Memory;
 
     hints->points = points_new;
-    hints->max_points = new_max;
+    hints->max_points = (FT_Int)new_max;
   }
 
   hints->num_points = outline->n_points;
