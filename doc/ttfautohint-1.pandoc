@@ -1052,7 +1052,7 @@ Composite Glyphs
 The ttfautohint library (and programs) supports two solutions for handling
 composite glyphs, to be controlled with option
 [`--composites`](#hint-composites).  This section contains some general
-information, then covers the case where the option if off, while the next
+information, then covers the case where the option is off, while the next
 section describes how ttfautohint behaves if this option is activated.
 
 Regardless of the `--composites` option, ttfautohint performs a scan over
@@ -1065,7 +1065,29 @@ vertically unshifted, 'grave' does inherit the style.
 
 If `--composites` is off, components are hinted separately, then put
 together.  Separate hinting implies that the current style's blue zones are
-applied to all subglyphs in its original, unshifted positions.
+applied to all subglyphs in its original, unshifted positions.  In case you
+want to shift components vertically, it is *mandatory* to set bit\ 2
+(value\ 4), `ROUND_XY_TO_GRID`, in the flag variable of the composite glyph
+description to get visually pleasing results, as the images below
+demonstrate.
+
+![Here, the subscript glyphs are composites each having a single element
+  that is shifted down.  If option `--composites` is not used, subglyphs are
+  hinted before they are glued together (possibly applying scaling and
+  shifting).  Because the `ROUND_XY_TO_GRID` flag isn't set, the vertical
+  translation doesn't align the subglyph to the pixel grid, causing severe
+  distortions.](img/composite-no-round-xy-to-grid.png)
+
+![The same as before, but with `ROUND_XY_TO_GRID` set.  Now the subscript
+  glyphs look identical to the
+  superscripts.](img/composite-round-xy-to-grid.png)
+
+![For comparison purposes, here the result *with* option `--composites` (and
+  no `ROUND_XY_TO_GRID`).  The composite glyphs as a whole get hinted;
+  consequently, the subscript glyphs get separate blue zones.  At the
+  displayed size of 16ppem the vertical positions of the subscript blue
+  zones are rounded differently if compared to the superscript zones, thus
+  the smaller glyph height.](img/composite-no-round-xy-to-grid-option-c.png)
 
 
 The '\.ttfautohint' Glyph
