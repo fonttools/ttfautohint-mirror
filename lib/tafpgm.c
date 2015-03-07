@@ -2047,12 +2047,32 @@ static const unsigned char FPGM(bci_deltap1) [] =
     bci_deltap1,
   FDEF,
 
-  DUP,
-  MDAP_noround, /* touch `point' */
-
+  SWAP,
+  DUP, /* s: point arg arg */
+  PUSHB_1, /* cf. DIV_POS_BY_2 macro */
+    16,
+  DIV,
+  FLOOR,
   PUSHB_1,
     1,
-  DELTAP1, /* process one `(point,arg)' pair */
+  MUL, /* s: point arg hnibble(arg) */
+  PUSHB_1,
+    CONTROL_DELTA_PPEM_MIN,
+  ADD, /* s: point arg ppem(arg) */
+  MPPEM,
+  EQ,
+  IF,
+    SWAP,
+    DUP,
+    MDAP_noround, /* touch `point' */
+
+    PUSHB_1,
+      1,
+    DELTAP1, /* process one `(point,arg)' pair */
+  ELSE,
+    POP,
+    POP,
+  EIF,
 
   ENDF,
 
@@ -2065,12 +2085,32 @@ static const unsigned char FPGM(bci_deltap2) [] =
     bci_deltap2,
   FDEF,
 
-  DUP,
-  MDAP_noround, /* touch `point' */
-
+  SWAP,
+  DUP, /* s: point arg arg */
+  PUSHB_1, /* cf. DIV_POS_BY_2 macro */
+    16,
+  DIV,
+  FLOOR,
   PUSHB_1,
     1,
-  DELTAP2, /* process one `(point,arg)' pair */
+  MUL, /* s: point arg hnibble(arg) */
+  PUSHB_1,
+    CONTROL_DELTA_PPEM_MIN + 16,
+  ADD, /* s: point arg ppem(arg) */
+  MPPEM,
+  EQ,
+  IF,
+    SWAP,
+    DUP,
+    MDAP_noround, /* touch `point' */
+
+    PUSHB_1,
+      1,
+    DELTAP2, /* process one `(point,arg)' pair */
+  ELSE,
+    POP,
+    POP,
+  EIF,
 
   ENDF,
 
@@ -2083,12 +2123,32 @@ static const unsigned char FPGM(bci_deltap3) [] =
     bci_deltap3,
   FDEF,
 
-  DUP,
-  MDAP_noround, /* touch `point' */
-
+  SWAP,
+  DUP, /* s: point arg arg */
+  PUSHB_1, /* cf. DIV_POS_BY_2 macro */
+    16,
+  DIV,
+  FLOOR,
   PUSHB_1,
     1,
-  DELTAP3, /* process one `(point,arg)' pair */
+  MUL, /* s: point arg hnibble(arg) */
+  PUSHB_1,
+    CONTROL_DELTA_PPEM_MIN + 32,
+  ADD, /* s: point arg ppem(arg) */
+  MPPEM,
+  EQ,
+  IF,
+    SWAP,
+    DUP,
+    MDAP_noround, /* touch `point' */
+
+    PUSHB_1,
+      1,
+    DELTAP3, /* process one `(point,arg)' pair */
+  ELSE,
+    POP,
+    POP,
+  EIF,
 
   ENDF,
 
