@@ -1199,8 +1199,18 @@ Table: `deva` character ranges
 
      Character range     Description
   ---------------------  -------------
-  `0x0900` - `0x097F`    Devanagari
+  `0x0900` - `0x093B`    Devanagari
+                         (omitting U+093C nukta)
+  `0x093D` - `0x0950`    Devanagari cont'd
+                         (omitting U+0951 udatta, U+0952 anudatta)
+  `0x0953` - `0x0963`    Devanagari cont'd
+                         (omitting U+0964 danda, U+0965 double danda)
+  `0x0966` - `0x097F`    Devanagari cont'd
   `0x20B9`               (new) Rupee sign
+
+There are some characters in the Devanagari Unicode block that are generic
+to Indic scripts; we omit them so that their presence doesn't trigger
+Devanagari.
 
 
 Table: `grek` character ranges
