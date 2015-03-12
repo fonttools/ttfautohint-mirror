@@ -815,6 +815,9 @@ Table: script-specific standard characters of the 'latin' writing system
 
     Script    Standard characters
   ----------  ---------------------
+  `arab`      'ل', U+0644, ARABIC LETTER LAM
+              'ح', U+062D, ARABIC LETTER HAH
+              'ـ', U+0640, ARABIC TATWEEL
   `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
               'О', U+041E, CYRILLIC CAPITAL LETTER O
   `deva`      'ठ', U+0920, DEVANAGARI LETTER TTHA
@@ -860,6 +863,14 @@ Here a series of tables that show the blue zone characters of the latin
 writing system's available scripts; the values are hard-coded in the source
 code.  Since the auto-hinter takes mean values it is not necessary that all
 characters of a zone are present.
+
+
+Table: `arab` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters with vertical stroke    ا إ ل ك ط ظ
+  2     bottom of letter joining               ت ث ط ظ ك
 
 
 Table: `cyrl` blue zones
@@ -1160,6 +1171,18 @@ scripts (in the Unicode sense) that have similar typographical properties.
 
 In ttfautohint, scripts are identified by four-character tags.  The value
 `none` indicates 'no script'.
+
+
+Table: `arab` character ranges
+
+     Character range     Description
+  ---------------------  -------------
+  `0x0600` - `0x06FF`    Arabic
+  `0x0750` - `0x07FF`    Arabic Supplement
+  `0x08A0` - `0x08FF`    Arabic Extended-A
+  `0xFB50` - `0xFDFF`    Arabic Presentation Forms-A
+  `0xFE70` - `0xFEFF`    Arabic Presentation Forms-B
+  `0x1EE00` - `0x1EEFF`  Arabic Mathematical Alphabetic Symbols
 
 
 Table: `cyrl` character ranges
