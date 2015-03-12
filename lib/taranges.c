@@ -20,6 +20,17 @@
 #include "taranges.h"
 
 
+const TA_Script_UniRangeRec ta_arab_uniranges[] =
+{
+  TA_UNIRANGE_REC( 0x0600UL,  0x06FFUL), /* Arabic */
+  TA_UNIRANGE_REC( 0x0750UL,  0x07FFUL), /* Arabic Supplement */
+  TA_UNIRANGE_REC( 0x08A0UL,  0x08FFUL), /* Arabic Extended-A */
+  TA_UNIRANGE_REC( 0xFB50UL,  0xFDFFUL), /* Arabic Presentation Forms-A */
+  TA_UNIRANGE_REC( 0xFE70UL,  0xFEFFUL), /* Arabic Presentation Forms-B */
+  TA_UNIRANGE_REC(0x1EE00UL, 0x1EEFFUL), /* Arabic Mathematical Alphabetic Symbols */
+  TA_UNIRANGE_REC(      0UL,       0UL)
+};
+
 const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0400UL, 0x04FFUL), /* Cyrillic */

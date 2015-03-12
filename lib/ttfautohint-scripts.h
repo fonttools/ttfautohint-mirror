@@ -28,6 +28,11 @@
  * the standard width of stems).
  */
 
+SCRIPT(arab, ARAB,
+       "Arabic",
+       HB_SCRIPT_ARABIC,
+       0x644, 0x62D, 0x640) /* ل ح ـ */
+
 SCRIPT(cyrl, CYRL,
        "Cyrillic",
        HB_SCRIPT_CYRILLIC,

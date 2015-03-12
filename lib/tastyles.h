@@ -84,6 +84,14 @@
                       "default", \
                       DEFAULT)
 
+
+STYLE(arab_dflt, ARAB_DFLT,
+      "Arabic default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_ARAB,
+      TA_BLUE_STRINGSET_ARAB,
+      TA_COVERAGE_DEFAULT)
+
 META_STYLE_LATIN(cyrl, CYRL, "Cyrillic")
 
 STYLE(deva_dflt, DEVA_DFLT,
