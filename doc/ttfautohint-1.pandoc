@@ -204,9 +204,9 @@ Calling `ttfautohint`
     ttfautohint [OPTION]... [IN-FILE [OUT-FILE]]
 ```
 
-The TTY binary, `ttfautohint`, works like a Unix filter, this is, it reads
-data from standard input if no input file name is given, and it sends its
-output to standard output if no output file name is specified.
+The command-line binary, `ttfautohint`, works like a Unix filter, this is,
+it reads data from standard input if no input file name is given, and it
+sends its output to standard output if no output file name is specified.
 
 A typical call looks like the following.
 
@@ -564,7 +564,7 @@ to value 'Version' in the 'ttfautohint info' combo box.
      grid.](img/ff-g-26px-wD.png)
 
 ### Control Instructions File
-`--control-file=`*file*, `-m`\ *file* (TTY only)
+`--control-file=`*file*, `-m`\ *file* (not in `ttfautohintGUI`)
 :   Specify the name of a control instructions file to manually tweak the
     hinting process.  This feature can be used to correct glitches in
     ttfautohint's hinting algorithm.
@@ -716,7 +716,7 @@ to value 'Version' in the 'ttfautohint info' combo box.
 
 ### Miscellaneous
 
-Watch input files (GUI only)
+Watch input files (`ttfautohintGUI` only)
 :   If this checkbox is set, automatically regenerate the output file as
     soon as an input file (either the font or the control instructions file)
     gets modified.

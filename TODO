@@ -77,7 +77,7 @@ apply hinting in x direction also?
 
 add a config and/or command file for batch handling
 
-warn against overwrite of output file in TTY mode?
+warn against overwrite of output file in command-line mode?
 
 reduce output size of option -p:
   1. compare outline rendered at EM value with unhinted outline

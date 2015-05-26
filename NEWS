@@ -54,7 +54,8 @@ Version 1.2 (2014-Oct-06)
 
   Please see the documentation for a description and a small tutorial.
 
-  In the TTY front-end, use option `--control-file` to load such a file.
+  In the command-line front-end, use option `--control-file` to load such a
+  file.
 
 * Support for input file watching in ttfautohintGUI: If the 'Watch Input
   File' box is checked, the program automatically regenerates the output
@@ -221,8 +222,8 @@ Version 0.93 (2012-Oct-09)
 
 * Drag-and-drop support in the GUI.
 
-* The TTY version of ttfautohint now acts like a (Unix) filter, this is, it
-  accepts stdin and stdout as input and output, respectively.
+* The command-line version of ttfautohint now acts like a (Unix) filter,
+  this is, it accepts stdin and stdout as input and output, respectively.
 
 * Less memory consumption.
 
