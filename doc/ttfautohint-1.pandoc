@@ -578,9 +578,9 @@ to value 'Version' in the 'ttfautohint info' combo box.
 
     *font‑idx* gives the index of the font in a TrueType Collection.  If
     missing, it is set to zero.  For normal TrueType fonts, only value zero
-    is valid.  If starting with `0x` the number is interpreted as
-    hexadecimal.  If starting with `0` it gets interpreted as an octal
-    value, and as a decimal value otherwise.
+    is valid.  A font index can be specified in decimal, octal, or
+    hexadecimal format, the latter two indicated by the prefixes `0` and
+    `0x`, respectively.
 
     *glyph‑id* is a glyph's name as listed in the `post` SFNT table or a
     glyph index.  A glyph name consists of characters from the set
@@ -597,16 +597,18 @@ to value 'Version' in the 'ttfautohint info' combo box.
     point (or passing the control point).  If the specified direction is
     identical to what ttfautohint computes, nothing special happens.
     Otherwise, a one-point segment with the specified direction gets
-    created.  By default, its length is zero.  Setting *left‑offset* and
-    *right‑offset*, you can change the segment's horizontal start and end
-    position relative to the point position.  *left‑offset* and
-    *right‑offset* are integers measured in font units.
+    created, see [below](#segments-and-edges).  By default, its length is
+    zero.  Setting *left‑offset* and *right‑offset*, you can change the
+    segment's horizontal start and end position relative to the point
+    position.  *left‑offset* and *right‑offset* are integers measured in
+    font units.
 
     Parameter `nodir` (or '`n`') sets the 'out' direction of the following
-    points to 'no direction'.  If the specified direction is identical to
-    what ttfautohint computes, nothing special happens.  Otherwise,
-    ttfautohint no longer considers those points as part of horizontal
-    segments, thus treating them as 'weak' points.
+    points to 'no direction', this is, neither left nor right.  If the
+    specified direction is identical to what ttfautohint computes, nothing
+    special happens.  Otherwise, ttfautohint no longer considers those
+    points as part of horizontal segments, thus treating them as
+    ['weak'](#grid-fitting) points.
 
     Modifying or adding segments doesn't directly modify the outlines; it
     only influences the hinting process.
@@ -615,17 +617,19 @@ to value 'Version' in the 'ttfautohint info' combo box.
     abbreviated as '`t`' and '`p`', respectively) make ttfautohint apply
     delta exceptions for the given points, shifting them by the given
     values.  Delta exceptions entered with `touch` are applied before the
-    final `IUP` instructions in a glyph's bytecode, exceptions entered with
-    `point` after `IUP`.  Additionally, the `touch` parameter makes the
-    bytecode *touch* the affected points; such points are no longer affected
-    by `IUP` at all.  Note that in ClearType mode all deltas along the
-    x\ axis are discarded, and deltas along the y\ axis are only executed
-    for touched points.  As a consequence, vertical delta exceptions entered
-    with `point` should not be used in ClearType mode.^[Unfortunately, there
-    is a bug in FreeType prior to version 2.5.4 (released in December 2014)
-    that completely disables vertical delta exceptions if subpixel hinting
-    is activated.  For this reason you should expect that the `touch`
-    parameter fails on older GNU/Linux distributions.]
+    final `IUP` (*interpolate untouched points*) instructions in a glyph's
+    bytecode, exceptions entered with `point` after `IUP` (please consult
+    Greg Hitchcock's [ClearType Whitepaper] for more on pre-IUP and post-IUP
+    delta hints).  Additionally, the `touch` parameter makes the bytecode
+    *touch* the affected points; such points are no longer affected by `IUP`
+    at all.  Note that in ClearType mode all deltas along the x\ axis are
+    discarded, and deltas along the y\ axis are only executed for touched
+    points.  As a consequence, vertical delta exceptions entered with
+    `point` should not be used in ClearType mode.^[Unfortunately, there is a
+    bug in FreeType prior to version 2.5.4 (released in December 2014) that
+    completely disables vertical delta exceptions if subpixel hinting is
+    activated.  For this reason you should expect that the `touch` parameter
+    fails on older GNU/Linux distributions.]
 
     Both *points* and *ppems* are number ranges, see '[x Height Snapping
     Exceptions](#x-height-snapping-exceptions)' for the syntax.
@@ -662,9 +666,10 @@ to value 'Version' in the 'ttfautohint info' combo box.
     ```
 
     in a control instructions file.  Since we use `touch` and not `point`,
-    points 2, 3, and\ 4 are no longer subject to the final `IUP` instruction
-    (`IUP` interpolates weak, untouched point positions between strong,
-    touched ones).
+    points 2, 3, and\ 4 are no longer subject to the final `IUP`
+    instruction, which interpolates weak, untouched point positions between
+    strong, touched ones, cf. the description
+    [here](https://developer.apple.com/fonts/TrueType-Reference-Manual/RM05/Chap5.html#IUP).
 
     The following images display glyphs from the font
     [Halant-Regular](http://www.google.com/fonts/specimen/Halant).
@@ -772,7 +777,11 @@ example, glyph 'O' consists of two contours, while glyph 'I' has only one.
 
 A *segment* is a series of consecutive points of a contour (including its
 Bézier control points) that are approximately aligned along a coordinate
-axis.
+axis.  A segment has one of three possible directions: left, right, or none
+(which means neither left nor right), derived from the TrueType outline
+directions.  ttfautohint itself creates segments that contain at least two
+points.  Using control instructions, however, it is possible to create
+one-point segments, which are useful for fine-tuning the hinting process.
 
 ![A serif.  Contour and control points are represented by squares and
   circles, respectively.  The bottom 'line' DE is approximately aligned
@@ -780,10 +789,18 @@ axis.
   with the two other horizontal segments, BC and FG, they form two edges
   (BC+FG, DE).](img/segment-edge)
 
-An *edge* corresponds to a single coordinate value on the main dimension
-that collects one or more segments (allowing for a small threshold).  While
-finding segments is done on the unscaled outline, finding edges is bound to
-the device resolution.  See [below](#hint-sets) for an example.
+An *edge* corresponds to a single coordinate value (allowing for a small
+threshold) on the main dimension that collects one or more segments, all
+pointing into the same direction (either left or right, all others are
+ignored).  While finding segments is done on the unscaled outline, finding
+edges is bound to the device resolution.  See [below](#hint-sets) for an
+example.
+
+In general, segments and edges pointing into different directions 'repel'
+each other, thus preventing alignment on the same vertical coordinate if
+they are near.  Note that this is a simplification, but it should help
+understand how to manipulate and/or create segments in control instructions
+files.
 
 The analysis to find segments and edges is specific to a writing
 system, see [below](#writing-systems).
@@ -1375,7 +1392,7 @@ work.
 
   * `name`: The 'version' entries are modified to add information about the
     parameters that have been used for calling ttfautohint.  This can be
-    controlled with the [`--no-info`](#add-ttfautohint-info) option.
+    controlled with the [`--no-info`](#ttfautohint-info) option.
 
   * `GPOS`, `hmtx`, `loca`, `head`, `maxp`, `post`: Updated to fit the
     additional '\.ttfautohint' glyph, the additional subglyphs in

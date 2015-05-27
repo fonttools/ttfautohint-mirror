@@ -77,6 +77,7 @@ The file `COPYING` mentioned in the previous paragraph is distributed with
 the ttfautohint library.
 
 
+[ClearType Whitepaper]: http://www.microsoft.com/typography/cleartype/truetypecleartype.aspx
 [Dalton Maag Ltd]: https://daltonmaag.com
 [DejaVu]: http://dejavu-fonts.org
 [FontForge]: http://fontforge.sf.net
