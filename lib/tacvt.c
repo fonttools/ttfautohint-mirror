@@ -104,14 +104,14 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
      * reason, search an arbitrary character from the current coverage to
      * trigger the coverage's metrics computation.
      */
-    if (gstyles[glyph_index] != style_idx)
+    if ((gstyles[glyph_index] & ~TA_DIGIT) != style_idx)
     {
       FT_ULong i;
 
 
       for (i = 0; i < (FT_ULong)globals->glyph_count; i++)
       {
-        if (gstyles[i] == style_idx)
+        if ((gstyles[i] & ~TA_DIGIT) == style_idx)
           break;
       }
 
