@@ -56,12 +56,35 @@ number_set_new(int start,
  * If possible, the ranges of `element' and the first element of `list' are
  * merged, in which case `element' gets deallocated.
  *
- * If `element' is NULL, return `list.
+ * If `element' is NULL, return `list'.
  */
 
 number_range*
 number_set_prepend(number_range* list,
                    number_range* element);
+
+
+/*
+ * Insert a single `number_range' object `element' into `list' of
+ * `number_range' objects, which might be NULL.  `list' is expected to be
+ * stored in reversed order.  If possible, the ranges of `element' and
+ * `list' are merged, in which case `element' gets deallocated.
+ *
+ * If `element' is NULL, return `list'.
+ */
+
+number_range*
+number_set_insert(number_range* list,
+                  number_range* element);
+
+
+/*
+ * Merge adjacent ranges in a list of `number_range' objects (which must be
+ * in normal order), deallocating list elements where appropriate.
+ */
+
+number_range*
+number_set_normalize(number_range* list);
 
 
 /*

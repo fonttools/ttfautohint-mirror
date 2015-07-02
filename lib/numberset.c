@@ -77,8 +77,7 @@ number_set_prepend(number_range* list,
       return NUMBERSET_OVERLAPPING_RANGES;
   }
 
-  if (list
-      && element->start == list->end + 1)
+  if (element->start == list->end + 1)
   {
     /* merge adjacent ranges */
     list->end = element->end;
@@ -91,6 +90,109 @@ number_set_prepend(number_range* list,
   element->next = list;
 
   return element;
+}
+
+
+number_range*
+number_set_insert(number_range* list,
+                  number_range* element)
+{
+  number_range* nr = list;
+  number_range* prev;
+
+
+  if (!element)
+    return list;
+
+  if (!list)
+    return element;
+
+  prev = NULL;
+  while (nr)
+  {
+    if (element->start <= nr->end
+        && element->end >= nr->start)
+      return NUMBERSET_OVERLAPPING_RANGES;
+
+    /* merge adjacent ranges */
+    if (element->start == nr->end + 1)
+    {
+      nr->end = element->end;
+
+      free(element);
+
+      return list;
+    }
+    if (element->end + 1 == nr->start)
+    {
+      nr->start = element->start;
+
+      free(element);
+
+      return list;
+    }
+
+    /* insert element */
+    if (element->start > nr->end)
+    {
+      if (prev)
+        prev->next = element;
+      element->next = nr;
+
+      return prev ? list : element;
+    }
+
+    prev = nr;
+    nr = nr->next;
+  }
+
+  /* append element */
+  prev->next = element;
+  element->next = NULL;
+
+  return list;
+}
+
+
+number_range*
+number_set_normalize(number_range* list)
+{
+  number_range* cur;
+  number_range* prev;
+
+
+  if (!list)
+    return NULL;
+
+  prev = list;
+  cur = list->next;
+
+  if (!cur)
+    return list; /* only a single element, nothing to do */
+
+  while (cur)
+  {
+    if (prev->end + 1 == cur->start)
+    {
+      number_range* tmp;
+
+
+      prev->end = cur->end;
+
+      tmp = cur;
+      cur = cur->next;
+      prev->next = cur;
+
+      free(tmp);
+    }
+    else
+    {
+      prev = cur;
+      cur = cur->next;
+    }
+  }
+
+  return list;
 }
 
 
@@ -126,7 +228,6 @@ number_set_parse(const char* s,
 {
   number_range* cur = NULL;
   number_range* new_range;
-  number_range* tmp;
 
   const char* last_pos = s;
   int last_start = -1;
@@ -296,20 +397,9 @@ number_set_parse(const char* s,
   }
   else
   {
-    /* success; now reverse list to have elements in ascending order */
-    number_range* list = NULL;
-
-
-    while (cur)
-    {
-      tmp = cur;
-      cur = cur->next;
-      tmp->next = list;
-      list = tmp;
-    }
-
+    /* success */
     if (number_set)
-      *number_set = list;
+      *number_set = number_set_normalize(number_set_reverse(cur));
   }
 
   return s;
