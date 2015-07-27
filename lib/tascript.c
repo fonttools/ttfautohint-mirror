@@ -25,4 +25,6 @@ const char* script_names[] =
 
 };
 
+size_t script_names_size = sizeof (script_names) / sizeof (script_names[0]);
+
 /* end of tascript.c */

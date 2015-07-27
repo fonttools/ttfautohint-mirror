@@ -292,6 +292,7 @@ struct FONT_
 
 /* in file `tascript.c' */
 extern const char* script_names[];
+extern size_t script_names_size;
 
 
 const char*
