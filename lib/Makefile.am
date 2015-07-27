@@ -46,6 +46,7 @@ libttfautohint_la_SOURCES = \
   tadummy.c tadummy.h \
   tadump.c \
   taerror.c \
+  tafeature.c \
   tafile.c \
   tafont.c \
   tafpgm.c \

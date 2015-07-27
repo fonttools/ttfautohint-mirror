@@ -31,6 +31,11 @@
 #include "ta.h"
 
 
+/* in file `tafeature.c' */
+extern const hb_tag_t feature_tags[];
+extern size_t feature_tags_size;
+
+
 FT_Error
 ta_get_coverage(TA_FaceGlobals globals,
                 TA_StyleClass style_class,
