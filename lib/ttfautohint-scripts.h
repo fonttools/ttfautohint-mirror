@@ -24,7 +24,7 @@
  * Add new scripts here.  The first and second arguments are the
  * script name in lowercase and uppercase, respectively, followed
  * by a description string.  Then comes the corresponding HarfBuzz
- * script name tag, followed by the default character (to derive
+ * script name tag, followed by the default characters (to derive
  * the standard width of stems).
  */
 

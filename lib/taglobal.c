@@ -21,7 +21,6 @@
 
 #include "taglobal.h"
 #include "taranges.h"
-#include "taharfbuzz.h"
 
 
 #undef SCRIPT
