@@ -13,9 +13,11 @@
  */
 
 #include "ta.h"
+#include "taharfbuzz.h"
 
 #include <locale.h>
 #include <limits.h>
+#include <stdio.h>
 #include <errno.h>
 #include <ctype.h>
 #include <math.h>
@@ -23,6 +25,7 @@
 
 #include "llrb.h" /* a red-black tree implementation */
 #include "tacontrol-bison.h"
+
 
 Control*
 TA_control_new(Control_Type type,
@@ -67,6 +70,11 @@ TA_control_new(Control_Type type,
   case Control_Segment_None:
     control->x_shift = 0;
     control->y_shift = 0;
+    break;
+
+  case Control_Script_Feature:
+    /* the `glyph_idx' field holds the style; */
+    /* the `points' field holds the glyph index set */
     break;
   }
 
@@ -155,7 +163,8 @@ control_show_line(FONT* font,
 
   face = font->sfnts[control->font_idx].face;
   glyph_name_buf[0] = '\0';
-  if (FT_HAS_GLYPH_NAMES(face))
+  if (control->type != Control_Script_Feature
+      && FT_HAS_GLYPH_NAMES(face))
     FT_Get_Glyph_Name(face, (FT_UInt)control->glyph_idx, glyph_name_buf, 64);
 
   points_buf = number_set_show(control->points, -1, -1);
@@ -526,6 +535,13 @@ TA_control_build_tree(FONT* font)
     number_set_iter ppems_iter;
     int ppem;
 
+
+    /* we don't store style information in the tree */
+    if (type == Control_Script_Feature)
+    {
+      control = control->next;
+      continue;
+    }
 
     ppems_iter.range = control->ppems;
     ppem = number_set_get_first(&ppems_iter);

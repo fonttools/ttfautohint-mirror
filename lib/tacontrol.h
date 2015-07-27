@@ -61,13 +61,14 @@ typedef enum Control_Type_
   Control_Delta_after_IUP,
   Control_Segment_Left,
   Control_Segment_Right,
-  Control_Segment_None
+  Control_Segment_None,
+  Control_Script_Feature
 } Control_Type;
 
 
 /*
- * A structure to hold control instructions for a glyph.  A linked list of it
- * gets allocated by a successful call to `TA_control_parse_buffer'.  Use
+ * A structure to hold control instructions.  A linked list of it gets
+ * allocated by a successful call to `TA_control_parse_buffer'.  Use
  * `TA_control_free' to deallocate the list.
  *
  * `x_shift' and `y_shift' are in the range [-8;8] for delta exceptions

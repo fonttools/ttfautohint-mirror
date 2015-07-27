@@ -93,23 +93,29 @@ TA_ERRORDEF_(Control_Invalid_Glyph_Name,   0x204,
              "invalid glyph name")
 TA_ERRORDEF_(Control_Invalid_Character,    0x205,
              "invalid character")
-TA_ERRORDEF_(Control_Invalid_Shift,        0x206,
+TA_ERRORDEF_(Control_Invalid_Style,        0x206,
+             "invalid style")
+TA_ERRORDEF_(Control_Invalid_Script,       0x207,
+             "invalid script")
+TA_ERRORDEF_(Control_Invalid_Feature,      0x208,
+             "invalid feature")
+TA_ERRORDEF_(Control_Invalid_Shift,        0x209,
              "invalid shift")
-TA_ERRORDEF_(Control_Invalid_Offset,       0x207,
+TA_ERRORDEF_(Control_Invalid_Offset,       0x20A,
              "invalid offset")
-TA_ERRORDEF_(Control_Invalid_Range,        0x208,
+TA_ERRORDEF_(Control_Invalid_Range,        0x20B,
              "invalid range")
-TA_ERRORDEF_(Control_Invalid_Glyph,        0x209,
+TA_ERRORDEF_(Control_Invalid_Glyph,        0x20C,
              "invalid glyph")
-TA_ERRORDEF_(Control_Overflow,             0x20A,
+TA_ERRORDEF_(Control_Overflow,             0x20D,
              "overflow")
-TA_ERRORDEF_(Control_Overlapping_Ranges,   0x20B,
+TA_ERRORDEF_(Control_Overlapping_Ranges,   0x20E,
              "overlapping ranges")
-TA_ERRORDEF_(Control_Ranges_Not_Ascending, 0x20C,
+TA_ERRORDEF_(Control_Ranges_Not_Ascending, 0x20F,
              "ranges not ascending")
-TA_ERRORDEF_(Control_Allocation_Error,     0x20D,
+TA_ERRORDEF_(Control_Allocation_Error,     0x210,
              "allocation error")
-TA_ERRORDEF_(Control_Flex_Error,           0x20E,
+TA_ERRORDEF_(Control_Flex_Error,           0x211,
              "internal flex error")
 
 #ifdef TA_ERROR_END_LIST

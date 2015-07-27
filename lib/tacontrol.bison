@@ -36,7 +36,7 @@
 
 %define api.pure
 %error-verbose
-%expect 2
+%expect 7
 %glr-parser
 %lex-param { void* scanner }
 %locations
@@ -45,6 +45,7 @@
 
 %code requires {
 #include "ta.h"
+#include "taharfbuzz.h"
 
 /* we don't change the name prefix of flex functions */
 #define TA_control_lex yylex
@@ -97,6 +98,10 @@ store_error_data(const YYLTYPE *locp,
 %type <control> entry
 %type <integer> font_idx
 %type <integer> glyph_idx
+%type <range> glyph_idx_range
+%type <range> glyph_idx_range_elem
+%type <range> glyph_idx_range_elems
+%type <range> glyph_idx_set
 %type <name> glyph_name
 %type <name> glyph_name_
 %type <control> input
@@ -115,6 +120,7 @@ store_error_data(const YYLTYPE *locp,
 %type <range> range_elems
 %type <real> real
 %type <range> right_limited
+%type <integer> script_feature
 %type <real> shift
 %type <integer> signed_integer
 %type <range> unlimited
@@ -220,6 +226,21 @@ entry:
                               $font_idx,
                               $glyph_idx,
                               $number_set,
+                              0,
+                              0,
+                              NULL);
+      if (!$entry)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+| font_idx script_feature glyph_idx_set EOE
+    {
+      $entry = TA_control_new(Control_Script_Feature,
+                              $font_idx,
+                              $script_feature,
+                              $glyph_idx_set,
                               0,
                               0,
                               NULL);
@@ -419,6 +440,72 @@ no_dir:
 
       $no_dir = Control_Segment_None;
       free($NODIR);
+    }
+;
+
+script_feature:
+  glyph_name[script] glyph_name[feature]
+    {
+      long ss;
+      size_t i, j;
+      size_t script_idx = 0;
+      size_t feature_idx = 0;
+      char feature_name[5];
+
+
+      for (i = 0; i < script_names_size; i++)
+      {
+        if (!strcmp($script, script_names[i]))
+        {
+          script_idx = i;
+          break;
+        }
+      }
+
+      feature_name[4] = '\0';
+
+      for (j = 0; j < feature_tags_size; j++)
+      {
+        hb_tag_to_string(feature_tags[j], feature_name);
+
+        if (!strcmp($feature, feature_name))
+        {
+          feature_idx = j;
+          break;
+        }
+      }
+
+      free($script);
+      free($feature);
+
+      if (i == script_names_size)
+      {
+        store_error_data(&@1, context, TA_Err_Control_Invalid_Script);
+        YYABORT;
+      }
+      if (j == feature_tags_size)
+      {
+        store_error_data(&@2, context, TA_Err_Control_Invalid_Feature);
+        YYABORT;
+      }
+
+      for (ss = 0; ta_style_classes[ss]; ss++)
+      {
+        TA_StyleClass style_class = ta_style_classes[ss];
+
+
+        if (script_idx == style_class->script
+            && feature_idx == style_class->coverage)
+        {
+          $script_feature = ss;
+          break;
+        }
+      }
+      if (!ta_style_classes[ss])
+      {
+        store_error_data(&@$, context, TA_Err_Control_Invalid_Style);
+        YYABORT;
+      }
     }
 ;
 
@@ -683,6 +770,72 @@ range:
         YYABORT;
       }
       if ($range == NUMBERSET_ALLOCATION_ERROR)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+;
+
+glyph_idx_set:
+  '@'
+    {
+      FT_Face face = context->font->sfnts[context->font_idx].face;
+
+
+      context->number_set_min = 0;
+      context->number_set_max = face->num_glyphs - 1;
+    }
+  glyph_idx_range_elems
+    { $glyph_idx_set = $glyph_idx_range_elems; }
+;
+
+glyph_idx_range_elems[result]:
+  glyph_idx_range_elem
+    { $result = $glyph_idx_range_elem; }
+| glyph_idx_range_elems[left] ',' glyph_idx_range_elem
+    {
+      /* for glyph_idx_set, ascending order is not enforced */
+      $result = number_set_insert($left, $glyph_idx_range_elem);
+      if ($result == NUMBERSET_OVERLAPPING_RANGES)
+      {
+        number_set_free($left);
+        number_set_free($glyph_idx_range_elem);
+        store_error_data(&@3, context, TA_Err_Control_Overlapping_Ranges);
+        YYABORT;
+      }
+    }
+;
+
+glyph_idx_range_elem:
+  glyph_idx
+    {
+      $glyph_idx_range_elem = number_set_new($glyph_idx,
+                                             $glyph_idx,
+                                             context->number_set_min,
+                                             context->number_set_max);
+      /* glyph_idx is always valid */
+      /* since its value was already tested for validity */
+      if ($glyph_idx_range_elem == NUMBERSET_ALLOCATION_ERROR)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+| glyph_idx_range
+    { $glyph_idx_range_elem = $glyph_idx_range; }
+;
+
+glyph_idx_range:
+  glyph_idx[left] '-' glyph_idx[right]
+    {
+      $glyph_idx_range = number_set_new($left,
+                                        $right,
+                                        context->number_set_min,
+                                        context->number_set_max);
+      /* glyph range is always valid */
+      /* since both `glyph_idx' values were already tested for validity */
+      if ($glyph_idx_range == NUMBERSET_ALLOCATION_ERROR)
       {
         store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;
