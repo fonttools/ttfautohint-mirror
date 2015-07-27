@@ -266,6 +266,13 @@ TA_control_parse_buffer(FONT* font,
 
 
 /*
+ * Apply coverage data from the control instructions file.
+ */
+
+void
+TA_control_apply_coverage(SFNT* sfnt,
+                          FONT* font);
+/*
  * Free the allocated data in `control'.
  */
 

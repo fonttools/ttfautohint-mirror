@@ -589,6 +589,17 @@ No_check:
   }
 #endif
 
+  if (!font->dehint)
+  {
+    for (i = 0; i < font->num_sfnts; i++)
+    {
+      SFNT* sfnt = &font->sfnts[i];
+
+
+      TA_control_apply_coverage(sfnt, font);
+    }
+  }
+
   /* loop again over subfonts */
   for (i = 0; i < font->num_sfnts; i++)
   {

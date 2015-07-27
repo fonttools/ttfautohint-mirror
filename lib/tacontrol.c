@@ -234,6 +234,23 @@ control_show_line(FONT* font,
                        control->glyph_idx,
                        points_buf);
     break;
+
+  case Control_Script_Feature:
+    {
+      TA_StyleClass style_class = ta_style_classes[control->glyph_idx];
+      char feature_name[5];
+
+
+      feature_name[4] = '\0';
+      hb_tag_to_string(feature_tags[style_class->coverage], feature_name);
+
+      s = sdscatprintf(s, "%ld %s %s @ %s",
+                       control->font_idx,
+                       script_names[style_class->script],
+                       feature_name,
+                       points_buf);
+    }
+    break;
   }
 
 Exit:
@@ -417,6 +434,50 @@ Fail:
     font->control = context.result;
 
   return context.error;
+}
+
+
+/* apply coverage data from the control instructions file */
+
+void
+TA_control_apply_coverage(SFNT* sfnt,
+                          FONT* font)
+{
+  Control* control = font->control;
+  TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
+  FT_Byte* gstyles = globals->glyph_styles;
+
+
+  while (control)
+  {
+    number_set_iter glyph_idx_iter;
+    int glyph_idx;
+    int style;
+
+
+    if (control->type != Control_Script_Feature)
+      goto Skip;
+    if (control->font_idx != sfnt->face->face_index)
+      goto Skip;
+
+    /* `control->glyph_idx' holds the style; */
+    /* `control->points' holds the glyph index set */
+    style = control->glyph_idx;
+    glyph_idx_iter.range = control->points;
+    glyph_idx = number_set_get_first(&glyph_idx_iter);
+
+    while (glyph_idx_iter.range)
+    {
+      /* assign new style but retain digit property */
+      gstyles[glyph_idx] &= TA_DIGIT;
+      gstyles[glyph_idx] |= style;
+
+      glyph_idx = number_set_get_next(&glyph_idx_iter);
+    }
+
+  Skip:
+    control = control->next;
+  }
 }
 
 
