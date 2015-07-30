@@ -56,7 +56,6 @@ Manual](https://developer.apple.com/fonts/TrueType-Reference-Manual/RM03/Chap3.h
 >
 >  - At large sizes, the subtlety of the original design should emerge.
 
-
 In general, there are three possible ways to hint a glyph.
 
  1. The font contains hints (in the original sense of this word) to guide
@@ -1372,7 +1371,7 @@ The following syntax forms allows adjustments of a glyph's hinting process.
 
 ### Change Direction of Points, Artificial Segments
 
-> *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`l`\[`eft`\]|`r`\[`ight`\]*\ points\ \ *\[*\ *`(`*\ left‑offset\ *`,`*\ right‑offset\ *`)`*\ *\]*\
+> *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`l`\[`eft`\]|`r`\[`ight`\]*\ \ points\ \ *\[*\ *`(`*\ left‑offset\ *`,`*\ right‑offset\ *`)`*\ *\]*\
 
 The mutually exclusive parameters `left` and `right` (which can be
 abbreviated as '`l`' and '`r`', respectively) indicate that the following
@@ -1434,7 +1433,7 @@ how to use direction changes.
 
 ### Unset Direction of Points
 
-> *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`n`\[`odir`\]*\ points\
+> *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`n`\[`odir`\]*\ \ points\
 
 Parameter `nodir` (or '`n`') sets the 'out' direction of the following
 points to 'no direction', this is, neither left nor right.  If the specified
@@ -1447,7 +1446,7 @@ influences the hinting process.
 
 ### Delta Exceptions
 
-> *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`t`\[`ouch`\]|`p`\[`oint`\]*\ points\ \ *\[*\ *`x`\[`shift`\]*\ x‑shift\ *\]*\ \ *\[*\ *`y`\[`shift`\]*\ y‑shift\ *\]*\ \ *`@`*\ ppems\
+> *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`t`\[`ouch`\]|`p`\[`oint`\]*\ \ points\ \ *\[*\ *`x`\[`shift`\]*\ x‑shift\ *\]*\ \ *\[*\ *`y`\[`shift`\]*\ y‑shift\ *\]*\ \ *`@`*\ \ ppems\
 
 The mutually exclusive parameters `touch` and `point` (which can be
 abbreviated as '`t`' and '`p`', respectively) make ttfautohint apply delta

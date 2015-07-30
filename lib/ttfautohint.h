@@ -292,83 +292,8 @@ typedef int
  * :   A pointer of type `FILE*` to the data stream of control instructions.
  *     Mutually exclusive with `control-buffer`.
  *
- *     An entry in a control instructions file or buffer has one of the
- *     following syntax forms (with brackets showing optional elements):
- *
- *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`l`\[`eft`\]|`r`\[`ight`\]*\ points\ \ *\[*\ *`(`*\ left‑offset\ *`,`*\ right‑offset\ *`)`*\ *\]*\
- *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`n`\[`odir`\]*\ points\
- *     > *\[*\ font‑idx\ *\]*\ \ glyph‑id\ \ *`t`\[`ouch`\]|`p`\[`oint`\]*\ points\ \ *\[*\ *`x`\[`shift`\]*\ x‑shift\ *\]*\ \ *\[*\ *`y`\[`shift`\]*\ y‑shift\ *\]*\ \ *`@`*\ ppems
- *
- *     *font‑idx* gives the index of the font in a TrueType Collection.  If
- *     missing, it is set to zero.  For normal TrueType fonts, only value
- *     zero is valid.  If starting with `0x` the number is interpreted as
- *     hexadecimal.  If starting with `0` it gets interpreted as an octal
- *     value, and as a decimal value otherwise.
- *
- *     *glyph‑id* is a glyph's name as listed in the `post` SFNT table or a
- *     glyph index.  A glyph name consists of characters from the set
- *     '`A-Za-z0-9._`' only and does not start with a digit or period, with
- *     the exceptions of the names '`.notdef`' and '`.null`'.  A glyph index
- *     can be specified in decimal, octal, or hexadecimal format, the latter
- *     two indicated by the prefixes `0` and `0x`, respectively.
- *
- *     The mutually exclusive parameters `left` and `right` (which can be
- *     abbreviated as '`l`' and '`r`', respectively) indicate that the
- *     following points have left or right 'out' direction, respectively,
- *     overriding ttfautohint's algorithm for setting point directions.  The
- *     'out direction' of a point is the direction of the outline *leaving*
- *     the point (or passing the control point).  If the specified direction
- *     is identical to what ttfautohint computes, nothing special happens.
- *     Otherwise, a one-point segment with the specified direction gets
- *     created.  By default, its length is zero.  Setting *left‑offset* and
- *     *right‑offset*, you can change the segment's horizontal start and end
- *     position relative to the point position.  *left‑offset* and
- *     *right‑offset* are integers measured in font units.
- *
- *     Parameter `nodir` (or '`n`') sets the 'out' direction of the
- *     following points to 'no direction'.  If the specified direction is
- *     identical to what ttfautohint computes, nothing special happens.
- *     Otherwise, ttfautohint no longer considers those points as part of
- *     horizontal segments, thus treating them as 'weak' points.
- *
- *     Modifying or adding segments don't directly modify the outlines; it
- *     only influences the hinting process.
- *
- *     The mutually exclusive parameters `touch` and `point` (which can be
- *     abbreviated as '`t`' and '`p`', respectively) make ttfautohint apply
- *     delta exceptions for the given points, shifting them by the given
- *     values.  Delta exceptions entered with `touch` are applied before the
- *     final `IUP` instructions in a glyph's bytecode, exceptions entered
- *     with `point` after `IUP`.  Additionally, the `touch` parameter makes
- *     the bytecode *touch* the affected points; such points are no longer
- *     affected by `IUP` at all.  Note that in ClearType mode all deltas
- *     along the x\ axis are discarded, and deltas along the y\ axis are
- *     only executed for touched points.  As a consequence, vertical delta
- *     exceptions entered with `point` should not be used in ClearType mode.
- *
- *     Both *points* and *ppems* are number ranges, similar to the
- *     `x-height-snapping-exceptions` syntax.
- *
- *     *x‑shift* and *y‑shift* represent real numbers that get rounded to
- *     multiples of 1/8 pixels.  The entries for `xshift` ('`x`') and
- *     `yshift` ('`y`') are optional; if missing, the corresponding value is
- *     set to zero.  If both values are zero, the delta exception entry is
- *     ignored as a whole.
- *
- *     Values for *x‑shift* and *y‑shift* must be in the range [−1.0;1.0].
- *     Values for *ppems* must be in the range [6;53].  Values for *points*
- *     are limited by the number of points in the glyph.
- *
- *     Control instruction entries can be either separated with newlines or
- *     with character '`;`'.  Additionally, a line can be continued on the
- *     next line by ending it with backslash character ('`\`').  A backslash
- *     followed by a newline gets treated similar to a whitespace character.
- *
- *     A comment starts with character '`#`'; the rest of the line is
- *     ignored.  An empty line is ignored also.
- *
- *     Note that only character '`.`' is recognized as a decimal point, and
- *     a thousands separator is not accepted.
+ *     See '[Control Instructions](#control-instructions)' for the syntax
+ *     used in such a file or buffer.
  *
  * `control-buffer`
  * :   A pointer of type `const char*` to a buffer that contains control
