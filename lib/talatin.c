@@ -1879,7 +1879,7 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
       /* example: the `c' in cour.pfa at size 13 */
 
       if (edge->serif && edge->link)
-        edge->serif = 0;
+        edge->serif = NULL;
     }
   }
 
@@ -2415,7 +2415,7 @@ ta_latin_hint_edges(TA_GlyphHints hints,
         FT_Byte neutral2 = edge2->flags & TA_EDGE_NEUTRAL;
 
 
-        if ((neutral && neutral2) || neutral2)
+        if (neutral2)
         {
           edge2->blue_edge = NULL;
           edge2->flags &= ~TA_EDGE_NEUTRAL;

@@ -243,9 +243,13 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
   TA_Point point;
 
 
-  TA_LOG(("Table of points:\n"
-          "  [ index |  xorg |  yorg | xscale | yscale"
-          " |  xfit |  yfit | flags ]\n"));
+  TA_LOG(("Table of points:\n"));
+
+  if (hints->num_points)
+    TA_LOG(("  [ index |  xorg |  yorg | xscale | yscale"
+            " |  xfit |  yfit | flags ]\n"));
+  else
+    TA_LOG(("  (none)\n"));
 
   for (point = points; point < limit; point++)
     TA_LOG(("  [ %5d | %5d | %5d | %6.2f | %6.2f"
@@ -425,15 +429,15 @@ ta_direction_compute(FT_Pos dx,
     else
     {
       dir = TA_DIR_DOWN;
-      ll = dy;
+      ll = -dy;
       ss = dx;
     }
   }
 
-  /* return no direction if arm lengths differ too much */
-  /* (value 14 is heuristic, corresponding to approx. 4.1 degrees) */
-  ss *= 14;
-  if (TA_ABS(ll) <= TA_ABS(ss))
+  /* return no direction if arm lengths do not differ enough */
+  /* (value 14 is heuristic, corresponding to approx. 4.1 degrees); */
+  /* the long arm is never negative */
+  if (ll <= 14 * TA_ABS(ss))
     dir = TA_DIR_NONE;
 
   return dir;
@@ -763,8 +767,6 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
 
         FT_Pos out_x, out_y;
 
-        FT_Bool is_first;
-
 
         /* since the first point of a contour could be part of a */
         /* series of near points, go backwards to find the first */
@@ -814,17 +816,13 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
         out_x = 0;
         out_y = 0;
 
-        is_first = 1;
-
-        for (point = first;
-             point != first || is_first;
-             point = point->next)
+        next = first;
+        do
         {
           TA_Direction out_dir;
 
 
-          is_first = 0;
-
+          point = next;
           next = point->next;
 
           out_x += next->fx - point->fx;
@@ -856,7 +854,8 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
 
           out_x = 0;
           out_y = 0;
-        }
+
+        } while (next != first);
       }
 
       /*

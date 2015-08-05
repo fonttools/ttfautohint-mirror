@@ -133,8 +133,7 @@ typedef FT_Int TA_Angle;
             TA_Angle _delta = (angle2) - (angle1); \
 \
 \
-            _delta %= TA_ANGLE_2PI; \
-            if (_delta < 0) \
+            while (_delta <= -TA_ANGLE_PI) \
               _delta += TA_ANGLE_2PI; \
 \
             if (_delta > TA_ANGLE_PI) \
