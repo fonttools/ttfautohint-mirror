@@ -153,6 +153,8 @@ typedef struct TA_GlyphHintsRec_* TA_GlyphHints;
 #define TA_SCALER_FLAG_NO_HORIZONTAL 0x01U /* disable horizontal hinting */
 #define TA_SCALER_FLAG_NO_VERTICAL 0x02U /* disable vertical hinting */
 #define TA_SCALER_FLAG_NO_ADVANCE 0x04U /* disable advance hinting */
+#define TA_SCALER_FLAG_NO_WARPER 0x08U /* disable warper */
+
 
 typedef struct TA_ScalerRec_
 {

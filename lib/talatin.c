@@ -2092,10 +2092,18 @@ ta_latin_hints_init(TA_GlyphHints hints,
     other_flags |= TA_LATIN_HINTS_MONO;
 
   /* in `light' hinting mode we disable horizontal hinting completely; */
-  /* we also do it if the face is italic */
+  /* we also do it if the face is italic -- */
+  /* however, if warping is enabled (which only works in `light' hinting */
+  /* mode), advance widths get adjusted, too */
   if (mode == FT_RENDER_MODE_LIGHT
       || (face->style_flags & FT_STYLE_FLAG_ITALIC) != 0)
     scaler_flags |= TA_SCALER_FLAG_NO_HORIZONTAL;
+
+#ifdef TA_CONFIG_OPTION_USE_WARPER
+  /* get (global) warper flag */
+  if (!metrics->root.globals->module->warping)
+    scaler_flags |= TA_SCALER_FLAG_NO_WARPER;
+#endif
 
   hints->scaler_flags = scaler_flags;
   hints->other_flags = other_flags;
@@ -2977,7 +2985,8 @@ ta_latin_hints_apply(TA_GlyphHints hints,
 
   /* analyze glyph outline */
 #ifdef TA_CONFIG_OPTION_USE_WARPER
-  if (metrics->root.scaler.render_mode == FT_RENDER_MODE_LIGHT
+  if ((metrics->root.scaler.render_mode == FT_RENDER_MODE_LIGHT
+       && TA_HINTS_DO_WARP(hints))
       || TA_HINTS_DO_HORIZONTAL(hints))
 #else
   if (TA_HINTS_DO_HORIZONTAL(hints))
@@ -3010,7 +3019,8 @@ ta_latin_hints_apply(TA_GlyphHints hints,
   {
 #ifdef TA_CONFIG_OPTION_USE_WARPER
     if (dim == TA_DIMENSION_HORZ
-        && metrics->root.scaler.render_mode == FT_RENDER_MODE_LIGHT)
+        && metrics->root.scaler.render_mode == FT_RENDER_MODE_LIGHT
+        && TA_HINTS_DO_WARP(hints))
     {
       TA_WarperRec warper;
       FT_Fixed scale;
@@ -3022,7 +3032,7 @@ ta_latin_hints_apply(TA_GlyphHints hints,
 
       continue;
     }
-#endif
+#endif /* TA_CONFIG_OPTION_USE_WARPER */
 
     if ((dim == TA_DIMENSION_HORZ && TA_HINTS_DO_HORIZONTAL(hints))
         || (dim == TA_DIMENSION_VERT && TA_HINTS_DO_VERTICAL(hints)))

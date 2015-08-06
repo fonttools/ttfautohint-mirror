@@ -460,9 +460,6 @@ typedef struct TA_GlyphHintsRec_
           (!_ta_debug_disable_vert_hints \
            && !TA_HINTS_TEST_SCALER(h, TA_SCALER_FLAG_NO_VERTICAL))
 
-#define TA_HINTS_DO_ADVANCE(h) \
-          !TA_HINTS_TEST_SCALER(h, TA_SCALER_FLAG_NO_ADVANCE)
-
 #define TA_HINTS_DO_BLUES(h) \
           (!_ta_debug_disable_blue_hints)
 
@@ -474,13 +471,17 @@ typedef struct TA_GlyphHintsRec_
 #define TA_HINTS_DO_VERTICAL(h) \
           !TA_HINTS_TEST_SCALER(h, TA_SCALER_FLAG_NO_VERTICAL)
 
-#define TA_HINTS_DO_ADVANCE(h) \
-          !TA_HINTS_TEST_SCALER(h, TA_SCALER_FLAG_NO_ADVANCE)
-
 #define TA_HINTS_DO_BLUES(h) \
           1
 
 #endif /* !TA_DEBUG */
+
+
+#define TA_HINTS_DO_ADVANCE(h) \
+          !TA_HINTS_TEST_SCALER(h, TA_SCALER_FLAG_NO_ADVANCE)
+
+#define TA_HINTS_DO_WARP(h) \
+          !TA_HINTS_TEST_SCALER(h, TA_SCALER_FLAG_NO_WARPER)
 
 
 TA_Direction
