@@ -35,6 +35,10 @@
 #include <numberset.h>
 
 
+/* needed for computation of round vs. flat segments */
+#define FLAT_THRESHOLD(x)  (x / 14)
+
+
 /* find segments and links, compute all stem widths, and initialize */
 /* standard width and height for the glyph with given charcode */
 
@@ -271,6 +275,8 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
 
   TA_Blue_Stringset bss = sc->blue_stringset;
   const TA_Blue_StringRec* bs = &ta_blue_stringsets[bss];
+
+  FT_Pos flat_threshold = FLAT_THRESHOLD(metrics->units_per_em);
 
 
   /* we walk over the blue character strings as specified in the  */
@@ -690,7 +696,7 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
          * now set the `round' flag depending on the segment's kind:
          *
          * - if the horizontal distance between the first and last
-         *   `on' point is larger than upem/8 (value 8 is heuristic)
+         *   `on' point is larger than a heuristic threshold
          *   we have a flat segment
          * - if either the first or the last point of the segment is
          *   an `off' point, the segment is round, otherwise it is
@@ -698,9 +704,9 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
          */
         if (best_on_point_first >= 0
             && best_on_point_last >= 0
-            && (FT_UInt)(TA_ABS(points[best_on_point_last].x
+            && (TA_ABS(points[best_on_point_last].x
                                 - points[best_on_point_first].x))
-                 > metrics->units_per_em / 8)
+                 > flat_threshold)
           round = 0;
         else
           round = FT_BOOL(FT_CURVE_TAG(outline.tags[best_segment_first])
@@ -1220,6 +1226,7 @@ FT_Error
 ta_latin_hints_compute_segments(TA_GlyphHints hints,
                                 TA_Dimension dim)
 {
+  TA_LatinMetrics metrics = (TA_LatinMetrics)hints->metrics;
   TA_AxisHints axis = &hints->axis[dim];
   FT_Error error = FT_Err_Ok;
 
@@ -1229,6 +1236,8 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
   TA_Point* contour = hints->contours;
   TA_Point* contour_limit = contour + hints->num_contours;
   TA_Direction major_dir, segment_dir;
+
+  FT_Pos flat_threshold = FLAT_THRESHOLD(metrics->units_per_em);
 
 
   memset(&seg0, 0, sizeof (TA_SegmentRec));
@@ -1276,6 +1285,8 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
 
     FT_Pos min_pos = 32000; /* minimum segment pos != min_coord */
     FT_Pos max_pos = -32000; /* maximum segment pos != max_coord */
+    FT_Pos min_on_pos = 32000;
+    FT_Pos max_on_pos = -32000;
     FT_Bool passed;
 
 
@@ -1317,6 +1328,16 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
         if (u > max_pos)
           max_pos = u;
 
+        /* get minimum and maximum coordinate of on points */
+        if (!(point->flags & TA_FLAG_CONTROL))
+        {
+          v = point->v;
+          if (v < min_on_pos)
+            min_on_pos = v;
+          if (v > max_on_pos)
+            max_on_pos = v;
+        }
+
         if (point->out_dir != segment_dir
             || point == last)
         {
@@ -1325,8 +1346,10 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
           segment->pos = (FT_Short)((min_pos + max_pos) >> 1);
 
           /* a segment is round if either its first or last point */
-          /* is a control point */
-          if ((segment->first->flags | point->flags) & TA_FLAG_CONTROL)
+          /* is a control point, and the length of the on points */
+          /* inbetween doesn't exceed a heuristic limit */
+          if ((segment->first->flags | point->flags) & TA_FLAG_CONTROL
+              && (max_on_pos - min_on_pos) < flat_threshold)
             segment->flags |= TA_EDGE_ROUND;
 
           /* compute segment size */
@@ -1371,9 +1394,18 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
         segment[0] = seg0;
 
         segment->dir = (FT_Char)segment_dir;
-        min_pos = max_pos = point->u;
         segment->first = point;
         segment->last = point;
+
+        min_pos = max_pos = point->u;
+
+        if (point->flags & TA_FLAG_CONTROL)
+        {
+          min_on_pos = 32000;
+          max_on_pos = -32000;
+        }
+        else
+          min_on_pos = max_on_pos = point->v;
 
         on_edge = 1;
 
