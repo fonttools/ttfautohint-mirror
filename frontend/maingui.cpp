@@ -42,19 +42,20 @@
 #define Tr(text) QCoreApplication::translate(TRDOMAIN, text)
 
 
-// the available script tags and its descriptions are directly extracted
-// from `ttfautohint-scripts.h'
-typedef struct Script_Names_
+typedef struct Tag_Names_
 {
   const char* tag;
   const char* description;
-} Script_Names;
+} Tag_Names;
 
+
+// the available script tags and its descriptions are directly extracted
+// from `ttfautohint-scripts.h'
 #undef SCRIPT
 #define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
           {#s, d},
 
-const Script_Names script_names[] =
+const Tag_Names script_names[] =
 {
 #include <ttfautohint-scripts.h>
   {NULL, NULL}

@@ -62,19 +62,20 @@
 using namespace std;
 
 
-// the available script tags and its descriptions are directly extracted
-// from `ttfautohint-scripts.h'
-typedef struct Script_Names_
+typedef struct Tag_Names_
 {
   const char* tag;
   const char* description;
-} Script_Names;
+} Tag_Names;
 
+
+// the available script tags and its descriptions are directly extracted
+// from `ttfautohint-scripts.h'
 #undef SCRIPT
 #define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
           {#s, d},
 
-const Script_Names script_names[] =
+const Tag_Names script_names[] =
 {
 #include <ttfautohint-scripts.h>
   {NULL, NULL}
@@ -397,7 +398,7 @@ show_help(bool
 "character codes outside of known script ranges.  Option -D sets the\n"
 "default script for handling OpenType features.  Possible values are\n"
 "\n");
-  const Script_Names* sn = script_names;
+  const Tag_Names* sn = script_names;
   for(;;)
   {
     fprintf(handle, "  %s (%s)",
@@ -840,7 +841,7 @@ main(int argc,
 
   if (have_default_script)
   {
-    const Script_Names* sn;
+    const Tag_Names* sn;
 
     for (sn = script_names; sn->tag; sn++)
       if (!strcmp(default_script, sn->tag))
@@ -854,7 +855,7 @@ main(int argc,
 
   if (have_fallback_script)
   {
-    const Script_Names* sn;
+    const Tag_Names* sn;
 
     for (sn = script_names; sn->tag; sn++)
       if (!strcmp(fallback_script, sn->tag))
