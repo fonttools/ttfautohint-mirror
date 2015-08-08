@@ -329,7 +329,7 @@ typedef const TA_ScriptClassRec* TA_ScriptClass;
 
 #undef COVERAGE
 #define COVERAGE(name, NAME, description, \
-                 tag1, tag2, tag3, tag4) \
+                 tag, tag1, tag2, tag3, tag4) \
           TA_COVERAGE_ ## NAME,
 
 typedef enum TA_Coverage_

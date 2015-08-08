@@ -42,7 +42,7 @@
 /* load coverage tags */
 #undef COVERAGE
 #define COVERAGE(name, NAME, description, \
-                 tag1, tag2, tag3, tag4) \
+                 tag, tag1, tag2, tag3, tag4) \
           static const hb_tag_t name ## _coverage[] = \
           { \
             HB_TAG(tag1, tag2, tag3, tag4), \
@@ -55,7 +55,7 @@
 /* define mapping between coverage tags and TA_Coverage */
 #undef COVERAGE
 #define COVERAGE(name, NAME, description, \
-                 tag1, tag2, tag3, tag4) \
+                 tag, tag1, tag2, tag3, tag4) \
           name ## _coverage,
 
 static const hb_tag_t* coverages[] =
@@ -368,7 +368,7 @@ Exit:
 /* construct HarfBuzz features */
 #undef COVERAGE
 #define COVERAGE(name, NAME, description, \
-                 tag1, tag2, tag3, tag4) \
+                 tag, tag1, tag2, tag3, tag4) \
           static const hb_feature_t name ## _feature[] = \
           { \
             { \
@@ -383,7 +383,7 @@ Exit:
 /* define mapping between HarfBuzz features and TA_Coverage */
 #undef COVERAGE
 #define COVERAGE(name, NAME, description, \
-                 tag1, tag2, tag3, tag4) \
+                 tag, tag1, tag2, tag3, tag4) \
           name ## _feature,
 
 static const hb_feature_t* features[] =

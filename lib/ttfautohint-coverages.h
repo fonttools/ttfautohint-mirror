@@ -22,38 +22,38 @@
 /*
  * Add new coverages here.  The first and second arguments are the coverage
  * name in lowercase and uppercase, respectively, followed by a description
- * string.  The last four arguments are the four characters defining the
- * corresponding OpenType feature.
+ * string.  The last five arguments are a four-character identifier and its
+ * four characters defining the corresponding OpenType feature.
  */
 
 #if 0
 /* XXX: It's not possible to define blue zone characters in advance. */
 COVERAGE(alternative_fractions, ALTERNATIVE_FRACTIONS,
          "alternative fractions",
-         'a', 'f', 'r', 'c')
+         afrc, 'a', 'f', 'r', 'c')
 #endif
 
 COVERAGE(petite_capitals_from_capitals, PETITE_CAPITALS_FROM_CAPITALS,
          "petite capitals from capitals",
-         'c', '2', 'c', 'p')
+         c2cp, 'c', '2', 'c', 'p')
 
 COVERAGE(small_capitals_from_capitals, SMALL_CAPITALS_FROM_CAPITALS,
          "small capitals from capitals",
-         'c', '2', 's', 'c')
+         c2sc, 'c', '2', 's', 'c')
 
 #if 0
 /* XXX: Only digits are in this coverage, however, both normal style */
 /*      and oldstyle representation forms are possible.              */
 COVERAGE(denominators, DENOMINATORS,
          "denominators",
-         'd', 'n', 'o', 'm')
+         dnom, 'd', 'n', 'o', 'm')
 #endif
 
 #if 0
 /* XXX: It's not possible to define blue zone characters in advance. */
 COVERAGE(fractions, FRACTIONS,
          "fractions",
-         'f', 'r', 'a', 'c')
+         frac, 'f', 'r', 'a', 'c')
 #endif
 
 #if 0
@@ -61,40 +61,40 @@ COVERAGE(fractions, FRACTIONS,
 /*      and oldstyle representation forms are possible.              */
 COVERAGE(numerators, NUMERATORS,
          "numerators",
-         'n', 'u', 'm', 'r')
+         numr, 'n', 'u', 'm', 'r')
 #endif
 
 COVERAGE(ordinals, ORDINALS,
          "ordinals",
-         'o', 'r', 'd', 'n')
+         ordn, 'o', 'r', 'd', 'n')
 
 COVERAGE(petite_capitals, PETITE_CAPITALS,
          "petite capitals",
-         'p', 'c', 'a', 'p')
+         pcap, 'p', 'c', 'a', 'p')
 
 COVERAGE(ruby, RUBY,
          "ruby",
-         'r', 'u', 'b', 'y')
+         ruby, 'r', 'u', 'b', 'y')
 
 COVERAGE(scientific_inferiors, SCIENTIFIC_INFERIORS,
          "scientific inferiors",
-         's', 'i', 'n', 'f')
+         sinf, 's', 'i', 'n', 'f')
 
 COVERAGE(small_capitals, SMALL_CAPITALS,
          "small capitals",
-         's', 'm', 'c', 'p')
+         smcp, 's', 'm', 'c', 'p')
 
 COVERAGE(subscript, SUBSCRIPT,
          "subscript",
-         's', 'u', 'b', 's')
+         subs, 's', 'u', 'b', 's')
 
 COVERAGE(superscript, SUPERSCRIPT,
          "superscript",
-         's', 'u', 'p', 's')
+         sups, 's', 'u', 'p', 's')
 
 COVERAGE(titling, TITLING,
          "titling",
-         't', 'i', 't', 'l')
+         titl, 't', 'i', 't', 'l')
 
 #if 0
   /* to be always excluded */

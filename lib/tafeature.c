@@ -17,7 +17,7 @@
 
 #undef COVERAGE
 #define COVERAGE(name, NAME, description, \
-                 tag1, tag2, tag3, tag4) \
+                 tag, tag1, tag2, tag3, tag4) \
                    HB_TAG(tag1, tag2, tag3, tag4),
 
 const hb_tag_t feature_tags[] =
