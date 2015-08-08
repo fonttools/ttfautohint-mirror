@@ -82,6 +82,19 @@ const Tag_Names script_names[] =
 };
 
 
+// the available feature tags and its descriptions are directly extracted
+// from `ttfautohint-coverages.h'
+#undef COVERAGE
+#define COVERAGE(n, N, d, t, t1, t2, t3, t4) \
+          {#t, d},
+
+const Tag_Names feature_names[] =
+{
+#include <ttfautohint-coverages.h>
+  {NULL, NULL}
+};
+
+
 #ifndef BUILD_GUI
 extern "C" {
 
@@ -417,11 +430,37 @@ show_help(bool
 "\n"
 "A control instructions file contains entries of the form\n"
 "\n"
-"  [<subfont idx>] <glyph id> l|r <points> [(<left offset>,<right offset>)]\n"
-"or\n"
-"  [<subfont idx>] <glyph id> n <points>\n"
-"or\n"
-"  [<subfont idx>] <glyph id> t|p <points> [x <shift>] [y <shift>] @ <ppems>\n"
+"  [<font idx>] <script> <feature> @ <glyph ids>\n"
+"\n"
+"  [<font idx>] <glyph id> l|r <points> [(<left offset>,<right offset>)]\n"
+"\n"
+"  [<font idx>] <glyph id> n <points>\n"
+"\n"
+"  [<font idx>] <glyph id> t|p <points> [x <shift>] [y <shift>] @ <ppems>\n"
+"\n"
+"<font idx> is the current subfont, <glyph id> is a glyph name or index,\n"
+"<glyph ids> is a set of <glyph id>s, <shift> is a real number in px,\n"
+"<points> and <ppems> are integer ranges as with option `-X'.\n"
+"\n"
+"<script> and <feature> are four-letter tags that define a style\n"
+"the <glyph ids> are assigned to; possible values for <script> are the same\n"
+"as with option -D, possible values for <feature> are\n"
+"\n");
+  const Tag_Names* fn = feature_names;
+  for(;;)
+  {
+    fprintf(handle, "  %s (%s)",
+            fn->tag, fn->description);
+    fn++;
+    if (fn->tag)
+      fprintf(handle, ",\n");
+    else
+    {
+      fprintf(handle, ".\n");
+      break;
+    }
+  }
+  fprintf(handle,
 "\n"
 "`l' (`r') creates one-point segments with direction left (right).\n"
 "<left offset> and <right offset> specify offsets (in font units)\n"
@@ -429,8 +468,6 @@ show_help(bool
 "`n' removes points from horizontal segments, making them `weak' points.\n"
 "`t' (`p') applies delta exceptions to the given points before (after) IUP.\n"
 "\n"
-"<glyph id> is a glyph name or index, <shift> is a real number in px,\n"
-"<points> and <ppems> are integer ranges as with option `-X'.\n"
 "`#' starts a line comment, which gets ignored.\n"
 "Empty lines are ignored, too.\n"
 "\n"

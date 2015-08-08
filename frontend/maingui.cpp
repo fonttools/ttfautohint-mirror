@@ -62,6 +62,19 @@ const Tag_Names script_names[] =
 };
 
 
+// the available feature tags and its descriptions are directly extracted
+// from `ttfautohint-coverages.h'
+#undef COVERAGE
+#define COVERAGE(n, N, d, t, t1, t2, t3, t4) \
+          {#t, d},
+
+const Tag_Names feature_names[] =
+{
+#include <ttfautohint-coverages.h>
+  {NULL, NULL}
+};
+
+
 // used hotkeys:
 //   a: Add ttf&autohint Info
 //   b: Add TTFA info ta&ble
@@ -1223,20 +1236,29 @@ Main_GUI::create_layout(bool horizontal_layout)
   control_line = new Drag_Drop_Line_Edit(DRAG_DROP_ANY);
   control_button = new QPushButton(tr("Browse..."));
   control_label->setBuddy(control_line);
-  control_label->setToolTip(
-    tr("<p>An optional control instructions file to tweak hinting."
+  QString tooltip_string =
+    tr("<p>An optional control instructions file to tweak hinting"
+       " and to override glyph assignments to styles."
        "  This text file contains entries"
        " of one of the following syntax forms"
        " (with brackets indicating optional elements).<br>"
        "&nbsp;<br>"
+
+       "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
+       "&nbsp;&nbsp;<i>script</i>"
+       "&nbsp;&nbsp;<i>feature</i>"
+       "&nbsp;&nbsp;<tt>@</tt>&nbsp;<i>glyph-ids</i><br>"
+
        "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
        "&nbsp;&nbsp;<i>glyph-id</i>"
        "&nbsp;&nbsp;<tt>left</tt>&nbsp;|&nbsp;<tt>right</tt>&nbsp;<i>points</i>"
        "&nbsp;&nbsp;[&nbsp;<tt>(</tt><i>left-offset</i><tt>,"
          "</tt><i>right-offset</i><tt>)</tt>&nbsp;]<br>"
+
        "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
        "&nbsp;&nbsp;<i>glyph-id</i>"
        "&nbsp;&nbsp;<tt>nodir</tt>&nbsp;<i>points</i><br>"
+
        "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
        "&nbsp;&nbsp;<i>glyph-id</i>"
        "&nbsp;&nbsp;<tt>touch</tt>&nbsp;|&nbsp;<tt>point</tt>&nbsp;<i>points</i>"
@@ -1244,39 +1266,98 @@ Main_GUI::create_layout(bool horizontal_layout)
        "&nbsp;&nbsp;[&nbsp;<tt>yshift</tt>&nbsp;<i>shift</i>&nbsp;]"
        "&nbsp;&nbsp;<tt>@</tt>&nbsp;<i>ppems</i><br>"
        "&nbsp;<br>"
+
        "<i>subfont-idx</i> gives the subfont index in a TTC,"
        " <i>glyph-id</i> is a glyph name or index.<br>"
-       "<tt>left</tt> (<tt>right</tt>) creates one-point segments"
+       "&nbsp;<br>"
+
+       "<i>script</i> and <i>feature</i> are four-letter tags"
+       " that define a style the <i>glyph-ids</i> are assigned to."
+       "  <i>glyph-ids</i> is a comma-separated list of"
+       " <i>glyph-id</i> values and value ranges.<br>");
+
+  tooltip_string += tr("Possible values for <i>script</i> are ");
+  const Tag_Names* sn = script_names;
+  for(;;)
+  {
+    tooltip_string += QString::fromLocal8Bit("<tt>%1</tt> (%2)")
+                                             .arg(sn->tag)
+                                             .arg(sn->description);
+    sn++;
+    if (sn->tag)
+      tooltip_string += ", ";
+    else
+    {
+      tooltip_string += ".<br>";
+      break;
+    }
+  }
+
+  tooltip_string += tr("Possible values for <i>feature</i> are ");
+  const Tag_Names* fn = feature_names;
+  for(;;)
+  {
+    tooltip_string += QString::fromLocal8Bit("<tt>%1</tt> (%2)")
+                                             .arg(fn->tag)
+                                             .arg(fn->description);
+    fn++;
+    if (fn->tag)
+      tooltip_string += ", ";
+    else
+    {
+      tooltip_string += ".<br>";
+      break;
+    }
+  }
+
+  tooltip_string += "&nbsp;<br>";
+
+  tooltip_string +=
+    tr("<tt>left</tt> (<tt>right</tt>) creates one-point segments"
        " with direction left (right), possibly having a width (in font units)"
        " given by <i>left-offset</i> and <i>right-offset</i>"
        " relative to the corresponding points.<br>"
+       "&nbsp;<br>"
+
        "<tt>nodir</tt> removes points from horizontal segments,"
        " making them <i>weak</i> points.<br>"
+       "&nbsp;<br>"
+
        "<tt>touch </tt> (<tt>point</tt>) defines delta exceptions"
        " to be applied before (after) the final"
        " <tt>IUP</tt> bytecode instructions."
        "  <tt>touch</tt> also touches points, making them <i>strong</i>."
        "  In ClearType mode, <tt>point</tt> and <tt>xshift</tt>"
        " have no effect.<br>"
+       "&nbsp;<br>"
+
        "x and y <i>shift</i> values are in the range [-1;1],"
        " rounded to multiples of 1/8px.<br>"
+
        "<i>points</i> and <i>ppems</i> are ranges for point indices"
        " and ppem values as with x&nbsp;height snapping exceptions.<br>"
+
        "Keywords <tt>left</tt>, <tt>right</tt>, <tt>nodir</tt>,"
        " <tt>point</tt>, <tt>touch</tt>, <tt>xshift</tt>, and"
        " <tt>yshift</tt> can be abbreviated as <tt>l</tt>, <tt>r</tt>,"
        " <tt>n</tt>, <tt>p</tt>, <tt>t</tt>, <tt>x</tt>, and <tt>y</tt>,"
        " respectively.<br>"
+
        "Control instruction entries are separated"
        " by character&nbsp;<tt>;</tt> or by a newline.<br>"
+
        "A trailing character&nbsp;<tt>\\</tt> continues the current line"
        " on the next line.<br>"
+
        "<tt>#</tt> starts a line comment, which gets ignored."
        "  Empty lines are ignored, too.</p>"
-       ""
+
        "Examples:<br>"
+       "&nbsp;&nbsp;<tt>cyrl sups @ one.sups-nine.sups, zero.sups</tt><br>"
        "&nbsp;&nbsp;<tt>Q left 38 (-70,20)</tt><br>"
-       "&nbsp;&nbsp;<tt>Adieresis touch 3-6 yshift 0.25 @ 13</tt>"));
+       "&nbsp;&nbsp;<tt>Adieresis touch 3-6 yshift 0.25 @ 13</tt>");
+
+  control_label->setToolTip(tooltip_string);
   control_line->setCompleter(completer);
 
   //

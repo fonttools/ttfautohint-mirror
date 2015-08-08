@@ -600,6 +600,13 @@ Watch input files (`ttfautohintGUI` only)
     processing a font (you should redirect stderr to a file).  This
     doesn't work with `ttfautohintGUI` on MS Windows.
 
+    To reduce the amount of debug data it is recommended to restrict the
+    hinting process to a single PPEM value, e.g.,
+
+    ```
+       ttfautohint --debug -l 15 -r 15 ... &> debug.txt
+    ```
+
 
 
 Background and Technical Details
@@ -737,7 +744,8 @@ Table: `arab` blue zones
   ID    Blue zone                              Characters
   ----  -----------                            ------------
   1     top of letters with vertical stroke    ا إ ل ك ط ظ
-  2     bottom of letter joining               ت ث ط ظ ك
+  2     bottom of letters                      ت ث ط ظ ك
+  3     glyph joining                          ـ
 
 
 Table: `cyrl` blue zones
@@ -1362,6 +1370,39 @@ the current line on the next one.
 
 A control instructions file is parsed line by line; later entries override
 earlier entries (in case there is something to override).
+
+
+Style Adjustments
+-----------------
+
+This syntax form makes it possible to override the style assignment
+algorithm of ttfautohint; see '[Scripts](#scripts)' and '[OpenType
+Features](#opentype-features)' for more details.
+
+> *\[*\ font-idx\ *\]*\ \ script\ \ feature\ \ *`@`*\ \ glyph-ids
+
+*script* is a four-letter name of one of the scripts supported by
+ttfautohint.  *feature* is one of the four-letter names of features
+supported by ttfautohint.
+
+The elements of *glyph-ids* are a list of comma separated *glyph-id* values
+or value ranges.  Note that is not necessary that elements are specified in
+increasing order.
+
+Assuming that a font contains superscript digits 'zero.sups' to 'nine.sups'
+together with the glyphs 'a.sups' and 'o.sups', use a line
+
+```
+    cyrl sups @ zero.sups-nine.sups, a.sups, o.sups
+```
+
+to add those glyphs to the style handling Cyrillic superscript glyphs.
+However, it is still necessary that the selected script contains proper
+[Blue Zone characters](#blue-zones), otherwise those glyphs aren't handled
+at all.
+
+Use the `--debug` command line option to see how ttfautohint assigns glyph
+indices of a font to styles.
 
 
 Glyph Adjustments
