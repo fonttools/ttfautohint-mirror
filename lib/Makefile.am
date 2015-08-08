@@ -40,7 +40,6 @@ libttfautohint_la_SOURCES = \
   tacontrol.c tacontrol.h \
   tacontrol-flex-wrapper.c tacontrol-flex.h \
   tacontrol-bison.c tacontrol-bison.h \
-  tacover.h \
   tacvt.c \
   tadsig.c \
   tadummy.c tadummy.h \
@@ -78,7 +77,8 @@ libttfautohint_la_SOURCES = \
   tatypes.h \
   tawrtsys.h \
   ttfautohint.c \
-  ttfautohint.h ttfautohint-errors.h ttfautohint-scripts.h
+  ttfautohint.h ttfautohint-errors.h \
+  ttfautohint-scripts.h ttfautohint-coverages.h
 
 libttfautohint_la_LIBADD = \
   libsds.la \

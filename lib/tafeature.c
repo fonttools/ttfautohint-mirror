@@ -23,7 +23,7 @@
 const hb_tag_t feature_tags[] =
 {
 
-#include <tacover.h>
+#include <ttfautohint-coverages.h>
 
   HB_TAG('d', 'f', 'l', 't')
 };

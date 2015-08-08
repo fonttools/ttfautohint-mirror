@@ -1,4 +1,4 @@
-/* tacover.h */
+/* ttfautohint-coverages.h */
 
 /*
  * Copyright (C) 2014-2015 by Werner Lemberg.
@@ -103,4 +103,4 @@ COVERAGE(ornm, 'o', 'r', 'n', 'm'); /* Ornaments (?) */
 #endif
 
 
-/* end of tacover.h */
+/* end of ttfautohint-coverages.h */

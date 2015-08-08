@@ -334,7 +334,7 @@ typedef const TA_ScriptClassRec* TA_ScriptClass;
 
 typedef enum TA_Coverage_
 {
-#include "tacover.h"
+#include "ttfautohint-coverages.h"
 
   TA_COVERAGE_DEFAULT
 } TA_Coverage;

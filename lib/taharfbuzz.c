@@ -49,7 +49,7 @@
             HB_TAG_NONE \
           };
 
-#include "tacover.h"
+#include "ttfautohint-coverages.h"
 
 
 /* define mapping between coverage tags and TA_Coverage */
@@ -60,7 +60,7 @@
 
 static const hb_tag_t* coverages[] =
 {
-#include "tacover.h"
+#include "ttfautohint-coverages.h"
 
   NULL /* TA_COVERAGE_DEFAULT */
 };
@@ -377,7 +377,7 @@ Exit:
             } \
           };
 
-#include "tacover.h"
+#include "ttfautohint-coverages.h"
 
 
 /* define mapping between HarfBuzz features and TA_Coverage */
@@ -388,7 +388,7 @@ Exit:
 
 static const hb_feature_t* features[] =
 {
-#include "tacover.h"
+#include "ttfautohint-coverages.h"
 
   NULL /* TA_COVERAGE_DEFAULT */
 };
