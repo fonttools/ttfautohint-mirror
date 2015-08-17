@@ -236,7 +236,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
     TA_Script_UniRange range;
 
 
-    if (script_class->script_uni_ranges == NULL)
+    if (script_class->script_uni_ranges->first == 0)
       continue;
 
     /* scan all Unicode points in the range and */
