@@ -114,8 +114,8 @@ const char* ta_style_names[] =
 static FT_Error
 ta_face_globals_scan_composite(FT_Face face,
                                FT_Long gindex,
-                               FT_Byte gstyle,
-                               FT_Byte* gstyles,
+                               FT_UShort gstyle,
+                               FT_UShort* gstyles,
                                FT_Int nesting_level)
 {
   FT_Error error;
@@ -208,16 +208,15 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
   FT_Error error;
   FT_Face face = globals->face;
   FT_CharMap old_charmap = face->charmap;
-  FT_Byte* gstyles = globals->glyph_styles;
+  FT_UShort* gstyles = globals->glyph_styles;
   FT_UInt ss;
   FT_UInt i;
   FT_UInt dflt = ~0U; /* a non-valid value */
 
 
   /* the value TA_STYLE_UNASSIGNED means `uncovered glyph' */
-  memset(globals->glyph_styles,
-         TA_STYLE_UNASSIGNED,
-         (unsigned int)globals->glyph_count);
+  for (i = 0; i < (unsigned int)globals->glyph_count; i++)
+    gstyles[i] = TA_STYLE_UNASSIGNED;
 
   error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
   if (error)
@@ -257,7 +256,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
         if (gindex != 0
             && gindex < (FT_ULong)globals->glyph_count
             && gstyles[gindex] == TA_STYLE_UNASSIGNED)
-          gstyles[gindex] = (FT_Byte)ss;
+          gstyles[gindex] = (FT_UShort)ss;
 
         for (;;)
         {
@@ -268,7 +267,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
           if (gindex < (FT_ULong)globals->glyph_count
               && gstyles[gindex] == TA_STYLE_UNASSIGNED)
-            gstyles[gindex] = (FT_Byte)ss;
+            gstyles[gindex] = (FT_UShort)ss;
         }
       }
     }
@@ -404,9 +403,11 @@ ta_face_globals_new(FT_Face face,
   TA_FaceGlobals globals;
 
 
+  /* we allocate an TA_FaceGlobals structure together */
+  /* with the glyph_styles array */
   globals = (TA_FaceGlobals)calloc(
               1, sizeof (TA_FaceGlobalsRec) +
-                 (FT_ULong)face->num_glyphs * sizeof (FT_Byte));
+                 (FT_ULong)face->num_glyphs * sizeof (FT_UShort));
   if (!globals)
   {
     error = FT_Err_Out_Of_Memory;
@@ -415,7 +416,8 @@ ta_face_globals_new(FT_Face face,
 
   globals->face = face;
   globals->glyph_count = face->num_glyphs;
-  globals->glyph_styles = (FT_Byte*)(globals + 1);
+  /* right after the globals structure come the glyph styles */
+  globals->glyph_styles = (FT_UShort*)(globals + 1);
   globals->font = font;
   globals->hb_font = hb_ft_font_create(face, NULL);
 

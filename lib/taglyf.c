@@ -1253,10 +1253,10 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
     TA_FaceGlobals master_globals = data->master_globals;
     FT_Long count = master_globals->glyph_count;
 
-    FT_Byte* master = master_globals->glyph_styles;
-    FT_Byte* curr = curr_globals->glyph_styles;
+    FT_UShort* master = master_globals->glyph_styles;
+    FT_UShort* curr = curr_globals->glyph_styles;
 
-    FT_Byte* limit = master + count;
+    FT_UShort* limit = master + count;
 
 
     /* we simply copy the data, */
@@ -1293,7 +1293,7 @@ TA_sfnt_adjust_coverage(SFNT* sfnt,
   if (!data->adjusted)
   {
     FT_Long nn;
-    FT_Byte* gstyles = master_globals->glyph_styles;
+    FT_UShort* gstyles = master_globals->glyph_styles;
 #ifdef TA_DEBUG
     FT_UInt count;
 #endif
@@ -1368,11 +1368,11 @@ TA_sfnt_copy_master_coverage(SFNT* sfnt,
   if (master_globals != curr_globals)
   {
     FT_Long count = master_globals->glyph_count;
-    FT_Byte* master = master_globals->glyph_styles;
-    FT_Byte* curr = curr_globals->glyph_styles;
+    FT_UShort* master = master_globals->glyph_styles;
+    FT_UShort* curr = curr_globals->glyph_styles;
 
 
-    memcpy(curr, master, count);
+    memcpy(curr, master, count * sizeof (FT_UShort));
   }
 }
 

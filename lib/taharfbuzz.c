@@ -79,7 +79,7 @@ static const hb_script_t scripts[] =
 FT_Error
 ta_get_coverage(TA_FaceGlobals globals,
                 TA_StyleClass style_class,
-                FT_Byte* gstyles)
+                FT_UShort* gstyles)
 {
   hb_face_t* face;
 
@@ -341,7 +341,7 @@ ta_get_coverage(TA_FaceGlobals globals,
       continue;
 
     if (gstyles[idx] == TA_STYLE_UNASSIGNED)
-      gstyles[idx] = (FT_Byte)style_class->style;
+      gstyles[idx] = (FT_UShort)style_class->style;
 #ifdef TA_DEBUG
     else
       TA_LOG_GLOBAL(("*"));

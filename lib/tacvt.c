@@ -43,7 +43,7 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
 
   {
     TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
-    FT_Byte* gstyles = globals->glyph_styles;
+    FT_UShort* gstyles = globals->glyph_styles;
 
     TA_StyleClass style_class = ta_style_classes[style_idx];
     TA_ScriptClass script_class = ta_script_classes[style_class->script];
@@ -170,7 +170,7 @@ TA_table_build_cvt(FT_Byte** cvt,
     if (error == TA_Err_Missing_Glyph)
     {
       TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
-      FT_Byte* gstyles = globals->glyph_styles;
+      FT_UShort* gstyles = globals->glyph_styles;
       FT_Int nn;
 
 

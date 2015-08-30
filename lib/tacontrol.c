@@ -445,7 +445,7 @@ TA_control_apply_coverage(SFNT* sfnt,
 {
   Control* control = font->control;
   TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
-  FT_Byte* gstyles = globals->glyph_styles;
+  FT_UShort* gstyles = globals->glyph_styles;
 
 
   while (control)

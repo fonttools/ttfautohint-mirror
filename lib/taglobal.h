@@ -60,9 +60,9 @@ extern const char* ta_style_names[];
 /* default script for OpenType */
 #define TA_SCRIPT_DEFAULT  AF_SCRIPT_LATN
 /* a bit mask indicating an uncovered glyph */
-#define TA_STYLE_UNASSIGNED 0x7F
+#define TA_STYLE_UNASSIGNED 0x7FFF
 /* if this flag is set, we have an ASCII digit */
-#define TA_DIGIT 0x80
+#define TA_DIGIT 0x8000U
 
 /* `increase-x-height' property */
 #define TA_PROP_INCREASE_X_HEIGHT_MIN 6
@@ -75,7 +75,7 @@ typedef struct TA_FaceGlobalsRec_
 {
   FT_Face face;
   FT_Long glyph_count; /* same as face->num_glyphs */
-  FT_Byte* glyph_styles;
+  FT_UShort* glyph_styles;
 
   hb_font_t* hb_font;
 
