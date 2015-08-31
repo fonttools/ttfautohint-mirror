@@ -104,14 +104,14 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
      * reason, search an arbitrary character from the current coverage to
      * trigger the coverage's metrics computation.
      */
-    if ((gstyles[glyph_index] & ~TA_DIGIT) != style_idx)
+    if ((gstyles[glyph_index] & TA_STYLE_MASK) != style_idx)
     {
       FT_ULong i;
 
 
       for (i = 0; i < (FT_ULong)globals->glyph_count; i++)
       {
-        if ((gstyles[i] & ~TA_DIGIT) == style_idx)
+        if ((gstyles[i] & TA_STYLE_MASK) == style_idx)
           break;
       }
 
@@ -180,9 +180,9 @@ TA_table_build_cvt(FT_Byte** cvt,
       /* otherwise blue zones are computed later on, which we don't want */
       for (nn = 0; nn < globals->glyph_count; nn++)
       {
-        if ((gstyles[nn] & ~TA_DIGIT) == i)
+        if ((gstyles[nn] & TA_STYLE_MASK) == i)
         {
-          gstyles[nn] &= ~TA_STYLE_UNASSIGNED;
+          gstyles[nn] &= ~TA_STYLE_MASK;
           gstyles[nn] |= globals->font->fallback_style;
         }
       }

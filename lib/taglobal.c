@@ -169,7 +169,7 @@ ta_face_globals_scan_composite(FT_Face face,
                                &p_transform);
 
     if (p_index >= face->num_glyphs
-        || (gstyles[p_index] & ~TA_DIGIT) != TA_STYLE_UNASSIGNED)
+        || (gstyles[p_index] & TA_STYLE_MASK) != TA_STYLE_UNASSIGNED)
       continue;
 
     /* only take subglyphs that are not shifted vertically; */
@@ -245,7 +245,9 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
       if ((FT_UInt)style_class->script == globals->font->default_script)
         dflt = ss;
 
-      for (range = script_class->script_uni_ranges; range->first != 0; range++)
+      for (range = script_class->script_uni_ranges;
+           range->first != 0;
+           range++)
       {
         FT_ULong charcode = range->first;
         FT_UInt gindex;
@@ -311,7 +313,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
     for (nn = 0; nn < globals->glyph_count; nn++)
     {
-      if ((gstyles[nn] & ~TA_DIGIT) == TA_STYLE_UNASSIGNED)
+      if ((gstyles[nn] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
         continue;
 
       error = ta_face_globals_scan_composite(globals->face,
@@ -334,9 +336,9 @@ Exit:
 
     for (nn = 0; nn < globals->glyph_count; nn++)
     {
-      if ((gstyles[nn] & ~TA_DIGIT) == TA_STYLE_UNASSIGNED)
+      if ((gstyles[nn] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
       {
-        gstyles[nn] &= ~TA_STYLE_UNASSIGNED;
+        gstyles[nn] &= ~TA_STYLE_MASK;
         gstyles[nn] |= globals->font->fallback_style;
       }
     }
@@ -368,7 +370,7 @@ Exit:
 
     for (idx = 0; idx < globals->glyph_count; idx++)
     {
-      if ((gstyles[idx] & ~TA_DIGIT) == style_class->style)
+      if ((gstyles[idx] & TA_STYLE_MASK) == style_class->style)
       {
         if (!(count % 10))
           TA_LOG_GLOBAL((" "));

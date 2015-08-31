@@ -59,8 +59,11 @@ extern const char* ta_style_names[];
 #define TA_STYLE_FALLBACK TA_STYLE_NONE_DFLT
 /* default script for OpenType */
 #define TA_SCRIPT_DEFAULT  AF_SCRIPT_LATN
-/* a bit mask indicating an uncovered glyph */
-#define TA_STYLE_UNASSIGNED 0x7FFF
+
+/* a bit mask for TA_DIGIT */
+#define TA_STYLE_MASK 0x7FFF
+/* an uncovered glyph */
+#define TA_STYLE_UNASSIGNED TA_STYLE_MASK
 /* if this flag is set, we have an ASCII digit */
 #define TA_DIGIT 0x8000U
 

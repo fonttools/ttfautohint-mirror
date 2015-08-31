@@ -1266,7 +1266,7 @@ TA_sfnt_handle_coverage(SFNT* sfnt,
     /* for example, glyph `A' can be used for both Cyrillic and Latin */
     while (master < limit)
     {
-      if ((*curr & ~TA_DIGIT) != TA_STYLE_UNASSIGNED)
+      if ((*curr & TA_STYLE_MASK) != TA_STYLE_UNASSIGNED)
         *master = *curr;
 
       master++;
@@ -1301,9 +1301,9 @@ TA_sfnt_adjust_coverage(SFNT* sfnt,
 
     for (nn = 0; nn < master_globals->glyph_count; nn++)
     {
-      if ((gstyles[nn] & ~TA_DIGIT) == TA_STYLE_UNASSIGNED)
+      if ((gstyles[nn] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
       {
-        gstyles[nn] &= ~TA_STYLE_UNASSIGNED;
+        gstyles[nn] &= ~TA_STYLE_MASK;
         gstyles[nn] |= master_globals->font->fallback_style;
       }
     }
@@ -1325,7 +1325,8 @@ TA_sfnt_adjust_coverage(SFNT* sfnt,
 
     for (nn = 0; nn < master_globals->glyph_count; nn++)
     {
-      if ((gstyles[nn] & ~TA_DIGIT) == master_globals->font->fallback_style)
+      if ((gstyles[nn] & TA_STYLE_MASK)
+          == master_globals->font->fallback_style)
       {
         if (!(count % 10))
           TA_LOG_GLOBAL((" "));
