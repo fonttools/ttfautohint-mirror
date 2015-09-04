@@ -3001,7 +3001,8 @@ ta_latin_hint_edges(TA_GlyphHints hints,
 /* apply the complete hinting algorithm to a latin glyph */
 
 static FT_Error
-ta_latin_hints_apply(TA_GlyphHints hints,
+ta_latin_hints_apply(FT_UInt glyph_index,
+                     TA_GlyphHints hints,
                      FT_Outline* outline,
                      TA_LatinMetrics metrics)
 {
@@ -3009,6 +3010,8 @@ ta_latin_hints_apply(TA_GlyphHints hints,
   int dim;
 
   TA_LatinAxis axis;
+
+  FT_UNUSED(glyph_index);
 
 
   error = ta_glyph_hints_reload(hints, outline);
@@ -3042,8 +3045,6 @@ ta_latin_hints_apply(TA_GlyphHints hints,
                                            TA_DIMENSION_VERT);
     if (error)
       goto Exit;
-
-    ta_latin_hints_compute_blue_edges(hints, metrics);
   }
 
   /* grid-fit the outline */

@@ -37,10 +37,13 @@ ta_dummy_hints_init(TA_GlyphHints hints,
 
 
 static FT_Error
-ta_dummy_hints_apply(TA_GlyphHints hints,
+ta_dummy_hints_apply(FT_UInt glyph_index,
+                     TA_GlyphHints hints,
                      FT_Outline* outline)
 {
   FT_Error error;
+
+  FT_UNUSED(glyph_index);
 
 
   error = ta_glyph_hints_reload(hints, outline);

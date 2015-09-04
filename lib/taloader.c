@@ -201,7 +201,8 @@ ta_loader_load_g(TA_Loader loader,
 
 
       if (writing_system_class->style_hints_apply)
-        writing_system_class->style_hints_apply(hints,
+        writing_system_class->style_hints_apply(glyph_index,
+                                                hints,
                                                 &gloader->current.outline,
                                                 metrics);
     }

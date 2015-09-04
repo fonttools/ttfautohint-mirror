@@ -190,7 +190,8 @@ typedef FT_Error
 (*TA_WritingSystem_InitHintsFunc)(TA_GlyphHints hints,
                                   TA_StyleMetrics metrics);
 typedef void
-(*TA_WritingSystem_ApplyHintsFunc)(TA_GlyphHints hints,
+(*TA_WritingSystem_ApplyHintsFunc)(FT_UInt glyph_index,
+                                   TA_GlyphHints hints,
                                    FT_Outline* outline,
                                    TA_StyleMetrics metrics);
 
