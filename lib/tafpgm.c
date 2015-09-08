@@ -678,6 +678,7 @@ static const unsigned char FPGM(bci_strong_stem_width_a) [] =
   SWAP,
   WS, /* sal_ref = width */
 
+  /* s: width dist */
   PUSHB_2,
     1,
     sal_vwidth_data_offset,
@@ -685,6 +686,7 @@ static const unsigned char FPGM(bci_strong_stem_width_a) [] =
   RCVT,
   MUL, /* divide by 64; first index of vertical widths */
 
+  /* s: width dist vw_idx */
   PUSHB_2,
     1,
     sal_vwidth_data_offset,
@@ -702,6 +704,7 @@ static const unsigned char FPGM(bci_strong_stem_width_b) [] =
   RCVT, /* number of vertical widths */
   MUL, /* divide by 64 */
 
+  /* s: width dist vw_idx loop_count */
   PUSHB_1,
     bci_get_best_width,
   LOOPCALL,
@@ -726,7 +729,7 @@ static const unsigned char FPGM(bci_strong_stem_width_b) [] =
     4,
   MINDEX, /* s: width dist reference dist ROUND(reference) 48 reference dist */
 
-  LTEQ, /* dist >= reference */
+  LTEQ, /* reference <= dist */
   IF, /* s: width dist reference dist ROUND(reference) 48 */
     ADD,
     LT, /* dist < ROUND(reference) + 48 */
@@ -737,7 +740,7 @@ static const unsigned char FPGM(bci_strong_stem_width_b) [] =
   EIF,
 
   IF,
-    SWAP, /* s: width reference dist */
+    SWAP, /* s: width reference=new_dist dist */
   EIF,
   POP,
 
