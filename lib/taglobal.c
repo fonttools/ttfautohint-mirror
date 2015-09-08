@@ -29,6 +29,7 @@
           { \
             TA_SCRIPT_ ## S, \
             ta_ ## s ## _uniranges, \
+            ta_ ## s ## _nobase_uniranges, \
             sc1, sc2, sc3 \
           };
 
@@ -257,7 +258,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
         if (gindex != 0
             && gindex < (FT_ULong)globals->glyph_count
-            && gstyles[gindex] == TA_STYLE_UNASSIGNED)
+            && (gstyles[gindex] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
           gstyles[gindex] = (FT_UShort)ss;
 
         for (;;)
@@ -268,8 +269,37 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
             break;
 
           if (gindex < (FT_ULong)globals->glyph_count
-              && gstyles[gindex] == TA_STYLE_UNASSIGNED)
+              && (gstyles[gindex] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
             gstyles[gindex] = (FT_UShort)ss;
+        }
+      }
+
+      /* do the same for the script's no-base characters */
+      for (range = script_class->script_uni_nobase_ranges;
+           range->first != 0;
+           range++)
+      {
+        FT_ULong charcode = range->first;
+        FT_UInt gindex;
+
+
+        gindex = FT_Get_Char_Index(face, charcode);
+
+        if (gindex != 0
+            && gindex < (FT_ULong)globals->glyph_count
+            && (gstyles[gindex] & TA_STYLE_MASK) == (FT_UShort)ss)
+          gstyles[gindex] |= TA_NOBASE;
+
+        for (;;)
+        {
+          charcode = FT_Get_Next_Char(face, charcode, &gindex);
+
+          if (gindex == 0 || charcode > range->last)
+            break;
+
+          if (gindex < (FT_ULong)globals->glyph_count
+              && (gstyles[gindex] & TA_STYLE_MASK) == (FT_UShort)ss)
+            gstyles[gindex] |= TA_NOBASE;
         }
       }
     }

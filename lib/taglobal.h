@@ -60,12 +60,15 @@ extern const char* ta_style_names[];
 /* default script for OpenType */
 #define TA_SCRIPT_DEFAULT  AF_SCRIPT_LATN
 
-/* a bit mask for TA_DIGIT */
-#define TA_STYLE_MASK 0x7FFF
+/* a bit mask for TA_DIGIT and TA_NOBASE */
+#define TA_STYLE_MASK 0x3FFF
 /* an uncovered glyph */
 #define TA_STYLE_UNASSIGNED TA_STYLE_MASK
+
 /* if this flag is set, we have an ASCII digit */
 #define TA_DIGIT 0x8000U
+/* if this flag is set, we have a no-base character */
+#define TA_NOBASE 0x4000U
 
 /* `increase-x-height' property */
 #define TA_PROP_INCREASE_X_HEIGHT_MIN 6

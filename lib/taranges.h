@@ -30,6 +30,12 @@
 
 #include "ttfautohint-scripts.h"
 
+#undef SCRIPT
+#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
+          extern const TA_Script_UniRangeRec ta_ ## s ## _nobase_uniranges[];
+
+#include "ttfautohint-scripts.h"
+
 #endif /* __TARANGES_H__ */
 
 /* end of taranges.h */

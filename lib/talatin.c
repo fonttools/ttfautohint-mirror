@@ -3011,8 +3011,6 @@ ta_latin_hints_apply(FT_UInt glyph_index,
 
   TA_LatinAxis axis;
 
-  FT_UNUSED(glyph_index);
-
 
   error = ta_glyph_hints_reload(hints, outline);
   if (error)
@@ -3045,6 +3043,10 @@ ta_latin_hints_apply(FT_UInt glyph_index,
                                            TA_DIMENSION_VERT);
     if (error)
       goto Exit;
+
+    /* apply blue zones to base characters only */
+    if (!(metrics->root.globals->glyph_styles[glyph_index] & TA_NOBASE))
+      ta_latin_hints_compute_blue_edges(hints, metrics);
   }
 
   /* grid-fit the outline */

@@ -248,8 +248,9 @@ typedef const TA_WritingSystemClassRec* TA_WritingSystemClass;
 
 
 /*
- * Each script is associated with a set of Unicode ranges that gets used
- * to test whether the font face supports the script.
+ * Each script is associated with two sets of Unicode ranges to test
+ * whether the font face supports the script, and which base characters
+ * the script contains.
  *
  * We use four-letter script tags from the OpenType specification,
  * extended by `NONE', which indicates `no script'.
@@ -283,7 +284,9 @@ typedef struct TA_ScriptClassRec_
 {
   TA_Script script;
 
-  TA_Script_UniRange script_uni_ranges; /* last must be { 0, 0 } */
+  /* last element in the ranges must be { 0, 0 } */
+  TA_Script_UniRange script_uni_ranges;
+  TA_Script_UniRange script_uni_nobase_ranges;
 
   FT_UInt32 standard_char1; /* for default width and height */
   FT_UInt32 standard_char2; /* ditto */

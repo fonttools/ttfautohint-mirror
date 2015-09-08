@@ -30,7 +30,9 @@
  * coverage.
  *
  * Note that styles using `TA_COVERAGE_DEFAULT' should always
- * come after styles with other coverages.
+ * come after styles with other coverages.  Also note that
+ * fallback scripts only use `AF_COVERAGE_DEFAULT' for its
+ * style.
  *
  * Example:
  *
@@ -111,6 +113,20 @@ STYLE(hebr_dflt, HEBR_DFLT,
       TA_COVERAGE_DEFAULT)
 
 META_STYLE_LATIN(latn, LATN, "Latin")
+
+STYLE(latb_dflt, LATB_DFLT,
+      "Latin subscript fallback default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_LATB,
+      TA_BLUE_STRINGSET_LATB,
+      TA_COVERAGE_DEFAULT)
+
+STYLE(latp_dflt, LATP_DFLT,
+      "Latin superscript fallback default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_LATP,
+      TA_BLUE_STRINGSET_LATP,
+      TA_COVERAGE_DEFAULT)
 
 #ifdef FT_OPTION_AUTOFIT2
 STYLE(ltn2_dflt, LTN2_DFLT,

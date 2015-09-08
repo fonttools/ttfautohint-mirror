@@ -134,6 +134,31 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_LATIN_SMALL_DESCENDER
     "pqgjy"
 
+  // we assume that both the subscript and superscript ranges
+  // don't contain oldstyle digits (actually, most fonts probably
+  // have digits only in those ranges)
+  TA_BLUE_STRING_LATIN_SUBS_CAPITAL_TOP
+    "₀₃₅₇₈"
+  TA_BLUE_STRING_LATIN_SUBS_CAPITAL_BOTTOM
+    "₀₁₂₃₈"
+  TA_BLUE_STRING_LATIN_SUBS_SMALL_F_TOP
+    "ᵢⱼₕₖₗ"
+  TA_BLUE_STRING_LATIN_SUBS_SMALL
+    "ₐₑₒₓₙₛᵥᵤᵣ"
+  TA_BLUE_STRING_LATIN_SUBS_SMALL_DESCENDER
+    "ᵦᵧᵨᵩₚ"
+
+  TA_BLUE_STRING_LATIN_SUPS_CAPITAL_TOP
+    "⁰³⁵⁷ᵀᴴᴱᴼ"
+  TA_BLUE_STRING_LATIN_SUPS_CAPITAL_BOTTOM
+    "⁰¹²³ᴱᴸᴼᵁ"
+  TA_BLUE_STRING_LATIN_SUPS_SMALL_F_TOP
+    "ᵇᵈᵏʰʲᶠⁱ"
+  TA_BLUE_STRING_LATIN_SUPS_SMALL
+    "ᵉᵒʳˢˣᶜᶻ"
+  TA_BLUE_STRING_LATIN_SUPS_SMALL_DESCENDER
+    "ᵖʸᵍ"
+
   // we separate the letters with spaces to avoid ligatures;
   // this is just for convenience to simplify reading
   TA_BLUE_STRING_TELUGU_TOP
@@ -274,6 +299,26 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_LATIN_SMALL,           0                                 }
     { TA_BLUE_STRING_LATIN_SMALL_DESCENDER, 0                                 }
     { TA_BLUE_STRING_MAX,                   0                                 }
+
+  TA_BLUE_STRINGSET_LATB
+    { TA_BLUE_STRING_LATIN_SUBS_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_LATIN_SUBS_CAPITAL_BOTTOM,  0                                 }
+    { TA_BLUE_STRING_LATIN_SUBS_SMALL_F_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_LATIN_SUBS_SMALL,           TA_BLUE_PROPERTY_LATIN_TOP      |
+                                                 TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_LATIN_SUBS_SMALL,           0                                 }
+    { TA_BLUE_STRING_LATIN_SUBS_SMALL_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_MAX,                        0                                 }
+
+  TA_BLUE_STRINGSET_LATP
+    { TA_BLUE_STRING_LATIN_SUPS_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_LATIN_SUPS_CAPITAL_BOTTOM,  0                                 }
+    { TA_BLUE_STRING_LATIN_SUPS_SMALL_F_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_LATIN_SUPS_SMALL,           TA_BLUE_PROPERTY_LATIN_TOP      |
+                                                 TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_LATIN_SUPS_SMALL,           0                                 }
+    { TA_BLUE_STRING_LATIN_SUPS_SMALL_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_MAX,                        0                                 }
 
   TA_BLUE_STRINGSET_TELU
     { TA_BLUE_STRING_TELUGU_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
