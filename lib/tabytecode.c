@@ -180,9 +180,13 @@ FT_Byte ttfautohint_glyph_bytecode[7] =
 };
 
 
-/* if we have y delta exceptions before IUP_y, this code gets inserted */
+/* a buffer holding additional instructions to be inserted */
+/* at the beginning of the bytecode */
+FT_Byte ins_extra_buf[256];
 
-FT_Byte ins_extra_buf[4] =
+
+/* if we have y delta exceptions before IUP_y, this code gets inserted */
+FT_Byte ins_extra_delta_exceptions[4] =
 {
 
   /* tell bci_{scale,scale_composite,hint}_glyph to not call IUP_y */
@@ -1042,7 +1046,10 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   {
     /* set `cvtl_do_iup_y' to zero at the beginning of the bytecode */
     /* by activating `ins_extra_buf' */
-    glyph->ins_extra_len = sizeof (ins_extra_buf) / sizeof (FT_Byte);
+    memcpy(ins_extra_buf,
+           ins_extra_delta_exceptions,
+           sizeof (ins_extra_delta_exceptions));
+    glyph->ins_extra_len += sizeof (ins_extra_delta_exceptions);
 
     /* reset `cvtl_do_iup_y' for next glyph */
     BCI(PUSHB_2);

@@ -610,7 +610,7 @@
 
 
 extern FT_Byte ttfautohint_glyph_bytecode[7];
-extern FT_Byte ins_extra_buf[4];
+extern FT_Byte ins_extra_buf[256];
 
 #endif /* __TABYTECODE_H__ */
 
