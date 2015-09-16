@@ -363,6 +363,9 @@ static const unsigned char FPGM(bci_round) [] =
  *        dist = -dist
  *      return dist
  *
+ *   If `cvtl_ignore_std_width' is set, we simply set `std_width'
+ *   equal to `dist'.
+ *
  * in: width
  *     stem_is_serif
  *     base_is_round
@@ -372,6 +375,7 @@ static const unsigned char FPGM(bci_round) [] =
  * sal: sal_vwidth_data_offset
  *
  * CVT: std_width
+ *      cvtl_ignore_std_width
  *
  * uses: bci_round
  */
@@ -404,6 +408,17 @@ static const unsigned char FPGM(bci_smooth_stem_width) [] =
   RCVT, /* first indirection */
   MUL, /* divide by 64 */
   RCVT, /* second indirection */
+
+  PUSHB_1,
+    cvtl_ignore_std_width,
+  RCVT,
+  IF,
+    POP, /* s: ... dist (stem_is_serif && dist < 3*64) 40 */
+    PUSHB_1,
+      3,
+    CINDEX, /* standard_width = dist */
+  EIF,
+
   GT, /* standard_width < 40 */
   OR, /* (stem_is_serif && dist < 3*64) || standard_width < 40 */
 
@@ -610,8 +625,8 @@ static const unsigned char FPGM(bci_get_best_width) [] =
  *   `ta_latin_compute_stem_width'):
  *
  *     best = 64 + 32 + 2
- *     reference = width
  *     dist = ABS(width)
+ *     reference = dist
  *
  *     for n in 0 .. num_widths:
  *       w = widths[n]
@@ -637,6 +652,8 @@ static const unsigned char FPGM(bci_get_best_width) [] =
  *       dist = -dist
  *     return dist
  *
+ *   If `cvtl_ignore_std_width' is set, we leave `reference = width'.
+ *
  * in: width
  *     stem_is_serif (unused)
  *     base_is_round (unused)
@@ -648,6 +665,7 @@ static const unsigned char FPGM(bci_get_best_width) [] =
  *      sal_vwidth_data_offset
  *
  * CVT: widths[]
+ *      cvtl_ignore_std_width
  *
  * uses: bci_get_best_width
  *       bci_round
@@ -678,73 +696,80 @@ static const unsigned char FPGM(bci_strong_stem_width_a) [] =
   SWAP,
   WS, /* sal_ref = width */
 
-  /* s: width dist */
-  PUSHB_2,
-    1,
-    sal_vwidth_data_offset,
-  RS,
-  RCVT,
-  MUL, /* divide by 64; first index of vertical widths */
-
-  /* s: width dist vw_idx */
-  PUSHB_2,
-    1,
-    sal_vwidth_data_offset,
-  RS,
   PUSHB_1,
+    cvtl_ignore_std_width,
+  RCVT,
+  IF,
+  ELSE,
+
+    /* s: width dist */
+    PUSHB_2,
+      1,
+      sal_vwidth_data_offset,
+    RS,
+    RCVT,
+    MUL, /* divide by 64; first index of vertical widths */
+
+    /* s: width dist vw_idx */
+    PUSHB_2,
+      1,
+      sal_vwidth_data_offset,
+    RS,
+    PUSHB_1,
 
 };
 
-/*  %c, number of used styles */
+/*    %c, number of used styles */
 
 static const unsigned char FPGM(bci_strong_stem_width_b) [] =
 {
 
-  ADD,
-  RCVT, /* number of vertical widths */
-  MUL, /* divide by 64 */
-
-  /* s: width dist vw_idx loop_count */
-  PUSHB_1,
-    bci_get_best_width,
-  LOOPCALL,
-
-  POP, /* s: width dist */
-  DUP,
-  PUSHB_1,
-    sal_ref,
-  RS, /* s: width dist dist reference */
-  DUP,
-  ROLL,
-  DUP,
-  ROLL,
-  PUSHB_1,
-    bci_round,
-  CALL, /* s: width dist reference dist dist ROUND(reference) */
-  PUSHB_2,
-    48,
-    5,
-  CINDEX, /* s: width dist reference dist dist ROUND(reference) 48 reference */
-  PUSHB_1,
-    4,
-  MINDEX, /* s: width dist reference dist ROUND(reference) 48 reference dist */
-
-  LTEQ, /* reference <= dist */
-  IF, /* s: width dist reference dist ROUND(reference) 48 */
     ADD,
-    LT, /* dist < ROUND(reference) + 48 */
+    RCVT, /* number of vertical widths */
+    MUL, /* divide by 64 */
 
-  ELSE,
-    SUB,
-    GT, /* dist > ROUND(reference) - 48 */
-  EIF,
+    /* s: width dist vw_idx loop_count */
+    PUSHB_1,
+      bci_get_best_width,
+    LOOPCALL,
 
-  IF,
-    SWAP, /* s: width reference=new_dist dist */
-  EIF,
-  POP,
+    POP, /* s: width dist */
+    DUP,
+    PUSHB_1,
+      sal_ref,
+    RS, /* s: width dist dist reference */
+    DUP,
+    ROLL,
+    DUP,
+    ROLL,
+    PUSHB_1,
+      bci_round,
+    CALL, /* s: width dist reference dist dist ROUND(reference) */
+    PUSHB_2,
+      48,
+      5,
+    CINDEX, /* s: width dist reference dist dist ROUND(reference) 48 reference */
+    PUSHB_1,
+      4,
+    MINDEX, /* s: width dist reference dist ROUND(reference) 48 reference dist */
 
-  DUP,
+    LTEQ, /* reference <= dist */
+    IF, /* s: width dist reference dist ROUND(reference) 48 */
+      ADD,
+      LT, /* dist < ROUND(reference) + 48 */
+
+    ELSE,
+      SUB,
+      GT, /* dist > ROUND(reference) - 48 */
+    EIF,
+
+    IF,
+      SWAP, /* s: width reference=new_dist dist */
+    EIF,
+    POP,
+  EIF, /* !cvtl_ignore_std_width */
+
+  DUP, /* s: width dist dist */
   PUSHB_1,
     64,
   GTEQ, /* dist >= 64 */
