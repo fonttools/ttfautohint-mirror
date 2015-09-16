@@ -387,20 +387,29 @@ static const unsigned char PREP(adjust_delta_exceptions) [] =
 };
 
 
-static const unsigned char PREP(do_iup_y) [] =
+static const unsigned char PREP(set_default_cvs_values) [] =
 {
 
   /* We set a default value for `cvtl_do_iup_y'. */
   /* If we have delta exceptions before IUP_y, */
   /* the glyph's bytecode sets this CVT value temporarily to zero */
   /* and manually inserts IUP_y afterwards. */
-  /* It would be more elegant to use a storage area location instead, */
-  /* however, it is not possible to have a default value for them */
+
+  /* We set a default value for `cvtl_ignore_std_width'. */
+  /* As the name implies, the stem width computation routines */
+  /* ignore the standard width(s) if this flag gets set. */
+
+  /* It would be more elegant to use storage area locations instead, */
+  /* however, it is not possible to have default values for them */
   /* since storage area locations might be reset on a per-glyph basis */
   /* (this is dependent on the bytecode interpreter implementation). */
-  PUSHB_2,
+
+  PUSHB_4,
     cvtl_do_iup_y,
     100,
+    cvtl_ignore_std_width,
+    0,
+  WCVTP,
   WCVTP,
 
 };
@@ -652,7 +661,7 @@ TA_table_build_prep(FT_Byte** prep,
   buf_new_len += sizeof (PREP(reset_component_counter));
   if (font->control_data_head)
     buf_new_len += sizeof (PREP(adjust_delta_exceptions));
-  buf_new_len += sizeof (PREP(do_iup_y));
+  buf_new_len += sizeof (PREP(set_default_cvs_values));
 
   /* buffer length must be a multiple of four */
   len = (buf_new_len + 3) & ~3U;
@@ -827,7 +836,7 @@ TA_table_build_prep(FT_Byte** prep,
   COPY_PREP(reset_component_counter);
   if (font->control_data_head)
     COPY_PREP(adjust_delta_exceptions);
-  COPY_PREP(do_iup_y);
+  COPY_PREP(set_default_cvs_values);
 
   *prep = buf;
   *prep_len = buf_new_len;

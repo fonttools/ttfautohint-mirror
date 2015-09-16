@@ -509,8 +509,9 @@
 #define cvtl_use_strong_functions cvtl_is_subglyph + 1
 #define cvtl_is_element cvtl_use_strong_functions + 1
 #define cvtl_do_iup_y cvtl_is_element + 1
+#define cvtl_ignore_std_width cvtl_do_iup_y + 1
 
-#define cvtl_max_runtime cvtl_do_iup_y + 1 /* must be last */
+#define cvtl_max_runtime cvtl_ignore_std_width + 1 /* must be last */
 
 
 /* symbolic names for build-time CVT locations */

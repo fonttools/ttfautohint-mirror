@@ -198,6 +198,19 @@ FT_Byte ins_extra_delta_exceptions[4] =
 };
 
 
+/* if we have a no-base glyph, this code gets inserted */
+FT_Byte ins_extra_ignore_std_width[4] =
+{
+
+  /* tell bci_{smooth,strong}_stem_width to ignore std_width */
+  PUSHB_2,
+    cvtl_ignore_std_width,
+    100,
+  WCVTP,
+
+};
+
+
 /*
  * convert array `args' into a sequence of NPUSHB, NPUSHW, PUSHB_X, and
  * PUSHW_X instructions to be stored in `bufp' (the latter two instructions
@@ -1045,7 +1058,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       || num_delta_before_IUP_args[3])
   {
     /* set `cvtl_do_iup_y' to zero at the beginning of the bytecode */
-    /* by activating `ins_extra_buf' */
+    /* by activating `ins_extra_delta_exceptions' */
     memcpy(ins_extra_buf,
            ins_extra_delta_exceptions,
            sizeof (ins_extra_delta_exceptions));
@@ -2438,6 +2451,10 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   /* `idx' is never negative */
   GLYPH* glyph = &data->glyphs[idx];
 
+  TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
+  FT_UShort* gstyles = globals->glyph_styles;
+  FT_Bool use_gstyle_data = 1;
+
   TA_GlyphHints hints;
 
   FT_UInt num_action_hints_records = 0;
@@ -2548,6 +2565,8 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
       goto Err;
     }
 
+    use_gstyle_data = 0;
+
     goto Done1;
   }
 
@@ -2566,6 +2585,8 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
       error = FT_Err_Out_Of_Memory;
       goto Err;
     }
+
+    use_gstyle_data = 0;
 
     goto Done1;
   }
@@ -2730,6 +2751,8 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
       goto Err;
     }
 
+    use_gstyle_data = 0;
+
     goto Done;
   }
 
@@ -2784,6 +2807,24 @@ Done1:
       error = FT_Err_Out_Of_Memory;
       goto Err;
     }
+  }
+
+  /* we need to insert a few extra bytecode instructions */
+  /* for no-base glyphs */
+  if (use_gstyle_data && (gstyles[idx] & TA_NOBASE))
+  {
+    /* set `cvtl_ignore_std_width' to 100 at the beginning of the bytecode */
+    /* by activating `ins_extra_ignore_std_width' */
+    memcpy(ins_extra_buf + glyph->ins_extra_len,
+           ins_extra_ignore_std_width,
+           sizeof (ins_extra_ignore_std_width));
+    glyph->ins_extra_len += sizeof (ins_extra_ignore_std_width);
+
+    /* reset `cvtl_ignore_std_width' for next glyph */
+    BCI(PUSHB_2);
+    BCI(cvtl_ignore_std_width);
+    BCI(0);
+    BCI(WCVTP);
   }
 
   ins_len = (FT_UInt)(bufp - ins_buf);
