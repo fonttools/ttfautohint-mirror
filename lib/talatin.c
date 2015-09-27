@@ -1076,8 +1076,11 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
 
   if (dim == TA_DIMENSION_VERT)
   {
-    TA_LOG_GLOBAL(("blue zones (style `%s')\n",
-                   ta_style_names[metrics->root.style_class->style]));
+#ifdef TA_DEBUG
+    if (axis->blue_count)
+      TA_LOG_GLOBAL(("blue zones (style `%s')\n",
+                     ta_style_names[metrics->root.style_class->style]));
+#endif
 
     /* scale the blue zones */
     for (nn = 0; nn < axis->blue_count; nn++)
