@@ -198,7 +198,7 @@ FT_Byte ins_extra_delta_exceptions[4] =
 };
 
 
-/* if we have a no-base glyph, this code gets inserted */
+/* if we have a non-base glyph, this code gets inserted */
 FT_Byte ins_extra_ignore_std_width[4] =
 {
 
@@ -2810,8 +2810,8 @@ Done1:
   }
 
   /* we need to insert a few extra bytecode instructions */
-  /* for no-base glyphs */
-  if (use_gstyle_data && (gstyles[idx] & TA_NOBASE))
+  /* for non-base glyphs */
+  if (use_gstyle_data && (gstyles[idx] & TA_NONBASE))
   {
     /* set `cvtl_ignore_std_width' to 100 at the beginning of the bytecode */
     /* by activating `ins_extra_ignore_std_width' */

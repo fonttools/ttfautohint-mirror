@@ -3048,7 +3048,7 @@ ta_latin_hints_apply(FT_UInt glyph_index,
       goto Exit;
 
     /* apply blue zones to base characters only */
-    if (!(metrics->root.globals->glyph_styles[glyph_index] & TA_NOBASE))
+    if (!(metrics->root.globals->glyph_styles[glyph_index] & TA_NONBASE))
       ta_latin_hints_compute_blue_edges(hints, metrics);
   }
 

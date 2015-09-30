@@ -32,7 +32,7 @@
 
 #undef SCRIPT
 #define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
-          extern const TA_Script_UniRangeRec ta_ ## s ## _nobase_uniranges[];
+          extern const TA_Script_UniRangeRec ta_ ## s ## _nonbase_uniranges[];
 
 #include "ttfautohint-scripts.h"
 

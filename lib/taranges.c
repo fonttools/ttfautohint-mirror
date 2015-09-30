@@ -49,11 +49,11 @@
 /*     Right now, they are quickly derived by visual inspection. */
 /*     I can imagine that fine-tuning is necessary. */
 
-/* for the auto-hinter, a `no-base character' is something that should */
+/* for the auto-hinter, a `non-base character' is something that should */
 /* not be affected by blue zones, regardless of whether this is a */
 /* spacing or no-spacing glyph */
 
-/* the `ta_xxxx_nobase_uniranges' ranges must be strict subsets */
+/* the `ta_xxxx_nonbase_uniranges' ranges must be strict subsets */
 /* of the corresponding `ta_xxxx_uniranges' ranges */
 
 
@@ -68,7 +68,7 @@ const TA_Script_UniRangeRec ta_arab_uniranges[] =
   TA_UNIRANGE_REC(      0UL,       0UL)
 };
 
-const TA_Script_UniRangeRec ta_arab_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_arab_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0600UL, 0x0605UL),
   TA_UNIRANGE_REC(0x0610UL, 0x061AUL),
@@ -101,7 +101,7 @@ const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_cyrl_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_cyrl_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0483UL, 0x0489UL),
   TA_UNIRANGE_REC(0x2DE0UL, 0x2DFFUL),
@@ -129,7 +129,7 @@ const TA_Script_UniRangeRec ta_deva_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_deva_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_deva_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0900UL, 0x0902UL),
   TA_UNIRANGE_REC(0x093AUL, 0x093AUL),
@@ -150,7 +150,7 @@ const TA_Script_UniRangeRec ta_grek_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_grek_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_grek_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x037AUL, 0x037AUL),
   TA_UNIRANGE_REC(0x0384UL, 0x0385UL),
@@ -170,7 +170,7 @@ const TA_Script_UniRangeRec ta_hebr_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_hebr_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_hebr_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0591UL, 0x05BFUL),
   TA_UNIRANGE_REC(0x05C1UL, 0x05C2UL),
@@ -187,7 +187,7 @@ const TA_Script_UniRangeRec ta_lao_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_lao_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_lao_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0EB1UL, 0x0EB1UL),
   TA_UNIRANGE_REC(0x0EB4UL, 0x0EBCUL),
@@ -233,7 +233,7 @@ const TA_Script_UniRangeRec ta_latn_uniranges[] =
   TA_UNIRANGE_REC(      0UL,       0UL)
 };
 
-const TA_Script_UniRangeRec ta_latn_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_latn_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x005EUL, 0x0060UL),
   TA_UNIRANGE_REC(0x007EUL, 0x007EUL),
@@ -263,7 +263,7 @@ const TA_Script_UniRangeRec ta_latb_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_latb_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_latb_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0UL, 0UL)
 };
@@ -287,7 +287,7 @@ const TA_Script_UniRangeRec ta_latp_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_latp_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_latp_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0UL, 0UL)
 };
@@ -299,7 +299,7 @@ const TA_Script_UniRangeRec ta_telu_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_telu_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_telu_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0C00UL, 0x0C00UL),
   TA_UNIRANGE_REC(0x0C3EUL, 0x0C40UL),
@@ -315,7 +315,7 @@ const TA_Script_UniRangeRec ta_thai_uniranges[] =
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec ta_thai_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_thai_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0E31UL, 0x0E31UL),
   TA_UNIRANGE_REC(0x0E34UL, 0x0E3AUL),
@@ -329,7 +329,7 @@ const TA_Script_UniRangeRec ta_none_uniranges[] =
   TA_UNIRANGE_REC(0UL, 0UL)
 };
 
-const TA_Script_UniRangeRec ta_none_nobase_uniranges[] =
+const TA_Script_UniRangeRec ta_none_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0UL, 0UL)
 };

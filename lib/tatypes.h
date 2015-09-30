@@ -286,7 +286,7 @@ typedef struct TA_ScriptClassRec_
 
   /* last element in the ranges must be { 0, 0 } */
   TA_Script_UniRange script_uni_ranges;
-  TA_Script_UniRange script_uni_nobase_ranges;
+  TA_Script_UniRange script_uni_nonbase_ranges;
 
   FT_UInt32 standard_char1; /* for default width and height */
   FT_UInt32 standard_char2; /* ditto */

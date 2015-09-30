@@ -29,7 +29,7 @@
           { \
             TA_SCRIPT_ ## S, \
             ta_ ## s ## _uniranges, \
-            ta_ ## s ## _nobase_uniranges, \
+            ta_ ## s ## _nonbase_uniranges, \
             sc1, sc2, sc3 \
           };
 
@@ -274,8 +274,8 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
         }
       }
 
-      /* do the same for the script's no-base characters */
-      for (range = script_class->script_uni_nobase_ranges;
+      /* do the same for the script's non-base characters */
+      for (range = script_class->script_uni_nonbase_ranges;
            range->first != 0;
            range++)
       {
@@ -288,7 +288,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
         if (gindex != 0
             && gindex < (FT_ULong)globals->glyph_count
             && (gstyles[gindex] & TA_STYLE_MASK) == (FT_UShort)ss)
-          gstyles[gindex] |= TA_NOBASE;
+          gstyles[gindex] |= TA_NONBASE;
 
         for (;;)
         {
@@ -299,7 +299,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
           if (gindex < (FT_ULong)globals->glyph_count
               && (gstyles[gindex] & TA_STYLE_MASK) == (FT_UShort)ss)
-            gstyles[gindex] |= TA_NOBASE;
+            gstyles[gindex] |= TA_NONBASE;
         }
       }
     }
