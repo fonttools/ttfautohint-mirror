@@ -181,6 +181,21 @@ const TA_Script_UniRangeRec ta_hebr_nobase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_lao_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0E80UL, 0x0EFFUL), /* Lao */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_lao_nobase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0EB1UL, 0x0EB1UL),
+  TA_UNIRANGE_REC(0x0EB4UL, 0x0EBCUL),
+  TA_UNIRANGE_REC(0x0EC8UL, 0x0ECDUL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_latn_uniranges[] =
 {
   TA_UNIRANGE_REC( 0x0020UL,  0x007FUL), /* Basic Latin (no control chars) */

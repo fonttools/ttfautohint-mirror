@@ -112,6 +112,13 @@ STYLE(hebr_dflt, HEBR_DFLT,
       TA_BLUE_STRINGSET_HEBR,
       TA_COVERAGE_DEFAULT)
 
+STYLE(lao_dflt, LAO_DFLT,
+      "Lao default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_LAO,
+      TA_BLUE_STRINGSET_LAO,
+      TA_COVERAGE_DEFAULT)
+
 META_STYLE_LATIN(latn, LATN, "Latin")
 
 STYLE(latb_dflt, LATB_DFLT,

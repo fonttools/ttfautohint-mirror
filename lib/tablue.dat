@@ -123,6 +123,17 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_HEBREW_DESCENDER
     "קךןףץ"
 
+  TA_BLUE_STRING_LAO_TOP
+    "າ ດ ອ ມ ລ ວ ຣ ງ"
+  TA_BLUE_STRING_LAO_BOTTOM
+    "າ ອ ບ ຍ ຣ ຮ ວ ຢ"
+  TA_BLUE_STRING_LAO_ASCENDER
+    "ປ ຢ ຟ ຝ"
+  TA_BLUE_STRING_LAO_LARGE_ASCENDER
+    "ໂ ໄ ໃ"
+  TA_BLUE_STRING_LAO_DESCENDER
+    "ງ ຊ ຖ ຽ ໆ ຯ"
+
   TA_BLUE_STRING_LATIN_CAPITAL_TOP
     "THEZOCQS"
   TA_BLUE_STRING_LATIN_CAPITAL_BOTTOM
@@ -289,6 +300,15 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_HEBREW_BOTTOM,    0                             }
     { TA_BLUE_STRING_HEBREW_DESCENDER, 0                             }
     { TA_BLUE_STRING_MAX,              0                             }
+
+  TA_BLUE_STRINGSET_LAO
+    { TA_BLUE_STRING_LAO_TOP,            TA_BLUE_PROPERTY_LATIN_TOP      |
+                                         TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_LAO_BOTTOM,         0                                 }
+    { TA_BLUE_STRING_LAO_ASCENDER,       TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_LAO_LARGE_ASCENDER, TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_LAO_DESCENDER,      0                                 }
+    { TA_BLUE_STRING_MAX,                0                                 }
 
   TA_BLUE_STRINGSET_LATN
     { TA_BLUE_STRING_LATIN_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
