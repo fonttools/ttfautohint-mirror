@@ -78,10 +78,11 @@ SCRIPT(latp, LATP,
        HB_SCRIPT_INVALID,
        0x1D52, 0x1D3C, 0x2070) /* ᵒ ᴼ ⁰ */
 
+/* there are no simple forms for letters; we thus use two digit shapes */
 SCRIPT(telu, TELU,
        "Telugu",
        HB_SCRIPT_TELUGU,
-       0xC19, 0xC12, 0x0) /* ఙ ఒ */
+       0xC66, 0xC67, 0x0) /* ౦ ౧ */
 
 SCRIPT(thai, THAI,
        "Thai",
