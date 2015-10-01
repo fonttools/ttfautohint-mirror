@@ -217,20 +217,6 @@ const TA_Script_UniRangeRec ta_lao_nonbase_uniranges[] =
 };
 
 
-const TA_Script_UniRangeRec ta_latb_uniranges[] =
-{
-  TA_UNIRANGE_REC(0x1D62UL, 0x1D6AUL), /* some small subscript letters */
-  TA_UNIRANGE_REC(0x2080UL, 0x209CUL), /* subscript digits and letters */
-  TA_UNIRANGE_REC(0x2C7CUL, 0x2C7CUL), /* latin subscript small letter j */
-  TA_UNIRANGE_REC(     0UL,      0UL)
-};
-
-const TA_Script_UniRangeRec ta_latb_nonbase_uniranges[] =
-{
-  TA_UNIRANGE_REC(0UL, 0UL)
-};
-
-
 const TA_Script_UniRangeRec ta_latn_uniranges[] =
 {
   TA_UNIRANGE_REC( 0x0020UL,  0x007FUL), /* Basic Latin (no control chars) */
@@ -287,6 +273,20 @@ const TA_Script_UniRangeRec ta_latn_nonbase_uniranges[] =
   TA_UNIRANGE_REC(0xA788UL, 0xA788UL),
   TA_UNIRANGE_REC(0xA7F8UL, 0xA7FAUL),
   TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
+const TA_Script_UniRangeRec ta_latb_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x1D62UL, 0x1D6AUL), /* some small subscript letters */
+  TA_UNIRANGE_REC(0x2080UL, 0x209CUL), /* subscript digits and letters */
+  TA_UNIRANGE_REC(0x2C7CUL, 0x2C7CUL), /* latin subscript small letter j */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_latb_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0UL, 0UL)
 };
 
 
