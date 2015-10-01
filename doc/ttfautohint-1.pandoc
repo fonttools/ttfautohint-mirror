@@ -689,9 +689,9 @@ Table: script-specific standard characters of the 'latin' writing system
 
     Script    Standard characters
   ----------  ---------------------
-  `arab`      'ل', U+0644, ARABIC LETTER LAM
+  `arab`      'ـ', U+0640, ARABIC TATWEEL
+              'ل', U+0644, ARABIC LETTER LAM
               'ح', U+062D, ARABIC LETTER HAH
-              'ـ', U+0640, ARABIC TATWEEL
   `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
               'О', U+041E, CYRILLIC CAPITAL LETTER O
   `deva`      'ठ', U+0920, DEVANAGARI LETTER TTHA
@@ -700,6 +700,7 @@ Table: script-specific standard characters of the 'latin' writing system
   `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
               'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
+  `lao`       '໐', U+0ED0, LAO DIGIT ZERO
   `latn`      'o', U+006F, LATIN SMALL LETTER O
               'O', U+004F, LATIN CAPITAL LETTER O
               '0', U+0030, DIGIT ZERO
@@ -708,6 +709,17 @@ Table: script-specific standard characters of the 'latin' writing system
   `thai`      'า', U+0E32, THAI CHARACTER SARA AA
               'ๅ', U+0E45, THAI CHARACTER LAKKHANGYAO
               '๐', U+0E50, THAI DIGIT ZERO
+
+
+Table: standard characters of the 'latin' writing system, special scripts
+
+    Script    Standard characters
+  ----------  ---------------------
+  `latb`      'ₒ', U+2092, LATIN SUBSCRIPT SMALL LETTER O
+              '₀', U+2080, SUBSCRIPT ZERO
+  `latp`      'ᵒ', U+1D52, MODIFIER LETTER SMALL O
+              'ᴼ', U+1D3C, MODIFIER LETTER CAPITAL O
+              '⁰', U+2070, SUPERSCRIPT ZERO
 
 
   * Glyph Analysis
@@ -752,11 +764,11 @@ Table: `cyrl` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of capital letters                 БВЕПЗОСЭ
-  2     bottom of capital letters              БВЕШЗОСЭ
-  3     top of small letters                   хпншезос
-  4     bottom of small letters                хпншезос
-  5     bottom of descenders of small letters  руф
+  1     top of capital letters                 Б В Е П З О С Э
+  2     bottom of capital letters              Б В Е Ш З О С Э
+  3     top of small letters                   х п н ш е з о с
+  4     bottom of small letters                х п н ш е з о с
+  5     bottom of descenders of small letters  р у ф
 
 
 Table: `deva` blue zones
@@ -766,7 +778,8 @@ Table: `deva` blue zones
   1     baseline (flat glyphs only)            क न म उ छ ट ठ ड
   2     top of ascenders                       ई ऐ ओ औ ि ी ो ौ
   3     top of baseline                        क म अ आ थ ध भ श
-  4     bottom of descenders                   ु ृ
+  4     bottom of base characters              क म अ आ थ ध भ श
+  5     bottom of descenders                   ु ृ
 
 Contrary to scripts like latin, the baseline in Devanagari is on the top.
 Note that some fonts have extreme variation in the height of the round
@@ -778,38 +791,77 @@ Table: `grek` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of capital letters                 ΓΒΕΖΘΟΩ
-  2     bottom of capital letters              ΒΔΖΞΘΟ
-  3     top of 'small beta' like letters       βθδζλξ
-  4     top of small letters                   αειοπστω
-  5     bottom of small letters                αειοπστω
-  6     bottom of descenders of small letters  βγημρφχψ
+  1     top of capital letters                 Γ Β Ε Ζ Θ Ο Ω
+  2     bottom of capital letters              Β Δ Ζ Ξ Θ Ο
+  3     top of 'small beta' like letters       β θ δ ζ λ ξ
+  4     top of small letters                   α ε ι ο π σ τ ω
+  5     bottom of small letters                α ε ι ο π σ τ ω
+  6     bottom of descenders of small letters  β γ η μ ρ φ χ ψ
 
 
 Table: `hebr` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of letters                         בדהחךכםס
-  2     bottom of letters                      בטכםסצ
-  3     bottom of descenders of letters        קךןףץ
+  1     top of letters                         ב ד ה ח ך כ ם ס
+  2     bottom of letters                      ב ט כ ם ס צ
+  3     bottom of descenders of letters        ק ך ן ף ץ
+
+
+Table: `lao` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         າ ດ ອ ມ ລ ວ ຣ ງ
+  2     bottom of letters                      າ ອ ບ ຍ ຣ ຮ ວ ຢ
+  3     top of ascenders                       ປ ຢ ຟ ຝ
+  4     top of large ascenders                 ໂ ໄ ໃ
+  5     bottom of descenders                   ງ ຊ ຖ ຽ ໆ ຯ
+
+
+Table: `latb` blue zones
+
+  ID    Blue zone                                 Characters
+  ----  -----------                               ------------
+   1    top of capital characters                 ₀ ₃ ₅ ₇ ₈
+   2    bottom of capital characters              ₀ ₁ ₂ ₃ ₈
+   3    top of 'small f' like characters          ᵢ ⱼ ₕ ₖ ₗ
+   4    top of small characters                   ₐ ₑ ₒ ₓ ₙ ₛ ᵥ ᵤ ᵣ
+   5    bottom of small characters                ₐ ₑ ₒ ₓ ₙ ₛ ᵥ ᵤ ᵣ
+   6    bottom of descenders of small characters  ᵦ ᵧ ᵨ ᵩ ₚ
+
+Subscript latin characters are similar to normal latin characters.
 
 
 Table: `latn` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of capital letters                 THEZOCQS
-  2     bottom of capital letters              HEZLOCUS
-  3     top of 'small f' like letters          fijkdbh
-  4     top of small letters                   xzroesc
-  5     bottom of small letters                xzroesc
-  6     bottom of descenders of small letters  pqgjy
+  1     top of capital letters                 T H E Z O C Q S
+  2     bottom of capital letters              H E Z L O C U S
+  3     top of 'small f' like letters          f i j k d b h
+  4     top of small letters                   x z r o e s c
+  5     bottom of small letters                x z r o e s c
+  6     bottom of descenders of small letters  p q g j y
 
 The 'round' characters (e.g. 'OCQS') from Zones 1, 2, and\ 5 are also used
 to control the overshoot handling; to improve rendering at small sizes,
 zone\ 4 gets adjusted to be on the pixel grid; cf. the
 [`--increase-x-height`](#x-height-increase-limit) option.
+
+
+Table: `latp` blue zones
+
+  ID    Blue zone                                 Characters
+  ----  -----------                               ------------
+  1     top of capital characters                 ⁰ ³ ⁵ ⁷ ᵀ ᴴ ᴱ ᴼ
+  2     bottom of capital characters              ⁰ ¹ ² ³ ᴱ ᴸ ᴼ ᵁ
+  3     top of 'small f' like characters          ᵇ ᵈ ᵏ ʰ ʲ ᶠ ⁱ
+  4     top of small characters                   ᵉ ᵒ ʳ ˢ ˣ ᶜ ᶻ
+  5     bottom of small characters                ᵉ ᵒ ʳ ˢ ˣ ᶜ ᶻ
+  6     bottom of descenders of small characters  ᵖ ʸ ᵍ
+
+Superscript latin characters are similar to normal latin characters.
 
 
 Table: `telu` blue zones
@@ -1044,8 +1096,22 @@ Here is the hardcoded list of character ranges that are used for scripts in
 the 'latin' writing system.  As you can see, this also covers some non-latin
 scripts (in the Unicode sense) that have similar typographical properties.
 
-In ttfautohint, scripts are identified by four-character tags.  The value
-`none` indicates 'no script'.
+In ttfautohint, scripts are identified by four-character tags (if there are
+less characters, spaces are appended).  The value `none` indicates 'no
+script'.
+
+Each script is represented by two tables to handle 'base' and 'non-base'
+characters.  For ttfautohint, a non-base character is something that should
+not be affected by blue zones, regardless of whether this is a spacing or
+no-spacing glyph.  In other words, non-base characters are hinted using a
+script's default stem width without applying blue zones.
+
+Right now, there are two pseudo-scripts that are used as fallbacks: `latb`
+and `latp`, used for latin subscript and superscript characters,
+respectively.  Its main usage is support of phonetic alphabets like the IPA,
+which intermix those characters with normal characters sitting on the
+baseline without handling them specially in corresponding OpenType features
+like `sups`.
 
 
 Table: `arab` character ranges

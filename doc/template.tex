@@ -14,19 +14,22 @@
 \ifxetex
   \usepackage{ucharclasses}
 
+  \newfontfamily{\arabicfont}[Script=Arabic]{Amiri}
   \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
+  \newfontfamily{\laofont}[Script=Lao]{NotoSerifLao}
   \newfontfamily{\telugufont}[Script=Telugu]{Pothana2000}
   \newfontfamily{\thaifont}[Script=Thai]{FreeSerif}
-  \newfontfamily{\arabicfont}[Script=Arabic]{Amiri}
 
+  \setTransitionTo{Arabic}{\begingroup\arabicfont}
+  \setTransitionFrom{Arabic}{\endgroup}
   \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
   \setTransitionFrom{Devanagari}{\endgroup}
+  \setTransitionTo{Lao}{\begingroup\laofont}
+  \setTransitionFrom{Lao}{\endgroup}
   \setTransitionTo{Telugu}{\begingroup\telugufont}
   \setTransitionFrom{Telugu}{\endgroup}
   \setTransitionTo{Thai}{\begingroup\thaifont}
   \setTransitionFrom{Thai}{\endgroup}
-  \setTransitionTo{Arabic}{\begingroup\arabicfont}
-  \setTransitionFrom{Arabic}{\endgroup}
 \fi
 
 % Libertine Mono is too ugly; we use lmodern instead
