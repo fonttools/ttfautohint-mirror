@@ -13,6 +13,7 @@
 DOCSRC = ttfautohint-1.pandoc \
          ttfautohint-2.pandoc \
          ttfautohint-3.pandoc \
+         ttfautohint-4.pandoc \
          ../NEWS
 
 DOCIMGSVG = img/blue-zones.svg \
@@ -54,11 +55,13 @@ DOC = ttfautohint.html \
       toc-unfold.js
 
 EXTRA_DIST = c2pandoc.sed \
+             taranges.sed \
              make-snapshot.sh \
              strip-comments.sh \
              ttfautohint-1.pandoc \
              ttfautohint-2.pandoc \
              ttfautohint-3.pandoc \
+             ttfautohint-4.pandoc \
              template.html \
              template.tex \
              ttfautohint-css.html \
@@ -71,6 +74,9 @@ endif
 
 ttfautohint-2.pandoc: $(top_srcdir)/lib/ttfautohint.h
 	$(SED) -f $(srcdir)/c2pandoc.sed < $< > $@
+
+ttfautohint-4.pandoc: $(top_srcdir)/lib/taranges.c
+	$(SED) -f $(srcdir)/taranges.sed < $< > $@
 
 ttfautohint.txt: $(DOCSRC)
 	$(SHELL) $(srcdir)/strip-comments.sh $^ > $@

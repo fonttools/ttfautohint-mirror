@@ -20,6 +20,27 @@
 #include "taranges.h"
 
 /*
+ * This file gets also processed with the `taranges.sed' script to produce
+ * documentation of character ranges.  To make this simple approach work,
+ * don't change the formatting in this file!
+ *
+ *   - Everything before the first `const' keyword (starting a line) gets
+ *     removed.
+ *
+ *   - The line containing `none_uniranges' and everything after it gets
+ *     removed, too.
+ *
+ *   - Comments after a `TA_UNIRANGE_REC' entry are used for character range
+ *     documentation within a table.
+ *
+ *   - Comments indented by two spaces are also used within a table.
+ *
+ *   - Other comments are inserted into the documentation as-is (after
+ *     stripping off the comment characters).
+ */
+
+
+/*
  * The algorithm for assigning properties and styles to the `glyph_styles'
  * array is as follows (cf. the implementation in
  * `af_face_globals_compute_style_coverage').
@@ -111,19 +132,19 @@ const TA_Script_UniRangeRec ta_cyrl_nonbase_uniranges[] =
 };
 
 
-/* there are some characters in the Devanagari Unicode block that are */
+/* There are some characters in the Devanagari Unicode block that are */
 /* generic to Indic scripts; we omit them so that their presence doesn't */
-/* trigger Devanagari */
+/* trigger Devanagari. */
 
 const TA_Script_UniRangeRec ta_deva_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0900UL, 0x093BUL), /* Devanagari */
   /* omitting U+093C nukta */
-  TA_UNIRANGE_REC(0x093DUL, 0x0950UL),
+  TA_UNIRANGE_REC(0x093DUL, 0x0950UL), /* ... continued */
   /* omitting U+0951 udatta, U+0952 anudatta */
-  TA_UNIRANGE_REC(0x0953UL, 0x0963UL),
+  TA_UNIRANGE_REC(0x0953UL, 0x0963UL), /* ... continued */
   /* omitting U+0964 danda, U+0965 double danda */
-  TA_UNIRANGE_REC(0x0966UL, 0x097FUL),
+  TA_UNIRANGE_REC(0x0966UL, 0x097FUL), /* ... continued */
   TA_UNIRANGE_REC(0x20B9UL, 0x20B9UL), /* (new) Rupee sign */
   TA_UNIRANGE_REC(0xA8E0UL, 0xA8FFUL), /* Devanagari Extended */
   TA_UNIRANGE_REC(     0UL,      0UL)
@@ -196,23 +217,37 @@ const TA_Script_UniRangeRec ta_lao_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_latb_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x1D62UL, 0x1D6AUL), /* some small subscript letters */
+  TA_UNIRANGE_REC(0x2080UL, 0x209CUL), /* subscript digits and letters */
+  TA_UNIRANGE_REC(0x2C7CUL, 0x2C7CUL), /* latin subscript small letter j */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_latb_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0UL, 0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_latn_uniranges[] =
 {
   TA_UNIRANGE_REC( 0x0020UL,  0x007FUL), /* Basic Latin (no control chars) */
   TA_UNIRANGE_REC( 0x00A0UL,  0x00A9UL), /* Latin-1 Supplement (no control chars) */
-  TA_UNIRANGE_REC( 0x00ABUL,  0x00B1UL),
-  TA_UNIRANGE_REC( 0x00B4UL,  0x00B8UL),
-  TA_UNIRANGE_REC( 0x00BBUL,  0x00FFUL),
+  TA_UNIRANGE_REC( 0x00ABUL,  0x00B1UL), /* ... continued */
+  TA_UNIRANGE_REC( 0x00B4UL,  0x00B8UL), /* ... continued */
+  TA_UNIRANGE_REC( 0x00BBUL,  0x00FFUL), /* ... continued */
   TA_UNIRANGE_REC( 0x0100UL,  0x017FUL), /* Latin Extended-A */
   TA_UNIRANGE_REC( 0x0180UL,  0x024FUL), /* Latin Extended-B */
   TA_UNIRANGE_REC( 0x0250UL,  0x02AFUL), /* IPA Extensions */
   TA_UNIRANGE_REC( 0x02B9UL,  0x02DFUL), /* Spacing Modifier Letters */
-  TA_UNIRANGE_REC( 0x02E5UL,  0x02FFUL),
+  TA_UNIRANGE_REC( 0x02E5UL,  0x02FFUL), /* ... continued */
   TA_UNIRANGE_REC( 0x0300UL,  0x036FUL), /* Combining Diacritical Marks */
   TA_UNIRANGE_REC( 0x1AB0UL,  0x1ABEUL), /* Combining Diacritical Marks Extended */
   TA_UNIRANGE_REC( 0x1D00UL,  0x1D2BUL), /* Phonetic Extensions */
-  TA_UNIRANGE_REC( 0x1D6BUL,  0x1D77UL),
-  TA_UNIRANGE_REC( 0x1D79UL,  0x1D7FUL),
+  TA_UNIRANGE_REC( 0x1D6BUL,  0x1D77UL), /* ... continued */
+  TA_UNIRANGE_REC( 0x1D79UL,  0x1D7FUL), /* ... continued */
   TA_UNIRANGE_REC( 0x1D80UL,  0x1D9AUL), /* Phonetic Extensions Supplement */
   TA_UNIRANGE_REC( 0x1DC0UL,  0x1DFFUL), /* Combining Diacritical Marks Supplement */
   TA_UNIRANGE_REC( 0x1E00UL,  0x1EFFUL), /* Latin Extended Additional */
@@ -221,13 +256,13 @@ const TA_Script_UniRangeRec ta_latn_uniranges[] =
   TA_UNIRANGE_REC( 0x20BAUL,  0x20CFUL), /* ... except new Rupee sign */
   TA_UNIRANGE_REC( 0x2150UL,  0x218FUL), /* Number Forms */
   TA_UNIRANGE_REC( 0x2C60UL,  0x2C7BUL), /* Latin Extended-C */
-  TA_UNIRANGE_REC( 0x2C7EUL,  0x2C7FUL),
+  TA_UNIRANGE_REC( 0x2C7EUL,  0x2C7FUL), /* ... continued */
   TA_UNIRANGE_REC( 0x2E00UL,  0x2E7FUL), /* Supplemental Punctuation */
   TA_UNIRANGE_REC( 0xA720UL,  0xA76FUL), /* Latin Extended-D */
-  TA_UNIRANGE_REC( 0xA771UL,  0xA7F7UL),
-  TA_UNIRANGE_REC( 0xA7FAUL,  0xA7FFUL),
+  TA_UNIRANGE_REC( 0xA771UL,  0xA7F7UL), /* ... continued */
+  TA_UNIRANGE_REC( 0xA7FAUL,  0xA7FFUL), /* ... continued */
   TA_UNIRANGE_REC( 0xAB30UL,  0xAB5BUL), /* Latin Extended-E */
-  TA_UNIRANGE_REC( 0xAB60UL,  0xAB6FUL),
+  TA_UNIRANGE_REC( 0xAB60UL,  0xAB6FUL), /* ... continued */
   TA_UNIRANGE_REC( 0xFB00UL,  0xFB06UL), /* Alphab. Present. Forms (Latin Ligs) */
   TA_UNIRANGE_REC(0x1D400UL, 0x1D7FFUL), /* Mathematical Alphanumeric Symbols */
   TA_UNIRANGE_REC(      0UL,       0UL)
@@ -255,35 +290,21 @@ const TA_Script_UniRangeRec ta_latn_nonbase_uniranges[] =
 };
 
 
-const TA_Script_UniRangeRec ta_latb_uniranges[] =
-{
-  TA_UNIRANGE_REC(0x1D62UL, 0x1D6AUL),
-  TA_UNIRANGE_REC(0x2080UL, 0x209CUL),
-  TA_UNIRANGE_REC(0x2C7CUL, 0x2C7CUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
-};
-
-const TA_Script_UniRangeRec ta_latb_nonbase_uniranges[] =
-{
-  TA_UNIRANGE_REC(0UL, 0UL)
-};
-
-
 const TA_Script_UniRangeRec ta_latp_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x00AAUL, 0x00AAUL),
-  TA_UNIRANGE_REC(0x00B2UL, 0x00B3UL),
-  TA_UNIRANGE_REC(0x00B9UL, 0x00BAUL),
-  TA_UNIRANGE_REC(0x02B0UL, 0x02B8UL),
-  TA_UNIRANGE_REC(0x02E0UL, 0x02E4UL),
-  TA_UNIRANGE_REC(0x1D2CUL, 0x1D61UL),
-  TA_UNIRANGE_REC(0x1D78UL, 0x1D78UL),
-  TA_UNIRANGE_REC(0x1D9BUL, 0x1DBFUL),
-  TA_UNIRANGE_REC(0x2070UL, 0x207FUL),
-  TA_UNIRANGE_REC(0x2C7DUL, 0x2C7DUL),
-  TA_UNIRANGE_REC(0xA770UL, 0xA770UL),
-  TA_UNIRANGE_REC(0xA7F8UL, 0xA7F9UL),
-  TA_UNIRANGE_REC(0xAB5CUL, 0xAB5FUL),
+  TA_UNIRANGE_REC(0x00AAUL, 0x00AAUL), /* feminine ordinal indicator */
+  TA_UNIRANGE_REC(0x00B2UL, 0x00B3UL), /* superscript two and three */
+  TA_UNIRANGE_REC(0x00B9UL, 0x00BAUL), /* superscript one, masc. ord. indic. */
+  TA_UNIRANGE_REC(0x02B0UL, 0x02B8UL), /* some latin superscript mod. letters */
+  TA_UNIRANGE_REC(0x02E0UL, 0x02E4UL), /* some IPA modifier letters */
+  TA_UNIRANGE_REC(0x1D2CUL, 0x1D61UL), /* latin superscript modifier letters */
+  TA_UNIRANGE_REC(0x1D78UL, 0x1D78UL), /* modifier letter cyrillic en */
+  TA_UNIRANGE_REC(0x1D9BUL, 0x1DBFUL), /* more modifier letters */
+  TA_UNIRANGE_REC(0x2070UL, 0x207FUL), /* superscript digits and letters */
+  TA_UNIRANGE_REC(0x2C7DUL, 0x2C7DUL), /* modifier letter capital v */
+  TA_UNIRANGE_REC(0xA770UL, 0xA770UL), /* modifier letter us */
+  TA_UNIRANGE_REC(0xA7F8UL, 0xA7F9UL), /* more modifier letters */
+  TA_UNIRANGE_REC(0xAB5CUL, 0xAB5FUL), /* more modifier letters */
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 

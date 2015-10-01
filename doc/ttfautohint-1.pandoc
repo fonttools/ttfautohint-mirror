@@ -1092,9 +1092,11 @@ ttfautohint needs to know which script should be used to hint a specific
 glyph.  To do so, it checks a glyph's Unicode character code whether it
 belongs to a given script.
 
-Here is the hardcoded list of character ranges that are used for scripts in
-the 'latin' writing system.  As you can see, this also covers some non-latin
-scripts (in the Unicode sense) that have similar typographical properties.
+See '[Character Ranges](#character-ranges)' for a complete list of all
+handled scripts and its ranges.  This list is auto-generated from a source
+code file, covering the `latin' writing system.  It also covers some
+non-latin scripts (in the Unicode sense) that have similar typographical
+properties.
 
 In ttfautohint, scripts are identified by four-character tags (if there are
 less characters, spaces are appended).  The value `none` indicates 'no
@@ -1110,107 +1112,8 @@ Right now, there are two pseudo-scripts that are used as fallbacks: `latb`
 and `latp`, used for latin subscript and superscript characters,
 respectively.  Its main usage is support of phonetic alphabets like the IPA,
 which intermix those characters with normal characters sitting on the
-baseline without handling them specially in corresponding OpenType features
-like `sups`.
-
-
-Table: `arab` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0600` - `0x06FF`    Arabic
-  `0x0750` - `0x07FF`    Arabic Supplement
-  `0x08A0` - `0x08FF`    Arabic Extended-A
-  `0xFB50` - `0xFDFF`    Arabic Presentation Forms-A
-  `0xFE70` - `0xFEFF`    Arabic Presentation Forms-B
-  `0x1EE00` - `0x1EEFF`  Arabic Mathematical Alphabetic Symbols
-
-
-Table: `cyrl` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0400` - `0x04FF`    Cyrillic
-  `0x0500` - `0x052F`    Cyrillic Supplement
-  `0x2DE0` - `0x2DFF`    Cyrillic Extended-A
-  `0xA640` - `0xA69F`    Cyrillic Extended-B
-
-
-Table: `deva` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0900` - `0x093B`    Devanagari
-                         (omitting U+093C nukta)
-  `0x093D` - `0x0950`    Devanagari cont'd
-                         (omitting U+0951 udatta, U+0952 anudatta)
-  `0x0953` - `0x0963`    Devanagari cont'd
-                         (omitting U+0964 danda, U+0965 double danda)
-  `0x0966` - `0x097F`    Devanagari cont'd
-  `0x20B9`               (new) Rupee sign
-
-There are some characters in the Devanagari Unicode block that are generic
-to Indic scripts; we omit them so that their presence doesn't trigger
-Devanagari.
-
-
-Table: `grek` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0370` - `0x03FF`    Greek and Coptic
-  `0x1F00` - `0x1FFF`    Greek Extended
-
-
-Table: `hebr` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0590` - `0x05FF`    Hebrew
-  `0xFB1D` - `0xFB4F`    Alphabetic Presentation Forms (Hebrew)
-
-
-Table: `latn` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0020` - `0x007F`    Basic Latin (no control characters)
-  `0x00A0` - `0x00FF`    Latin-1 Supplement (no control characters)
-  `0x0100` - `0x017F`    Latin Extended-A
-  `0x0180` - `0x024F`    Latin Extended-B
-  `0x0250` - `0x02AF`    IPA Extensions
-  `0x02B0` - `0x02FF`    Spacing Modifier Letters
-  `0x0300` - `0x036F`    Combining Diacritical Marks
-  `0x1D00` - `0x1D7F`    Phonetic Extensions
-  `0x1D80` - `0x1DBF`    Phonetic Extensions Supplement
-  `0x1DC0` - `0x1DFF`    Combining Diacritical Marks Supplement
-  `0x1E00` - `0x1EFF`    Latin Extended Additional
-  `0x2000` - `0x206F`    General Punctuation
-  `0x2070` - `0x209F`    Superscripts and Subscripts
-  `0x20A0` - `0x20CF`    Currency Symbols
-  `0x2150` - `0x218F`    Number Forms
-  `0x2460` - `0x24FF`    Enclosed Alphanumerics
-  `0x2C60` - `0x2C7F`    Latin Extended-C
-  `0x2E00` - `0x2E7F`    Supplemental Punctuation
-  `0xA720` - `0xA7FF`    Latin Extended-D
-  `0xFB00` - `0xFB06`    Alphabetical Presentation Forms (Latin Ligatures)
-  `0x1D400` - `0x1D7FF`  Mathematical Alphanumeric Symbols
-  `0x1F100` - `0x1F1FF`  Enclosed Alphanumeric Supplement
-
-
-Table: `telu` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0C00` - `0x0C7F`    Telugu
-
-
-Table: `thai` character ranges
-
-     Character range     Description
-  ---------------------  -------------
-  `0x0E00` - `0x0E7F`    Thai
-
+baseline, and which are not specially handled in corresponding OpenType
+features like `sups`.
 
 If a glyph's character code is not covered by a script range, it is not
 hinted (or rather, it gets hinted by the 'dummy' auto-hinting module that
