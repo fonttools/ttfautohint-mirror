@@ -40,7 +40,7 @@ SCRIPT(arab, ARAB,
 SCRIPT(cyrl, CYRL,
        "Cyrillic",
        HB_SCRIPT_CYRILLIC,
-       0x43E, 0x41E, 0x0) /* оО */
+       0x43E, 0x41E, 0x0) /* о О */
 
 SCRIPT(deva, DEVA,
        "Devanagari",
@@ -50,7 +50,7 @@ SCRIPT(deva, DEVA,
 SCRIPT(grek, GREK,
        "Greek",
        HB_SCRIPT_GREEK,
-       0x3BF, 0x39F, 0x0) /* οΟ */
+       0x3BF, 0x39F, 0x0) /* ο Ο */
 
 SCRIPT(hebr, HEBR,
        "Hebrew",
