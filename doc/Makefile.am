@@ -34,6 +34,9 @@ DOCIMGPNG = img/ttfautohintGUI.png \
             img/afii10108-11px-before-hinting.png \
             img/afii10108-12px-after-hinting.png \
             img/afii10108-12px-before-hinting.png \
+            img/composite-no-round-xy-to-grid-option-c.png \
+            img/composite-no-round-xy-to-grid.png \
+            img/composite-round-xy-to-grid.png \
             img/e-17px-x14.png \
             img/e-17px-x17.png \
             img/ff-g-26px.png \
