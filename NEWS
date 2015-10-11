@@ -15,8 +15,8 @@ Version 1.4 (2015-Oct-04)
   between glyphs and styles.  Right now, its usage is quite limited; a
   forthcoming version will give much more flexibility.
 
-* The `touch` keyword in a delta instructions file was buggy: If used for a
-  point\ `P` at a ppem value\ `s`, it sometimes led to unwanted movements
+* The `touch` keyword in a control instructions file was buggy: If used for
+  a point\ `P` at a ppem value\ `s`, it sometimes led to unwanted movements
   of\ `P` for ppem values unequal to\ `s`, thus causing outline distortions.
 
 
