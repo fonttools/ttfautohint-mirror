@@ -862,7 +862,7 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
         *(p++) = LOW(glyph->ins_extra_len + glyph->ins_len);
         if (glyph->ins_extra_len)
         {
-          memcpy(p, ins_extra_buf, glyph->ins_extra_len);
+          memcpy(p, glyph->ins_extra_buf, glyph->ins_extra_len);
           p += glyph->ins_extra_len;
         }
         memcpy(p, glyph->ins_buf, glyph->ins_len);
@@ -881,7 +881,7 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
           *(p++) = LOW(glyph->ins_extra_len + glyph->ins_len);
           if (glyph->ins_extra_len)
           {
-            memcpy(p, ins_extra_buf, glyph->ins_extra_len);
+            memcpy(p, glyph->ins_extra_buf, glyph->ins_extra_len);
             p += glyph->ins_extra_len;
           }
           memcpy(p, glyph->ins_buf, glyph->ins_len);
@@ -1113,6 +1113,7 @@ TA_create_glyph_data(FT_Outline* outline,
   p += 10;
 
   glyph->ins_extra_len = 0;
+  glyph->ins_extra_buf = NULL;
   glyph->ins_len = 0;
   glyph->ins_buf = NULL;
 

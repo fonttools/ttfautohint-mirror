@@ -180,11 +180,6 @@ FT_Byte ttfautohint_glyph_bytecode[7] =
 };
 
 
-/* a buffer holding additional instructions to be inserted */
-/* at the beginning of the bytecode */
-FT_Byte ins_extra_buf[256];
-
-
 /* if we have y delta exceptions before IUP_y, this code gets inserted */
 FT_Byte ins_extra_delta_exceptions[4] =
 {
@@ -1057,12 +1052,28 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
       || num_delta_before_IUP_args[4]
       || num_delta_before_IUP_args[3])
   {
+    FT_Byte* ins_extra_buf_new;
+    FT_Byte ins_extra_len_new;
+
+
+    ins_extra_len_new = glyph->ins_extra_len
+                        + sizeof (ins_extra_delta_exceptions);
+    ins_extra_buf_new = (FT_Byte*)realloc(glyph->ins_extra_buf,
+                                          ins_extra_len_new);
+    if (!ins_extra_buf_new)
+    {
+      bufp = NULL;
+      goto Done;
+    }
+
     /* set `cvtl_do_iup_y' to zero at the beginning of the bytecode */
     /* by activating `ins_extra_delta_exceptions' */
-    memcpy(ins_extra_buf,
+    memcpy(ins_extra_buf_new + glyph->ins_extra_len,
            ins_extra_delta_exceptions,
            sizeof (ins_extra_delta_exceptions));
-    glyph->ins_extra_len += sizeof (ins_extra_delta_exceptions);
+
+    glyph->ins_extra_buf = ins_extra_buf_new;
+    glyph->ins_extra_len = ins_extra_len_new;
 
     /* reset `cvtl_do_iup_y' for next glyph */
     BCI(PUSHB_2);
@@ -2813,12 +2824,28 @@ Done1:
   /* for non-base glyphs */
   if (use_gstyle_data && (gstyles[idx] & TA_NONBASE))
   {
+    FT_Byte* ins_extra_buf_new;
+    FT_Byte ins_extra_len_new;
+
+
+    ins_extra_len_new = glyph->ins_extra_len
+                        + sizeof (ins_extra_ignore_std_width);
+    ins_extra_buf_new = (FT_Byte*)realloc(glyph->ins_extra_buf,
+                                          ins_extra_len_new);
+    if (!ins_extra_buf_new)
+    {
+      bufp = NULL;
+      goto Done;
+    }
+
     /* set `cvtl_ignore_std_width' to 100 at the beginning of the bytecode */
     /* by activating `ins_extra_ignore_std_width' */
-    memcpy(ins_extra_buf + glyph->ins_extra_len,
+    memcpy(ins_extra_buf_new + glyph->ins_extra_len,
            ins_extra_ignore_std_width,
            sizeof (ins_extra_ignore_std_width));
-    glyph->ins_extra_len += sizeof (ins_extra_ignore_std_width);
+
+    glyph->ins_extra_buf = ins_extra_buf_new;
+    glyph->ins_extra_len = ins_extra_len_new;
 
     /* reset `cvtl_ignore_std_width' for next glyph */
     BCI(PUSHB_2);
