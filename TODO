@@ -65,6 +65,8 @@ add second-pass analysis to improve positioning of composite glyphs
 minor improvements
 ------------------
 
+add a glossary to the documentation
+
 reject fonts that are `hopeless' (for example, `Lipstick')
 
 correctly set `lowestRecPPEM' field in `head'
