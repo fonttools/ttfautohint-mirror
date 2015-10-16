@@ -32,6 +32,8 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_C_INLINE
 
+gl_EARLY
+
 PKG_PROG_PKG_CONFIG([0.24])
 
 # AM_PROG_AR is new in automake 1.11.2;
@@ -41,7 +43,6 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 AC_PATH_PROG([BISON], [bison])
 AC_PATH_PROG([FLEX], [flex])
 
-gl_EARLY
 gl_INIT
 
 PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 0.9.19])
