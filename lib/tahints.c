@@ -235,6 +235,70 @@ ta_dir_str(TA_Direction dir)
                       : -1)
 
 
+static char*
+ta_print_idx(char* p,
+             int idx)
+{
+  if (idx == -1)
+  {
+    p[0] = '-';
+    p[1] = '-';
+    p[2] = '\0';
+  }
+  else
+    sprintf(p, "%d", idx);
+
+  return p;
+}
+
+
+static int
+ta_get_segment_index(TA_GlyphHints hints,
+                     int point_idx,
+                     int dimension)
+{
+  TA_AxisHints axis = &hints->axis[dimension];
+  TA_Point point = hints->points + point_idx;
+  TA_Segment segments = axis->segments;
+  TA_Segment limit = segments + axis->num_segments;
+  TA_Segment segment;
+
+
+  for (segment = segments; segment < limit; segment++)
+  {
+    if (segment->first <= segment->last)
+    {
+      if (point >= segment->first && point <= segment->last)
+        break;
+    }
+    else
+    {
+      if (point >= segment->first || point <= segment->last)
+        break;
+    }
+  }
+
+  if (segment == limit)
+    return -1;
+
+  return (int)(segment - segments);
+}
+
+
+static int
+ta_get_edge_index(TA_GlyphHints hints,
+                  int segment_idx,
+                  int dimension)
+{
+  TA_AxisHints axis = &hints->axis[dimension];
+  TA_Edge edges = axis->edges;
+  TA_Segment segment = axis->segments + segment_idx;
+
+
+  return segment_idx == -1 ? -1 : TA_INDEX_NUM(segment->edge, edges);
+}
+
+
 void
 ta_glyph_hints_dump_points(TA_GlyphHints hints)
 {
@@ -246,22 +310,38 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
   TA_LOG(("Table of points:\n"));
 
   if (hints->num_points)
-    TA_LOG(("  [ index |  xorg |  yorg | xscale | yscale"
-            " |  xfit |  yfit | flags ]\n"));
+    TA_LOG(("  index  hedge  hseg  vedge  vseg  flags"
+            "  xorg  yorg  xscale  yscale   xfit    yfit\n"));
   else
     TA_LOG(("  (none)\n"));
 
   for (point = points; point < limit; point++)
-    TA_LOG(("  [ %5d | %5d | %5d | %6.2f | %6.2f"
-            " | %5.2f | %5.2f |   %c   ]\n",
-            TA_INDEX_NUM(point, points),
+  {
+    int point_idx = TA_INDEX_NUM(point, points);
+    int segment_idx_0 = ta_get_segment_index(hints, point_idx, 0);
+    int segment_idx_1 = ta_get_segment_index(hints, point_idx, 1);
+
+    char buf1[16], buf2[16], buf3[16], buf4[16];
+
+
+    TA_LOG(("  %5d  %5s %5s  %5s %5s    %c  "
+            " %5d %5d %7.2f %7.2f %7.2f %7.2f\n",
+            point_idx,
+            ta_print_idx(buf1,
+                         ta_get_edge_index(hints, segment_idx_1, 1)),
+            ta_print_idx(buf2, segment_idx_1),
+            ta_print_idx(buf3,
+                         ta_get_edge_index(hints, segment_idx_0, 0)),
+            ta_print_idx(buf4, segment_idx_0),
+            (point->flags & TA_FLAG_WEAK_INTERPOLATION) ? 'w' : '-',
+
             point->fx,
             point->fy,
             point->ox / 64.0,
             point->oy / 64.0,
             point->x / 64.0,
-            point->y / 64.0,
-            (point->flags & TA_FLAG_WEAK_INTERPOLATION) ? 'w' : ' '));
+            point->y / 64.0));
+  }
   TA_LOG(("\n"));
 }
 
@@ -313,30 +393,34 @@ ta_glyph_hints_dump_segments(TA_GlyphHints hints)
     TA_Segment limit = segments + axis->num_segments;
     TA_Segment seg;
 
+    char buf1[16], buf2[16], buf3[16];
+
 
     TA_LOG(("Table of %s segments:\n",
             dimension == TA_DIMENSION_HORZ ? "vertical"
                                            : "horizontal"));
     if (axis->num_segments)
-      TA_LOG(("  [ index |  pos  |  dir  | from"
-              " |  to  | link | serif | edge"
-              " | height | extra |    flags    ]\n"));
+      TA_LOG(("  index   pos    dir   from   to"
+              "   link  serif  edge"
+              "  height  extra     flags\n"));
     else
       TA_LOG(("  (none)\n"));
 
     for (seg = segments; seg < limit; seg++)
-      TA_LOG(("  [ %5d | %5.2g | %5s | %4d"
-              " | %4d | %4d | %5d | %4d"
-              " | %6d | %5d | %11s ]\n",
+      TA_LOG(("  %5d  %5.2g  %5s  %4d  %4d"
+              "  %4s  %5s  %4s"
+              "  %6d  %5d  %11s\n",
               TA_INDEX_NUM(seg, segments),
               dimension == TA_DIMENSION_HORZ ? (int)seg->first->ox / 64.0
                                              : (int)seg->first->oy / 64.0,
               ta_dir_str((TA_Direction)seg->dir),
               TA_INDEX_NUM(seg->first, points),
               TA_INDEX_NUM(seg->last, points),
-              TA_INDEX_NUM(seg->link, segments),
-              TA_INDEX_NUM(seg->serif, segments),
-              TA_INDEX_NUM(seg->edge, edges),
+
+              ta_print_idx(buf1, TA_INDEX_NUM(seg->link, segments)),
+              ta_print_idx(buf2, TA_INDEX_NUM(seg->serif, segments)),
+              ta_print_idx(buf3, TA_INDEX_NUM(seg->edge, edges)),
+
               seg->height,
               seg->height - (seg->max_coord - seg->min_coord),
               ta_edge_flags_to_string(seg->flags)));
@@ -362,6 +446,8 @@ ta_glyph_hints_dump_edges(TA_GlyphHints hints)
     TA_Edge limit = edges + axis->num_edges;
     TA_Edge edge;
 
+    char buf1[16], buf2[16];
+
 
     /* note that TA_DIMENSION_HORZ corresponds to _vertical_ edges */
     /* since they have a constant X coordinate */
@@ -369,19 +455,20 @@ ta_glyph_hints_dump_edges(TA_GlyphHints hints)
             dimension == TA_DIMENSION_HORZ ? "vertical"
                                            : "horizontal"));
     if (axis->num_edges)
-      TA_LOG(("  [ index |  pos  |  dir  | link"
-              " | serif | blue | opos  |  pos  |    flags    ]\n"));
+      TA_LOG(("  index   pos    dir   link  serif"
+              "  blue  opos    pos      flags\n"));
     else
       TA_LOG(("  (none)\n"));
 
     for (edge = edges; edge < limit; edge++)
-      TA_LOG(("  [ %5d | %5.2g | %5s | %4d"
-              " | %5d |   %c  | %5.2f | %5.2f | %11s ]\n",
+      TA_LOG(("  %5d  %5.2g  %5s  %4s  %5s"
+              "    %c   %5.2f  %5.2f  %11s\n",
               TA_INDEX_NUM(edge, edges),
               (int)edge->opos / 64.0,
               ta_dir_str((TA_Direction)edge->dir),
-              TA_INDEX_NUM(edge->link, edges),
-              TA_INDEX_NUM(edge->serif, edges),
+              ta_print_idx(buf1, TA_INDEX_NUM(edge->link, edges)),
+              ta_print_idx(buf2, TA_INDEX_NUM(edge->serif, edges)),
+
               edge->blue_edge ? 'y' : 'n',
               edge->opos / 64.0,
               edge->pos / 64.0,
