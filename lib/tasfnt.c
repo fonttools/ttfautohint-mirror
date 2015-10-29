@@ -76,13 +76,14 @@ TA_sfnt_split_into_SFNT_tables(SFNT* sfnt,
 
     /* ignore tables which we are going to create by ourselves, */
     /* or which would become invalid otherwise */
-    else if (tag == TTAG_fpgm
-             || tag == TTAG_prep
-             || tag == TTAG_cvt
+    else if (tag == TTAG_cvt
+             || tag == TTAG_fpgm
+             || tag == TTAG_gasp
              || tag == TTAG_hdmx
-             || tag == TTAG_VDMX
              || tag == TTAG_LTSH
-             || tag == TTAG_gasp)
+             || tag == TTAG_prep
+             || tag == TTAG_TTFA
+             || tag == TTAG_VDMX)
       continue;
 
     else if (tag == TTAG_DSIG)
