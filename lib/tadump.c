@@ -64,10 +64,11 @@ TA_font_dump_parameters(FONT* font,
   if (format)
   {
     s = sdscat(s, "TTF_autohint parameters\n"
-                  "=======================\n"
-                  "\n");
+                  "=======================\n");
     width = 33;
   }
+
+  s = sdscat(s, "\n");
 
   if (font->dehint)
   {
@@ -129,13 +130,6 @@ TA_font_dump_parameters(FONT* font,
     goto Exit;
   }
 
-  /* show control instructions line by line */
-  if (!format)
-  {
-    eol = "";
-    prev_eol = "; \\\n";
-  }
-
   if (*ds)
   {
     char* token;
@@ -143,7 +137,16 @@ TA_font_dump_parameters(FONT* font,
 
 
     token = strtok_r(ds, "\n", &saveptr);
-    DUMPSTR("control-instructions", token);
+    if (format)
+      DUMPSTR("control-instructions", token);
+    else
+    {
+      DUMPSTR("control-instructions", "\\");
+      eol = "";
+      /* show control instructions line by line */
+      DUMPSTRX(token);
+      prev_eol = "; \\\n";
+    }
 
     for (;;)
     {

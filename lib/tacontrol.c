@@ -674,7 +674,7 @@ TA_control_build_tree(FONT* font)
           s = control_show_line(font, &d);
           if (s)
           {
-            fprintf(stderr, "Control instruction %s ignored.\n", s);
+            fprintf(stderr, "Control instruction `%s' ignored.\n", s);
             sdsfree(s);
           }
 
