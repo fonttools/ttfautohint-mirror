@@ -310,7 +310,7 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
   TA_LOG(("Table of points:\n"));
 
   if (hints->num_points)
-    TA_LOG(("  index  hedge  hseg  vedge  vseg  flags"
+    TA_LOG(("  index  hedge  hseg  flags"
             "  xorg  yorg  xscale  yscale   xfit    yfit\n"));
   else
     TA_LOG(("  (none)\n"));
@@ -318,22 +318,19 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
   for (point = points; point < limit; point++)
   {
     int point_idx = TA_INDEX_NUM(point, points);
-    int segment_idx_0 = ta_get_segment_index(hints, point_idx, 0);
     int segment_idx_1 = ta_get_segment_index(hints, point_idx, 1);
 
-    char buf1[16], buf2[16], buf3[16], buf4[16];
+    char buf1[16], buf2[16];
 
 
-    TA_LOG(("  %5d  %5s %5s  %5s %5s    %c  "
+    /* we don't show vertical edges since they are never used */
+    TA_LOG(("  %5d  %5s %5s  %s "
             " %5d %5d %7.2f %7.2f %7.2f %7.2f\n",
             point_idx,
             ta_print_idx(buf1,
                          ta_get_edge_index(hints, segment_idx_1, 1)),
             ta_print_idx(buf2, segment_idx_1),
-            ta_print_idx(buf3,
-                         ta_get_edge_index(hints, segment_idx_0, 0)),
-            ta_print_idx(buf4, segment_idx_0),
-            (point->flags & TA_FLAG_WEAK_INTERPOLATION) ? 'w' : '-',
+            (point->flags & TA_FLAG_WEAK_INTERPOLATION) ? "weak" : " -- ",
 
             point->fx,
             point->fy,
