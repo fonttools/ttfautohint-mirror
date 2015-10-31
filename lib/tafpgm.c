@@ -732,8 +732,9 @@ static const unsigned char FPGM(bci_strong_stem_width_b) [] =
     PUSHB_1,
       bci_get_best_width,
     LOOPCALL,
-
+    /* clean up stack */
     POP, /* s: width dist */
+
     DUP,
     PUSHB_1,
       sal_ref,
@@ -957,6 +958,7 @@ static const unsigned char FPGM(bci_cvt_rescale_range) [] =
   WS, /* s: cvt_start_idx num_cvt bci_cvt_rescale */
 
   LOOPCALL,
+  /* clean up stack */
   POP,
 
   PUSHB_3,
@@ -1270,6 +1272,7 @@ static const unsigned char FPGM(bci_blue_round_range) [] =
 
   EIF,
   LOOPCALL,
+  /* clean up stack */
   POP,
 
   ENDF,
@@ -2895,6 +2898,8 @@ static const unsigned char FPGM(bci_shift_subglyph_a) [] =
     1,
   SZP2, /* set zp2 to normal zone 1 */
   LOOPCALL,
+  /* clean up stack */
+  POP,
 
 };
 
