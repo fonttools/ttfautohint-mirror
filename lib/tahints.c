@@ -273,11 +273,23 @@ ta_get_segment_index(TA_GlyphHints hints,
     }
     else
     {
-      if (point >= segment->first || point <= segment->last)
-        break;
+      TA_Point p = segment->first;
+
+
+      for (;;)
+      {
+        if (point == p)
+          goto Exit;
+
+        if (p == segment->last)
+          break;
+
+        p = p->next;
+      }
     }
   }
 
+Exit:
   if (segment == limit)
     return -1;
 
