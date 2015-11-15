@@ -59,6 +59,8 @@ typedef struct TA_LatinBlueRec_
 {
   TA_WidthRec ref;
   TA_WidthRec shoot;
+  FT_Pos ascender;
+  FT_Pos descender;
   FT_UInt flags;
 } TA_LatinBlueRec, *TA_LatinBlue;
 

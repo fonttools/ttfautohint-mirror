@@ -291,6 +291,8 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
     const char* p = &ta_blue_strings[bs->string];
     FT_Pos* blue_ref;
     FT_Pos* blue_shoot;
+    FT_Pos ascender;
+    FT_Pos descender;
 
 
 #ifdef TA_DEBUG
@@ -342,6 +344,8 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
 
     num_flats = 0;
     num_rounds = 0;
+    ascender = 0;
+    descender = 0;
 
     while (*p)
     {
@@ -403,22 +407,32 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
           if (TA_LATIN_IS_TOP_BLUE(bs))
           {
             for (pp = first; pp <= last; pp++)
+            {
               if (best_point < 0
                   || points[pp].y > best_y)
               {
                 best_point = pp;
                 best_y = points[pp].y;
+                ascender = TA_MAX(ascender, best_y + y_offset);
               }
+              else
+                descender = TA_MIN(descender, points[pp].y + y_offset);
+            }
           }
           else
           {
             for (pp = first; pp <= last; pp++)
+            {
               if (best_point < 0
                   || points[pp].y < best_y)
               {
                 best_point = pp;
                 best_y = points[pp].y;
+                descender = TA_MIN(descender, best_y + y_offset);
               }
+              else
+                ascender = TA_MAX(ascender, points[pp].y + y_offset);
+            }
           }
 
           if (best_point != old_best_point)
@@ -786,6 +800,9 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
       }
     }
 
+    blue->ascender = ascender;
+    blue->descender = descender;
+
     blue->flags = 0;
     if (TA_LATIN_IS_TOP_BLUE(bs))
       blue->flags |= TA_LATIN_BLUE_TOP;
@@ -1011,18 +1028,52 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
       {
         if (dim == TA_DIMENSION_VERT)
         {
-          scale = FT_MulDiv(scale, fitted, scaled);
+          FT_Pos max_height;
+          FT_Pos dist;
+          FT_Fixed new_scale;
 
-          TA_LOG_GLOBAL((
-            "ta_latin_metrics_scale_dim:"
-            " x height alignment (style `%s'):\n"
-            "                           "
-            " vertical scaling changed from %.4f to %.4f (by %d%%)\n"
-            "\n",
-            ta_style_names[metrics->root.style_class->style],
-            axis->org_scale / 65536.0,
-            scale / 65536.0,
-            (fitted - scaled) * 100 / scaled));
+
+          new_scale = FT_MulDiv(scale, fitted, scaled);
+
+          /* the scaling should not change the result by more than two pixels */
+          max_height = metrics->units_per_em;
+
+          for (nn = 0; nn < Axis->blue_count; nn++)
+          {
+            max_height = TA_MAX(max_height, Axis->blues[nn].ascender);
+            max_height = TA_MAX(max_height, -Axis->blues[nn].descender);
+          }
+
+          dist = TA_ABS(FT_MulFix(max_height, new_scale - scale));
+          dist &= ~127;
+
+          if (dist == 0)
+          {
+            scale = new_scale;
+
+            TA_LOG_GLOBAL((
+              "ta_latin_metrics_scale_dim:"
+              " x height alignment (style `%s'):\n"
+              "                           "
+              " vertical scaling changed from %.4f to %.4f (by %d%%)\n"
+              "\n",
+              ta_style_names[metrics->root.style_class->style],
+              axis->org_scale / 65536.0,
+              scale / 65536.0,
+              (fitted - scaled) * 100 / scaled));
+          }
+#ifdef TA_DEBUG
+          else
+          {
+            TA_LOG_GLOBAL((
+              "ta_latin_metrics_scale_dim:"
+              " x height alignment (style `%s'):\n"
+              "                           "
+              " excessive vertical scaling abandoned\n"
+              "\n",
+              ta_style_names[metrics->root.style_class->style]));
+          }
+#endif
         }
       }
     }

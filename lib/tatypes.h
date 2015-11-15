@@ -88,6 +88,9 @@ extern void* _ta_debug_hints;
 #endif /* !TA_DEBUG */
 
 
+#define TA_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define TA_MAX(a, b) ((a) > (b) ? (a) : (b))
+
 #define TA_ABS(a) ((a) < 0 ? -(a) : (a))
 
 /* from file `ftconfig.h' (2015-03-02) from FreeType */
