@@ -27,6 +27,8 @@ AM_SILENT_RULES([yes])
 
 AC_USE_SYSTEM_EXTENSIONS
 
+AC_PROG_LN_S
+
 AC_PROG_CPP
 AC_PROG_CC
 AC_PROG_CXX
@@ -227,6 +229,17 @@ if test x"$with_doc" != x"no"; then
 fi
 
 AM_CONDITIONAL([WITH_DOC], [test x"$with_doc" != x"no"])
+
+# pandoc (currently version 1.15.2.1) doesn't have the equivalent to
+# a compiler's `-I' command line option to make it search image files
+# in specified directories; for this reason, we create symlinks.
+AC_CONFIG_COMMANDS([doc/img/create-links],
+                   [abs_top_srcdir=`(cd "$srcdir"; pwd)`
+                    abs_top_builddir=`pwd`
+                    if test "$abs_top_srcdir" != "$abs_top_builddir"; then
+                      cd doc \
+                      && $LN_S "$abs_top_srcdir"/doc/img/*.png img
+                    fi])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile

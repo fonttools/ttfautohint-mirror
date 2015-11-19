@@ -101,16 +101,16 @@ EXTRA_DIST = \
 
 tablue.c: tablue.dat tablue.cin
 	$(AM_V_GEN)rm -f $@-t $@ \
-	&& perl afblue.pl $(srcdir)/tablue.dat \
-	                  < $(srcdir)/tablue.cin \
-	                  > $@-t \
+	&& perl $(srcdir)/afblue.pl $(srcdir)/tablue.dat \
+	                            < $(srcdir)/tablue.cin \
+	                            > $@-t \
 	&& mv $@-t $@
 
 tablue.h: tablue.dat tablue.hin
 	$(AM_V_GEN)rm -f $@-t $@ \
-	&& perl afblue.pl $(srcdir)/tablue.dat \
-	                  < $(srcdir)/tablue.hin \
-	                  > $@-t \
+	&& perl $(srcdir)/afblue.pl $(srcdir)/tablue.dat \
+	                            < $(srcdir)/tablue.hin \
+	                            > $@-t \
 	&& mv $@-t $@
 
 TA_V_FLEX = $(TA_V_FLEX_@AM_V@)
@@ -120,7 +120,7 @@ TA_V_FLEX_0 = @echo "  FLEX    " $@;
 # we use `touch' to make the created .h file newer than the created .c file
 
 tacontrol-flex.c tacontrol-flex.h: tacontrol.flex
-	$(TA_V_FLEX)$(FLEX) tacontrol.flex \
+	$(TA_V_FLEX)$(FLEX) $(srcdir)/tacontrol.flex \
 	&& touch tacontrol-flex.h
 tacontrol-flex.h: tacontrol-flex.c
 
@@ -129,7 +129,7 @@ TA_V_BISON_ = $(TA_V_BISON_@AM_DEFAULT_V@)
 TA_V_BISON_0 = @echo "  BISON   " $@;
 
 tacontrol-bison.c tacontrol-bison.h: tacontrol.bison
-	$(TA_V_BISON)$(BISON) tacontrol.bison \
+	$(TA_V_BISON)$(BISON) $(srcdir)/tacontrol.bison \
 	&& touch tacontrol-bison.h
 tacontrol-bison.h: tacontrol-bison.c
 

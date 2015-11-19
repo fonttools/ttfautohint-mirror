@@ -77,7 +77,7 @@ endif
 ttfautohint.1: $(top_srcdir)/frontend/main.cpp \
                $(top_srcdir)/lib/ttfautohint.h \
                $(top_srcdir)/lib/ttfautohint-scripts.h \
-               $(top_srcdir)/.version
+               $(top_builddir)/.version
 	$(MAKE) $(AM_MAKEFLAGS) ttfautohint$(EXEEXT)
 	$(HELP2MAN) --output=$@ \
 	            --no-info \
@@ -87,7 +87,7 @@ ttfautohint.1: $(top_srcdir)/frontend/main.cpp \
 ttfautohintGUI.1: $(top_srcdir)/frontend/main.cpp \
                   $(top_srcdir)/lib/ttfautohint.h \
                   $(top_srcdir)/lib/ttfautohint-scripts.h \
-                  $(top_srcdir)/.version
+                  $(top_builddir)/.version
 	$(MAKE) $(AM_MAKEFLAGS) ttfautohintGUI$(EXEEXT)
 	$(HELP2MAN) --output=$@ \
 	            --no-info \

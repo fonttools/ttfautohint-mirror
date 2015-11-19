@@ -97,13 +97,12 @@ if WITH_DOC
                           $(top_srcdir)/configure.ac
 	  cd $(top_builddir)/frontend \
 	    && $(MAKE) $(AM_MAKEFLAGS) ttfautohintGUI$(EXEEXT)
-	  -mkdir img 2> /dev/null
 	  $(SHELL) $(srcdir)/make-snapshot.sh \
 	             $(top_builddir)/frontend/ttfautohintGUI$(EXEEXT) $@
 
   ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) \
                     ttfautohint-css.html ttfautohint-js.html \
-                    template.html $(top_srcdir)/.version
+                    template.html $(top_builddir)/.version
 	  $(PANDOC) --smart \
 	            --template=$(srcdir)/template.html \
 	            --default-image-extension=".svg" \
@@ -115,7 +114,7 @@ if WITH_DOC
 	            --output=$@ $<
 
   ttfautohint.pdf: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGPDF) \
-                   template.tex $(top_srcdir)/.version
+                   template.tex $(top_builddir)/.version
 	  TEXINPUTS="$(srcdir);" \
 	  $(PANDOC) --smart \
 	            --latex-engine=$(LATEX) \
@@ -138,12 +137,12 @@ else
 	  @echo 1>&2 "         please install ImageMagick's \`import' tool and reconfigure"
 
   ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) \
-                    ttfautohint-css.html template.html $(top_srcdir)/.version
+                    ttfautohint-css.html template.html $(top_builddir)/.version
 	  @echo 1>&2 "warning: can't generate \`$@'"
-	  @echo 1>&2 "         pleasae install pandoc and reconfigure"
+	  @echo 1>&2 "         please install pandoc and reconfigure"
 
   ttfautohint.pdf: $ttfautohint.txt $(DOCIMGPNG) $(DOCIMGPDF) \
-                   template.tex $(top_srcdir)/.version
+                   template.tex $(top_builddir)/.version
 	  @echo 1>&2 "warning: can't generate \`$@'"
 	  @echo 1>&2 "         please install pdftex and pandoc, then reconfigure"
 endif
