@@ -238,7 +238,7 @@ AC_CONFIG_COMMANDS([doc/img/create-links],
                     abs_top_builddir=`pwd`
                     if test "$abs_top_srcdir" != "$abs_top_builddir"; then
                       cd doc \
-                      && $LN_S "$abs_top_srcdir"/doc/img/*.png img
+                      && $LN_S "$abs_top_srcdir"/doc/img/* img
                     fi])
 
 AC_CONFIG_HEADERS([config.h])
