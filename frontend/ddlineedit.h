@@ -17,7 +17,10 @@
 #include <config.h>
 #include "ttlineedit.h"
 
-#include <QtGui>
+#include <QDragEnterEvent>
+#include <QFileInfo>
+#include <QMimeData>
+#include <QUrl>
 
 enum Drag_Drop_File_Type
 {

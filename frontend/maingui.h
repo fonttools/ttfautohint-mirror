@@ -16,7 +16,24 @@
 
 #include <config.h>
 
-#include <QtGui>
+#include <QAction>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QCompleter>
+#include <QDateTime>
+#include <QDesktopWidget>
+#include <QFileDialog>
+#include <QFileSystemModel>
+#include <QGridLayout>
+#include <QLabel>
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QProgressDialog>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QStatusBar>
+
 #include "ddlineedit.h"
 #include "ttlineedit.h"
 

@@ -16,7 +16,7 @@
 
 #include <config.h>
 
-#include <QtGui>
+#include <QLineEdit>
 
 class Tooltip_Line_Edit
 : public QLineEdit
