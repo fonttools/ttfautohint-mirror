@@ -1,3 +1,17 @@
+Version 1.5 (XXXX-XX-XX)
+------------------------
+
+* Support for Khmer script.
+
+* ttfautohintGUI can now be compiled with Qt5.
+
+* Bug fix: Too many delta control instructions for a single glyph caused
+  a bytecode stack overflow, making the MS rasterizer ignore all hinting
+  instructions for this glyph.
+
+* Bug fix: Don't create multiple `TTFA` tables in font.
+
+
 Version 1.4.1 (2015-Oct-17)
 ---------------------------
 

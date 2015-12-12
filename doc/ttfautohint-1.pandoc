@@ -700,6 +700,7 @@ Table: script-specific standard characters of the 'latin' writing system
   `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
               'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
+  `khmer`     '០', U+17E0, KHMER DIGIT ZERO
   `lao`       '໐', U+0ED0, LAO DIGIT ZERO
   `latn`      'o', U+006F, LATIN SMALL LETTER O
               'O', U+004F, LATIN CAPITAL LETTER O
@@ -715,6 +716,8 @@ Table: standard characters of the 'latin' writing system, special scripts
 
     Script    Standard characters
   ----------  ---------------------
+  `khms`      '᧡', U+19E1, KHMER SYMBOL MUOY KOET
+              '᧪', U+19EA, KHMER SYMBOL DAP KOET
   `latb`      'ₒ', U+2092, LATIN SUBSCRIPT SMALL LETTER O
               '₀', U+2080, SUBSCRIPT ZERO
   `latp`      'ᵒ', U+1D52, MODIFIER LETTER SMALL O
@@ -806,6 +809,27 @@ Table: `hebr` blue zones
   1     top of letters                         ב ד ה ח ך כ ם ס
   2     bottom of letters                      ב ט כ ם ס צ
   3     bottom of descenders of letters        ק ך ן ף ץ
+
+
+Table: `khmr` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ខ ទ ន ឧ ឩ ា
+  2     top of subscript cluster components    ក្ក ក្ខ ក្គ ក្ថ
+  3     bottom of letters                      ខ ឃ ច ឋ ប ម យ ឲ
+  4     bottom of descenders                   ត្រ រៀ ឲ្យ អឿ
+  5     bottom of large descenders             ន្ត្រៃ ង្ខ្យ ក្បៀ ច្រៀ ន្តឿ ល្បឿ
+
+
+Table: `khms` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of symbols for waxing              ᧠ ᧡
+  2     bottom of symbols for waning           ᧶ ᧹
+
+Khmer symbols are used for lunar dates.
 
 
 Table: `lao` blue zones

@@ -1,6 +1,6 @@
 % For non-ASCII characters, this template only works with luatex or XeTeX.
-% Arabic, Devanagari, Telugu, Lao, and Thai support currently works with
-% XeTeX only.
+% Arabic, Devanagari, Khmer, Lao, Telugu, and Thai support currently works
+% with XeTeX only.
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$%
                $if(lang)$$lang$,$endif$%
@@ -12,18 +12,25 @@
 \usepackage{libertine}
 
 \ifxetex
-  \usepackage{ucharclasses}
-
+  % with newer releases of `fontspec', fonts should be defined before
+  % including `ucharclasses'
   \newfontfamily{\arabicfont}[Script=Arabic]{Amiri}
   \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
+  \newfontfamily{\khmerfont}[Script=Khmer]{KhmerOS}
   \newfontfamily{\laofont}[Script=Lao]{NotoSerifLao}
   \newfontfamily{\telugufont}[Script=Telugu]{Pothana2000}
   \newfontfamily{\thaifont}[Script=Thai]{FreeSerif}
+
+  \usepackage{ucharclasses}
 
   \setTransitionTo{Arabic}{\begingroup\arabicfont}
   \setTransitionFrom{Arabic}{\endgroup}
   \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
   \setTransitionFrom{Devanagari}{\endgroup}
+  \setTransitionTo{Khmer}{\begingroup\khmerfont}
+  \setTransitionFrom{Khmer}{\endgroup}
+  \setTransitionTo{KhmerSymbols}{\begingroup\khmerfont}
+  \setTransitionFrom{KhmerSymbols}{\endgroup}
   \setTransitionTo{Lao}{\begingroup\laofont}
   \setTransitionFrom{Lao}{\endgroup}
   \setTransitionTo{Telugu}{\begingroup\telugufont}

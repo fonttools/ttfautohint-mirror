@@ -9,6 +9,7 @@ History\
 /^[{}]/ d
 
 /lat[bp]_nonbase_uniranges/ d
+/khms_nonbase_uniranges/ d
 
 s|.*ta_\(.*\)_nonbase_uniranges.*|Table: `\1` non-base characters\
 \
