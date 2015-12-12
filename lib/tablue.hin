@@ -23,31 +23,34 @@
   /* an auxiliary macro to decode a UTF-8 character -- since we only use */
   /* hard-coded, self-converted data, no error checking is performed */
 #define GET_UTF8_CHAR(ch, p) \
-  ch = (unsigned char)*p++; \
-  if (ch >= 0x80) \
+  do \
   { \
-    FT_UInt len; \
+    ch = (unsigned char)*p++; \
+    if (ch >= 0x80) \
+    { \
+      FT_UInt len_; \
 \
 \
-    if (ch < 0xE0) \
-    { \
-      len = 1; \
-      ch &= 0x1F; \
-    } \
-    else if (ch < 0xF0) \
-    { \
-      len = 2; \
-      ch &= 0x0F; \
-    } \
-    else \
-    { \
-      len = 3;\
-      ch &= 0x07; \
-    } \
+      if (ch < 0xE0) \
+      { \
+        len_ = 1; \
+        ch &= 0x1F; \
+      } \
+      else if (ch < 0xF0) \
+      { \
+        len_ = 2; \
+        ch &= 0x0F; \
+      } \
+      else \
+      { \
+        len_ = 3;\
+        ch &= 0x07; \
+      } \
 \
-    for (; len > 0; len--) \
-      ch = (ch << 6) | (*p++ & 0x3F); \
-  }
+      for (; len_ > 0; len_--) \
+        ch = (ch << 6) | (*p++ & 0x3F); \
+    } \
+  } while (0)
 
 
 /****************************************************************
@@ -88,9 +91,10 @@ extern const char ta_blue_strings[];
 /* blue string can't be used in more than a single writing system, which */
 /* is a safe bet. */
 #define TA_BLUE_PROPERTY_LATIN_TOP (1U << 0) /* must have value 1 */
-#define TA_BLUE_PROPERTY_LATIN_NEUTRAL (1U << 1)
-#define TA_BLUE_PROPERTY_LATIN_X_HEIGHT (1U << 2)
-#define TA_BLUE_PROPERTY_LATIN_LONG (1U << 3)
+#define TA_BLUE_PROPERTY_LATIN_SUB_TOP (1U << 1)
+#define TA_BLUE_PROPERTY_LATIN_NEUTRAL (1U << 2)
+#define TA_BLUE_PROPERTY_LATIN_X_HEIGHT (1U << 3)
+#define TA_BLUE_PROPERTY_LATIN_LONG (1U << 4)
 
 
 #define TA_BLUE_STRINGSET_MAX_LEN @TA_BLUE_STRINGSET_MAX_LEN@

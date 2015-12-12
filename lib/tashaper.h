@@ -1,4 +1,4 @@
-/* taharfbuzz.h */
+/* tashaper.h */
 
 /*
  * Copyright (C) 2014-2015 by Werner Lemberg.
@@ -17,8 +17,8 @@
 
 /* heavily modified 2014 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TAHARFBUZZ_H__
-#define __TAHARFBUZZ_H__
+#ifndef __TASHAPER_H__
+#define __TASHAPER_H__
 
 
 #include <ft2build.h>
@@ -37,16 +37,30 @@ extern size_t feature_tags_size;
 
 
 FT_Error
-ta_get_coverage(TA_FaceGlobals globals,
-                TA_StyleClass style_class,
-                FT_UShort* gstyles);
+ta_shaper_get_coverage(TA_FaceGlobals globals,
+                       TA_StyleClass style_class,
+                       FT_UShort* gstyles);
 
-FT_Error
-ta_get_char_index(TA_StyleMetrics metrics,
-                  FT_ULong charcode,
-                  FT_ULong *codepoint,
-                  FT_Long *y_offset);
+void*
+ta_shaper_buf_create(FT_Face face);
 
-#endif /* __TAHARFBUZZ_H__ */
+void
+ta_shaper_buf_destroy(FT_Face face,
+                      void* buf);
 
-/* end of taharfbuzz.h */
+const char*
+ta_shaper_get_cluster(const char* p,
+                      TA_StyleMetrics metrics,
+                      void* buf_,
+                      unsigned int* count);
+
+FT_ULong
+ta_shaper_get_elem(TA_StyleMetrics metrics,
+                   void* buf_,
+                   unsigned int idx,
+                   FT_Long* x_advance,
+                   FT_Long* y_offset);
+
+#endif /* __TASHAPER_H__ */
+
+/* end of tashaper.h */

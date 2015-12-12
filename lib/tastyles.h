@@ -31,7 +31,7 @@
  *
  * Note that styles using `TA_COVERAGE_DEFAULT' should always
  * come after styles with other coverages.  Also note that
- * fallback scripts only use `AF_COVERAGE_DEFAULT' for its
+ * fallback scripts only use `TA_COVERAGE_DEFAULT' for its
  * style.
  *
  * Example:
@@ -110,6 +110,20 @@ STYLE(hebr_dflt, HEBR_DFLT,
       TA_WRITING_SYSTEM_LATIN,
       TA_SCRIPT_HEBR,
       TA_BLUE_STRINGSET_HEBR,
+      TA_COVERAGE_DEFAULT)
+
+STYLE(khmr_dflt, KHMR_DFLT,
+      "Khmer default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_KHMR,
+      TA_BLUE_STRINGSET_KHMR,
+      TA_COVERAGE_DEFAULT)
+
+STYLE(khms_dflt, KHMS_DFLT,
+      "Khmer Symbols default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_KHMS,
+      TA_BLUE_STRINGSET_KHMS,
       TA_COVERAGE_DEFAULT)
 
 STYLE(lao_dflt, LAO_DFLT,

@@ -35,63 +35,74 @@
 SCRIPT(arab, ARAB,
        "Arabic",
        HB_SCRIPT_ARABIC,
-       0x644, 0x62D, 0x640) /* ل ح ـ */
+       "\xD9\x84 \xD8\xAD \xD9\x80") /* ل ح ـ */
 
 SCRIPT(cyrl, CYRL,
        "Cyrillic",
        HB_SCRIPT_CYRILLIC,
-       0x43E, 0x41E, 0x0) /* о О */
+       "\xD0\xBE \xD0\x9E") /* о О */
 
 SCRIPT(deva, DEVA,
        "Devanagari",
        HB_SCRIPT_DEVANAGARI,
-       0x920, 0x935, 0x91F) /* ठ व ट */
+       "\xE0\xA4\xA0 \xE0\xA4\xB5 \xE0\xA4\x9F") /* ठ व ट */
 
 SCRIPT(grek, GREK,
        "Greek",
        HB_SCRIPT_GREEK,
-       0x3BF, 0x39F, 0x0) /* ο Ο */
+       "\xCE\xBF \xCE\x9F") /* ο Ο */
 
 SCRIPT(hebr, HEBR,
        "Hebrew",
        HB_SCRIPT_HEBREW,
-       0x5DD, 0x0, 0x0) /* ם */
+       "\xD7\x9D") /* ם */
+
+/* only digit zero has a simple shape in the Khmer script */
+SCRIPT(khmr, KHMR,
+       "Khmer",
+       HB_SCRIPT_KHMER,
+       "\xE1\x9F\xA0") /* ០ */
+
+SCRIPT(khms, KHMS,
+       "Khmer Symbols",
+       HB_SCRIPT_INVALID,
+       "\xE1\xA7\xA1 \xE1\xA7\xAA") /* ᧡ ᧪ */
 
 /* only digit zero has a simple shape in the Lao script */
 SCRIPT(lao, LAO,
        "Lao",
        HB_SCRIPT_LAO,
-       0xED0, 0x0, 0x0) /* ໐ */
+       "\xE0\xBB\x90") /* ໐ */
 
 SCRIPT(latn, LATN,
        "Latin",
        HB_SCRIPT_LATIN,
-       'o', 'O', '0')
+       "o O 0")
 
 SCRIPT(latb, LATB,
        "Latin Subscript Fallback",
        HB_SCRIPT_INVALID,
-       0x2092, 0x2080, 0x0) /* ₒ ₀ */
+       "\xE2\x82\x92 \xE2\x82\x80") /* ₒ ₀ */
 
 SCRIPT(latp, LATP,
        "Latin Superscript Fallback",
        HB_SCRIPT_INVALID,
-       0x1D52, 0x1D3C, 0x2070) /* ᵒ ᴼ ⁰ */
+       "\xE1\xB5\x92 \xE1\xB4\xBC \xE2\x81\xB0") /* ᵒ ᴼ ⁰ */
 
 /* there are no simple forms for letters; we thus use two digit shapes */
 SCRIPT(telu, TELU,
        "Telugu",
        HB_SCRIPT_TELUGU,
-       0xC66, 0xC67, 0x0) /* ౦ ౧ */
+       "\xE0\xB1\xA6 \xE0\xB1\xA7") /* ౦ ౧ */
 
 SCRIPT(thai, THAI,
        "Thai",
        HB_SCRIPT_THAI,
-       0xE32, 0xE45, 0xE50) /* า ๅ ๐ */
+       "\xE0\xB8\xB2 \xE0\xB9\x85 \xE0\xB9\x90") /* า ๅ ๐ */
 
 SCRIPT(none, NONE,
        "no script",
        HB_SCRIPT_INVALID,
-       0x0, 0x0, 0x0)
+       "")
 
 /* end of ttfautohint-scripts.h */

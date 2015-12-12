@@ -25,13 +25,13 @@
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
+#define SCRIPT(s, S, d, h, ss) \
           extern const TA_Script_UniRangeRec ta_ ## s ## _uniranges[];
 
 #include "ttfautohint-scripts.h"
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
+#define SCRIPT(s, S, d, h, ss) \
           extern const TA_Script_UniRangeRec ta_ ## s ## _nonbase_uniranges[];
 
 #include "ttfautohint-scripts.h"

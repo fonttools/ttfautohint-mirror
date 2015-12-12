@@ -12,7 +12,7 @@
  * with the ttfautohint library.
  */
 
-#include "taharfbuzz.h"
+#include "tashaper.h"
 
 
 #undef COVERAGE

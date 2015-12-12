@@ -24,7 +24,6 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
   FT_Error error;
   FT_Face face = sfnt->face;
   FT_ULong glyph_index;
-  FT_Long y_offset;
   FT_Int32 load_flags;
 
 
@@ -50,10 +49,16 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
 
     TA_StyleMetricsRec dummy;
 
+    void* shaper_buf;
+    const char* p;
+
 
     /* we don't have a `TA_Loader' object yet */
     dummy.globals = globals;
     dummy.style_class = style_class;
+
+    p = script_class->standard_charstring;
+    shaper_buf = ta_shaper_buf_create(face);
 
     /*
      * We check more than a single standard character to catch features
@@ -61,28 +66,32 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
      * letters by definition, or other features that mainly operate on
      * numerals.
      */
-    ta_get_char_index(&dummy,
-                      script_class->standard_char1,
-                      &glyph_index,
-                      &y_offset);
-    if (!glyph_index)
+
+    glyph_index = 0;
+    while (*p)
     {
-      if (script_class->standard_char2)
-      {
-        ta_get_char_index(&dummy,
-                          script_class->standard_char2,
-                          &glyph_index,
-                          &y_offset);
-        if (!glyph_index)
-        {
-          if (script_class->standard_char3)
-            ta_get_char_index(&dummy,
-                              script_class->standard_char3,
-                              &glyph_index,
-                              &y_offset);
-        }
-      }
+      unsigned int num_idx;
+
+
+      while (*p == ' ')
+        p++;
+
+      /* reject input that maps to more than a single glyph */
+      p = ta_shaper_get_cluster(p, &dummy, shaper_buf, &num_idx);
+      if (num_idx > 1)
+        continue;
+
+      /* otherwise exit loop if we have a result */
+      glyph_index = ta_shaper_get_elem(&dummy,
+                                       shaper_buf,
+                                       0,
+                                       NULL,
+                                       NULL);
+      if (glyph_index)
+        break;
     }
+
+    ta_shaper_buf_destroy(face, shaper_buf);
 
     if (!glyph_index)
     {

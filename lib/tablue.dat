@@ -23,9 +23,8 @@
 // labels separated by whitespace and followed by a colon (everything in a
 // single line); the first label gives the name of the enumeration template,
 // the second the name of the array template, and the third the name of the
-// `maximum' template, holding the size of the largest array element.  The
-// script then fills the corresponding templates (indicated by `@'
-// characters around the name).
+// `maximum' template.  The script then fills the corresponding templates
+// (indicated by `@' characters around the name).
 //
 // A section contains one or more data records.  Each data record consists
 // of two or more lines.  The first line holds the enumeration name, and the
@@ -33,15 +32,20 @@
 //
 // There are two possible representations for array data.
 //
-// - A string of characters in UTF-8 encoding enclosed in double quotes,
-//   using C syntax.  There can be only one string per line, thus the
-//   starting and ending double quote must be the first and last character
-//   in the line, respectively, ignoring whitespace before and after the
-//   string.  Space characters within the string are ignored too.  If there
-//   are multiple strings (in multiple lines), they are concatenated to a
-//   single string.  In the output, a string gets represented as a series of
-//   singles bytes, followed by a zero byte.  The enumeration values simply
-//   hold byte offsets to the start of the corresponding strings.
+// - A string of characters or character clusters (for example, representing
+//   Aksharas, Devanagari syllables) in UTF-8 encoding enclosed in double
+//   quotes, using C syntax, where the elements are separated by spaces.
+//   There can be only one string per line, thus the starting and ending
+//   double quote must be the first and last character in the line,
+//   respectively, ignoring whitespace before and after the string.  If
+//   there are multiple strings (in multiple lines), they are concatenated
+//   to a single string.  In the output, a string gets represented as a
+//   series of singles bytes, followed by a zero byte.  The enumeration
+//   values simply hold byte offsets to the start of the corresponding
+//   strings.
+//
+//   For strings, the `maximum' template holds the maximum number of
+//   non-space characters in all strings.
 //
 // - Data blocks enclosed in balanced braces, which get copied verbatim and
 //   which can span multiple lines.  The opening brace of a block must be
@@ -49,6 +53,9 @@
 //   brace the last (ignoring whitespace also).  The script appends a comma
 //   character after each block and counts the number of blocks to set the
 //   enumeration values.
+//
+//   For data blocks, the `maximum' template holds the maximum number of
+//   array elements.
 //
 // A section can contain either strings only or data blocks only.
 //
@@ -83,16 +90,14 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "ـ"
 
   TA_BLUE_STRING_CYRILLIC_CAPITAL_TOP
-    "БВЕПЗОСЭ"
+    "Б В Е П З О С Э"
   TA_BLUE_STRING_CYRILLIC_CAPITAL_BOTTOM
-    "БВЕШЗОСЭ"
+    "Б В Е Ш З О С Э"
   TA_BLUE_STRING_CYRILLIC_SMALL
-    "хпншезос"
+    "х п н ш е з о с"
   TA_BLUE_STRING_CYRILLIC_SMALL_DESCENDER
-    "руф"
+    "р у ф"
 
-  // we separate the letters with spaces to avoid ligatures;
-  // this is just for convenience to simplify reading
   TA_BLUE_STRING_DEVANAGARI_BASE
     "क न म उ छ ट ठ ड"
   TA_BLUE_STRING_DEVANAGARI_TOP
@@ -106,22 +111,38 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "ु ृ"
 
   TA_BLUE_STRING_GREEK_CAPITAL_TOP
-    "ΓΒΕΖΘΟΩ"
+    "Γ Β Ε Ζ Θ Ο Ω"
   TA_BLUE_STRING_GREEK_CAPITAL_BOTTOM
-    "ΒΔΖΞΘΟ"
+    "Β Δ Ζ Ξ Θ Ο"
   TA_BLUE_STRING_GREEK_SMALL_BETA_TOP
-    "βθδζλξ"
+    "β θ δ ζ λ ξ"
   TA_BLUE_STRING_GREEK_SMALL
-    "αειοπστω"
+    "α ε ι ο π σ τ ω"
   TA_BLUE_STRING_GREEK_SMALL_DESCENDER
-    "βγημρφχψ"
+    "β γ η μ ρ φ χ ψ"
 
   TA_BLUE_STRING_HEBREW_TOP
-    "בדהחךכםס"
+    "ב ד ה ח ך כ ם ס"
   TA_BLUE_STRING_HEBREW_BOTTOM
-    "בטכםסצ"
+    "ב ט כ ם ס צ"
   TA_BLUE_STRING_HEBREW_DESCENDER
-    "קךןףץ"
+    "ק ך ן ף ץ"
+
+  TA_BLUE_STRING_KHMER_TOP
+    "ខ ទ ន ឧ ឩ ា"
+  TA_BLUE_STRING_KHMER_SUBSCRIPT_TOP
+    "ក្ក ក្ខ ក្គ ក្ថ"
+  TA_BLUE_STRING_KHMER_BOTTOM
+    "ខ ឃ ច ឋ ប ម យ ឲ"
+  TA_BLUE_STRING_KHMER_DESCENDER
+    "ត្រ រៀ ឲ្យ អឿ"
+  TA_BLUE_STRING_KHMER_LARGE_DESCENDER
+    "ន្ត្រៃ ង្ខ្យ ក្បៀ ច្រៀ ន្តឿ ល្បឿ"
+
+  TA_BLUE_STRING_KHMER_SYMBOLS_WAXING_TOP
+    "᧠ ᧡"
+  TA_BLUE_STRING_KHMER_SYMBOLS_WANING_BOTTOM
+    "᧶ ᧹"
 
   TA_BLUE_STRING_LAO_TOP
     "າ ດ ອ ມ ລ ວ ຣ ງ"
@@ -135,43 +156,41 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "ງ ຊ ຖ ຽ ໆ ຯ"
 
   TA_BLUE_STRING_LATIN_CAPITAL_TOP
-    "THEZOCQS"
+    "T H E Z O C Q S"
   TA_BLUE_STRING_LATIN_CAPITAL_BOTTOM
-    "HEZLOCUS"
+    "H E Z L O C U S"
   TA_BLUE_STRING_LATIN_SMALL_F_TOP
-    "fijkdbh"
+    "f i j k d b h"
   TA_BLUE_STRING_LATIN_SMALL
-    "xzroesc"
+    "x z r o e s c"
   TA_BLUE_STRING_LATIN_SMALL_DESCENDER
-    "pqgjy"
+    "p q g j y"
 
   // we assume that both the subscript and superscript ranges
   // don't contain oldstyle digits (actually, most fonts probably
   // have digits only in those ranges)
   TA_BLUE_STRING_LATIN_SUBS_CAPITAL_TOP
-    "₀₃₅₇₈"
+    "₀ ₃ ₅ ₇ ₈"
   TA_BLUE_STRING_LATIN_SUBS_CAPITAL_BOTTOM
-    "₀₁₂₃₈"
+    "₀ ₁ ₂ ₃ ₈"
   TA_BLUE_STRING_LATIN_SUBS_SMALL_F_TOP
-    "ᵢⱼₕₖₗ"
+    "ᵢ ⱼ ₕ ₖ ₗ"
   TA_BLUE_STRING_LATIN_SUBS_SMALL
-    "ₐₑₒₓₙₛᵥᵤᵣ"
+    "ₐ ₑ ₒ ₓ ₙ ₛ ᵥ ᵤ ᵣ"
   TA_BLUE_STRING_LATIN_SUBS_SMALL_DESCENDER
-    "ᵦᵧᵨᵩₚ"
+    "ᵦ ᵧ ᵨ ᵩ ₚ"
 
   TA_BLUE_STRING_LATIN_SUPS_CAPITAL_TOP
-    "⁰³⁵⁷ᵀᴴᴱᴼ"
+    "⁰ ³ ⁵ ⁷ ᵀ ᴴ ᴱ ᴼ"
   TA_BLUE_STRING_LATIN_SUPS_CAPITAL_BOTTOM
-    "⁰¹²³ᴱᴸᴼᵁ"
+    "⁰ ¹ ² ³ ᴱ ᴸ ᴼ ᵁ"
   TA_BLUE_STRING_LATIN_SUPS_SMALL_F_TOP
-    "ᵇᵈᵏʰʲᶠⁱ"
+    "ᵇ ᵈ ᵏ ʰ ʲ ᶠ ⁱ"
   TA_BLUE_STRING_LATIN_SUPS_SMALL
-    "ᵉᵒʳˢˣᶜᶻ"
+    "ᵉ ᵒ ʳ ˢ ˣ ᶜ ᶻ"
   TA_BLUE_STRING_LATIN_SUPS_SMALL_DESCENDER
-    "ᵖʸᵍ"
+    "ᵖ ʸ ᵍ"
 
-  // we separate the letters with spaces to avoid ligatures;
-  // this is just for convenience to simplify reading
   TA_BLUE_STRING_TELUGU_TOP
     "ఇ ఌ ఙ ఞ ణ ఱ ౯"
   TA_BLUE_STRING_TELUGU_BOTTOM
@@ -217,6 +236,14 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
 // respectively.  Only horizontal blue zones (i.e., adjusting vertical
 // coordinate values) are supported.
 //
+// Some scripts like Khmer need character composition to get all necessary
+// blue zones, since Unicode only provides an abstract data model that
+// doesn't represent all possible glyph shapes.  For such character
+// clusters, the HarfBuzz library is used to convert them into the
+// corresponding glyphs.  The largest glyph element (where `largest' can be
+// either `largest ascender' or `largest descender') then defines the
+// corresponding flat or round extremum.
+//
 // For the latin auto-hinter, the overshoot should be larger than the
 // reference for top zones, and vice versa for bottom zones.
 //
@@ -226,6 +253,21 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
 //     values.
 //
 //     If not set, take the minimum values.
+//
+//     Mutually exclusive with `LATIN_SUB_TOP'.
+//
+//   LATIN_SUB_TOP
+//     For all glyphs of a character cluster, compute the maximum flat
+//     and round coordinate values of each component, then take the
+//     smallest of the maximum values.  The idea is to get the top of
+//     subscript glyphs, as used in Khmer, for example.  Note that
+//     this mechanism doesn't work for ordinary ligatures.
+//
+//     This flags indicates a secondary blue zone: It gets removed if
+//     there is a non-LATIN_SUB_TOP blue zone at the same coordinate
+//     value (after scaling).
+//
+//     Mutually exclusive with `LATIN_TOP'.
 //
 //   LATIN_NEUTRAL
 //     Ignore round extrema and define the blue zone with flat values only.
@@ -300,6 +342,21 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_HEBREW_BOTTOM,    0                             }
     { TA_BLUE_STRING_HEBREW_DESCENDER, 0                             }
     { TA_BLUE_STRING_MAX,              0                             }
+
+  TA_BLUE_STRINGSET_KHMR
+    { TA_BLUE_STRING_KHMER_TOP,             TA_BLUE_PROPERTY_LATIN_TOP      |
+                                            TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_KHMER_SUBSCRIPT_TOP,   TA_BLUE_PROPERTY_LATIN_SUB_TOP    }
+    { TA_BLUE_STRING_KHMER_BOTTOM,          0                                 }
+    { TA_BLUE_STRING_KHMER_DESCENDER,       0                                 }
+    { TA_BLUE_STRING_KHMER_LARGE_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_MAX,                   0                                 }
+
+  TA_BLUE_STRINGSET_KHMS
+    { TA_BLUE_STRING_KHMER_SYMBOLS_WAXING_TOP,    TA_BLUE_PROPERTY_LATIN_TOP      |
+                                                  TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_KHMER_SYMBOLS_WANING_BOTTOM, 0                                 }
+    { TA_BLUE_STRING_MAX,                         0                                 }
 
   TA_BLUE_STRINGSET_LAO
     { TA_BLUE_STRING_LAO_TOP,            TA_BLUE_PROPERTY_LATIN_TOP      |

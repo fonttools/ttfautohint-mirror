@@ -13,7 +13,7 @@
  */
 
 #include "ta.h"
-#include "taharfbuzz.h"
+#include "tashaper.h"
 
 #include <locale.h>
 #include <limits.h>

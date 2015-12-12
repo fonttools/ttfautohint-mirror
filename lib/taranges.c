@@ -43,11 +43,11 @@
 /*
  * The algorithm for assigning properties and styles to the `glyph_styles'
  * array is as follows (cf. the implementation in
- * `af_face_globals_compute_style_coverage').
+ * `ta_face_globals_compute_style_coverage').
  *
- *   Walk over all scripts (as listed in `afscript.h').
+ *   Walk over all scripts (as listed in `tascript.h').
  *
- *   For a given script, walk over all styles (as listed in `afstyles.h').
+ *   For a given script, walk over all styles (as listed in `tastyles.h').
  *   The order of styles is important and should be as follows.
  *
  *   - First come styles based on OpenType features (small caps, for
@@ -198,6 +198,34 @@ const TA_Script_UniRangeRec ta_hebr_nonbase_uniranges[] =
   TA_UNIRANGE_REC(0x05C7UL, 0x05C7UL),
   TA_UNIRANGE_REC(0xFB1EUL, 0xFB1EUL),
   TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
+const TA_Script_UniRangeRec ta_khmr_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x1780UL, 0x17FFUL), /* Khmer */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_khmr_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x17B7UL, 0x17BDUL),
+  TA_UNIRANGE_REC(0x17C6UL, 0x17C6UL),
+  TA_UNIRANGE_REC(0x17C9UL, 0x17D3UL),
+  TA_UNIRANGE_REC(0x17DDUL, 0x17DDUL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
+const TA_Script_UniRangeRec ta_khms_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x19E0UL, 0x19FFUL), /* Khmer Symbols */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_khms_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0UL, 0UL)
 };
 
 

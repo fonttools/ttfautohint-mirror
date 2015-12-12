@@ -260,7 +260,7 @@ typedef const TA_WritingSystemClassRec* TA_WritingSystemClass;
  */
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
+#define SCRIPT(s, S, d, h, ss) \
           TA_SCRIPT_ ## S,
 
 /* The list of known scripts. */
@@ -291,9 +291,7 @@ typedef struct TA_ScriptClassRec_
   TA_Script_UniRange script_uni_ranges;
   TA_Script_UniRange script_uni_nonbase_ranges;
 
-  FT_UInt32 standard_char1; /* for default width and height */
-  FT_UInt32 standard_char2; /* ditto */
-  FT_UInt32 standard_char3; /* ditto */
+  const char* standard_charstring; /* for default width and height */
 } TA_ScriptClassRec;
 
 typedef const TA_ScriptClassRec* TA_ScriptClass;

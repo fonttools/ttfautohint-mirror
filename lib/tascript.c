@@ -16,7 +16,7 @@
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, sc1, sc2, sc3) #s,
+#define SCRIPT(s, S, d, h, ss) #s,
 
 const char* script_names[] =
 {

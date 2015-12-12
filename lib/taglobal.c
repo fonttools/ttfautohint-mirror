@@ -24,13 +24,13 @@
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
+#define SCRIPT(s, S, d, h, ss) \
           const TA_ScriptClassRec ta_ ## s ## _script_class = \
           { \
             TA_SCRIPT_ ## S, \
             ta_ ## s ## _uniranges, \
             ta_ ## s ## _nonbase_uniranges, \
-            sc1, sc2, sc3 \
+            ss \
           };
 
 #include <ttfautohint-scripts.h>
@@ -70,7 +70,7 @@ TA_WritingSystemClass const ta_writing_system_classes[] =
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
+#define SCRIPT(s, S, d, h, ss) \
           &ta_ ## s ## _script_class,
 
 TA_ScriptClass const ta_script_classes[] =
@@ -306,12 +306,12 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
     else
     {
       /* get glyphs not directly addressable by cmap */
-      ta_get_coverage(globals, style_class, gstyles);
+      ta_shaper_get_coverage(globals, style_class, gstyles);
     }
   }
 
   /* handle the default OpenType features of the default script ... */
-  ta_get_coverage(globals, ta_style_classes[dflt], gstyles);
+  ta_shaper_get_coverage(globals, ta_style_classes[dflt], gstyles);
 
   /* ... and the remaining default OpenType features */
   for (ss = 0; ta_style_classes[ss]; ss++)
@@ -320,7 +320,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
 
     if (ss != dflt && style_class->coverage == TA_COVERAGE_DEFAULT)
-      ta_get_coverage(globals, style_class, gstyles);
+      ta_shaper_get_coverage(globals, style_class, gstyles);
   }
 
   /* mark ASCII digits */
@@ -452,6 +452,7 @@ ta_face_globals_new(FT_Face face,
   globals->glyph_styles = (FT_UShort*)(globals + 1);
   globals->font = font;
   globals->hb_font = hb_ft_font_create(face, NULL);
+  globals->hb_buf = hb_buffer_create();
 
   error = ta_face_globals_compute_style_coverage(globals);
   if (error)
@@ -495,8 +496,11 @@ ta_face_globals_free(TA_FaceGlobals globals)
     }
 
     hb_font_destroy(globals->hb_font);
-
     globals->hb_font = NULL;
+
+    hb_buffer_destroy(globals->hb_buf);
+    globals->hb_buf = NULL;
+
     globals->glyph_count = 0;
     globals->glyph_styles = NULL; /* no need to free this one! */
     globals->face = NULL;

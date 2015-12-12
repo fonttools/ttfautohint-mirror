@@ -45,7 +45,7 @@
 
 %code requires {
 #include "ta.h"
-#include "taharfbuzz.h"
+#include "tashaper.h"
 
 /* we don't change the name prefix of flex functions */
 #define TA_control_lex yylex

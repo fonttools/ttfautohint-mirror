@@ -22,14 +22,14 @@
 
 #include "ta.h"
 #include "tatypes.h"
-#include "taharfbuzz.h"
+#include "tashaper.h"
 
 
 extern TA_WritingSystemClass const ta_writing_system_classes[];
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, sc1, sc2, sc3) \
+#define SCRIPT(s, S, d, h, ss) \
           extern const TA_ScriptClassRec ta_ ## s ## _script_class;
 
 #include "ttfautohint-scripts.h"
@@ -58,7 +58,7 @@ extern const char* ta_style_names[];
 /* index of fallback style in `ta_style_classes' */
 #define TA_STYLE_FALLBACK TA_STYLE_NONE_DFLT
 /* default script for OpenType */
-#define TA_SCRIPT_DEFAULT  AF_SCRIPT_LATN
+#define TA_SCRIPT_DEFAULT  TA_SCRIPT_LATN
 
 /* a bit mask for TA_DIGIT and TA_NONBASE */
 #define TA_STYLE_MASK 0x3FFF
@@ -84,6 +84,7 @@ typedef struct TA_FaceGlobalsRec_
   FT_UShort* glyph_styles;
 
   hb_font_t* hb_font;
+  hb_buffer_t* hb_buf; /* for feature comparison */
 
   /* per-face auto-hinter properties */
   FT_UInt increase_x_height;
