@@ -158,6 +158,13 @@ STYLE(ltn2_dflt, LTN2_DFLT,
       TA_COVERAGE_DEFAULT)
 #endif
 
+STYLE(mymr_dflt, MYMR_DFLT,
+      "Myanmar default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_MYMR,
+      TA_BLUE_STRINGSET_MYMR,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(telu_dflt, TELU_DFLT,
       "Telugu default style",
       TA_WRITING_SYSTEM_LATIN,

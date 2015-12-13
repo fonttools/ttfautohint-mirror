@@ -341,6 +341,32 @@ const TA_Script_UniRangeRec ta_latp_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_mymr_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x1000UL, 0x109FUL), /* Myanmar */
+  TA_UNIRANGE_REC(0xA9E0UL, 0xA9FFUL), /* Myanmar Extended-B */
+  TA_UNIRANGE_REC(0xAA60UL, 0xAA7FUL), /* Myanmar Extended-A */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_mymr_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x102DUL, 0x1030UL),
+  TA_UNIRANGE_REC(0x1032UL, 0x1037UL),
+  TA_UNIRANGE_REC(0x103AUL, 0x103AUL),
+  TA_UNIRANGE_REC(0x103DUL, 0x103EUL),
+  TA_UNIRANGE_REC(0x1058UL, 0x1059UL),
+  TA_UNIRANGE_REC(0x105EUL, 0x1060UL),
+  TA_UNIRANGE_REC(0x1071UL, 0x1074UL),
+  TA_UNIRANGE_REC(0x1082UL, 0x1082UL),
+  TA_UNIRANGE_REC(0x1085UL, 0x1086UL),
+  TA_UNIRANGE_REC(0x108DUL, 0x108DUL),
+  TA_UNIRANGE_REC(0xA9E5UL, 0xA9E5UL),
+  TA_UNIRANGE_REC(0xAA7CUL, 0xAA7CUL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_telu_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0C00UL, 0x0C7FUL), /* Telugu */

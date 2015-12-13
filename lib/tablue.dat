@@ -191,6 +191,15 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_LATIN_SUPS_SMALL_DESCENDER
     "ᵖ ʸ ᵍ"
 
+  TA_BLUE_STRING_MYANMAR_TOP
+    "ခ ဂ င ဒ ဝ ၥ ၊ ။"
+  TA_BLUE_STRING_MYANMAR_BOTTOM
+    "င ဎ ဒ ပ ဗ ဝ ၊ ။"
+  TA_BLUE_STRING_MYANMAR_ASCENDER
+    "ဩ ြ ၍ ၏ ၆ ါ ိ"
+  TA_BLUE_STRING_MYANMAR_DESCENDER
+    "ဉ ည ဥ ဩ ဨ ၂ ၅ ၉"
+
   TA_BLUE_STRING_TELUGU_TOP
     "ఇ ఌ ఙ ఞ ణ ఱ ౯"
   TA_BLUE_STRING_TELUGU_BOTTOM
@@ -396,6 +405,14 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_LATIN_SUPS_SMALL,           0                                 }
     { TA_BLUE_STRING_LATIN_SUPS_SMALL_DESCENDER, 0                                 }
     { TA_BLUE_STRING_MAX,                        0                                 }
+
+  TA_BLUE_STRINGSET_MYMR
+    { TA_BLUE_STRING_MYANMAR_TOP,       TA_BLUE_PROPERTY_LATIN_TOP      |
+                                        TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_MYANMAR_BOTTOM,    0                                 }
+    { TA_BLUE_STRING_MYANMAR_ASCENDER,  TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_MYANMAR_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_MAX,               0                                 }
 
   TA_BLUE_STRINGSET_TELU
     { TA_BLUE_STRING_TELUGU_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }

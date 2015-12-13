@@ -89,6 +89,11 @@ SCRIPT(latp, LATP,
        HB_SCRIPT_INVALID,
        "\xE1\xB5\x92 \xE1\xB4\xBC \xE2\x81\xB0") /* ᵒ ᴼ ⁰ */
 
+SCRIPT(mymr, MYMR,
+       "Myanmar",
+       HB_SCRIPT_MYANMAR,
+       "\xE1\x80\x9D \xE1\x80\x84 \xE1\x80\x82") /* ဝ င ဂ */
+
 /* there are no simple forms for letters; we thus use two digit shapes */
 SCRIPT(telu, TELU,
        "Telugu",
