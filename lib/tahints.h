@@ -497,6 +497,7 @@ FT_Error
 ta_axis_hints_new_edge(TA_AxisHints axis,
                        FT_Int fpos,
                        TA_Direction dir,
+                       FT_Bool top_to_bottom_hinting,
                        TA_Edge* edge);
 
 #ifdef TA_DEBUG

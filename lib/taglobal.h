@@ -29,7 +29,7 @@ extern TA_WritingSystemClass const ta_writing_system_classes[];
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, ss) \
+#define SCRIPT(s, S, d, h, H, ss) \
           extern const TA_ScriptClassRec ta_ ## s ## _script_class;
 
 #include "ttfautohint-scripts.h"

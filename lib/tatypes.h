@@ -260,7 +260,7 @@ typedef const TA_WritingSystemClassRec* TA_WritingSystemClass;
  */
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, ss) \
+#define SCRIPT(s, S, d, h, H, ss) \
           TA_SCRIPT_ ## S,
 
 /* The list of known scripts. */
@@ -281,6 +281,9 @@ typedef struct TA_Script_UniRangeRec_
 #define TA_UNIRANGE_REC(a, b) \
           { (FT_UInt32)(a), (FT_UInt32)(b) }
 
+#define TA_HINTING_BOTTOM_TO_TOP 0
+#define TA_HINTING_TOP_TO_BOTTOM 1
+
 typedef const TA_Script_UniRangeRec* TA_Script_UniRange;
 
 typedef struct TA_ScriptClassRec_
@@ -290,6 +293,8 @@ typedef struct TA_ScriptClassRec_
   /* last element in the ranges must be { 0, 0 } */
   TA_Script_UniRange script_uni_ranges;
   TA_Script_UniRange script_uni_nonbase_ranges;
+
+  FT_Bool top_to_bottom_hinting;
 
   const char* standard_charstring; /* for default width and height */
 } TA_ScriptClassRec;

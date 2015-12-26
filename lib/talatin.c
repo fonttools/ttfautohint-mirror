@@ -1855,6 +1855,11 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
   FT_Error error = FT_Err_Ok;
   TA_LatinAxis laxis = &((TA_LatinMetrics)hints->metrics)->axis[dim];
 
+  TA_StyleClass style_class = hints->metrics->style_class;
+  TA_ScriptClass script_class = ta_script_classes[style_class->script];
+
+  FT_Bool top_to_bottom_hinting = 0;
+
   TA_Segment segments = axis->segments;
   TA_Segment segment_limit = segments + axis->num_segments;
   TA_Segment seg;
@@ -1876,6 +1881,9 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
   up_dir = (dim == TA_DIMENSION_HORZ) ? TA_DIR_UP
                                       : TA_DIR_RIGHT;
 #endif
+
+  if (dim == TA_DIMENSION_VERT)
+    top_to_bottom_hinting = script_class->top_to_bottom_hinting;
 
   /* we ignore all segments that are less than 1 pixel in length */
   /* to avoid many problems with serif fonts */
@@ -1951,6 +1959,7 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
       /* insert a new edge in the list and sort according to the position */
       error = ta_axis_hints_new_edge(axis, seg->pos,
                                      (TA_Direction)seg->dir,
+                                     top_to_bottom_hinting,
                                      &edge);
       if (error)
         goto Exit;
@@ -2626,6 +2635,11 @@ ta_latin_hint_edges(TA_GlyphHints hints,
   TA_Edge anchor = NULL;
   FT_Int has_serifs = 0;
 
+  TA_StyleClass style_class = hints->metrics->style_class;
+  TA_ScriptClass script_class = ta_script_classes[style_class->script];
+
+  FT_Bool top_to_bottom_hinting = 0;
+
 #ifdef TA_DEBUG
   FT_UInt num_actions = 0;
 #endif
@@ -2633,6 +2647,9 @@ ta_latin_hint_edges(TA_GlyphHints hints,
   TA_LOG(("latin %s edge hinting (style `%s')\n",
           dim == TA_DIMENSION_VERT ? "horizontal" : "vertical",
           ta_style_names[hints->metrics->style_class->style]));
+
+  if (dim == TA_DIMENSION_VERT)
+    top_to_bottom_hinting = script_class->top_to_bottom_hinting;
 
   /* we begin by aligning all stems relative to the blue zone if needed -- */
   /* that's only for horizontal edges */
@@ -2976,7 +2993,8 @@ ta_latin_hint_edges(TA_GlyphHints hints,
       edge2->flags |= TA_EDGE_DONE;
 
       if (edge > edges
-          && edge->pos < edge[-1].pos)
+          && (top_to_bottom_hinting ? (edge->pos > edge[-1].pos)
+                                    : (edge->pos < edge[-1].pos)))
       {
 #ifdef TA_DEBUG
         TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",
@@ -3166,7 +3184,8 @@ ta_latin_hint_edges(TA_GlyphHints hints,
       edge->flags |= TA_EDGE_DONE;
 
       if (edge > edges
-          && edge->pos < edge[-1].pos)
+          && (top_to_bottom_hinting ? (edge->pos > edge[-1].pos)
+                                    : (edge->pos < edge[-1].pos)))
       {
 #ifdef TA_DEBUG
         TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",
@@ -3183,7 +3202,9 @@ ta_latin_hint_edges(TA_GlyphHints hints,
 
       if (edge + 1 < edge_limit
           && edge[1].flags & TA_EDGE_DONE
-          && edge->pos > edge[1].pos)
+          && (top_to_bottom_hinting ? (edge->pos < edge[1].pos)
+                                    : (edge->pos > edge[1].pos)))
+
       {
 #ifdef TA_DEBUG
         TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",

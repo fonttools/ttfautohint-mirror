@@ -24,12 +24,13 @@
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, ss) \
+#define SCRIPT(s, S, d, h, H, ss) \
           const TA_ScriptClassRec ta_ ## s ## _script_class = \
           { \
             TA_SCRIPT_ ## S, \
             ta_ ## s ## _uniranges, \
             ta_ ## s ## _nonbase_uniranges, \
+            TA_ ## H, \
             ss \
           };
 
@@ -70,7 +71,7 @@ TA_WritingSystemClass const ta_writing_system_classes[] =
 
 
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, ss) \
+#define SCRIPT(s, S, d, h, H, ss) \
           &ta_ ## s ## _script_class,
 
 TA_ScriptClass const ta_script_classes[] =

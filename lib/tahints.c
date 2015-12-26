@@ -100,6 +100,7 @@ FT_Error
 ta_axis_hints_new_edge(TA_AxisHints axis,
                        FT_Int fpos,
                        TA_Direction dir,
+                       FT_Bool top_to_bottom_hinting,
                        TA_Edge* anedge)
 {
   FT_Error error = FT_Err_Ok;
@@ -161,7 +162,8 @@ ta_axis_hints_new_edge(TA_AxisHints axis,
 
   while (edge > edges)
   {
-    if (edge[-1].fpos < fpos)
+    if (top_to_bottom_hinting ? (edge[-1].fpos > fpos)
+                              : (edge[-1].fpos < fpos))
       break;
 
     /* we want the edge with same position and minor direction */

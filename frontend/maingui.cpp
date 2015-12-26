@@ -52,7 +52,7 @@ typedef struct Tag_Names_
 // the available script tags and its descriptions are directly extracted
 // from `ttfautohint-scripts.h'
 #undef SCRIPT
-#define SCRIPT(s, S, d, h, ss) \
+#define SCRIPT(s, S, d, h, H, ss) \
           {#s, d},
 
 const Tag_Names script_names[] =
