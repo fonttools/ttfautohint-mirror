@@ -113,6 +113,23 @@ const TA_Script_UniRangeRec ta_arab_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_beng_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0980UL, 0x09FFUL), /* Bengali */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_beng_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0981UL, 0x0981UL),
+  TA_UNIRANGE_REC(0x09BCUL, 0x09BCUL),
+  TA_UNIRANGE_REC(0x09C1UL, 0x09C4UL),
+  TA_UNIRANGE_REC(0x09CDUL, 0x09CDUL),
+  TA_UNIRANGE_REC(0x09E2UL, 0x09E3UL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0400UL, 0x04FFUL), /* Cyrillic */

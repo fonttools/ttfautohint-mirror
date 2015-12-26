@@ -94,6 +94,13 @@ STYLE(arab_dflt, ARAB_DFLT,
       TA_BLUE_STRINGSET_ARAB,
       TA_COVERAGE_DEFAULT)
 
+STYLE(beng_dflt, BENG_DFLT,
+      "Bengali default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_BENG,
+      TA_BLUE_STRINGSET_BENG,
+      TA_COVERAGE_DEFAULT)
+
 META_STYLE_LATIN(cyrl, CYRL, "Cyrillic")
 
 STYLE(deva_dflt, DEVA_DFLT,
