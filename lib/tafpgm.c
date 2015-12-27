@@ -3334,6 +3334,11 @@ static const unsigned char FPGM(bci_adjust_common) [] =
   SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
 
   PUSHB_1,
+    sal_top_to_bottom_hinting,
+  SWAP,
+  WS,
+
+  PUSHB_1,
     4,
   CINDEX, /* s: [...] edge2 edge is_round is_serif edge2 */
   PUSHB_1,
@@ -3364,11 +3369,12 @@ static const unsigned char FPGM(bci_adjust_common) [] =
 /*
  * bci_adjust_bound
  *
- *   Handle the ADJUST_BOUND action to align an edge of a stem if the other
- *   edge of the stem has already been moved, then moving it again if
+ *   Handle the ADJUST + BOUND actions to align an edge of a stem if the
+ *   other edge of the stem has already been moved, then moving it again if
  *   necessary to stay bound.
  *
- * in: edge2_is_serif
+ * in: top_to_bottom_hinting
+ *     edge2_is_serif
  *     edge_is_round
  *     edge_point (in twilight zone)
  *     edge2_point (in twilight zone)
@@ -3398,7 +3404,14 @@ static const unsigned char FPGM(bci_adjust_bound) [] =
     2,
   CINDEX,
   GC_cur, /* s: edge edge[-1]_pos edge_pos */
-  GT, /* edge_pos < edge[-1]_pos */
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  RS,
+  IF,
+    LT, /* edge_pos > edge[-1]_pos */
+  ELSE,
+    GT, /* edge_pos < edge[-1]_pos */
+  EIF,
   IF,
     DUP,
     ALIGNRP, /* align `edge' to `edge[-1]' */
@@ -3422,6 +3435,10 @@ static const unsigned char FPGM(bci_adjust_bound) [] =
  * bci_action_adjust_bound_serif
  * bci_action_adjust_bound_round
  * bci_action_adjust_bound_round_serif
+ * bci_action_adjust_down_bound
+ * bci_action_adjust_down_bound_serif
+ * bci_action_adjust_down_bound_round
+ * bci_action_adjust_down_bound_round_serif
  *
  * Higher-level routines for calling `bci_adjust_bound'.
  */
@@ -3433,7 +3450,8 @@ static const unsigned char FPGM(bci_action_adjust_bound) [] =
     bci_action_adjust_bound,
   FDEF,
 
-  PUSHB_3,
+  PUSHB_4,
+    0,
     0,
     0,
     bci_adjust_bound,
@@ -3450,9 +3468,10 @@ static const unsigned char FPGM(bci_action_adjust_bound_serif) [] =
     bci_action_adjust_bound_serif,
   FDEF,
 
-  PUSHB_3,
+  PUSHB_4,
     0,
     1,
+    0,
     bci_adjust_bound,
   CALL,
 
@@ -3467,8 +3486,9 @@ static const unsigned char FPGM(bci_action_adjust_bound_round) [] =
     bci_action_adjust_bound_round,
   FDEF,
 
-  PUSHB_3,
+  PUSHB_4,
     1,
+    0,
     0,
     bci_adjust_bound,
   CALL,
@@ -3484,7 +3504,80 @@ static const unsigned char FPGM(bci_action_adjust_bound_round_serif) [] =
     bci_action_adjust_bound_round_serif,
   FDEF,
 
-  PUSHB_3,
+  PUSHB_4,
+    1,
+    1,
+    0,
+    bci_adjust_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+static const unsigned char FPGM(bci_action_adjust_down_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_adjust_down_bound,
+  FDEF,
+
+  PUSHB_4,
+    0,
+    0,
+    1,
+    bci_adjust_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+static const unsigned char FPGM(bci_action_adjust_down_bound_serif) [] =
+{
+
+  PUSHB_1,
+    bci_action_adjust_down_bound_serif,
+  FDEF,
+
+  PUSHB_4,
+    0,
+    1,
+    1,
+    bci_adjust_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+static const unsigned char FPGM(bci_action_adjust_down_bound_round) [] =
+{
+
+  PUSHB_1,
+    bci_action_adjust_down_bound_round,
+  FDEF,
+
+  PUSHB_4,
+    1,
+    0,
+    1,
+    bci_adjust_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+static const unsigned char FPGM(bci_action_adjust_down_bound_round_serif) [] =
+{
+
+  PUSHB_1,
+    bci_action_adjust_down_bound_round_serif,
+  FDEF,
+
+  PUSHB_4,
+    1,
     1,
     1,
     bci_adjust_bound,
@@ -3518,7 +3611,8 @@ static const unsigned char FPGM(bci_adjust) [] =
     bci_adjust,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_adjust_common,
   CALL,
 
@@ -3646,6 +3740,11 @@ static const unsigned char FPGM(bci_stem_common) [] =
   PUSHB_1,
     0,
   SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
+
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  SWAP,
+  WS,
 
   PUSHB_1,
     4,
@@ -3899,7 +3998,8 @@ static const unsigned char FPGM(bci_stem_common) [] =
  *
  *      edge2 = edge + cur_len
  *
- * in: edge2_is_serif
+ * in: top_to_bottom_hinting
+ *     edge2_is_serif
  *     edge_is_round
  *     edge_point (in twilight zone)
  *     edge2_point (in twilight zone)
@@ -3946,7 +4046,14 @@ static const unsigned char FPGM(bci_stem_bound) [] =
     2,
   CINDEX,
   GC_cur, /* s: edge edge[-1]_pos edge_pos */
-  GT, /* edge_pos < edge[-1]_pos */
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  RS,
+  IF,
+    LT, /* edge_pos > edge[-1]_pos */
+  ELSE,
+    GT, /* edge_pos < edge[-1]_pos */
+  EIF,
   IF,
     DUP,
     ALIGNRP, /* align `edge' to `edge[-1]' */
@@ -3979,6 +4086,10 @@ static const unsigned char FPGM(bci_stem_bound) [] =
  * bci_action_stem_bound_serif
  * bci_action_stem_bound_round
  * bci_action_stem_bound_round_serif
+ * bci_action_stem_down_bound
+ * bci_action_stem_down_bound_serif
+ * bci_action_stem_down_bound_round
+ * bci_action_stem_down_bound_round_serif
  *
  * Higher-level routines for calling `bci_stem_bound'.
  */
@@ -3990,7 +4101,8 @@ static const unsigned char FPGM(bci_action_stem_bound) [] =
     bci_action_stem_bound,
   FDEF,
 
-  PUSHB_3,
+  PUSHB_4,
+    0,
     0,
     0,
     bci_stem_bound,
@@ -4007,9 +4119,10 @@ static const unsigned char FPGM(bci_action_stem_bound_serif) [] =
     bci_action_stem_bound_serif,
   FDEF,
 
-  PUSHB_3,
+  PUSHB_4,
     0,
     1,
+    0,
     bci_stem_bound,
   CALL,
 
@@ -4024,8 +4137,9 @@ static const unsigned char FPGM(bci_action_stem_bound_round) [] =
     bci_action_stem_bound_round,
   FDEF,
 
-  PUSHB_3,
+  PUSHB_4,
     1,
+    0,
     0,
     bci_stem_bound,
   CALL,
@@ -4041,7 +4155,80 @@ static const unsigned char FPGM(bci_action_stem_bound_round_serif) [] =
     bci_action_stem_bound_round_serif,
   FDEF,
 
-  PUSHB_3,
+  PUSHB_4,
+    1,
+    1,
+    0,
+    bci_stem_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+static const unsigned char FPGM(bci_action_stem_down_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_stem_down_bound,
+  FDEF,
+
+  PUSHB_4,
+    0,
+    0,
+    1,
+    bci_stem_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+static const unsigned char FPGM(bci_action_stem_down_bound_serif) [] =
+{
+
+  PUSHB_1,
+    bci_action_stem_down_bound_serif,
+  FDEF,
+
+  PUSHB_4,
+    0,
+    1,
+    1,
+    bci_stem_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+static const unsigned char FPGM(bci_action_stem_down_bound_round) [] =
+{
+
+  PUSHB_1,
+    bci_action_stem_down_bound_round,
+  FDEF,
+
+  PUSHB_4,
+    1,
+    0,
+    1,
+    bci_stem_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+static const unsigned char FPGM(bci_action_stem_down_bound_round_serif) [] =
+{
+
+  PUSHB_1,
+    bci_action_stem_down_bound_round_serif,
+  FDEF,
+
+  PUSHB_4,
+    1,
     1,
     1,
     bci_stem_bound,
@@ -4082,7 +4269,8 @@ static const unsigned char FPGM(bci_stem) [] =
     bci_stem,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_stem_common,
   CALL,
 
@@ -4732,6 +4920,11 @@ static const unsigned char FPGM(bci_serif_common) [] =
     0,
   SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
 
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  SWAP,
+  WS,
+
   DUP,
   DUP,
   DUP,
@@ -4776,7 +4969,14 @@ static const unsigned char FPGM(bci_lower_bound) [] =
     2,
   CINDEX,
   GC_cur, /* s: edge bound_pos edge_pos */
-  GT, /* edge_pos < bound_pos */
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  RS,
+  IF,
+    LT, /* edge_pos > bound_pos */
+  ELSE,
+    GT, /* edge_pos < bound_pos */
+  EIF,
   IF,
     DUP,
     ALIGNRP, /* align `edge' to `bound' */
@@ -4821,7 +5021,14 @@ static const unsigned char FPGM(bci_upper_bound) [] =
     2,
   CINDEX,
   GC_cur, /* s: edge bound_pos edge_pos */
-  LT, /* edge_pos > bound_pos */
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  RS,
+  IF,
+    GT, /* edge_pos < bound_pos */
+  ELSE,
+    LT, /* edge_pos > bound_pos */
+  EIF,
   IF,
     DUP,
     ALIGNRP, /* align `edge' to `bound' */
@@ -4867,7 +5074,14 @@ static const unsigned char FPGM(bci_upper_lower_bound) [] =
     2,
   CINDEX,
   GC_cur, /* s: upper serif lower_pos serif_pos */
-  GT, /* serif_pos < lower_pos */
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  RS,
+  IF,
+    LT, /* serif_pos > lower_pos */
+  ELSE,
+    GT, /* serif_pos < lower_pos */
+  EIF,
   IF,
     DUP,
     ALIGNRP, /* align `serif' to `lower' */
@@ -4881,7 +5095,14 @@ static const unsigned char FPGM(bci_upper_lower_bound) [] =
     2,
   CINDEX,
   GC_cur, /* s: serif upper_pos serif_pos */
-  LT, /* serif_pos > upper_pos */
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  RS,
+  IF,
+    GT, /* serif_pos < upper_pos */
+  ELSE,
+    LT, /* serif_pos > upper_pos */
+  EIF,
   IF,
     DUP,
     ALIGNRP, /* align `serif' to `upper' */
@@ -4920,7 +5141,8 @@ static const unsigned char FPGM(bci_action_serif) [] =
     bci_action_serif,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_common,
   CALL,
 
@@ -4959,7 +5181,8 @@ static const unsigned char FPGM(bci_action_serif_lower_bound) [] =
     bci_action_serif_lower_bound,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_common,
   CALL,
 
@@ -4994,7 +5217,8 @@ static const unsigned char FPGM(bci_action_serif_upper_bound) [] =
     bci_action_serif_upper_bound,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_common,
   CALL,
 
@@ -5034,7 +5258,124 @@ static const unsigned char FPGM(bci_action_serif_upper_lower_bound) [] =
     0,
   SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
 
+  PUSHB_2,
+    0,
+    bci_serif_common,
+  CALL,
+
   PUSHB_1,
+    bci_upper_lower_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_down_lower_bound
+ *
+ *   Handle the SERIF action to align a serif with its base, then moving it
+ *   again if necessary to stay within a lower bound.  We hint top to
+ *   bottom.
+ *
+ * in: serif_point (in twilight zone)
+ *     base_point (in twilight zone)
+ *     edge[-1] (in twilight zone)
+ *     ... stuff for bci_align_segments (serif) ...
+ *
+ * uses: bci_serif_common
+ *       bci_lower_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_down_lower_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_down_lower_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
+    bci_serif_common,
+  CALL,
+
+  PUSHB_1,
+    bci_lower_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_down_upper_bound
+ *
+ *   Handle the SERIF action to align a serif with its base, then moving it
+ *   again if necessary to stay within an upper bound.  We hint top to
+ *   bottom.
+ *
+ * in: serif_point (in twilight zone)
+ *     base_point (in twilight zone)
+ *     edge[1] (in twilight zone)
+ *     ... stuff for bci_align_segments (serif) ...
+ *
+ * uses: bci_serif_common
+ *       bci_upper_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_down_upper_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_down_upper_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
+    bci_serif_common,
+  CALL,
+
+  PUSHB_1,
+    bci_upper_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_down_upper_lower_bound
+ *
+ *   Handle the SERIF action to align a serif with its base, then moving it
+ *   again if necessary to stay within a lower and upper bound.  We hint top
+ *   to bottom.
+ *
+ * in: serif_point (in twilight zone)
+ *     base_point (in twilight zone)
+ *     edge[-1] (in twilight zone)
+ *     edge[1] (in twilight zone)
+ *     ... stuff for bci_align_segments (serif) ...
+ *
+ * uses: bci_serif_common
+ *       bci_upper_lower_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_down_upper_lower_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_down_upper_lower_bound,
+  FDEF,
+
+  PUSHB_1,
+    0,
+  SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
+
+  PUSHB_2,
+    1,
     bci_serif_common,
   CALL,
 
@@ -5067,6 +5408,11 @@ static const unsigned char FPGM(bci_serif_anchor_common) [] =
   PUSHB_1,
     0,
   SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
+
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  SWAP,
+  WS,
 
   DUP,
   PUSHB_1,
@@ -5112,7 +5458,8 @@ static const unsigned char FPGM(bci_action_serif_anchor) [] =
     bci_action_serif_anchor,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_anchor_common,
   CALL,
 
@@ -5151,7 +5498,8 @@ static const unsigned char FPGM(bci_action_serif_anchor_lower_bound) [] =
     bci_action_serif_anchor_lower_bound,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_anchor_common,
   CALL,
 
@@ -5186,7 +5534,8 @@ static const unsigned char FPGM(bci_action_serif_anchor_upper_bound) [] =
     bci_action_serif_anchor_upper_bound,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_anchor_common,
   CALL,
 
@@ -5222,7 +5571,117 @@ static const unsigned char FPGM(bci_action_serif_anchor_upper_lower_bound) [] =
     bci_action_serif_anchor_upper_lower_bound,
   FDEF,
 
+  PUSHB_2,
+    0,
+    bci_serif_anchor_common,
+  CALL,
+
   PUSHB_1,
+    bci_upper_lower_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_anchor_down_lower_bound
+ *
+ *   Handle the SERIF_ANCHOR action to align a serif and to set the edge
+ *   anchor, then moving it again if necessary to stay within a lower
+ *   bound.  We hint top to bottom.
+ *
+ * in: edge_point (in twilight zone)
+ *     edge[-1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_anchor_common
+ *       bci_lower_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_anchor_down_lower_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_anchor_down_lower_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
+    bci_serif_anchor_common,
+  CALL,
+
+  PUSHB_1,
+    bci_lower_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_anchor_down_upper_bound
+ *
+ *   Handle the SERIF_ANCHOR action to align a serif and to set the edge
+ *   anchor, then moving it again if necessary to stay within an upper
+ *   bound.  We hint top to bottom.
+ *
+ * in: edge_point (in twilight zone)
+ *     edge[1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_anchor_common
+ *       bci_upper_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_anchor_down_upper_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_anchor_down_upper_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
+    bci_serif_anchor_common,
+  CALL,
+
+  PUSHB_1,
+    bci_upper_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_anchor_down_upper_lower_bound
+ *
+ *   Handle the SERIF_ANCHOR action to align a serif and to set the edge
+ *   anchor, then moving it again if necessary to stay within a lower and
+ *   upper bound.  We hint top to bottom.
+ *
+ * in: edge_point (in twilight zone)
+ *     edge[-1] (in twilight zone)
+ *     edge[1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_anchor_common
+ *       bci_upper_lower_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_anchor_down_upper_lower_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_anchor_down_upper_lower_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
     bci_serif_anchor_common,
   CALL,
 
@@ -5251,6 +5710,11 @@ static const unsigned char FPGM(bci_serif_link1_common) [] =
   PUSHB_1,
     0,
   SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
+
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  SWAP,
+  WS,
 
   PUSHB_1,
     3,
@@ -5364,7 +5828,8 @@ static const unsigned char FPGM(bci_action_serif_link1) [] =
     bci_action_serif_link1,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_link1_common,
   CALL,
 
@@ -5405,7 +5870,8 @@ static const unsigned char FPGM(bci_action_serif_link1_lower_bound) [] =
     bci_action_serif_link1_lower_bound,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_link1_common,
   CALL,
 
@@ -5442,7 +5908,8 @@ static const unsigned char FPGM(bci_action_serif_link1_upper_bound) [] =
     bci_action_serif_link1_upper_bound,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_link1_common,
   CALL,
 
@@ -5480,7 +5947,123 @@ static const unsigned char FPGM(bci_action_serif_link1_upper_lower_bound) [] =
     bci_action_serif_link1_upper_lower_bound,
   FDEF,
 
+  PUSHB_2,
+    0,
+    bci_serif_link1_common,
+  CALL,
+
   PUSHB_1,
+    bci_upper_lower_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_link1_down_lower_bound
+ *
+ *   Handle the SERIF_LINK1 action to align a serif, depending on edges
+ *   before and after.  Additionally, move the serif again if necessary to
+ *   stay within a lower bound.  We hint top to bottom.
+ *
+ * in: before_point (in twilight zone)
+ *     edge_point (in twilight zone)
+ *     after_point (in twilight zone)
+ *     edge[-1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_link1_common
+ *       bci_lower_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_link1_down_lower_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_link1_down_lower_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
+    bci_serif_link1_common,
+  CALL,
+
+  PUSHB_1,
+    bci_lower_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_link1_down_upper_bound
+ *
+ *   Handle the SERIF_LINK1 action to align a serif, depending on edges
+ *   before and after.  Additionally, move the serif again if necessary to
+ *   stay within an upper bound.  We hint top to bottom.
+ *
+ * in: before_point (in twilight zone)
+ *     edge_point (in twilight zone)
+ *     after_point (in twilight zone)
+ *     edge[1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_link1_common
+ *       bci_upper_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_link1_down_upper_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_link1_down_upper_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
+    bci_serif_link1_common,
+  CALL,
+
+  PUSHB_1,
+    bci_upper_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_link1_down_upper_lower_bound
+ *
+ *   Handle the SERIF_LINK1 action to align a serif, depending on edges
+ *   before and after.  Additionally, move the serif again if necessary to
+ *   stay within a lower and upper bound.  We hint top to bottom.
+ *
+ * in: before_point (in twilight zone)
+ *     edge_point (in twilight zone)
+ *     after_point (in twilight zone)
+ *     edge[-1] (in twilight zone)
+ *     edge[1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_link1_common
+ *       bci_upper_lower_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_link1_down_upper_lower_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_link1_down_upper_lower_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
     bci_serif_link1_common,
   CALL,
 
@@ -5511,6 +6094,11 @@ static const unsigned char FPGM(bci_serif_link2_common) [] =
   PUSHB_1,
     0,
   SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
+
+  PUSHB_1,
+    sal_top_to_bottom_hinting,
+  SWAP,
+  WS,
 
   DUP, /* s: [...] edge edge */
   PUSHB_1,
@@ -5559,7 +6147,8 @@ static const unsigned char FPGM(bci_action_serif_link2) [] =
     bci_action_serif_link2,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_link2_common,
   CALL,
 
@@ -5598,7 +6187,8 @@ static const unsigned char FPGM(bci_action_serif_link2_lower_bound) [] =
     bci_action_serif_link2_lower_bound,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_link2_common,
   CALL,
 
@@ -5633,7 +6223,8 @@ static const unsigned char FPGM(bci_action_serif_link2_upper_bound) [] =
     bci_action_serif_link2_upper_bound,
   FDEF,
 
-  PUSHB_1,
+  PUSHB_2,
+    0,
     bci_serif_link2_common,
   CALL,
 
@@ -5669,7 +6260,117 @@ static const unsigned char FPGM(bci_action_serif_link2_upper_lower_bound) [] =
     bci_action_serif_link2_upper_lower_bound,
   FDEF,
 
+  PUSHB_2,
+    0,
+    bci_serif_link2_common,
+  CALL,
+
   PUSHB_1,
+    bci_upper_lower_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_link2_down_lower_bound
+ *
+ *   Handle the SERIF_LINK2 action to align a serif relative to the anchor.
+ *   Additionally, move the serif again if necessary to stay within a lower
+ *   bound.  We hint top to bottom.
+ *
+ * in: edge_point (in twilight zone)
+ *     edge[-1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_link2_common
+ *       bci_lower_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_link2_down_lower_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_link2_down_lower_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
+    bci_serif_link2_common,
+  CALL,
+
+  PUSHB_1,
+    bci_lower_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_link2_down_upper_bound
+ *
+ *   Handle the SERIF_LINK2 action to align a serif relative to the anchor.
+ *   Additionally, move the serif again if necessary to stay within an upper
+ *   bound.  We hint top to bottom.
+ *
+ * in: edge_point (in twilight zone)
+ *     edge[1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_link2_common
+ *       bci_upper_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_link2_down_upper_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_link2_down_upper_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
+    bci_serif_link2_common,
+  CALL,
+
+  PUSHB_1,
+    bci_upper_bound,
+  CALL,
+
+  ENDF,
+
+};
+
+
+/*
+ * bci_action_serif_link2_down_upper_lower_bound
+ *
+ *   Handle the SERIF_LINK2 action to align a serif relative to the anchor.
+ *   Additionally, move the serif again if necessary to stay within a lower
+ *   and upper bound.  We hint top to bottom.
+ *
+ * in: edge_point (in twilight zone)
+ *     edge[-1] (in twilight zone)
+ *     edge[1] (in twilight zone)
+ *     ... stuff for bci_align_segments (edge) ...
+ *
+ * uses: bci_serif_link2_common
+ *       bci_upper_lower_bound
+ */
+
+static const unsigned char FPGM(bci_action_serif_link2_down_upper_lower_bound) [] =
+{
+
+  PUSHB_1,
+    bci_action_serif_link2_down_upper_lower_bound,
+  FDEF,
+
+  PUSHB_2,
+    1,
     bci_serif_link2_common,
   CALL,
 
@@ -5967,6 +6668,10 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_action_adjust_bound_serif))
             + sizeof (FPGM(bci_action_adjust_bound_round))
             + sizeof (FPGM(bci_action_adjust_bound_round_serif))
+            + sizeof (FPGM(bci_action_adjust_down_bound))
+            + sizeof (FPGM(bci_action_adjust_down_bound_serif))
+            + sizeof (FPGM(bci_action_adjust_down_bound_round))
+            + sizeof (FPGM(bci_action_adjust_down_bound_round_serif))
 
             + sizeof (FPGM(bci_action_link))
             + sizeof (FPGM(bci_action_link_serif))
@@ -5981,26 +6686,42 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_action_stem_bound_serif))
             + sizeof (FPGM(bci_action_stem_bound_round))
             + sizeof (FPGM(bci_action_stem_bound_round_serif))
+            + sizeof (FPGM(bci_action_stem_down_bound))
+            + sizeof (FPGM(bci_action_stem_down_bound_serif))
+            + sizeof (FPGM(bci_action_stem_down_bound_round))
+            + sizeof (FPGM(bci_action_stem_down_bound_round_serif))
 
             + sizeof (FPGM(bci_action_serif))
             + sizeof (FPGM(bci_action_serif_lower_bound))
             + sizeof (FPGM(bci_action_serif_upper_bound))
             + sizeof (FPGM(bci_action_serif_upper_lower_bound))
+            + sizeof (FPGM(bci_action_serif_down_lower_bound))
+            + sizeof (FPGM(bci_action_serif_down_upper_bound))
+            + sizeof (FPGM(bci_action_serif_down_upper_lower_bound))
 
             + sizeof (FPGM(bci_action_serif_anchor))
             + sizeof (FPGM(bci_action_serif_anchor_lower_bound))
             + sizeof (FPGM(bci_action_serif_anchor_upper_bound))
             + sizeof (FPGM(bci_action_serif_anchor_upper_lower_bound))
+            + sizeof (FPGM(bci_action_serif_anchor_down_lower_bound))
+            + sizeof (FPGM(bci_action_serif_anchor_down_upper_bound))
+            + sizeof (FPGM(bci_action_serif_anchor_down_upper_lower_bound))
 
             + sizeof (FPGM(bci_action_serif_link1))
             + sizeof (FPGM(bci_action_serif_link1_lower_bound))
             + sizeof (FPGM(bci_action_serif_link1_upper_bound))
             + sizeof (FPGM(bci_action_serif_link1_upper_lower_bound))
+            + sizeof (FPGM(bci_action_serif_link1_down_lower_bound))
+            + sizeof (FPGM(bci_action_serif_link1_down_upper_bound))
+            + sizeof (FPGM(bci_action_serif_link1_down_upper_lower_bound))
 
             + sizeof (FPGM(bci_action_serif_link2))
             + sizeof (FPGM(bci_action_serif_link2_lower_bound))
             + sizeof (FPGM(bci_action_serif_link2_upper_bound))
             + sizeof (FPGM(bci_action_serif_link2_upper_lower_bound))
+            + sizeof (FPGM(bci_action_serif_link2_down_lower_bound))
+            + sizeof (FPGM(bci_action_serif_link2_down_upper_bound))
+            + sizeof (FPGM(bci_action_serif_link2_down_upper_lower_bound))
 
             + sizeof (FPGM(bci_hint_glyph));
 
@@ -6148,6 +6869,10 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_action_adjust_bound_serif);
   COPY_FPGM(bci_action_adjust_bound_round);
   COPY_FPGM(bci_action_adjust_bound_round_serif);
+  COPY_FPGM(bci_action_adjust_down_bound);
+  COPY_FPGM(bci_action_adjust_down_bound_serif);
+  COPY_FPGM(bci_action_adjust_down_bound_round);
+  COPY_FPGM(bci_action_adjust_down_bound_round_serif);
 
   COPY_FPGM(bci_action_link);
   COPY_FPGM(bci_action_link_serif);
@@ -6162,26 +6887,42 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_action_stem_bound_serif);
   COPY_FPGM(bci_action_stem_bound_round);
   COPY_FPGM(bci_action_stem_bound_round_serif);
+  COPY_FPGM(bci_action_stem_down_bound);
+  COPY_FPGM(bci_action_stem_down_bound_serif);
+  COPY_FPGM(bci_action_stem_down_bound_round);
+  COPY_FPGM(bci_action_stem_down_bound_round_serif);
 
   COPY_FPGM(bci_action_serif);
   COPY_FPGM(bci_action_serif_lower_bound);
   COPY_FPGM(bci_action_serif_upper_bound);
   COPY_FPGM(bci_action_serif_upper_lower_bound);
+  COPY_FPGM(bci_action_serif_down_lower_bound);
+  COPY_FPGM(bci_action_serif_down_upper_bound);
+  COPY_FPGM(bci_action_serif_down_upper_lower_bound);
 
   COPY_FPGM(bci_action_serif_anchor);
   COPY_FPGM(bci_action_serif_anchor_lower_bound);
   COPY_FPGM(bci_action_serif_anchor_upper_bound);
   COPY_FPGM(bci_action_serif_anchor_upper_lower_bound);
+  COPY_FPGM(bci_action_serif_anchor_down_lower_bound);
+  COPY_FPGM(bci_action_serif_anchor_down_upper_bound);
+  COPY_FPGM(bci_action_serif_anchor_down_upper_lower_bound);
 
   COPY_FPGM(bci_action_serif_link1);
   COPY_FPGM(bci_action_serif_link1_lower_bound);
   COPY_FPGM(bci_action_serif_link1_upper_bound);
   COPY_FPGM(bci_action_serif_link1_upper_lower_bound);
+  COPY_FPGM(bci_action_serif_link1_down_lower_bound);
+  COPY_FPGM(bci_action_serif_link1_down_upper_bound);
+  COPY_FPGM(bci_action_serif_link1_down_upper_lower_bound);
 
   COPY_FPGM(bci_action_serif_link2);
   COPY_FPGM(bci_action_serif_link2_lower_bound);
   COPY_FPGM(bci_action_serif_link2_upper_bound);
   COPY_FPGM(bci_action_serif_link2_upper_lower_bound);
+  COPY_FPGM(bci_action_serif_link2_down_lower_bound);
+  COPY_FPGM(bci_action_serif_link2_down_upper_bound);
+  COPY_FPGM(bci_action_serif_link2_down_upper_lower_bound);
 
   COPY_FPGM(bci_hint_glyph);
 

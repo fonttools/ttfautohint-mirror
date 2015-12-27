@@ -353,6 +353,10 @@ typedef enum TA_Action_
   ta_adjust_bound_serif,
   ta_adjust_bound_round,
   ta_adjust_bound_round_serif,
+  ta_adjust_down_bound,
+  ta_adjust_down_bound_serif,
+  ta_adjust_down_bound_round,
+  ta_adjust_down_bound_round_serif,
 
   ta_link,
   ta_link_serif,
@@ -367,26 +371,42 @@ typedef enum TA_Action_
   ta_stem_bound_serif,
   ta_stem_bound_round,
   ta_stem_bound_round_serif,
+  ta_stem_down_bound,
+  ta_stem_down_bound_serif,
+  ta_stem_down_bound_round,
+  ta_stem_down_bound_round_serif,
 
   ta_serif,
   ta_serif_lower_bound,
   ta_serif_upper_bound,
   ta_serif_upper_lower_bound,
+  ta_serif_down_lower_bound,
+  ta_serif_down_upper_bound,
+  ta_serif_down_upper_lower_bound,
 
   ta_serif_anchor,
   ta_serif_anchor_lower_bound,
   ta_serif_anchor_upper_bound,
   ta_serif_anchor_upper_lower_bound,
+  ta_serif_anchor_down_lower_bound,
+  ta_serif_anchor_down_upper_bound,
+  ta_serif_anchor_down_upper_lower_bound,
 
   ta_serif_link1,
   ta_serif_link1_lower_bound,
   ta_serif_link1_upper_bound,
   ta_serif_link1_upper_lower_bound,
+  ta_serif_link1_down_lower_bound,
+  ta_serif_link1_down_upper_bound,
+  ta_serif_link1_down_upper_lower_bound,
 
   ta_serif_link2,
   ta_serif_link2_lower_bound,
   ta_serif_link2_upper_bound,
   ta_serif_link2_upper_lower_bound,
+  ta_serif_link2_down_lower_bound,
+  ta_serif_link2_down_upper_bound,
+  ta_serif_link2_down_upper_lower_bound,
 
   ta_bound
 } TA_Action;

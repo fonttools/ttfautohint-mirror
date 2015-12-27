@@ -1922,7 +1922,11 @@ TA_hints_recorder(TA_Action action,
   FT_UShort* wraps = recorder->wrap_around_segments;
   FT_Byte* p = recorder->hints_record.buf;
 
-  FT_UInt style = font->loader->metrics->style_class->style;
+  TA_StyleClass style_class = font->loader->metrics->style_class;
+  TA_ScriptClass script_class = ta_script_classes[style_class->script];
+
+  FT_UInt style = style_class->style;
+  FT_Bool top_to_bottom_hinting = script_class->top_to_bottom_hinting;
 
 
   if (dim == TA_DIMENSION_HORZ)
@@ -2014,8 +2018,8 @@ TA_hints_recorder(TA_Action action,
     break;
   }
 
-  /* some enum values correspond to four or eight bytecode functions; */
-  /* if the value is n, the function numbers are n, ..., n+7, */
+  /* some enum values correspond to 4, 7, 8, or 12 bytecode functions; */
+  /* if the value is n, the function numbers are n, ..., n+11, */
   /* to be differentiated with flags */
 
   switch (action)
@@ -2071,7 +2075,9 @@ TA_hints_recorder(TA_Action action,
       *(p++) = (FT_Byte)action + ACTION_OFFSET
                + ((edge2->flags & TA_EDGE_SERIF) != 0)
                + 2 * ((edge->flags & TA_EDGE_ROUND) != 0)
-               + 4 * (edge_minus_one != NULL);
+               + 4 * (edge_minus_one != NULL) /* `bound' */
+               + 4 * (edge_minus_one != NULL
+                      && top_to_bottom_hinting); /* `down' */
 
       *(p++) = HIGH(edge->first - segments);
       *(p++) = LOW(edge->first - segments);
@@ -2129,7 +2135,9 @@ TA_hints_recorder(TA_Action action,
       *(p++) = (FT_Byte)action + ACTION_OFFSET
                + ((edge2->flags & TA_EDGE_SERIF) != 0)
                + 2 * ((edge->flags & TA_EDGE_ROUND) != 0)
-               + 4 * (edge_minus_one != NULL);
+               + 4 * (edge_minus_one != NULL) /* `bound' */
+               + 4 * (edge_minus_one != NULL
+                      && top_to_bottom_hinting); /* `down' */
 
       *(p++) = HIGH(edge->first - segments);
       *(p++) = LOW(edge->first - segments);
@@ -2182,7 +2190,9 @@ TA_hints_recorder(TA_Action action,
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
                + (lower_bound != NULL)
-               + 2 * (upper_bound != NULL);
+               + 2 * (upper_bound != NULL)
+               + 3 * ((lower_bound != NULL || upper_bound != NULL)
+                      && top_to_bottom_hinting); /* `down' */
 
       *(p++) = HIGH(serif->first - segments);
       *(p++) = LOW(serif->first - segments);
@@ -2213,7 +2223,9 @@ TA_hints_recorder(TA_Action action,
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
                + (lower_bound != NULL)
-               + 2 * (upper_bound != NULL);
+               + 2 * (upper_bound != NULL)
+               + 3 * ((lower_bound != NULL || upper_bound != NULL)
+                      && top_to_bottom_hinting); /* `down' */
 
       *(p++) = HIGH(edge->first - segments);
       *(p++) = LOW(edge->first - segments);
@@ -2243,7 +2255,9 @@ TA_hints_recorder(TA_Action action,
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
                + (lower_bound != NULL)
-               + 2 * (upper_bound != NULL);
+               + 2 * (upper_bound != NULL)
+               + 3 * ((lower_bound != NULL || upper_bound != NULL)
+                      && top_to_bottom_hinting); /* `down' */
 
       *(p++) = HIGH(before->first - segments);
       *(p++) = LOW(before->first - segments);

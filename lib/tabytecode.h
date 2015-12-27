@@ -317,7 +317,8 @@
 #define sal_point_max sal_point_min + 1
 #define sal_base sal_point_max + 1
 #define sal_num_packed_segments sal_base + 1
-#define sal_segment_offset sal_num_packed_segments + 1 /* must be last */
+#define sal_top_to_bottom_hinting sal_num_packed_segments + 1
+#define sal_segment_offset sal_top_to_bottom_hinting + 1 /* must be last */
 
 
 /* bytecode function numbers */
@@ -447,14 +448,18 @@
 #define bci_action_adjust_bound_serif bci_action_adjust_bound + 1
 #define bci_action_adjust_bound_round bci_action_adjust_bound_serif + 1
 #define bci_action_adjust_bound_round_serif bci_action_adjust_bound_round + 1
+#define bci_action_adjust_down_bound bci_action_adjust_bound_round_serif + 1
+#define bci_action_adjust_down_bound_serif bci_action_adjust_down_bound + 1
+#define bci_action_adjust_down_bound_round bci_action_adjust_down_bound_serif + 1
+#define bci_action_adjust_down_bound_round_serif bci_action_adjust_down_bound_round + 1
 
-/* 89 */
-#define bci_action_link bci_action_adjust_bound_round_serif + 1
+/* 93 */
+#define bci_action_link bci_action_adjust_down_bound_round_serif + 1
 #define bci_action_link_serif bci_action_link + 1
 #define bci_action_link_round bci_action_link_serif + 1
 #define bci_action_link_round_serif bci_action_link_round + 1
 
-/* 93 */
+/* 97 */
 #define bci_action_stem bci_action_link_round_serif + 1
 #define bci_action_stem_serif bci_action_stem + 1
 #define bci_action_stem_round bci_action_stem_serif + 1
@@ -463,35 +468,51 @@
 #define bci_action_stem_bound_serif bci_action_stem_bound + 1
 #define bci_action_stem_bound_round bci_action_stem_bound_serif + 1
 #define bci_action_stem_bound_round_serif bci_action_stem_bound_round + 1
+#define bci_action_stem_down_bound bci_action_stem_bound_round_serif + 1
+#define bci_action_stem_down_bound_serif bci_action_stem_down_bound + 1
+#define bci_action_stem_down_bound_round bci_action_stem_down_bound_serif + 1
+#define bci_action_stem_down_bound_round_serif bci_action_stem_down_bound_round + 1
 
-/* 101 */
-#define bci_action_serif bci_action_stem_bound_round_serif + 1
+/* 109 */
+#define bci_action_serif bci_action_stem_down_bound_round_serif + 1
 #define bci_action_serif_lower_bound bci_action_serif + 1
 #define bci_action_serif_upper_bound bci_action_serif_lower_bound + 1
 #define bci_action_serif_upper_lower_bound bci_action_serif_upper_bound + 1
+#define bci_action_serif_down_lower_bound bci_action_serif_upper_lower_bound + 1
+#define bci_action_serif_down_upper_bound bci_action_serif_down_lower_bound + 1
+#define bci_action_serif_down_upper_lower_bound bci_action_serif_down_upper_bound + 1
 
-/* 105 */
-#define bci_action_serif_anchor bci_action_serif_upper_lower_bound + 1
+/* 116 */
+#define bci_action_serif_anchor bci_action_serif_down_upper_lower_bound + 1
 #define bci_action_serif_anchor_lower_bound bci_action_serif_anchor + 1
 #define bci_action_serif_anchor_upper_bound bci_action_serif_anchor_lower_bound + 1
 #define bci_action_serif_anchor_upper_lower_bound bci_action_serif_anchor_upper_bound + 1
+#define bci_action_serif_anchor_down_lower_bound bci_action_serif_anchor_upper_lower_bound + 1
+#define bci_action_serif_anchor_down_upper_bound bci_action_serif_anchor_down_lower_bound + 1
+#define bci_action_serif_anchor_down_upper_lower_bound bci_action_serif_anchor_down_upper_bound + 1
 
-/* 109 */
-#define bci_action_serif_link1 bci_action_serif_anchor_upper_lower_bound + 1
+/* 123 */
+#define bci_action_serif_link1 bci_action_serif_anchor_down_upper_lower_bound + 1
 #define bci_action_serif_link1_lower_bound bci_action_serif_link1 + 1
 #define bci_action_serif_link1_upper_bound bci_action_serif_link1_lower_bound + 1
 #define bci_action_serif_link1_upper_lower_bound bci_action_serif_link1_upper_bound + 1
+#define bci_action_serif_link1_down_lower_bound bci_action_serif_link1_upper_lower_bound + 1
+#define bci_action_serif_link1_down_upper_bound bci_action_serif_link1_down_lower_bound + 1
+#define bci_action_serif_link1_down_upper_lower_bound bci_action_serif_link1_down_upper_bound + 1
 
-/* 113 */
-#define bci_action_serif_link2 bci_action_serif_link1_upper_lower_bound + 1
+/* 130 */
+#define bci_action_serif_link2 bci_action_serif_link1_down_upper_lower_bound + 1
 #define bci_action_serif_link2_lower_bound bci_action_serif_link2 + 1
 #define bci_action_serif_link2_upper_bound bci_action_serif_link2_lower_bound + 1
 #define bci_action_serif_link2_upper_lower_bound bci_action_serif_link2_upper_bound + 1
+#define bci_action_serif_link2_down_lower_bound bci_action_serif_link2_upper_lower_bound + 1
+#define bci_action_serif_link2_down_upper_bound bci_action_serif_link2_down_lower_bound + 1
+#define bci_action_serif_link2_down_upper_lower_bound bci_action_serif_link2_down_upper_bound + 1
 
-/* 117 */
-#define bci_hint_glyph bci_action_serif_link2_upper_lower_bound + 1
+/* 137 */
+#define bci_hint_glyph bci_action_serif_link2_down_upper_lower_bound + 1
 
-/* 118 */
+/* 138 */
 #define bci_freetype_enable_deltas bci_hint_glyph + 1
 
 #define NUM_FDEFS bci_freetype_enable_deltas + 1 /* must be last */
@@ -555,7 +576,7 @@
  *     ratio between the horizontal and vertical resolution isn't equal
  *     to 1)
  *
- * note that the `id_to_idx' function is hypothetic since the code works
+ * note that the `id_to_idx' function is hypothetical since the code works
  * exactly the opposite way: the `cvt_*' arrays are indexed by the style
  * index, and the `style_ids' array maps style indices to style IDs
  */
@@ -567,7 +588,7 @@
 /* vwidth offset data of style ID id */
 #define CVT_VWIDTH_OFFSET_DATA(id) \
           (CVT_SCALING_VALUE_OFFSET(id) \
-           + CVT_DATA->num_used_styles) \
+           + CVT_DATA->num_used_styles)
 
 /* vwidth size data of style ID id */
 #define CVT_VWIDTH_SIZE_DATA(id) \
