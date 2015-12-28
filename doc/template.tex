@@ -1,6 +1,6 @@
 % For non-ASCII characters, this template only works with luatex or XeTeX.
-% Arabic, Devanagari, Khmer, Lao, Telugu, and Thai support currently works
-% with XeTeX only.
+% Arabic, Bengali, Devanagari, Khmer, Lao, Telugu, and Thai support
+% currently works with XeTeX only.
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$%
                $if(lang)$$lang$,$endif$%
@@ -15,6 +15,7 @@
   % with newer releases of `fontspec', fonts should be defined before
   % including `ucharclasses'
   \newfontfamily{\arabicfont}[Script=Arabic]{Amiri}
+  \newfontfamily{\bengalifont}[Script=Bengali]{SagarNormal}
   \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
   \newfontfamily{\khmerfont}[Script=Khmer]{KhmerOS}
   \newfontfamily{\laofont}[Script=Lao]{NotoSerifLao}
@@ -26,6 +27,8 @@
 
   \setTransitionTo{Arabic}{\begingroup\arabicfont}
   \setTransitionFrom{Arabic}{\endgroup}
+  \setTransitionTo{Bengali}{\begingroup\bengalifont}
+  \setTransitionFrom{Bengali}{\endgroup}
   \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
   \setTransitionFrom{Devanagari}{\endgroup}
   \setTransitionTo{Khmer}{\begingroup\khmerfont}

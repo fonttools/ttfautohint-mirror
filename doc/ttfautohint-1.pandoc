@@ -692,6 +692,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `arab`      'ـ', U+0640, ARABIC TATWEEL
               'ل', U+0644, ARABIC LETTER LAM
               'ح', U+062D, ARABIC LETTER HAH
+  `beng`      '০', U+09E6, BENGALI DIGIT ZERO
+              '৪', U+09EA, BENGALI DIGIT FOUR
   `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
               'О', U+041E, CYRILLIC CAPITAL LETTER O
   `deva`      'ठ', U+0920, DEVANAGARI LETTER TTHA
@@ -766,6 +768,19 @@ Table: `arab` blue zones
   3     glyph joining                          ـ
 
 
+Table: `beng` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     baseline (flat glyphs only)            অ ড ত ন ব ভ ল ক
+  2     top of ascenders                       ই ট ঠ ি ী ৈ ৗ
+  3     top of baseline                        ও এ ড ত ন ব ল ক
+  4     bottom of base characters              অ ড ত ন ব ভ ল ক
+
+Contrary to scripts like latin, the baseline in Bengali is on the top, and
+we hint from top to bottom.
+
+
 Table: `cyrl` blue zones
 
   ID    Blue zone                              Characters
@@ -787,10 +802,10 @@ Table: `deva` blue zones
   4     bottom of base characters              क म अ आ थ ध भ श
   5     bottom of descenders                   ु ृ
 
-Contrary to scripts like latin, the baseline in Devanagari is on the top.
-Note that some fonts have extreme variation in the height of the round
-elements in Zone\ 3; for this reason we also define Zone\ 1, which must be
-always present.
+Contrary to scripts like latin, the baseline in Devanagari is on the top,
+and we hint from top to bottom.  Note that some fonts have extreme variation
+in the height of the round elements in Zone\ 3; for this reason we also
+define Zone\ 1, which must be always present.
 
 
 Table: `grek` blue zones
