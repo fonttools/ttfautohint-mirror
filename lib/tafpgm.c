@@ -3319,6 +3319,16 @@ static const unsigned char FPGM(bci_action_ip_between) [] =
  *
  *   Common code for bci_action_adjust routines.
  *
+ * in: top_to_bottom_hinting
+ *     edge2_is_serif
+ *     edge_is_round
+ *     edge
+ *     edge2
+ *
+ * out: edge (adjusted)
+ *
+ * sal: sal_top_to_bottom_hinting
+ *
  * uses: func[sal_stem_width_function]
  */
 
@@ -3380,6 +3390,8 @@ static const unsigned char FPGM(bci_adjust_common) [] =
  *     edge2_point (in twilight zone)
  *     edge[-1] (in twilight zone)
  *     ... stuff for bci_align_segments (edge) ...
+ *
+ * sal: sal_top_to_bottom_hinting
  *
  * uses: bci_adjust_common
  *       bci_align_segments
@@ -3712,10 +3724,21 @@ static const unsigned char FPGM(bci_action_adjust_round_serif) [] =
  *
  *   Common code for bci_action_stem routines.
  *
+ * in: top_to_bottom_hinting
+ *     edge2_is_serif
+ *     edge_is_round
+ *     edge
+ *     edge2
+ *
+ * out: edge
+ *      cur_len
+ *      edge2
+ *
  * sal: sal_anchor
  *      sal_temp1
  *      sal_temp2
  *      sal_temp3
+ *      sal_top_to_bottom_hinting
  *
  * uses: func[sal_stem_width_function]
  *       bci_round
@@ -4011,6 +4034,7 @@ static const unsigned char FPGM(bci_stem_common) [] =
  *      sal_temp1
  *      sal_temp2
  *      sal_temp3
+ *      sal_top_to_bottom_hinting
  *
  * uses: bci_stem_common
  *       bci_align_segments
@@ -4907,6 +4931,13 @@ static const unsigned char FPGM(bci_action_blue) [] =
  * bci_serif_common
  *
  *   Common code for bci_action_serif routines.
+ *
+ * in: top_to_bottom_hinting
+ *     serif
+ *     base
+ *
+ * sal: sal_top_to_bottom_hinting
+ *
  */
 
 static const unsigned char FPGM(bci_serif_common) [] =
@@ -4950,6 +4981,8 @@ static const unsigned char FPGM(bci_serif_common) [] =
  *
  * in: edge
  *     bound
+ *
+ * sal: sal_top_to_bottom_hinting
  *
  * uses: bci_align_segments
  */
@@ -5003,6 +5036,8 @@ static const unsigned char FPGM(bci_lower_bound) [] =
  * in: edge
  *     bound
  *
+ * sal: sal_top_to_bottom_hinting
+ *
  * uses: bci_align_segments
  */
 
@@ -5055,6 +5090,8 @@ static const unsigned char FPGM(bci_upper_bound) [] =
  * in: edge
  *     lower
  *     upper
+ *
+ * sal: sal_top_to_bottom_hinting
  *
  * uses: bci_align_segments
  */
@@ -5393,7 +5430,13 @@ static const unsigned char FPGM(bci_action_serif_down_upper_lower_bound) [] =
  *
  *   Common code for bci_action_serif_anchor routines.
  *
+ * in: top_to_bottom_hinting
+ *     edge
+ *
+ * out: edge (adjusted)
+ *
  * sal: sal_anchor
+ *      sal_top_to_bottom_hinting
  *
  * uses: bci_round
  */
@@ -5698,6 +5741,16 @@ static const unsigned char FPGM(bci_action_serif_anchor_down_upper_lower_bound) 
  * bci_serif_link1_common
  *
  *   Common code for bci_action_serif_link1 routines.
+ *
+ * in: top_to_bottom_hinting
+ *     before
+ *     edge
+ *     after
+ *
+ * out: edge (adjusted)
+ *
+ * sal: sal_top_to_bottom_hinting
+ *
  */
 
 static const unsigned char FPGM(bci_serif_link1_common) [] =
@@ -6081,7 +6134,14 @@ static const unsigned char FPGM(bci_action_serif_link1_down_upper_lower_bound) [
  *
  *   Common code for bci_action_serif_link2 routines.
  *
+ * in: top_to_bottom_hinting
+ *     edge
+ *
+ * out: edge (adjusted)
+ *
  * sal: sal_anchor
+ *      sal_top_to_bottom_hinting
+ *
  */
 
 static const unsigned char FPGM(bci_serif_link2_common) [] =
