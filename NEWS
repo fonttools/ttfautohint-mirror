@@ -1,7 +1,9 @@
 Version 1.5 (XXXX-XX-XX)
 ------------------------
 
-* Support for Khmer and Myanmar scripts.
+* Support for Khmer, Myanmar, and Bengali scripts.
+
+* Improved Devanagari hinting.
 
 * ttfautohintGUI can now be compiled with Qt5.
 
