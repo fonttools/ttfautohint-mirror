@@ -307,22 +307,22 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
     else
     {
       /* get glyphs not directly addressable by cmap */
-      ta_shaper_get_coverage(globals, style_class, gstyles);
+      ta_shaper_get_coverage(globals, style_class, gstyles, 0);
     }
   }
 
-  /* handle the default OpenType features of the default script ... */
-  ta_shaper_get_coverage(globals, ta_style_classes[dflt], gstyles);
-
-  /* ... and the remaining default OpenType features */
+  /* handle the remaining default OpenType features ... */
   for (ss = 0; ta_style_classes[ss]; ss++)
   {
     TA_StyleClass  style_class = ta_style_classes[ss];
 
 
-    if (ss != dflt && style_class->coverage == TA_COVERAGE_DEFAULT)
-      ta_shaper_get_coverage(globals, style_class, gstyles);
+    if (style_class->coverage == TA_COVERAGE_DEFAULT)
+      ta_shaper_get_coverage(globals, style_class, gstyles, 0);
   }
+
+  /* ... and finally the default OpenType features of the default script */
+  ta_shaper_get_coverage(globals, ta_style_classes[dflt], gstyles, 1);
 
   /* mark ASCII digits */
   for (i = 0x30; i <= 0x39; i++)

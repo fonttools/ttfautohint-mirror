@@ -79,7 +79,8 @@ static const hb_script_t scripts[] =
 FT_Error
 ta_shaper_get_coverage(TA_FaceGlobals globals,
                        TA_StyleClass style_class,
-                       FT_UShort* gstyles)
+                       FT_UShort* gstyles,
+                       FT_Bool default_script)
 {
   hb_face_t* face;
 
@@ -124,8 +125,7 @@ ta_shaper_get_coverage(TA_FaceGlobals globals,
   /* `hb_ot_tags_from_script' usually returns HB_OT_TAG_DEFAULT_SCRIPT */
   /* as the second tag; we change that to HB_TAG_NONE except for the */
   /* default script */
-  if (style_class->script == globals->font->default_script
-      && style_class->coverage == TA_COVERAGE_DEFAULT)
+  if (default_script)
   {
     if (script_tags[0] == HB_TAG_NONE)
       script_tags[0] = HB_OT_TAG_DEFAULT_SCRIPT;
@@ -139,6 +139,11 @@ ta_shaper_get_coverage(TA_FaceGlobals globals,
   }
   else
   {
+    /* we use non-standard tags like `khms' for special purposes; */
+    /* HarfBuzz maps them to `DFLT', which we don't want to handle here */
+    if (script_tags[0] == HB_OT_TAG_DEFAULT_SCRIPT)
+      goto Exit;
+
     if (script_tags[1] == HB_OT_TAG_DEFAULT_SCRIPT)
       script_tags[1] = HB_TAG_NONE;
   }

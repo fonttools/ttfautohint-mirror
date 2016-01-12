@@ -39,7 +39,8 @@ extern size_t feature_tags_size;
 FT_Error
 ta_shaper_get_coverage(TA_FaceGlobals globals,
                        TA_StyleClass style_class,
-                       FT_UShort* gstyles);
+                       FT_UShort* gstyles,
+                       FT_Bool default_script);
 
 void*
 ta_shaper_buf_create(FT_Face face);
