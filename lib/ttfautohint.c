@@ -368,7 +368,7 @@ TTF_autohint(const char* options,
     if (*s)
     {
       /* we map numberset.h's error codes to values starting with 0x100 */
-      error = 0x100 - (FT_Error)x_height_snapping_exceptions;
+      error = 0x100 - (FT_Error)(uintptr_t)x_height_snapping_exceptions;
       errlinenum = 0;
       errline = (char*)x_height_snapping_exceptions_string;
       errpos = (char*)s;
