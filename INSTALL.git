@@ -185,15 +185,26 @@ index 889394e..aaf59f7 100644
  QMAKE_CFLAGS_DEBUG	= -g
  QMAKE_CFLAGS_YACC	= -Wno-unused -Wno-parentheses
 
+  o At the time of this writing (January 2016), mxe's default target is
+    `i686-w64-mingw32.static', which builds a 32bit static executable.  We
+    want exactly that for the distributed binaries.
+
+    [For private builds, however, this can be changed by setting the
+     `MXE_TARGETS' variable in the `settings.mk' file.  A template for this
+     file gets automatically generated after calling make the first time, so
+     you should call make, abort the build process after a few seconds,
+     adjust `settings.mk' to your needs, then continue with the instructions
+     below.  More details can be found on mxe's homepage.]
+
   o Now build the necessary mxe infrastructure with
 
-      make build-requirements
+      make check-requirements
       make qt
       make freetype
 
-    These calls download packages with a total size of approx. 530 MByte.
-    Compilation easily takes some hours on a slower computer; it finally
-    occupies slightly more than 2GBytes on the harddisk.
+    These calls download packages with a total size of approx. 550MBytes. 
+    Compilation easily takes some hours on a slower computer; all together
+    it finally occupies slightly more than 2GBytes on the harddisk.
 
   o You are now ready to build ttfautohint from the git repository with
 

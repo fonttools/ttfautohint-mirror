@@ -13,6 +13,9 @@ Version 1.5 (XXXX-XX-XX)
 
 * Bug fix: Don't create multiple `TTFA` tables in font.
 
+* Bug fix: Under certain circumstances, glyph indices used in Indic features
+  were incorrectly assigned to the default script.
+
 
 Version 1.4.1 (2015-Oct-17)
 ---------------------------
