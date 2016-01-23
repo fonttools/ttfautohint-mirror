@@ -76,7 +76,7 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     const char* p;
 
 #ifdef TA_DEBUG
-    FT_ULong ch;
+    FT_ULong ch = 0;
 #endif
 
 
