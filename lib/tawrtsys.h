@@ -16,8 +16,8 @@
 /* originally file `afwrtsys.h' (2013-Aug-05) from FreeType */
 
 
-#ifndef __TAWRTSYS_H__
-#define __TAWRTSYS_H__
+#ifndef TAWRTSYS_H_
+#define TAWRTSYS_H_
 
   /* Since preprocessor directives can't create other preprocessor */
   /* directives, we have to include the header files manually.     */
@@ -32,7 +32,7 @@
 #  include "talatin2.h"
 #endif
 
-#endif /* __TAWRTSYS_H__ */
+#endif /* TAWRTSYS_H_ */
 
 
 /* The following part can be included multiple times. */

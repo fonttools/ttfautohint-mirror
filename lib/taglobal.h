@@ -17,8 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TAGLOBAL_H__
-#define __TAGLOBAL_H__
+#ifndef TAGLOBAL_H_
+#define TAGLOBAL_H_
 
 #include "ta.h"
 #include "tatypes.h"
@@ -116,6 +116,6 @@ FT_Bool
 ta_face_globals_is_digit(TA_FaceGlobals globals,
                          FT_UInt gindex);
 
-#endif /* __TAGLOBAL_H__ */
+#endif /* TAGLOBAL_H_ */
 
 /* end of taglobal.h */

@@ -17,8 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TALATIN_H__
-#define __TALATIN_H__
+#ifndef TALATIN_H_
+#define TALATIN_H_
 
 #include "tatypes.h"
 #include "tahints.h"
@@ -153,6 +153,6 @@ ta_latin_hints_detect_features(TA_GlyphHints hints,
                                TA_WidthRec* widths,
                                TA_Dimension dim);
 
-#endif /* __TALATIN_H__ */
+#endif /* TALATIN_H_ */
 
 /* end of talatin.h */

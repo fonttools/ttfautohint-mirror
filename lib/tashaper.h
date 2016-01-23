@@ -17,8 +17,8 @@
 
 /* heavily modified 2014 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TASHAPER_H__
-#define __TASHAPER_H__
+#ifndef TASHAPER_H_
+#define TASHAPER_H_
 
 
 #include <ft2build.h>
@@ -62,6 +62,6 @@ ta_shaper_get_elem(TA_StyleMetrics metrics,
                    FT_Long* x_advance,
                    FT_Long* y_offset);
 
-#endif /* __TASHAPER_H__ */
+#endif /* TASHAPER_H_ */
 
 /* end of tashaper.h */

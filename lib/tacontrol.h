@@ -13,8 +13,8 @@
  */
 
 
-#ifndef __TACONTROL_H__
-#define __TACONTROL_H__
+#ifndef TACONTROL_H_
+#define TACONTROL_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -352,6 +352,6 @@ TA_control_segment_dir_get_next(FONT* font,
 } /* extern "C" */
 #endif
 
-#endif /* __TACONTROL_H__ */
+#endif /* TACONTROL_H_ */
 
 /* end of control.h */

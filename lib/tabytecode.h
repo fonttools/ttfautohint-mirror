@@ -13,8 +13,8 @@
  */
 
 
-#ifndef __TABYTECODE_H__
-#define __TABYTECODE_H__
+#ifndef TABYTECODE_H_
+#define TABYTECODE_H_
 
 
 /* symbolic names for bytecode instruction codes */
@@ -633,6 +633,6 @@
 
 extern FT_Byte ttfautohint_glyph_bytecode[7];
 
-#endif /* __TABYTECODE_H__ */
+#endif /* TABYTECODE_H_ */
 
 /* end of tabytecode.h */

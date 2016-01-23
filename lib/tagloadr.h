@@ -17,8 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TAGLOADR_H__
-#define __TAGLOADR_H__
+#ifndef TAGLOADR_H_
+#define TAGLOADR_H_
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -136,6 +136,6 @@ TA_GlyphLoader_CopyPoints(TA_GlyphLoader target,
 }
 #endif
 
-#endif /* __TAGLOADR_H__ */
+#endif /* TAGLOADR_H_ */
 
 /* end of tagloadr.h */

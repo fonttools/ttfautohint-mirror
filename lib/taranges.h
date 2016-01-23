@@ -17,8 +17,8 @@
 
 /* heavily modified 2014 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TARANGES_H__
-#define __TARANGES_H__
+#ifndef TARANGES_H_
+#define TARANGES_H_
 
 
 #include "tatypes.h"
@@ -36,6 +36,6 @@
 
 #include "ttfautohint-scripts.h"
 
-#endif /* __TARANGES_H__ */
+#endif /* TARANGES_H_ */
 
 /* end of taranges.h */

@@ -11,8 +11,8 @@
 // with the ttfautohint library.
 
 
-#ifndef __TTLINEEDIT_H__
-#define __TTLINEEDIT_H__
+#ifndef TTLINEEDIT_H_
+#define TTLINEEDIT_H_
 
 #include <config.h>
 
@@ -31,6 +31,6 @@ public slots:
 };
 
 
-#endif // __TTLINEEDIT_H__
+#endif // TTLINEEDIT_H_
 
 // end of ttlineedit.h

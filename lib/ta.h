@@ -13,8 +13,8 @@
  */
 
 
-#ifndef __TA_H__
-#define __TA_H__
+#ifndef TA_H_
+#define TA_H_
 
 #include <config.h>
 
@@ -421,6 +421,6 @@ TA_font_build_TTF(FONT* font);
 FT_Error
 TA_font_build_TTC(FONT* font);
 
-#endif /* __TA_H__ */
+#endif /* TA_H_ */
 
 /* end of ta.h */

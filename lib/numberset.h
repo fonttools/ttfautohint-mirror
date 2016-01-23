@@ -13,8 +13,8 @@
  */
 
 
-#ifndef __NUMBERSET_H__
-#define __NUMBERSET_H__
+#ifndef NUMBERSET_H_
+#define NUMBERSET_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -228,6 +228,6 @@ number_set_get_next(number_set_iter* iter_p);
 } /* extern "C" */
 #endif
 
-#endif /* __NUMBERSET_H__ */
+#endif /* NUMBERSET_H_ */
 
 /* end of numberset.h */

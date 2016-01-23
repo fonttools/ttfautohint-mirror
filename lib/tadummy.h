@@ -17,8 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TADUMMY_H__
-#define __TADUMMY_H__
+#ifndef TADUMMY_H_
+#define TADUMMY_H_
 
 #include "tatypes.h"
 
@@ -27,6 +27,6 @@
 
 extern const TA_WritingSystemClassRec ta_dummy_writing_system_class;
 
-#endif /* __TADUMMY_H__ */
+#endif /* TADUMMY_H_ */
 
 /* end of tadummy.h */

@@ -17,8 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TALOADER_H__
-#define __TALOADER_H__
+#ifndef TALOADER_H_
+#define TALOADER_H_
 
 #include "tahints.h"
 #include "tagloadr.h"
@@ -70,6 +70,6 @@ ta_loader_register_hints_recorder(TA_Loader loader,
                                   TA_Hints_Recorder hints_recorder,
                                   void* user);
 
-#endif /* __TALOADER_H__ */
+#endif /* TALOADER_H_ */
 
 /* end of taloader.h */

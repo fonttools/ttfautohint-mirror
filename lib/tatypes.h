@@ -17,8 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TATYPES_H__
-#define __TATYPES_H__
+#ifndef TATYPES_H_
+#define TATYPES_H_
 
 #include <ft2build.h>
 
@@ -218,7 +218,7 @@ typedef void
  *   outline according to the results of the glyph analyzer.
  */
 
-#define __TAWRTSYS_H__ /* don't load header files */
+#define TAWRTSYS_H_ /* don't load header files */
 #undef WRITING_SYSTEM
 #define WRITING_SYSTEM(ws, WS) \
           TA_WRITING_SYSTEM_ ## WS,
@@ -231,7 +231,7 @@ typedef enum TA_WritingSystem_
   TA_WRITING_SYSTEM_MAX /* do not remove */
 } TA_WritingSystem;
 
-#undef __TAWRTSYS_H__
+#undef TAWRTSYS_H_
 
 
 typedef struct TA_WritingSystemClassRec_
@@ -400,6 +400,6 @@ typedef struct TA_StyleMetricsRec_
 } /* extern "C" */
 #endif
 
-#endif /* __TATYPES_H__ */
+#endif /* TATYPES_H_ */
 
 /* end of tatypes.h */

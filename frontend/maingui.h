@@ -11,8 +11,8 @@
 // with the ttfautohint library.
 
 
-#ifndef __MAINGUI_H__
-#define __MAINGUI_H__
+#ifndef MAINGUI_H_
+#define MAINGUI_H_
 
 #include <config.h>
 
@@ -226,6 +226,6 @@ private:
   QLocale* locale;
 };
 
-#endif // __MAINGUI_H__
+#endif // MAINGUI_H_
 
 // end of maingui.h

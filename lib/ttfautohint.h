@@ -13,8 +13,8 @@
  */
 
 
-#ifndef __TTFAUTOHINT_H__
-#define __TTFAUTOHINT_H__
+#ifndef TTFAUTOHINT_H_
+#define TTFAUTOHINT_H_
 
 #include <stdarg.h>
 
@@ -563,6 +563,6 @@ TTF_autohint(const char* options,
 } /* extern "C" */
 #endif
 
-#endif /* __TTFAUTOHINT_H__ */
+#endif /* TTFAUTOHINT_H_ */
 
 /* end of ttfautohint.h */

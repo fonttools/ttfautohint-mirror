@@ -11,8 +11,8 @@
 // with the ttfautohint library.
 
 
-#ifndef __INFO_H__
-#define __INFO_H__
+#ifndef INFO_H_
+#define INFO_H_
 
 #include <ttfautohint.h>
 #include <stdbool.h> // for llrb.h
@@ -77,6 +77,6 @@ info_post(void* user);
 
 } // extern "C"
 
-#endif // __INFO_H__
+#endif // INFO_H_
 
 // end of info.h

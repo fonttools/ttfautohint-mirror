@@ -13,8 +13,8 @@
  */
 
 
-#ifndef __TTFAUTOHINT_ERRORS_H__
-#define __TTFAUTOHINT_ERRORS_H__
+#ifndef TTFAUTOHINT_ERRORS_H_
+#define TTFAUTOHINT_ERRORS_H_
 
 /* We duplicate FreeType's error handling macros for simplicity; */
 /* however, we don't use module-specific error codes. */
@@ -129,6 +129,6 @@ TA_ERRORDEF_(Control_Flex_Error,           0x211,
 #undef TA_ERRORDEF_
 #undef TA_NOERRORDEF_
 
-#endif /* __TTFAUTOHINT_ERRORS_H__ */
+#endif /* TTFAUTOHINT_ERRORS_H_ */
 
 /* end of ttfautohint-errors.h */

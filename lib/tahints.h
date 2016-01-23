@@ -17,8 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TAHINTS_H__
-#define __TAHINTS_H__
+#ifndef TAHINTS_H_
+#define TAHINTS_H_
 
 #include "tatypes.h"
 
@@ -581,7 +581,7 @@ ta_glyph_hints_done(TA_GlyphHints hints);
 } /* extern "C" */
 #endif
 
-#endif /* __TAHINTS_H__ */
+#endif /* TAHINTS_H_ */
 
 
 /* end of tahints.h */

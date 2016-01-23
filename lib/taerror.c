@@ -33,7 +33,7 @@ static TA_error TA_Errors[] =
 #define FT_ERROR_END_LIST /* empty */
 #include FT_ERRORS_H
 
-#undef __TTFAUTOHINT_ERRORS_H__
+#undef TTFAUTOHINT_ERRORS_H_
 #define TA_ERRORDEF(e, v, s) { e, s },
 #define TA_ERROR_START_LIST /* empty */
 #define TA_ERROR_END_LIST { 0, NULL } };

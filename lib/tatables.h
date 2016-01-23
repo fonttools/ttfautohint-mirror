@@ -13,8 +13,8 @@
  */
 
 
-#ifndef __TATABLES_H__
-#define __TATABLES_H__
+#ifndef TATABLES_H_
+#define TATABLES_H_
 
 #include "ta.h"
 
@@ -41,6 +41,6 @@ void
 TA_font_compute_table_offsets(FONT* font,
                               FT_ULong start);
 
-#endif /* __TATABLES_H__ */
+#endif /* TATABLES_H_ */
 
 /* end of tatables.h */

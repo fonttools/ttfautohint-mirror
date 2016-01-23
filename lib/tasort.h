@@ -17,8 +17,8 @@
 
 /* heavily modified 2011 by Werner Lemberg <wl@gnu.org> */
 
-#ifndef __TASORT_H__
-#define __TASORT_H__
+#ifndef TASORT_H_
+#define TASORT_H_
 
 #include "tatypes.h"
 
@@ -40,6 +40,6 @@ ta_sort_and_quantize_widths(FT_UInt* count,
 }
 #endif
 
-#endif /* __TASORT_H__ */
+#endif /* TASORT_H_ */
 
 /* end of tasort.h */

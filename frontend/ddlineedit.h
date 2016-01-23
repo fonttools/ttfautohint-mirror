@@ -11,8 +11,8 @@
 // with the ttfautohint library.
 
 
-#ifndef __DDLINEEDIT_H__
-#define __DDLINEEDIT_H__
+#ifndef DDLINEEDIT_H_
+#define DDLINEEDIT_H_
 
 #include <config.h>
 #include "ttlineedit.h"
@@ -45,6 +45,6 @@ public:
 };
 
 
-#endif // __DDLINEEDIT_H__
+#endif // DDLINEEDIT_H_
 
 // end of ddlineedit.h
