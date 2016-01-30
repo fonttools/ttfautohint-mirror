@@ -318,6 +318,8 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
 {
   TA_Point points = hints->points;
   TA_Point limit = points + hints->num_points;
+  TA_Point* contour = hints->contours;
+  TA_Point* climit = contour + hints->num_contours;
   TA_Point point;
 
 
@@ -325,7 +327,7 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
 
   if (hints->num_points)
     TA_LOG(("  index  hedge  hseg  flags"
-            "  xorg  yorg  xscale  yscale   xfit    yfit\n"));
+            "  xorg  yorg  xscale  yscale   xfit    yfit"));
   else
     TA_LOG(("  (none)\n"));
 
@@ -336,6 +338,13 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
 
     char buf1[16], buf2[16];
 
+
+    /* insert extra newline at the beginning of a contour */
+    if (contour < climit && *contour == point)
+    {
+      TA_LOG(("\n"));
+      contour++;
+    }
 
     /* we don't show vertical edges since they are never used */
     TA_LOG(("  %5d  %5s %5s  %s "
