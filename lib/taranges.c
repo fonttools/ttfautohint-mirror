@@ -218,6 +218,24 @@ const TA_Script_UniRangeRec ta_hebr_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_knda_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0C80UL, 0x0CFFUL), /* Kannada */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_knda_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0C81UL, 0x0C81UL),
+  TA_UNIRANGE_REC(0x0CBCUL, 0x0CBCUL),
+  TA_UNIRANGE_REC(0x0CBFUL, 0x0CBFUL),
+  TA_UNIRANGE_REC(0x0CC6UL, 0x0CC6UL),
+  TA_UNIRANGE_REC(0x0CCCUL, 0x0CCDUL),
+  TA_UNIRANGE_REC(0x0CE2UL, 0x0CE3UL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_khmr_uniranges[] =
 {
   TA_UNIRANGE_REC(0x1780UL, 0x17FFUL), /* Khmer */

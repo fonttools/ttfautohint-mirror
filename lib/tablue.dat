@@ -135,6 +135,11 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_HEBREW_DESCENDER
     "ק ך ן ף ץ"
 
+  TA_BLUE_STRING_KANNADA_TOP
+    "ಇ ಊ ಐ ಣ ಸಾ ನಾ ದಾ ರಾ"
+  TA_BLUE_STRING_KANNADA_BOTTOM
+    "ಅ ಉ ಎ ಲ ೦ ೨ ೬ ೭"
+
   TA_BLUE_STRING_KHMER_TOP
     "ខ ទ ន ឧ ឩ ា"
   TA_BLUE_STRING_KHMER_SUBSCRIPT_TOP
@@ -367,6 +372,11 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_HEBREW_BOTTOM,    0                             }
     { TA_BLUE_STRING_HEBREW_DESCENDER, 0                             }
     { TA_BLUE_STRING_MAX,              0                             }
+
+  TA_BLUE_STRINGSET_KNDA
+    { TA_BLUE_STRING_KANNADA_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
+    { TA_BLUE_STRING_KANNADA_BOTTOM, 0                          }
+    { TA_BLUE_STRING_MAX,            0                          }
 
   TA_BLUE_STRINGSET_KHMR
     { TA_BLUE_STRING_KHMER_TOP,             TA_BLUE_PROPERTY_LATIN_TOP      |

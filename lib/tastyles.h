@@ -119,6 +119,13 @@ STYLE(hebr_dflt, HEBR_DFLT,
       TA_BLUE_STRINGSET_HEBR,
       TA_COVERAGE_DEFAULT)
 
+STYLE(knda_dflt, KNDA_DFLT,
+      "Kannada default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_KNDA,
+      TA_BLUE_STRINGSET_KNDA,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(khmr_dflt, KHMR_DFLT,
       "Khmer default style",
       TA_WRITING_SYSTEM_LATIN,
