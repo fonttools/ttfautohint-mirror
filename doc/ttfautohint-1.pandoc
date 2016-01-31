@@ -702,6 +702,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
               'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
+  `knda`      '೦', U+0CE6, KANNADA DIGIT ZERO
+              'ಬ', U+0CAC, KANNADA LETTER BA
   `khmer`     '០', U+17E0, KHMER DIGIT ZERO
   `lao`       '໐', U+0ED0, LAO DIGIT ZERO
   `latn`      'o', U+006F, LATIN SMALL LETTER O
@@ -827,6 +829,14 @@ Table: `hebr` blue zones
   1     top of letters                         ב ד ה ח ך כ ם ס
   2     bottom of letters                      ב ט כ ם ס צ
   3     bottom of descenders of letters        ק ך ן ף ץ
+
+
+Table: `knda` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ಇ ಊ ಐ ಣ ಸಾ ನಾ ದಾ ರಾ
+  2     bottom of letters                      ಅ ಉ ಎ ಲ ೦ ೨ ೬ ೭
 
 
 Table: `khmr` blue zones

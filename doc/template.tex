@@ -17,6 +17,9 @@
   \newfontfamily{\arabicfont}[Script=Arabic]{Amiri}
   \newfontfamily{\bengalifont}[Script=Bengali]{SagarNormal}
   \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
+  % alas, `Sampige.ttf' crashes the TeXLive 2015 version of xdvipdfmx
+  % \newfontfamily{\kannadafont}[Script=Kannada]{Sampige}
+  \newfontfamily{\kannadafont}[Script=Kannada]{Lohit Kannada}
   \newfontfamily{\khmerfont}[Script=Khmer]{KhmerOS}
   \newfontfamily{\laofont}[Script=Lao]{NotoSerifLao}
   \newfontfamily{\myanmarfont}[Script=Myanmar]{NotoSansMyanmar}
@@ -31,6 +34,8 @@
   \setTransitionFrom{Bengali}{\endgroup}
   \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
   \setTransitionFrom{Devanagari}{\endgroup}
+  \setTransitionTo{Kannada}{\begingroup\kannadafont}
+  \setTransitionFrom{Kannada}{\endgroup}
   \setTransitionTo{Khmer}{\begingroup\khmerfont}
   \setTransitionFrom{Khmer}{\endgroup}
   \setTransitionTo{KhmerSymbols}{\begingroup\khmerfont}
