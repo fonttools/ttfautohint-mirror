@@ -3,6 +3,8 @@ Version 1.6 (2016-XXX-XX)
 
 * Support for Kannada script.
 
+* New option `--ttfa-info` to display a font's `TTFA` table (if present).
+
 
 Version 1.5 (2016-Jan-24)
 -------------------------

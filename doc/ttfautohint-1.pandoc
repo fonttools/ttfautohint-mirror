@@ -480,7 +480,7 @@ to value 'Version' in the 'ttfautohint info' combo box.
 
 ### Add TTFA Info Table
 
-`--ttfa-info`, `-t`
+`--ttfa-table`, `-t`
 :   Add an SFNT table called `TTFA` to the output font that holds a dump of
     all parameters; the data resembles the format of the `--debug` option's
     parameter listing.  In particular, it lists all ttfautohint control
@@ -594,6 +594,10 @@ Watch input files (`ttfautohintGUI` only)
 `--version`, `-v`
 :   On the console, print version information on standard output and exit.
     This doesn't work with `ttfautohintGUI` on MS Windows.
+
+`--ttfa-info`, `-T` (not in `ttfautohintGUI`)
+:   Print [`TTFA` table](#add-ttfa-info-table) of the input font on standard
+    output if present, then exit.
 
 `--debug`
 :   Print *a lot* of debugging information on standard error while

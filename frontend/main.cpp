@@ -39,6 +39,9 @@
 #  include <QApplication>
 #  include "maingui.h"
 #else
+#  include <ft2build.h>
+#  include FT_FREETYPE_H
+#  include FT_TRUETYPE_TABLES_H // for option `-T'
 #  include "info.h"
 #endif
 
@@ -317,6 +320,9 @@ show_help(bool
 "                             (default: %d)\n"
 "  -s, --symbol               input is symbol font\n"
 "  -t, --ttfa-table           add TTFA information table\n"
+#ifndef BUILD_GUI
+"  -T, --ttfa-info            display TTFA table in IN-FILE and exit\n"
+#endif
 "  -v, --verbose              show progress information\n"
 "  -V, --version              print version information and exit\n"
 "  -w, --strong-stem-width=S  use strong stem width routine for modes S,\n"
@@ -511,6 +517,146 @@ show_version()
 #endif // CONSOLE_OUTPUT
 
 
+#ifndef BUILD_GUI
+
+typedef const struct FT_error_
+{
+  int err_code;
+  const char* err_msg;
+} FT_error;
+
+static FT_error FT_errors[] =
+
+#undef __FTERRORS_H__
+#define FT_ERRORDEF(e, v, s) { e, s },
+#define FT_ERROR_START_LIST {
+#define FT_ERROR_END_LIST { 0, NULL } };
+#include FT_ERRORS_H
+
+
+static const char*
+FT_get_error_message(FT_Error error)
+{
+  FT_error* e = FT_errors;
+
+  while (e->err_code || e->err_msg)
+  {
+    if (e->err_code == error)
+      return e->err_msg;
+    e++;
+  }
+
+  return NULL;
+}
+
+
+#define BUF_SIZE 0x10000
+
+#define TTAG_TTFA FT_MAKE_TAG('T', 'T', 'F', 'A')
+
+static void
+display_TTFA(FILE* in)
+{
+  FT_Byte buf[BUF_SIZE];
+  FT_Byte* in_buf;
+  size_t in_len = 0;
+  size_t read_bytes;
+
+  if (in == stdin)
+    SET_BINARY(stdin);
+
+  in_buf = (FT_Byte*)malloc(BUF_SIZE);
+  if (!in_buf)
+  {
+    fprintf(stderr, "Can't allocate enough memory.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  while ((read_bytes = fread(buf, 1, BUF_SIZE, in)) > 0)
+  {
+    FT_Byte* in_buf_new = (FT_Byte*)realloc(in_buf, in_len + read_bytes);
+    if (!in_buf_new)
+    {
+      fprintf(stderr, "Can't reallocate enough memory.\n");
+      exit(EXIT_FAILURE);
+    }
+    else
+      in_buf = in_buf_new;
+
+    memcpy(in_buf + in_len, buf, read_bytes);
+
+    in_len += read_bytes;
+  }
+
+  if (ferror(in))
+  {
+    fprintf(stderr, "Stream error while handling input font.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  FT_Library library;
+  FT_Face face;
+  FT_Error error;
+
+  error = FT_Init_FreeType(&library);
+  if (error)
+  {
+    fprintf(stderr, "Can't initialize FreeType library:\n"
+                    "%s\n", FT_get_error_message(error));
+    exit(EXIT_FAILURE);
+  }
+
+  // in a TTC, a `TTFA' table is part of the first subfont,
+  // thus we can simply pass 0 as the face index
+  error = FT_New_Memory_Face(library, in_buf, (FT_Long)in_len, 0, &face);
+  if (error)
+  {
+    fprintf(stderr, "Can't open input font:\n"
+                    "%s\n", FT_get_error_message(error));
+    exit(EXIT_FAILURE);
+  }
+
+  FT_Byte* ttfa_buf;
+  FT_ULong ttfa_len = 0;
+
+  error = FT_Load_Sfnt_Table(face, TTAG_TTFA, 0, NULL, &ttfa_len);
+  if (error)
+  {
+    fprintf(stderr, "No `TTFA' table in font.\n");
+    goto Exit;
+  }
+
+  ttfa_buf = (FT_Byte*)malloc(ttfa_len);
+  if (!ttfa_buf)
+  {
+    fprintf(stderr, "Can't allocate enough memory.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  error = FT_Load_Sfnt_Table(face, TTAG_TTFA, 0, ttfa_buf, &ttfa_len);
+  if (error)
+  {
+    fprintf(stderr, "Error loading `TTFA' table:\n"
+                    "%s\n", FT_get_error_message(error));
+    exit(EXIT_FAILURE);
+  }
+
+  fprintf(stdout, "%s", ttfa_buf);
+
+Exit:
+  FT_Done_Face(face);
+  FT_Done_FreeType(library);
+
+  free(in_buf);
+  free(ttfa_buf);
+  if (in != stdin)
+    fclose(in);
+
+  exit(EXIT_SUCCESS);
+}
+#endif
+
+
 int
 main(int argc,
      char** argv)
@@ -538,6 +684,9 @@ main(int argc,
   bool no_info = false;
   bool detailed_info = false;
   bool TTFA_info = false;
+#ifndef BUILD_GUI
+  bool show_TTFA_info = false;
+#endif
   bool symbol = false;
 
   const char* default_script = NULL;
@@ -615,6 +764,9 @@ main(int argc,
       {"strong-stem-width", required_argument, NULL, 'w'},
       {"symbol", no_argument, NULL, 's'},
       {"ttfa-table", no_argument, NULL, 't'},
+#ifndef BUILD_GUI
+      {"ttfa-info", no_argument, NULL, 'T'},
+#endif
       {"verbose", no_argument, NULL, 'v'},
       {"version", no_argument, NULL, 'V'},
       {"windows-compatibility", no_argument, NULL, 'W'},
@@ -654,7 +806,7 @@ main(int argc,
 #ifdef BUILD_GUI
                              "cdD:f:F:G:hH:iIl:npr:stVvw:Wx:X:",
 #else
-                             "cdD:f:F:G:hH:iIl:m:npr:stVvw:Wx:X:",
+                             "cdD:f:F:G:hH:iIl:m:npr:stTVvw:Wx:X:",
 #endif
                              long_options, &option_index);
     if (c == -1)
@@ -743,8 +895,12 @@ main(int argc,
       TTFA_info = true;
       break;
 
-    case 'v':
 #ifndef BUILD_GUI
+    case 'T':
+      show_TTFA_info = true;
+      break;
+
+    case 'v':
       progress_func = progress;
 #endif
       break;
@@ -819,6 +975,23 @@ main(int argc,
     have_increase_x_height = false;
     have_x_height_snapping_exceptions_string = false;
   }
+
+#ifndef BUILD_GUI
+  if (show_TTFA_info)
+  {
+    // -T makes ttfautohint ignore even more options
+    have_default_script = false;
+    have_fallback_script = false;
+    have_fallback_stem_width = false;
+    have_hinting_range_max = false;
+    have_hinting_range_min = false;
+    have_hinting_limit = false;
+    have_increase_x_height = false;
+    have_x_height_snapping_exceptions_string = false;
+    have_family_suffix = false;
+    debug = false;
+  }
+#endif
 
   if (!have_default_script)
     default_script = "latn";
@@ -947,6 +1120,11 @@ main(int argc,
       show_help(false, true);
     in = stdin;
   }
+
+#ifndef BUILD_GUI
+  if (show_TTFA_info)
+    display_TTFA(in); // this function doesn't return
+#endif
 
   FILE* out;
   if (num_args > 1)
