@@ -713,6 +713,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `latn`      'o', U+006F, LATIN SMALL LETTER O
               'O', U+004F, LATIN CAPITAL LETTER O
               '0', U+0030, DIGIT ZERO
+  `mlym`      'ഠ', U+0D20, MALAYALAM LETTER TTHA
+              'റ', U+0D31, MALAYALAM LETTER RRA
   `mymr`      'ဝ', U+101D, MYANMAR LETTER WA
               'င', U+1004, MYANMAR LETTER NGA
               'ဂ', U+1002, MYANMAR LETTER GA
@@ -918,6 +920,14 @@ Table: `latp` blue zones
   6     bottom of descenders of small characters  ᵖ ʸ ᵍ
 
 Superscript latin characters are similar to normal latin characters.
+
+
+Table: `mlym` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ഒ ട ഠ റ ച പ ച്ച പ്പ
+  2     bottom of letters                      ട ഠ ധ ശ ഘ ച ഥ ല
 
 
 Table: `mymr` blue zones

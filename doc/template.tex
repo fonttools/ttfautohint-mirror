@@ -22,6 +22,7 @@
   \newfontfamily{\kannadafont}[Script=Kannada]{Lohit Kannada}
   \newfontfamily{\khmerfont}[Script=Khmer]{KhmerOS}
   \newfontfamily{\laofont}[Script=Lao]{NotoSerifLao}
+  \newfontfamily{\malayalamfont}[Script=Malayalam]{FreeSerif}
   \newfontfamily{\myanmarfont}[Script=Myanmar]{NotoSansMyanmar}
   \newfontfamily{\telugufont}[Script=Telugu]{Pothana2000}
   \newfontfamily{\thaifont}[Script=Thai]{FreeSerif}
@@ -42,6 +43,8 @@
   \setTransitionFrom{KhmerSymbols}{\endgroup}
   \setTransitionTo{Lao}{\begingroup\laofont}
   \setTransitionFrom{Lao}{\endgroup}
+  \setTransitionTo{Malayalam}{\begingroup\malayalamfont}
+  \setTransitionFrom{Malayalam}{\endgroup}
   \setTransitionTo{Myanmar}{\begingroup\myanmarfont}
   \setTransitionFrom{Myanmar}{\endgroup}
   \setTransitionTo{Telugu}{\begingroup\telugufont}
