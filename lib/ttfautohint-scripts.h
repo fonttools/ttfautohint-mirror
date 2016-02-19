@@ -113,6 +113,12 @@ SCRIPT(latp, LATP,
        HINTING_BOTTOM_TO_TOP,
        "\xE1\xB5\x92 \xE1\xB4\xBC \xE2\x81\xB0") /* ᵒ ᴼ ⁰ */
 
+SCRIPT(mlym, MLYM,
+       "Malayalam",
+       HB_SCRIPT_MALAYALAM,
+       HINTING_BOTTOM_TO_TOP,
+       "\xE0\xB4\xA0 \xE0\xB4\xB1") /* ഠ റ */
+
 SCRIPT(mymr, MYMR,
        "Myanmar",
        HB_SCRIPT_MYANMAR,

@@ -376,6 +376,21 @@ const TA_Script_UniRangeRec ta_latp_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec  ta_mlym_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0D00UL, 0x0D7FUL), /* Malayalam */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec  ta_mlym_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0D01UL, 0x0D01UL),
+  TA_UNIRANGE_REC(0x0D4DUL, 0x0D4EUL),
+  TA_UNIRANGE_REC(0x0D62UL, 0x0D63UL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_mymr_uniranges[] =
 {
   TA_UNIRANGE_REC(0x1000UL, 0x109FUL), /* Myanmar */

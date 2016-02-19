@@ -172,6 +172,13 @@ STYLE(ltn2_dflt, LTN2_DFLT,
       TA_COVERAGE_DEFAULT)
 #endif
 
+STYLE(mlym_dflt, MLYM_DFLT,
+      "Malayalam default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_MLYM,
+      TA_BLUE_STRINGSET_MLYM,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(mymr_dflt, MYMR_DFLT,
       "Myanmar default style",
       TA_WRITING_SYSTEM_LATIN,
