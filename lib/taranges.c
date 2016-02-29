@@ -376,13 +376,13 @@ const TA_Script_UniRangeRec ta_latp_nonbase_uniranges[] =
 };
 
 
-const TA_Script_UniRangeRec  ta_mlym_uniranges[] =
+const TA_Script_UniRangeRec ta_mlym_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0D00UL, 0x0D7FUL), /* Malayalam */
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 
-const TA_Script_UniRangeRec  ta_mlym_nonbase_uniranges[] =
+const TA_Script_UniRangeRec ta_mlym_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0D01UL, 0x0D01UL),
   TA_UNIRANGE_REC(0x0D4DUL, 0x0D4EUL),
@@ -413,6 +413,35 @@ const TA_Script_UniRangeRec ta_mymr_nonbase_uniranges[] =
   TA_UNIRANGE_REC(0x108DUL, 0x108DUL),
   TA_UNIRANGE_REC(0xA9E5UL, 0xA9E5UL),
   TA_UNIRANGE_REC(0xAA7CUL, 0xAA7CUL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
+const TA_Script_UniRangeRec ta_sinh_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0D80UL, 0x0DFFUL), /* Sinhala */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_sinh_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0DCAUL, 0x0DCAUL),
+  TA_UNIRANGE_REC(0x0DD2UL, 0x0DD6UL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
+const TA_Script_UniRangeRec ta_taml_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0B80UL, 0x0BFFUL), /* Tamil */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_taml_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0B82UL, 0x0B82UL),
+  TA_UNIRANGE_REC(0x0BC0UL, 0x0BC2UL),
+  TA_UNIRANGE_REC(0x0BCDUL, 0x0BCDUL),
   TA_UNIRANGE_REC(     0UL,      0UL)
 };
 

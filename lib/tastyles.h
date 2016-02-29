@@ -186,6 +186,20 @@ STYLE(mymr_dflt, MYMR_DFLT,
       TA_BLUE_STRINGSET_MYMR,
       TA_COVERAGE_DEFAULT)
 
+STYLE(sinh_dflt, SINH_DFLT,
+      "Sinhala default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_SINH,
+      TA_BLUE_STRINGSET_SINH,
+      TA_COVERAGE_DEFAULT)
+
+STYLE(taml_dflt, TAML_DFLT,
+      "Tamil default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_TAML,
+      TA_BLUE_STRINGSET_TAML,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(telu_dflt, TELU_DFLT,
       "Telugu default style",
       TA_WRITING_SYSTEM_LATIN,

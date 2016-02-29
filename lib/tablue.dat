@@ -217,6 +217,18 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_MYANMAR_DESCENDER
     "ဉ ည ဥ ဩ ဨ ၂ ၅ ၉"
 
+  TA_BLUE_STRING_SINHALA_TOP
+    "ඉ ක ඝ ඳ ප ය ල ෆ"
+  TA_BLUE_STRING_SINHALA_BOTTOM
+    "එ ඔ ඝ ජ ට ථ ධ ර"
+  TA_BLUE_STRING_SINHALA_DESCENDER
+    "ද ඳ උ ල තූ තු බු දු"
+
+  TA_BLUE_STRING_TAMIL_TOP
+    "உ ஒ ஓ ற ஈ க ங ச"
+  TA_BLUE_STRING_TAMIL_BOTTOM
+    "க ச ல ஶ உ ங ட ப"
+
   TA_BLUE_STRING_TELUGU_TOP
     "ఇ ఌ ఙ ఞ ణ ఱ ౯"
   TA_BLUE_STRING_TELUGU_BOTTOM
@@ -449,6 +461,17 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_MYANMAR_ASCENDER,  TA_BLUE_PROPERTY_LATIN_TOP        }
     { TA_BLUE_STRING_MYANMAR_DESCENDER, 0                                 }
     { TA_BLUE_STRING_MAX,               0                                 }
+
+  TA_BLUE_STRINGSET_SINH
+    { TA_BLUE_STRING_SINHALA_TOP,       TA_BLUE_PROPERTY_LATIN_TOP }
+    { TA_BLUE_STRING_SINHALA_BOTTOM,    0                          }
+    { TA_BLUE_STRING_SINHALA_DESCENDER, 0                          }
+    { TA_BLUE_STRING_MAX,               0                          }
+
+  TA_BLUE_STRINGSET_TAML
+    { TA_BLUE_STRING_TAMIL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
+    { TA_BLUE_STRING_TAMIL_BOTTOM, 0                          }
+    { TA_BLUE_STRING_MAX,          0                          }
 
   TA_BLUE_STRINGSET_TELU
     { TA_BLUE_STRING_TELUGU_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }

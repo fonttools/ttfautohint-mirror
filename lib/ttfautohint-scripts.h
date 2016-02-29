@@ -125,6 +125,19 @@ SCRIPT(mymr, MYMR,
        HINTING_BOTTOM_TO_TOP,
        "\xE1\x80\x9D \xE1\x80\x84 \xE1\x80\x82") /* ဝ င ဂ */
 
+SCRIPT(sinh, SINH,
+       "Sinhala",
+       HB_SCRIPT_SINHALA,
+       HINTING_BOTTOM_TO_TOP,
+       "\xE0\xB6\xA7") /* ට */
+
+/* only digit zero has a simple (round) shape in the Tamil script */
+SCRIPT(taml, TAML,
+       "Tamil",
+       HB_SCRIPT_TAMIL,
+       HINTING_BOTTOM_TO_TOP,
+       "\xE0\xAF\xA6") /* ௦ */
+
 /* there are no simple forms for letters; we thus use two digit shapes */
 SCRIPT(telu, TELU,
        "Telugu",
