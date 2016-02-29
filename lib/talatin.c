@@ -1493,11 +1493,30 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
 
     int on_edge = 0;
 
-    FT_Pos min_pos = 32000; /* minimum segment pos != min_coord */
-    FT_Pos max_pos = -32000; /* maximum segment pos != max_coord */
-    FT_Pos min_on_pos = 32000;
-    FT_Pos max_on_pos = -32000;
+    /* we call values measured along a segment (point->v) */
+    /* `coordinates', and values orthogonal to it (point->u) */
+    /* `positions' */
+    FT_Pos min_pos = 32000;
+    FT_Pos max_pos = -32000;
+    FT_Pos min_coord = 32000;
+    FT_Pos max_coord = -32000;
+    FT_Pos min_flags = TA_FLAG_NONE;
+    FT_Pos max_flags = TA_FLAG_NONE;
+    FT_Pos min_on_coord = 32000;
+    FT_Pos max_on_coord = -32000;
+
     FT_Bool passed;
+
+    TA_Segment prev_segment = NULL;
+
+    FT_Pos prev_min_pos;
+    FT_Pos prev_max_pos;
+    FT_Pos prev_min_coord;
+    FT_Pos prev_max_coord;
+    FT_UShort prev_min_flags;
+    FT_UShort prev_max_flags;
+    FT_Pos prev_min_on_coord;
+    FT_Pos prev_max_on_coord;
 
 
     if (point == last) /* skip singletons -- just in case */
@@ -1532,52 +1551,181 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
 
       if (on_edge)
       {
+        /* get minimum and maximum position */
         u = point->u;
         if (u < min_pos)
           min_pos = u;
         if (u > max_pos)
           max_pos = u;
 
-        /* get minimum and maximum coordinate of on points */
+        /* get minimum and maximum coordinate together with flags */
+        v = point->v;
+        if (v < min_coord)
+        {
+          min_coord = v;
+          min_flags = point->flags;
+        }
+        if (v > max_coord)
+        {
+          max_coord = v;
+          max_flags = point->flags;
+        }
+
+        /* get minimum and maximum coordinate of `on' points */
         if (!(point->flags & TA_FLAG_CONTROL))
         {
           v = point->v;
-          if (v < min_on_pos)
-            min_on_pos = v;
-          if (v > max_on_pos)
-            max_on_pos = v;
+          if (v < min_on_coord)
+            min_on_coord = v;
+          if (v > max_on_coord)
+            max_on_coord = v;
         }
 
         if (point->out_dir != segment_dir
             || point == last)
         {
-          /* we are just leaving an edge; record a new segment! */
-          segment->last = point;
-          segment->pos = (FT_Short)((min_pos + max_pos) >> 1);
+          /* check whether the new segment's start point is identical to */
+          /* the previous segment's end point; for example, this might */
+          /* happen for spikes */
 
-          /* a segment is round if either its first or last point */
-          /* is a control point, and the length of the on points */
-          /* inbetween doesn't exceed a heuristic limit */
-          if ((segment->first->flags | point->flags) & TA_FLAG_CONTROL
-              && (max_on_pos - min_on_pos) < flat_threshold)
-            segment->flags |= TA_EDGE_ROUND;
+          if (!prev_segment
+              || segment->first != prev_segment->last)
+          {
+            /* points are different: we are just leaving an edge, thus */
+            /* record a new segment */
 
-          /* compute segment size */
-          min_pos = max_pos = point->v;
+            segment->last = point;
+            segment->pos = (FT_Short)((min_pos + max_pos) >> 1);
 
-          v = segment->first->v;
-          if (v < min_pos)
-            min_pos = v;
-          if (v > max_pos)
-            max_pos = v;
+            /* a segment is round if either its first or last point */
+            /* is a control point, and the length of the on points */
+            /* inbetween doesn't exceed a heuristic limit */
+            if ((min_flags | max_flags) & TA_FLAG_CONTROL
+                && (max_on_coord - min_on_coord) < flat_threshold)
+              segment->flags |= TA_EDGE_ROUND;
 
-          segment->min_coord = (FT_Short)min_pos;
-          segment->max_coord = (FT_Short)max_pos;
-          segment->height = (FT_Short)(segment->max_coord -
-                                         segment->min_coord);
+            segment->min_coord = (FT_Short)min_coord;
+            segment->max_coord = (FT_Short)max_coord;
+            segment->height = segment->max_coord - segment->min_coord;
+
+            prev_segment = segment;
+            prev_min_pos = min_pos;
+            prev_max_pos = max_pos;
+            prev_min_coord = min_coord;
+            prev_max_coord = max_coord;
+            prev_min_flags = min_flags;
+            prev_max_flags = max_flags;
+            prev_min_on_coord = min_on_coord;
+            prev_max_on_coord = max_on_coord;
+          }
+          else
+          {
+            /* points are the same: we don't create a new segment but */
+            /* merge the current segment with the previous one */
+
+            if (prev_segment->last->in_dir == point->in_dir)
+            {
+              /* we have identical directions (this can happen for */
+              /* degenerate outlines that move zig-zag along the main */
+              /* axis without changing the coordinate value of the other */
+              /* axis, and where the segments have just been merged): */
+              /* unify segments */
+
+              /* update constraints */
+
+              if (prev_min_pos < min_pos)
+                min_pos = prev_min_pos;
+              if (prev_max_pos > max_pos)
+                max_pos = prev_max_pos;
+
+              if (prev_min_coord < min_coord)
+              {
+                min_coord = prev_min_coord;
+                min_flags = prev_min_flags;
+              }
+              if (prev_max_coord > max_coord)
+              {
+                max_coord = prev_max_coord;
+                max_flags = prev_max_flags;
+              }
+
+              if (prev_min_on_coord < min_on_coord)
+                min_on_coord = prev_min_on_coord;
+              if (prev_max_on_coord > max_on_coord)
+                max_on_coord = prev_max_on_coord;
+
+              prev_segment->last = point;
+              prev_segment->pos = (FT_Short)((min_pos + max_pos) >> 1);
+
+              if ((min_flags | max_flags) & TA_FLAG_CONTROL
+                  && (max_on_coord - min_on_coord) < flat_threshold)
+                prev_segment->flags |= TA_EDGE_ROUND;
+              else
+                prev_segment->flags &= ~TA_EDGE_ROUND;
+
+              prev_segment->min_coord = (FT_Short)min_coord;
+              prev_segment->max_coord = (FT_Short)max_coord;
+              prev_segment->height = prev_segment->max_coord
+                                     - prev_segment->min_coord;
+            }
+            else
+            {
+              /* we have different directions; use the properties of the */
+              /* longer segment and discard the other one */
+
+              if (TA_ABS(prev_max_coord - prev_min_coord)
+                  > TA_ABS(max_coord - min_coord))
+              {
+                /* discard current segment */
+
+                if (min_pos < prev_min_pos)
+                  prev_min_pos = min_pos;
+                if (max_pos > prev_max_pos)
+                  prev_max_pos = max_pos;
+
+                prev_segment->last = point;
+                prev_segment->pos = (FT_Short)((prev_min_pos
+                                                + prev_max_pos) >> 1);
+              }
+              else
+              {
+                /* discard previous segment */
+
+                if (prev_min_pos < min_pos)
+                  min_pos = prev_min_pos;
+                if (prev_max_pos > max_pos)
+                  max_pos = prev_max_pos;
+
+                segment->last = point;
+                segment->pos = (FT_Short)((min_pos + max_pos) >> 1);
+
+                if ((min_flags | max_flags) & TA_FLAG_CONTROL
+                    && (max_on_coord - min_on_coord) < flat_threshold)
+                  segment->flags |= TA_EDGE_ROUND;
+
+                segment->min_coord = (FT_Short)min_coord;
+                segment->max_coord = (FT_Short)max_coord;
+                segment->height = segment->max_coord - segment->min_coord;
+
+                *prev_segment = *segment;
+
+                prev_min_pos = min_pos;
+                prev_max_pos = max_pos;
+                prev_min_coord = min_coord;
+                prev_max_coord = max_coord;
+                prev_min_flags = min_flags;
+                prev_max_flags = max_flags;
+                prev_min_on_coord = min_on_coord;
+                prev_max_on_coord = max_on_coord;
+              }
+            }
+
+            axis->num_segments--;
+          }
 
           on_edge = 0;
           segment = NULL;
+
           /* fall through */
         }
       }
@@ -1608,14 +1756,16 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
         segment->last = point;
 
         min_pos = max_pos = point->u;
+        min_coord = max_coord = point->v;
+        min_flags = max_flags = point->flags;
 
         if (point->flags & TA_FLAG_CONTROL)
         {
-          min_on_pos = 32000;
-          max_on_pos = -32000;
+          min_on_coord = 32000;
+          max_on_coord = -32000;
         }
         else
-          min_on_pos = max_on_pos = point->v;
+          min_on_coord = max_on_coord = point->v;
 
         on_edge = 1;
 
@@ -2996,18 +3146,24 @@ ta_latin_hint_edges(TA_GlyphHints hints,
           && (top_to_bottom_hinting ? (edge->pos > edge[-1].pos)
                                     : (edge->pos < edge[-1].pos)))
       {
+        /* don't move if stem would (almost) disappear otherwise; */
+        /* the ad-hoc value 16 corresponds to 1/4px */
+        if (edge->link
+            && TA_ABS(edge->link->pos - edge[-1].pos) > 16)
+        {
 #ifdef TA_DEBUG
-        TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",
-                edge - edges, edge->pos / 64.0, edge[-1].pos / 64.0));
+          TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",
+                  edge - edges, edge->pos / 64.0, edge[-1].pos / 64.0));
 
-        num_actions++;
+          num_actions++;
 #endif
 
-        edge->pos = edge[-1].pos;
+          edge->pos = edge[-1].pos;
 
-        if (hints->recorder)
-          hints->recorder(ta_bound, hints, dim,
-                          edge, &edge[-1], NULL, NULL, NULL);
+          if (hints->recorder)
+            hints->recorder(ta_bound, hints, dim,
+                            edge, &edge[-1], NULL, NULL, NULL);
+        }
       }
     }
   }
@@ -3187,17 +3343,23 @@ ta_latin_hint_edges(TA_GlyphHints hints,
           && (top_to_bottom_hinting ? (edge->pos > edge[-1].pos)
                                     : (edge->pos < edge[-1].pos)))
       {
+        /* don't move if stem would (almost) disappear otherwise; */
+        /* the ad-hoc value 16 corresponds to 1/4px */
+        if (edge->link
+            && TA_ABS(edge->link->pos - edge[-1].pos) > 16)
+        {
 #ifdef TA_DEBUG
-        TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",
-                edge - edges, edge->pos / 64.0, edge[-1].pos / 64.0));
-        num_actions++;
+          TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",
+                  edge - edges, edge->pos / 64.0, edge[-1].pos / 64.0));
+          num_actions++;
 #endif
 
-        edge->pos = edge[-1].pos;
+          edge->pos = edge[-1].pos;
 
-        if (hints->recorder)
-          hints->recorder(ta_bound, hints, dim,
-                          edge, &edge[-1], NULL, NULL, NULL);
+          if (hints->recorder)
+            hints->recorder(ta_bound, hints, dim,
+                            edge, &edge[-1], NULL, NULL, NULL);
+        }
       }
 
       if (edge + 1 < edge_limit
@@ -3206,18 +3368,24 @@ ta_latin_hint_edges(TA_GlyphHints hints,
                                     : (edge->pos > edge[1].pos)))
 
       {
+        /* don't move if stem would (almost) disappear otherwise; */
+        /* the ad-hoc value 16 corresponds to 1/4px */
+        if (edge->link
+            && TA_ABS(edge->link->pos - edge[-1].pos) > 16)
+        {
 #ifdef TA_DEBUG
-        TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",
-                edge - edges, edge->pos / 64.0, edge[1].pos / 64.0));
+          TA_LOG(("  BOUND: edge %d (pos=%.2f) moved to %.2f\n",
+                  edge - edges, edge->pos / 64.0, edge[1].pos / 64.0));
 
-        num_actions++;
+          num_actions++;
 #endif
 
-        edge->pos = edge[1].pos;
+          edge->pos = edge[1].pos;
 
-        if (hints->recorder)
-          hints->recorder(ta_bound, hints, dim,
-                          edge, &edge[1], NULL, NULL, NULL);
+          if (hints->recorder)
+            hints->recorder(ta_bound, hints, dim,
+                            edge, &edge[1], NULL, NULL, NULL);
+        }
       }
     }
   }
