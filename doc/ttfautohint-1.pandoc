@@ -718,6 +718,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `mymr`      'ဝ', U+101D, MYANMAR LETTER WA
               'င', U+1004, MYANMAR LETTER NGA
               'ဂ', U+1002, MYANMAR LETTER GA
+  `sinh`      'ට', U+0DA7, SINHALA LETTER ALPAPRAANA TTAYANNA
+  `taml`      '௦', U+0BE6, TAMIL DIGIT ZERO
   `telu`      '౦', U+0C66, TELUGU DIGIT ZERO
               '౧', U+0C67, TELUGU DIGIT ONE
   `thai`      'า', U+0E32, THAI CHARACTER SARA AA
@@ -938,6 +940,23 @@ Table: `mymr` blue zones
   2     bottom of letters                      င ဎ ဒ ပ ဗ ဝ ၊ ။
   3     top of ascenders of characters         ဩ ြ ၍ ၏ ၆ ါ ိ
   3     bottom of descenders of letters        ဉ ည ဥ ဩ ဨ ၂ ၅ ၉
+
+
+Table: `sinh` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ඉ ක ඝ ඳ ප ය ල ෆ
+  2     bottom of letters                      එ ඔ ඝ ජ ට ථ ධ ර
+  3     bottom of descenders of letters        ද ඳ උ ල තූ තු බු දු
+
+
+Table: `taml` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         உ ஒ ஓ ற ஈ க ங ச
+  2     bottom of letters                      க ச ல ஶ உ ங ட ப
 
 
 Table: `telu` blue zones

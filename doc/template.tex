@@ -24,6 +24,8 @@
   \newfontfamily{\laofont}[Script=Lao]{NotoSerifLao}
   \newfontfamily{\malayalamfont}[Script=Malayalam]{FreeSerif}
   \newfontfamily{\myanmarfont}[Script=Myanmar]{NotoSansMyanmar}
+  \newfontfamily{\sinhalafont}[Script=Sinhala]{FreeSerif}
+  \newfontfamily{\tamilfont}[Script=Tamil]{NotoSerifTamil}
   \newfontfamily{\telugufont}[Script=Telugu]{Pothana2000}
   \newfontfamily{\thaifont}[Script=Thai]{FreeSerif}
 
@@ -47,6 +49,10 @@
   \setTransitionFrom{Malayalam}{\endgroup}
   \setTransitionTo{Myanmar}{\begingroup\myanmarfont}
   \setTransitionFrom{Myanmar}{\endgroup}
+  \setTransitionTo{Sinhala}{\begingroup\sinhalafont}
+  \setTransitionFrom{Sinhala}{\endgroup}
+  \setTransitionTo{Tamil}{\begingroup\tamilfont}
+  \setTransitionFrom{Tamil}{\endgroup}
   \setTransitionTo{Telugu}{\begingroup\telugufont}
   \setTransitionFrom{Telugu}{\endgroup}
   \setTransitionTo{Thai}{\begingroup\thaifont}
