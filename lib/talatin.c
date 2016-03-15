@@ -1500,8 +1500,8 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
     FT_Pos max_pos = -32000;
     FT_Pos min_coord = 32000;
     FT_Pos max_coord = -32000;
-    FT_Pos min_flags = TA_FLAG_NONE;
-    FT_Pos max_flags = TA_FLAG_NONE;
+    FT_UShort min_flags = TA_FLAG_NONE;
+    FT_UShort max_flags = TA_FLAG_NONE;
     FT_Pos min_on_coord = 32000;
     FT_Pos max_on_coord = -32000;
 
@@ -1509,14 +1509,14 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
 
     TA_Segment prev_segment = NULL;
 
-    FT_Pos prev_min_pos;
-    FT_Pos prev_max_pos;
-    FT_Pos prev_min_coord;
-    FT_Pos prev_max_coord;
-    FT_UShort prev_min_flags;
-    FT_UShort prev_max_flags;
-    FT_Pos prev_min_on_coord;
-    FT_Pos prev_max_on_coord;
+    FT_Pos prev_min_pos = min_pos;
+    FT_Pos prev_max_pos = max_pos;
+    FT_Pos prev_min_coord = min_coord;
+    FT_Pos prev_max_coord = max_coord;
+    FT_UShort prev_min_flags = min_flags;
+    FT_UShort prev_max_flags = max_flags;
+    FT_Pos prev_min_on_coord = min_on_coord;
+    FT_Pos prev_max_on_coord = max_on_coord;
 
 
     if (point == last) /* skip singletons -- just in case */
@@ -1754,6 +1754,11 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
         segment->dir = (FT_Char)segment_dir;
         segment->first = point;
         segment->last = point;
+
+        /* `ta_axis_hints_new_segment' reallocates memory, */
+        /* thus we have to refresh the `prev_segment' pointer */
+        if (prev_segment)
+          prev_segment = segment - 1;
 
         min_pos = max_pos = point->u;
         min_coord = max_coord = point->v;
@@ -2571,6 +2576,7 @@ static FT_Pos
 ta_latin_compute_stem_width(TA_GlyphHints hints,
                             TA_Dimension dim,
                             FT_Pos width,
+                            FT_Pos base_delta,
                             FT_Byte base_flags,
                             FT_Byte stem_flags)
 {
@@ -2645,7 +2651,39 @@ ta_latin_compute_stem_width(TA_GlyphHints hints,
           dist += delta;
       }
       else
-        dist = (dist + 32) & ~63;
+      {
+        /* A stem's end position depends on two values: the start */
+        /* position and the stem length.  The former gets usually */
+        /* rounded to the grid, while the latter gets rounded also if it */
+        /* exceeds a certain length (see below in this function).  This */
+        /* `double rounding' can lead to a great difference to the */
+        /* original, unhinted position; this normally doesn't matter for */
+        /* large PPEM values, but for small sizes it can easily make */
+        /* outlines collide.  For this reason, we adjust the stem length */
+        /* by a small amount depending on the PPEM value in case the */
+        /* former and latter rounding both point into the same */
+        /* direction. */
+
+        FT_Pos bdelta = 0;
+
+
+        if (((width > 0) && (base_delta > 0))
+            || ((width < 0) && (base_delta < 0)))
+        {
+          FT_UInt ppem = metrics->root.scaler.face->size->metrics.x_ppem;
+
+
+          if (ppem < 10)
+            bdelta = base_delta;
+          else if (ppem < 30)
+            bdelta = (base_delta * (FT_Pos)(30 - ppem)) / 20;
+
+          if (bdelta < 0)
+            bdelta = -bdelta;
+        }
+
+        dist = (dist - bdelta + 32) & ~63;
+      }
     }
   }
   else
@@ -2734,13 +2772,18 @@ ta_latin_align_linked_edge(TA_GlyphHints hints,
                            TA_Edge base_edge,
                            TA_Edge stem_edge)
 {
-  FT_Pos dist = stem_edge->opos - base_edge->opos;
+  FT_Pos dist, base_delta;
+  FT_Pos fitted_width;
 
-  FT_Pos fitted_width = ta_latin_compute_stem_width(
-                           hints, dim, dist,
-                           base_edge->flags,
-                           stem_edge->flags);
 
+  dist = stem_edge->opos - base_edge->opos;
+  base_delta = base_edge->pos - base_edge->opos;
+
+
+  fitted_width = ta_latin_compute_stem_width(hints, dim,
+                                             dist, base_delta,
+                                             base_edge->flags,
+                                             stem_edge->flags);
 
   stem_edge->pos = base_edge->pos + fitted_width;
 
@@ -2945,7 +2988,8 @@ ta_latin_hint_edges(TA_GlyphHints hints,
 
 
       org_len = edge2->opos - edge->opos;
-      cur_len = ta_latin_compute_stem_width(hints, dim, org_len,
+      cur_len = ta_latin_compute_stem_width(hints, dim,
+                                            org_len, 0,
                                             edge->flags, edge2->flags);
 
       /* some voodoo to specially round edges for small stem widths; */
@@ -3017,7 +3061,8 @@ ta_latin_hint_edges(TA_GlyphHints hints,
       org_len = edge2->opos - edge->opos;
       org_center = org_pos + (org_len >> 1);
 
-      cur_len = ta_latin_compute_stem_width(hints, dim, org_len,
+      cur_len = ta_latin_compute_stem_width(hints, dim,
+                                            org_len, 0,
                                             edge->flags, edge2->flags);
 
       if (edge2->flags & TA_EDGE_DONE)
@@ -3100,7 +3145,8 @@ ta_latin_hint_edges(TA_GlyphHints hints,
         org_len = edge2->opos - edge->opos;
         org_center = org_pos + (org_len >> 1);
 
-        cur_len = ta_latin_compute_stem_width(hints, dim, org_len,
+        cur_len = ta_latin_compute_stem_width(hints, dim,
+                                              org_len, 0,
                                               edge->flags, edge2->flags);
 
         cur_pos1 = TA_PIX_ROUND(org_pos);
