@@ -322,7 +322,7 @@ static const unsigned char FPGM(bci_round) [] =
  *   This is the equivalent to the following code from function
  *   `ta_latin_compute_stem_width':
  *
- *      dist = ABS(width)
+ *      dist = |width|
  *
  *      if (stem_is_serif
  *          && dist < 3*64)
@@ -334,7 +334,7 @@ static const unsigned char FPGM(bci_round) [] =
  *      else if dist < 56:
  *        dist = 56
  *
- *      delta = ABS(dist - std_width)
+ *      delta = |dist - std_width|
  *
  *      if delta < 40:
  *        dist = std_width
@@ -356,7 +356,17 @@ static const unsigned char FPGM(bci_round) [] =
  *        else:
  *          dist = dist + delta
  *      else:
- *        dist = ROUND(dist)
+ *        bdelta = 0
+ *
+ *        if width * base_delta > 0:
+ *          if ppem < 10:
+ *            bdelta = base_delta
+ *          else if ppem < 30:
+ *            bdelta = (base_delta * (30 - ppem)) / 20
+ *
+ *          bdelta = |bdelta|
+ *
+ *        dist = ROUND(dist - bdelta)
  *
  *    End:
  *      if width < 0:
@@ -373,6 +383,7 @@ static const unsigned char FPGM(bci_round) [] =
  * out: new_width
  *
  * sal: sal_vwidth_data_offset
+ *      sal_base_delta
  *
  * CVT: std_width
  *      cvtl_ignore_std_width
@@ -536,6 +547,60 @@ static const unsigned char FPGM(bci_smooth_stem_width) [] =
 
       ELSE,
         PUSHB_1,
+          2,
+        CINDEX, /* s: width dist width */
+        PUSHB_1,
+          sal_base_delta,
+        RS,
+        MUL, /* s: width dist width*base_delta */
+        PUSHB_1,
+          0,
+        GT, /* width * base_delta > 0 */
+        IF,
+          PUSHB_1,
+            0, /* s: width dist bdelta */
+
+          MPPEM,
+          PUSHB_1,
+            10,
+          LT, /* ppem < 10 */
+          IF,
+            POP,
+            PUSHB_1,
+              sal_base_delta,
+            RS, /* bdelta = base_delta */
+
+          ELSE,
+            MPPEM,
+            PUSHB_1,
+              30,
+            LT, /* ppem < 30 */
+            IF,
+              POP,
+              PUSHB_1,
+                30,
+              MPPEM,
+              SUB, /* 30 - ppem */
+              PUSHW_1,
+                0x10, /* 64 * 64 */
+                0x00,
+              MUL, /* (30 - ppem) in 26.6 format */
+              PUSHB_1,
+                sal_base_delta,
+              RS,
+              MUL, /* base_delta * (30 - ppem) */
+              PUSHW_1,
+                0x05, /* 20 * 64 */
+                0x00,
+              DIV, /* bdelta = (base_delta * (30 - ppem)) / 20 */
+            EIF,
+          EIF,
+
+          ABS, /* bdelta = |bdelta| */
+          SUB, /* dist = dist - bdelta */
+        EIF,
+
+        PUSHB_1,
           bci_round,
         CALL, /* dist = round(dist) */
 
@@ -625,12 +690,12 @@ static const unsigned char FPGM(bci_get_best_width) [] =
  *   `ta_latin_compute_stem_width'):
  *
  *     best = 64 + 32 + 2
- *     dist = ABS(width)
+ *     dist = |width|
  *     reference = dist
  *
  *     for n in 0 .. num_widths:
  *       w = widths[n]
- *       d = ABS(dist - w)
+ *       d = |dist - w|
  *
  *       if d < best:
  *         best = d
@@ -3328,6 +3393,7 @@ static const unsigned char FPGM(bci_action_ip_between) [] =
  * out: edge (adjusted)
  *
  * sal: sal_top_to_bottom_hinting
+ *      sal_base_delta
  *
  * uses: func[sal_stem_width_function]
  */
@@ -3342,7 +3408,6 @@ static const unsigned char FPGM(bci_adjust_common) [] =
   PUSHB_1,
     0,
   SZPS, /* set zp0, zp1, and zp2 to twilight zone 0 */
-
   PUSHB_1,
     sal_top_to_bottom_hinting,
   SWAP,
@@ -3355,6 +3420,11 @@ static const unsigned char FPGM(bci_adjust_common) [] =
     4,
   CINDEX, /* s: [...] edge2 edge is_round is_serif edge2 edge */
   MD_orig_ZP2_0, /* s: [...] edge2 edge is_round is_serif org_len */
+
+  PUSHB_2,
+    sal_base_delta, /* no base_delta needed here */
+    0,
+  WS,
 
   PUSHB_1,
     sal_stem_width_function,
@@ -3739,6 +3809,7 @@ static const unsigned char FPGM(bci_action_adjust_round_serif) [] =
  *      sal_temp2
  *      sal_temp3
  *      sal_top_to_bottom_hinting
+ *      sal_base_delta
  *
  * uses: func[sal_stem_width_function]
  *       bci_round
@@ -3783,6 +3854,11 @@ static const unsigned char FPGM(bci_stem_common) [] =
   PUSHB_1,
     sal_org_len,
   SWAP,
+  WS,
+
+  PUSHB_2,
+    sal_base_delta, /* no base_delta needed here */
+    0,
   WS,
 
   PUSHB_1,
@@ -3943,7 +4019,7 @@ static const unsigned char FPGM(bci_stem_common) [] =
       4,
     CINDEX,
     ADD,
-    ABS, /* delta1 = ABS(cur_pos1 + cur_len / 2 - org_center) */
+    ABS, /* delta1 = |cur_pos1 + cur_len / 2 - org_center| */
     SWAP,
     PUSHB_1,
       3,
@@ -3996,8 +4072,8 @@ static const unsigned char FPGM(bci_stem_common) [] =
  *        org_center = org_pos + org_len / 2
  *
  *        cur_pos1 = ROUND(org_center)
- *        delta1 = ABS(org_center - (cur_pos1 - u_off))
- *        delta2 = ABS(org_center - (cur_pos1 + d_off))
+ *        delta1 = |org_center - (cur_pos1 - u_off)|
+ *        delta2 = |org_center - (cur_pos1 + d_off)|
  *        if (delta1 < delta2):
  *          cur_pos1 = cur_pos1 - u_off
  *        else:
@@ -4010,9 +4086,9 @@ static const unsigned char FPGM(bci_stem_common) [] =
  *        org_center = org_pos + org_len / 2
  *
  *        cur_pos1 = ROUND(org_pos)
- *        delta1 = ABS(cur_pos1 + cur_len / 2 - org_center)
+ *        delta1 = |cur_pos1 + cur_len / 2 - org_center|
  *        cur_pos2 = ROUND(org_pos + org_len) - cur_len
- *        delta2 = ABS(cur_pos2 + cur_len / 2 - org_center)
+ *        delta2 = |cur_pos2 + cur_len / 2 - org_center|
  *
  *        if (delta1 < delta2):
  *          edge = cur_pos1
@@ -4418,6 +4494,8 @@ static const unsigned char FPGM(bci_action_stem_round_serif) [] =
  *     stem_point (in twilight zone)
  *     ... stuff for bci_align_segments (base) ...
  *
+ * sal: sal_base_delta
+ *
  * uses: func[sal_stem_width_function]
  *       bci_align_segments
  */
@@ -4440,6 +4518,18 @@ static const unsigned char FPGM(bci_link) [] =
     4,
   MINDEX,
   DUP, /* s: stem is_round is_serif stem base base */
+
+  DUP,
+  DUP,
+  GC_cur,
+  SWAP,
+  GC_orig,
+  SUB, /* base_delta = base_point_pos - base_point_orig_pos */
+  PUSHB_1,
+    sal_base_delta,
+  SWAP,
+  WS, /* sal_base_delta = base_delta */
+
   MDAP_noround, /* set rp0 and rp1 to `base_point' (for ALIGNRP below) */
 
   MD_orig_ZP2_0, /* s: stem is_round is_serif dist_orig */
@@ -4566,8 +4656,8 @@ static const unsigned char FPGM(bci_action_link_round_serif) [] =
  *        org_center = edge_orig + org_len / 2
  *        cur_pos1 = ROUND(org_center)
  *
- *        error1 = ABS(org_center - (cur_pos1 - u_off))
- *        error2 = ABS(org_center - (cur_pos1 + d_off))
+ *        error1 = |org_center - (cur_pos1 - u_off)|
+ *        error2 = |org_center - (cur_pos1 + d_off)|
  *        if (error1 < error2):
  *          cur_pos1 = cur_pos1 - u_off
  *        else:
@@ -4589,6 +4679,7 @@ static const unsigned char FPGM(bci_action_link_round_serif) [] =
  *      sal_temp1
  *      sal_temp2
  *      sal_temp3
+ *      sal_base_delta
  *
  * uses: func[sal_stem_width_function]
  *       bci_round
@@ -4634,6 +4725,11 @@ static const unsigned char FPGM(bci_anchor) [] =
   PUSHB_1,
     sal_org_len,
   SWAP,
+  WS,
+
+  PUSHB_2,
+    sal_base_delta, /* no base_delta needed here */
+    0,
   WS,
 
   PUSHB_1,

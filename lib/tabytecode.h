@@ -311,7 +311,8 @@
 #define sal_func sal_ref + 1
 #define sal_anchor sal_func + 1
 #define sal_stem_width_function sal_anchor + 1
-#define sal_vwidth_data_offset sal_stem_width_function + 1
+#define sal_base_delta sal_stem_width_function + 1
+#define sal_vwidth_data_offset sal_base_delta + 1
 #define sal_scale sal_vwidth_data_offset + 1
 #define sal_point_min sal_scale + 1
 #define sal_point_max sal_point_min + 1
