@@ -1236,6 +1236,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   control_line = new Drag_Drop_Line_Edit(DRAG_DROP_ANY);
   control_button = new QPushButton(tr("Browse..."));
   control_label->setBuddy(control_line);
+  // we use the non-breaking hyphen U+2011 (&#8209;) where necessary
   QString tooltip_string =
     tr("<p>An optional control instructions file to tweak hinting"
        " and to override glyph assignments to styles."
@@ -1244,37 +1245,37 @@ Main_GUI::create_layout(bool horizontal_layout)
        " (with brackets indicating optional elements).<br>"
        "&nbsp;<br>"
 
-       "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
+       "&nbsp;&nbsp;[&nbsp;<i>subfont&#8209;idx</i>&nbsp;]"
        "&nbsp;&nbsp;<i>script</i>"
        "&nbsp;&nbsp;<i>feature</i>"
-       "&nbsp;&nbsp;<tt>@</tt>&nbsp;<i>glyph-ids</i><br>"
+       "&nbsp;&nbsp;<tt>@</tt>&nbsp;<i>glyph&#8209;ids</i><br>"
 
-       "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
-       "&nbsp;&nbsp;<i>glyph-id</i>"
+       "&nbsp;&nbsp;[&nbsp;<i>subfont&#8209;idx</i>&nbsp;]"
+       "&nbsp;&nbsp;<i>glyph&#8209;id</i>"
        "&nbsp;&nbsp;<tt>left</tt>&nbsp;|&nbsp;<tt>right</tt>&nbsp;<i>points</i>"
-       "&nbsp;&nbsp;[&nbsp;<tt>(</tt><i>left-offset</i><tt>,"
-         "</tt><i>right-offset</i><tt>)</tt>&nbsp;]<br>"
+       "&nbsp;&nbsp;[&nbsp;<tt>(</tt><i>left&#8209;offset</i><tt>,"
+         "</tt><i>right&#8209;offset</i><tt>)</tt>&nbsp;]<br>"
 
-       "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
-       "&nbsp;&nbsp;<i>glyph-id</i>"
+       "&nbsp;&nbsp;[&nbsp;<i>subfont&#8209;idx</i>&nbsp;]"
+       "&nbsp;&nbsp;<i>glyph&#8209;id</i>"
        "&nbsp;&nbsp;<tt>nodir</tt>&nbsp;<i>points</i><br>"
 
-       "&nbsp;&nbsp;[&nbsp;<i>subfont-idx</i>&nbsp;]"
-       "&nbsp;&nbsp;<i>glyph-id</i>"
+       "&nbsp;&nbsp;[&nbsp;<i>subfont&#8209;idx</i>&nbsp;]"
+       "&nbsp;&nbsp;<i>glyph&#8209;id</i>"
        "&nbsp;&nbsp;<tt>touch</tt>&nbsp;|&nbsp;<tt>point</tt>&nbsp;<i>points</i>"
        "&nbsp;&nbsp;[&nbsp;<tt>xshift</tt>&nbsp;<i>shift</i>&nbsp;]"
        "&nbsp;&nbsp;[&nbsp;<tt>yshift</tt>&nbsp;<i>shift</i>&nbsp;]"
        "&nbsp;&nbsp;<tt>@</tt>&nbsp;<i>ppems</i><br>"
        "&nbsp;<br>"
 
-       "<i>subfont-idx</i> gives the subfont index in a TTC,"
-       " <i>glyph-id</i> is a glyph name or index.<br>"
+       "<i>subfont&#8209;idx</i> gives the subfont index in a TTC,"
+       " <i>glyph&#8209;id</i> is a glyph name or index.<br>"
        "&nbsp;<br>"
 
        "<i>script</i> and <i>feature</i> are four-letter tags"
-       " that define a style the <i>glyph-ids</i> are assigned to."
-       "  <i>glyph-ids</i> is a comma-separated list of"
-       " <i>glyph-id</i> values and value ranges.<br>");
+       " that define a style the <i>glyph&#8209;ids</i> are assigned to."
+       "  <i>glyph&#8209;ids</i> is a comma-separated list of"
+       " <i>glyph&#8209;id</i> values and value ranges.<br>");
 
   tooltip_string += tr("Possible values for <i>script</i> are ");
   const Tag_Names* sn = script_names;
@@ -1315,7 +1316,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   tooltip_string +=
     tr("<tt>left</tt> (<tt>right</tt>) creates one-point segments"
        " with direction left (right), possibly having a width (in font units)"
-       " given by <i>left-offset</i> and <i>right-offset</i>"
+       " given by <i>left&#8209;offset</i> and <i>right&#8209;offset</i>"
        " relative to the corresponding points.<br>"
        "&nbsp;<br>"
 
