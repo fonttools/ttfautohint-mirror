@@ -213,9 +213,13 @@ TA_table_build_cvt(FT_Byte** cvt,
 
       hwidth_count += haxis->width_count;
       vwidth_count += vaxis->width_count;
-      /* there are two artificial blue zones at the end of the array */
+
+      blue_count += vaxis->blue_count;
+      /* if windows compatibility mode is active */
+      /* we add two artificial blue zones at the end of the array */
       /* that are not part of `vaxis->blue_count' */
-      blue_count += vaxis->blue_count + 2;
+      if (font->windows_compatibility)
+        blue_count += 2;
     }
   }
 
@@ -292,7 +296,10 @@ TA_table_build_cvt(FT_Byte** cvt,
 
       hwidth_count = haxis->width_count;
       vwidth_count = vaxis->width_count;
-      blue_count = vaxis->blue_count + 2; /* with artificial blue zones */
+
+      blue_count = vaxis->blue_count;
+      if (font->windows_compatibility)
+        blue_count += 2; /* with artificial blue zones */
     }
 
     /* horizontal standard width */

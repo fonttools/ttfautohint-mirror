@@ -923,9 +923,11 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
 
   ta_shaper_buf_destroy(face, shaper_buf);
 
-  /* add two blue zones for usWinAscent and usWinDescent */
+  /* if windows compatibility mode is activated, */
+  /* add two artificial blue zones for usWinAscent and usWinDescent */
   /* just in case the above algorithm has missed them -- */
   /* Windows cuts off everything outside of those two values */
+  if (metrics->root.globals->font->windows_compatibility)
   {
     TT_OS2* os2;
 
@@ -1374,6 +1376,7 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
 
     /* the last two artificial blue zones are to be scaled */
     /* with uncorrected scaling values */
+    if (metrics->root.globals->font->windows_compatibility)
     {
       TA_LatinAxis a = &metrics->axis[TA_DIMENSION_VERT];
       TA_LatinBlue b;

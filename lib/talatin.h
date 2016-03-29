@@ -82,7 +82,7 @@ typedef struct TA_LatinAxisRec_
 
   /* ignored for horizontal metrics */
   FT_UInt blue_count;
-  /* we add two blue zones for usWinAscent and usWinDescent */
+  /* we add two artificial blue zones for usWinAscent and usWinDescent */
   TA_LatinBlueRec blues[TA_BLUE_STRINGSET_MAX + 2];
 
   FT_Fixed org_scale;
