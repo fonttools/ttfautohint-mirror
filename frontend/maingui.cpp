@@ -86,7 +86,7 @@ const Tag_Names feature_names[] =
 //   h: &Help (menu)
 //   i: &Input File
 //   j: Ad&just Subglyphs
-//   k: Fallbac&k Stem Width / Default Fallbac&k Stem Width
+//   k: Fallbac&k Script
 //   l: Hinting &Limit / No Hinting &Limit
 //   m: Hint Co&mposites
 //   n: Hint Set Range Mi&nimum
@@ -94,7 +94,7 @@ const Tag_Names feature_names[] =
 //   p: Windows Com&patibility
 //   q: --
 //   r: &Run
-//   s: Fallback &Script
+//   s: Fallback &Stem Width / Default Fallback &Stem Width
 //   t: x Height Snapping Excep&tions
 //   u: Defa&ult Script
 //   v: --
@@ -1417,7 +1417,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // hinting and fallback controls
   //
-  fallback_label = new QLabel(tr("Fallback &Script:"));
+  fallback_label = new QLabel(tr("Fallbac&k Script:"));
   fallback_box = new QComboBox;
   fallback_label->setBuddy(fallback_box);
   fallback_label->setToolTip(
@@ -1515,7 +1515,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // fallback stem width
   //
-  stem_width_label_text_with_key = tr("Fallbac&k Stem Width:");
+  stem_width_label_text_with_key = tr("Fallback &Stem Width:");
   stem_width_label_text = tr("Fallback Stem Width:");
   stem_width_label = new QLabel(stem_width_label_text_with_key);
   stem_width_box = new QSpinBox;
@@ -1527,7 +1527,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   stem_width_box->setKeyboardTracking(false);
   stem_width_box->setRange(1, 10000);
 
-  default_stem_width_box_text_with_key = tr("Default Fallbac&k Stem Width");
+  default_stem_width_box_text_with_key = tr("Default Fallback &Stem Width");
   default_stem_width_box_text = tr("Default Fallback Stem Width");
   default_stem_width_box = new QCheckBox(default_stem_width_box_text, this);
   default_stem_width_box->setToolTip(
