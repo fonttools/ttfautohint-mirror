@@ -218,7 +218,7 @@ STYLE(none_dflt, NONE_DFLT,
       "no style",
       TA_WRITING_SYSTEM_DUMMY,
       TA_SCRIPT_NONE,
-      (TA_Blue_Stringset)0,
+      TA_BLUE_STRINGSET_NONE,
       TA_COVERAGE_DEFAULT)
 
 /* end of tastyles.h */
