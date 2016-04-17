@@ -117,6 +117,29 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_DEVANAGARI_BOTTOM
     "ु ृ"
 
+  TA_BLUE_STRING_GEORGIAN_MKHEDRULI_TOP
+    "გ დ ე ვ თ ი ო ღ"
+  TA_BLUE_STRING_GEORGIAN_MKHEDRULI_BOTTOM
+    "ა ზ მ ს შ ძ ხ ჰ"
+  TA_BLUE_STRING_GEORGIAN_MKHEDRULI_ASCENDER
+    "ს ხ ქ ზ მ შ ჩ წ"
+  TA_BLUE_STRING_GEORGIAN_MKHEDRULI_DESCENDER
+    "ე ვ ჟ ტ უ ფ ქ ყ"
+
+  TA_BLUE_STRING_GEORGIAN_ASOMTAVRULI_TOP
+    "Ⴑ Ⴇ Ⴙ Ⴜ Ⴄ Ⴅ Ⴓ Ⴚ"
+  TA_BLUE_STRING_GEORGIAN_ASOMTAVRULI_BOTTOM
+    "Ⴄ Ⴅ Ⴇ Ⴈ Ⴆ Ⴑ Ⴊ Ⴋ"
+
+  TA_BLUE_STRING_GEORGIAN_NUSKHURI_TOP
+    "ⴁ ⴗ ⴂ ⴄ ⴅ ⴇ ⴔ ⴖ"
+  TA_BLUE_STRING_GEORGIAN_NUSKHURI_BOTTOM
+    "ⴈ ⴌ ⴖ ⴎ ⴃ ⴆ ⴋ ⴢ"
+  TA_BLUE_STRING_GEORGIAN_NUSKHURI_ASCENDER
+    "ⴐ ⴑ ⴓ ⴕ ⴙ ⴛ ⴡ ⴣ"
+  TA_BLUE_STRING_GEORGIAN_NUSKHURI_DESCENDER
+    "ⴄ ⴅ ⴔ ⴕ ⴁ ⴂ ⴘ ⴝ"
+
   TA_BLUE_STRING_GREEK_CAPITAL_TOP
     "Γ Β Ε Ζ Θ Ο Ω"
   TA_BLUE_STRING_GREEK_CAPITAL_BOTTOM
@@ -372,6 +395,25 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_DEVANAGARI_BASE,   0                                 }
     { TA_BLUE_STRING_DEVANAGARI_BOTTOM, 0                                 }
     { TA_BLUE_STRING_MAX,               0                                 }
+
+  // blue zones for Mtavruli are missing (not yet defined in Unicode)
+  TA_BLUE_STRINGSET_GEOR
+    { TA_BLUE_STRING_GEORGIAN_MKHEDRULI_TOP,       TA_BLUE_PROPERTY_LATIN_TOP      |
+                                                   TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_GEORGIAN_MKHEDRULI_BOTTOM,    0                                 }
+    { TA_BLUE_STRING_GEORGIAN_MKHEDRULI_ASCENDER,  TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_GEORGIAN_MKHEDRULI_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_MAX,                          0                                 }
+
+  TA_BLUE_STRINGSET_GEOK
+    { TA_BLUE_STRING_GEORGIAN_ASOMTAVRULI_TOP,       TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_GEORGIAN_ASOMTAVRULI_BOTTOM,    0                                 }
+    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_TOP,          TA_BLUE_PROPERTY_LATIN_TOP      |
+                                                     TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_BOTTOM,       0                                 }
+    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_ASCENDER,     TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_DESCENDER,    0                                 }
+    { TA_BLUE_STRING_MAX,                            0                                 }
 
   TA_BLUE_STRINGSET_GREK
     { TA_BLUE_STRING_GREEK_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }

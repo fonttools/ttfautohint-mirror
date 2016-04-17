@@ -180,6 +180,36 @@ const TA_Script_UniRangeRec ta_deva_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_geor_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x10D0UL, 0x10FFUL), /* Georgian (Mkhedruli) */
+#if 0
+  /* the following range is proposed for inclusion in Unicode */
+  TA_UNIRANGE_REC(0x1C90UL, 0x1CBFUL), /* Georgian (Mtavruli) */
+#endif
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_geor_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0UL, 0UL)
+};
+
+
+const TA_Script_UniRangeRec ta_geok_uniranges[] =
+{
+  /* Khutsuri */
+  TA_UNIRANGE_REC(0x10A0UL, 0x10CDUL), /* Georgian (Asomtavruli) */
+  TA_UNIRANGE_REC(0x2D00UL, 0x2D2DUL), /* Georgian (Nuskhuri) */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_geok_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0UL, 0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_grek_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0370UL, 0x03FFUL), /* Greek and Coptic */

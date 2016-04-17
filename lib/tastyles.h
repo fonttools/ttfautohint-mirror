@@ -110,6 +110,20 @@ STYLE(deva_dflt, DEVA_DFLT,
       TA_BLUE_STRINGSET_DEVA,
       TA_COVERAGE_DEFAULT)
 
+STYLE(geor_dflt, GEOR_DFLT,
+      "Georgian (Mkhedruli) default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_GEOR,
+      TA_BLUE_STRINGSET_GEOR,
+      TA_COVERAGE_DEFAULT)
+
+STYLE(geok_dflt, GEOK_DFLT,
+      "Georgian (Khutsuri) default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_GEOK,
+      TA_BLUE_STRINGSET_GEOK,
+      TA_COVERAGE_DEFAULT)
+
 META_STYLE_LATIN(grek, GREK, "Greek")
 
 STYLE(hebr_dflt, HEBR_DFLT,
