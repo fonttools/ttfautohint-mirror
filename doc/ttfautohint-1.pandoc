@@ -703,12 +703,18 @@ Table: script-specific standard characters of the 'latin' writing system
   `deva`      'ठ', U+0920, DEVANAGARI LETTER TTHA
               'व', U+0935, DEVANAGARI LETTER VA
               'ट', U+091F, DEVANAGARI LETTER TTA
+  `geor`      'ი', U+10D8, GEORGIAN LETTER IN
+              'ე', U+10D4, GEORGIAN LETTER EN
+              'ა', U+10D0, GEORGIAN LETTER AN
+  `geok`      'Ⴖ', U+10B6, GEORGIAN CAPITAL LETTER GHAN
+              'Ⴑ', U+10B1, GEORGIAN CAPITAL LETTER SAN
+              'ⴙ', U+2D19, GEORGIAN SMALL LETTER CHIN
   `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
               'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
   `knda`      '೦', U+0CE6, KANNADA DIGIT ZERO
               'ಬ', U+0CAC, KANNADA LETTER BA
-  `khmer`     '០', U+17E0, KHMER DIGIT ZERO
+  `khmr`      '០', U+17E0, KHMER DIGIT ZERO
   `lao`       '໐', U+0ED0, LAO DIGIT ZERO
   `latn`      'o', U+006F, LATIN SMALL LETTER O
               'O', U+004F, LATIN CAPITAL LETTER O
@@ -816,6 +822,36 @@ Contrary to scripts like latin, the baseline in Devanagari is on the top,
 and we hint from top to bottom.  Note that some fonts have extreme variation
 in the height of the round elements in Zone\ 3; for this reason we also
 define Zone\ 1, which must be always present.
+
+
+Table: `geok` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of Asomtavruli letters             Ⴑ Ⴇ Ⴙ Ⴜ Ⴄ Ⴅ Ⴓ Ⴚ
+  2     bottom of Asomtavruli letters          Ⴄ Ⴅ Ⴇ Ⴈ Ⴆ Ⴑ Ⴊ Ⴋ
+  3     top of Nuskhuri letters                ⴁ ⴗ ⴂ ⴄ ⴅ ⴇ ⴔ ⴖ
+  4     bottom of Nuskhuri letters             ⴈ ⴌ ⴖ ⴎ ⴃ ⴆ ⴋ ⴢ
+  5     top of ascender Nuskhuri letters       ⴐ ⴑ ⴓ ⴕ ⴙ ⴛ ⴡ ⴣ
+  6     bottom of Nuskhuri descender letters   ⴄ ⴅ ⴔ ⴕ ⴁ ⴂ ⴘ ⴝ
+
+Georgian Asomtavruli and Nuskhuri form the old ecclesiastical script,
+Khutsuri.  Note that fonts show a great variation in height and depth of
+ascender and descender letter forms.
+
+
+Table: `geor` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of Mkhedruli letters               გ დ ე ვ თ ი ო ღ
+  2     bottom of Mkhedruli letters            ა ზ მ ს შ ძ ხ ჰ
+  3     top of ascender Mkhedruli letters      ს ხ ქ ზ მ შ ჩ წ
+  4     bottom of descender Mkhedruli letters  ე ვ ჟ ტ უ ფ ქ ყ
+
+Georgian Mkhedruli support is incomplete; it doesn't yet contain characters
+for Mtavruli (which are not yet encoded in Unicode), the uppercase glyph
+variants of Mkhedruli.
 
 
 Table: `grek` blue zones
