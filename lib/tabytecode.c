@@ -2552,10 +2552,6 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
 
   hints = &font->loader->hints;
 
-  /* do nothing if the setup delivered the `none_dflt' style only */
-  if (!hints->num_points)
-    return FT_Err_Ok;
-
   /*
    * We allocate a buffer which is certainly large enough
    * to hold all of the created bytecode instructions;
@@ -2595,8 +2591,9 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     goto Done1;
   }
 
-  /* only scale the glyph if the `none_dflt' style has been used */
-  if (font->loader->metrics->style_class == &ta_none_dflt_style_class)
+#if 0
+  if (font->loader->metrics->style_class == &ta_none_dflt_style_class
+      && font->fallback_scaling)
   {
     /* since `TA_init_recorder' hasn't been called yet, */
     /* we manually initialize the `sfnt', `font', and `glyph' fields */
@@ -2615,6 +2612,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
 
     goto Done1;
   }
+#endif
 
   error = TA_init_recorder(&recorder, sfnt, font, glyph, hints);
   if (error)

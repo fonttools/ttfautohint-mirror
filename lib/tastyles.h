@@ -230,7 +230,7 @@ STYLE(thai_dflt, THAI_DFLT,
 
 STYLE(none_dflt, NONE_DFLT,
       "no style",
-      TA_WRITING_SYSTEM_DUMMY,
+      TA_WRITING_SYSTEM_LATIN,
       TA_SCRIPT_NONE,
       TA_BLUE_STRINGSET_NONE,
       TA_COVERAGE_DEFAULT)

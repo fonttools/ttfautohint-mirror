@@ -95,12 +95,20 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
 
     if (!glyph_index)
     {
-      /* in case of a symbol font, */
-      /* we only proceed if a fallback style is set */
-      if (font->symbol
-          && font->fallback_style != TA_STYLE_NONE_DFLT
-          && font->fallback_style == style_idx)
-        goto Symbol;
+      if (font->fallback_style == style_idx)
+      {
+        /* Having TA_STYLE_NONE_DFLT as the fallback script means */
+        /* hinting without default characters */
+        /* (and without script-specific blue zones), so we proceed */
+        if (style_idx == TA_STYLE_NONE_DFLT)
+          goto Symbol;
+
+        /* in case of a symbol font, we also proceed */
+        if (font->symbol)
+          goto Symbol;
+      }
+
+      /* no standard characters to set up this style */
       return TA_Err_Missing_Glyph;
     }
 
@@ -203,24 +211,19 @@ TA_table_build_cvt(FT_Byte** cvt,
 
     data->style_ids[i] = data->num_used_styles++;
 
-    if (i == TA_STYLE_NONE_DFLT)
-      continue;
-    else
-    {
-      /* XXX: generalize this to handle other metrics also */
-      haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
-      vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
+    /* XXX: generalize this to handle other metrics also */
+    haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
+    vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
 
-      hwidth_count += haxis->width_count;
-      vwidth_count += vaxis->width_count;
+    hwidth_count += haxis->width_count;
+    vwidth_count += vaxis->width_count;
 
-      blue_count += vaxis->blue_count;
-      /* if windows compatibility mode is active */
-      /* we add two artificial blue zones at the end of the array */
-      /* that are not part of `vaxis->blue_count' */
-      if (font->windows_compatibility)
-        blue_count += 2;
-    }
+    blue_count += vaxis->blue_count;
+    /* if windows compatibility mode is active */
+    /* we add two artificial blue zones at the end of the array */
+    /* that are not part of `vaxis->blue_count' */
+    if (font->windows_compatibility)
+      blue_count += 2;
   }
 
   /* exit if the font doesn't contain a single supported style, */
@@ -280,27 +283,15 @@ TA_table_build_cvt(FT_Byte** cvt,
     if (error)
       return error;
 
-    if (font->loader->hints.metrics->style_class == &ta_none_dflt_style_class)
-    {
-      haxis = NULL;
-      vaxis = NULL;
+    haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
+    vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
 
-      hwidth_count = 0;
-      vwidth_count = 0;
-      blue_count = 0;
-    }
-    else
-    {
-      haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
-      vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
+    hwidth_count = haxis->width_count;
+    vwidth_count = vaxis->width_count;
 
-      hwidth_count = haxis->width_count;
-      vwidth_count = vaxis->width_count;
-
-      blue_count = vaxis->blue_count;
-      if (font->windows_compatibility)
-        blue_count += 2; /* with artificial blue zones */
-    }
+    blue_count = vaxis->blue_count;
+    if (font->windows_compatibility)
+      blue_count += 2; /* with artificial blue zones */
 
     /* horizontal standard width */
     if (hwidth_count > 0)

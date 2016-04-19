@@ -226,12 +226,8 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
                  ? (FT_Pos)font->fallback_stem_width
                  : TA_LATIN_CONSTANT(metrics, 50);
 
-        /* set one width value if we do hinting */
-        if (style_class->style != TA_STYLE_NONE_DFLT)
-        {
-          axis->width_count++;
-          axis->widths[0].org = stdw;
-        }
+        axis->width_count++;
+        axis->widths[0].org = stdw;
       }
 
       stdw = axis->widths[0].org;
