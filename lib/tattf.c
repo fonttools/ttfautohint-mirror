@@ -126,6 +126,12 @@ TA_sfnt_build_TTF_header(SFNT* sfnt,
       head_buf[10] = 0x00;
       head_buf[11] = 0x00;
 
+      /* update flags; we have to */
+      /* set bit 2 (`instructions may depend on point size') and to */
+      /* clear bit 4 (`instructions may alter advance width') */
+      head_buf[17] |= 0x04U;
+      head_buf[17] &= ~0x10U;
+
       /* update modification time */
       TA_get_current_time(&date_high, &date_low);
 
