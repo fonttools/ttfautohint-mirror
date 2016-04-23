@@ -84,6 +84,8 @@ TA_font_dump_parameters(FONT* font,
           script_names[font->default_script]);
   DUMPVAL("dw-cleartype-strong-stem-width",
           font->dw_cleartype_strong_stem_width);
+  DUMPVAL("fallback-scaling",
+          font->fallback_scaling);
   DUMPSTR("fallback-script",
           script_names[ta_style_classes[font->fallback_style]->script]);
   DUMPVAL("fallback-stem-width",

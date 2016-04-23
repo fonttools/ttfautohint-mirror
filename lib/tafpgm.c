@@ -2734,10 +2734,12 @@ static const unsigned char FPGM(bci_scale_contour) [] =
  * CVT: cvtl_is_subglyph
  *      cvtl_do_iup_y
  *
+ * sal: sal_scale
+ *
  * uses: bci_scale_contour
  */
 
-static const unsigned char FPGM(bci_scale_glyph) [] =
+static const unsigned char FPGM(bci_scale_glyph_a) [] =
 {
 
   PUSHB_1,
@@ -2754,6 +2756,20 @@ static const unsigned char FPGM(bci_scale_glyph) [] =
   RCVT,
   EQ,
   IF,
+    /* use fallback scaling value */
+    PUSHB_2,
+      sal_scale,
+
+};
+
+/*    %c, fallback scaling index */
+
+static const unsigned char FPGM(bci_scale_glyph_b) [] =
+{
+
+    RCVT,
+    WS,
+
     PUSHB_1,
       1,
     SZPS, /* set zp0, zp1, and zp2 to normal zone 1 */
@@ -2789,11 +2805,13 @@ static const unsigned char FPGM(bci_scale_glyph) [] =
  * CVT: cvtl_is_subglyph
  *      cvtl_do_iup_y
  *
+ * sal: sal_scale
+ *
  * uses: bci_decrement_component_counter
  *       bci_scale_contour
  */
 
-static const unsigned char FPGM(bci_scale_composite_glyph) [] =
+static const unsigned char FPGM(bci_scale_composite_glyph_a) [] =
 {
 
   PUSHB_1,
@@ -2814,6 +2832,20 @@ static const unsigned char FPGM(bci_scale_composite_glyph) [] =
   RCVT,
   EQ,
   IF,
+    /* use fallback scaling value */
+    PUSHB_2,
+      sal_scale,
+
+};
+
+/*    %c, fallback scaling index */
+
+static const unsigned char FPGM(bci_scale_composite_glyph_b) [] =
+{
+
+    RCVT,
+    WS,
+
     PUSHB_1,
       1,
     SZPS, /* set zp0, zp1, and zp2 to normal zone 1 */
@@ -2918,6 +2950,20 @@ static const unsigned char FPGM(bci_shift_subglyph_a) [] =
   /* all our measurements are taken along the y axis */
   SVTCA_y,
 
+  /* use fallback scaling value */
+  PUSHB_2,
+    sal_scale,
+
+};
+
+/*  %c, fallback scaling index */
+
+static const unsigned char FPGM(bci_shift_subglyph_b) [] =
+{
+
+  RCVT,
+  WS,
+
   PUSHB_1,
     cvtl_funits_to_pixels,
   RCVT, /* scaling factor FUnits -> pixels */
@@ -2970,7 +3016,7 @@ static const unsigned char FPGM(bci_shift_subglyph_a) [] =
 
 /* used if we have delta exceptions */
 
-static const unsigned char FPGM(bci_shift_subglyph_b) [] =
+static const unsigned char FPGM(bci_shift_subglyph_c) [] =
 {
 
   PUSHB_1,
@@ -2979,7 +3025,7 @@ static const unsigned char FPGM(bci_shift_subglyph_b) [] =
 
 };
 
-static const unsigned char FPGM(bci_shift_subglyph_c) [] =
+static const unsigned char FPGM(bci_shift_subglyph_d) [] =
 {
 
   ENDF,
@@ -6684,6 +6730,11 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   SFNT_Table* glyf_table = &font->tables[sfnt->glyf_idx];
   glyf_Data* data = (glyf_Data*)glyf_table->data;
 
+  unsigned char num_used_styles = (unsigned char)data->num_used_styles;
+  unsigned char fallback_style =
+                  CVT_SCALING_VALUE_OFFSET(0)
+                  + (unsigned char)data->style_ids[font->fallback_style];
+
   FT_UInt buf_len;
   FT_UInt len;
   FT_Byte* buf;
@@ -6771,14 +6822,20 @@ TA_table_build_fpgm(FT_Byte** fpgm,
             + sizeof (FPGM(bci_align_segments))
 
             + sizeof (FPGM(bci_scale_contour))
-            + sizeof (FPGM(bci_scale_glyph))
-            + sizeof (FPGM(bci_scale_composite_glyph))
+            + sizeof (FPGM(bci_scale_glyph_a))
+            + 1
+            + sizeof (FPGM(bci_scale_glyph_b))
+            + sizeof (FPGM(bci_scale_composite_glyph_a))
+            + 1
+            + sizeof (FPGM(bci_scale_composite_glyph_b))
             + sizeof (FPGM(bci_shift_contour))
             + sizeof (FPGM(bci_shift_subglyph_a))
+            + 1
+            + sizeof (FPGM(bci_shift_subglyph_b))
             + (font->control_data_head != 0
-                ? sizeof (FPGM(bci_shift_subglyph_b))
+                ? sizeof (FPGM(bci_shift_subglyph_c))
                 : 0)
-            + sizeof (FPGM(bci_shift_subglyph_c))
+            + sizeof (FPGM(bci_shift_subglyph_d))
 
             + sizeof (FPGM(bci_ip_outer_align_point))
             + sizeof (FPGM(bci_ip_on_align_points))
@@ -6911,7 +6968,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_smooth_stem_width);
   COPY_FPGM(bci_get_best_width);
   COPY_FPGM(bci_strong_stem_width_a);
-  *(bufp++) = (unsigned char)data->num_used_styles;
+  *(bufp++) = num_used_styles;
   COPY_FPGM(bci_strong_stem_width_b);
   COPY_FPGM(bci_loop_do);
   COPY_FPGM(bci_loop);
@@ -6929,7 +6986,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
 
   COPY_FPGM(bci_create_segment);
   COPY_FPGM(bci_create_segments_a);
-  *(bufp++) = (unsigned char)data->num_used_styles;
+  *(bufp++) = num_used_styles;
   COPY_FPGM(bci_create_segments_b);
   if (font->control_data_head)
     COPY_FPGM(bci_create_segments_c);
@@ -6951,7 +7008,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_deltap3);
 
   COPY_FPGM(bci_create_segments_composite_a);
-  *(bufp++) = (unsigned char)data->num_used_styles;
+  *(bufp++) = num_used_styles;
   COPY_FPGM(bci_create_segments_composite_b);
   if (font->control_data_head)
     COPY_FPGM(bci_create_segments_composite_c);
@@ -6973,13 +7030,19 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_align_segments);
 
   COPY_FPGM(bci_scale_contour);
-  COPY_FPGM(bci_scale_glyph);
-  COPY_FPGM(bci_scale_composite_glyph);
+  COPY_FPGM(bci_scale_glyph_a);
+  *(bufp++) = fallback_style;
+  COPY_FPGM(bci_scale_glyph_b);
+  COPY_FPGM(bci_scale_composite_glyph_a);
+  *(bufp++) = fallback_style;
+  COPY_FPGM(bci_scale_composite_glyph_b);
   COPY_FPGM(bci_shift_contour);
   COPY_FPGM(bci_shift_subglyph_a);
+  *(bufp++) = fallback_style;
+  COPY_FPGM(bci_shift_subglyph_b);
   if (font->control_data_head)
-    COPY_FPGM(bci_shift_subglyph_b);
-  COPY_FPGM(bci_shift_subglyph_c);
+    COPY_FPGM(bci_shift_subglyph_c);
+  COPY_FPGM(bci_shift_subglyph_d);
 
   COPY_FPGM(bci_ip_outer_align_point);
   COPY_FPGM(bci_ip_on_align_points);

@@ -96,9 +96,11 @@ TTF_autohint(const char* options,
   FT_Bool adjust_subglyphs = 0;
   FT_Bool hint_composites = 0;
   FT_Bool symbol = 0;
+  FT_Bool fallback_scaling = 0;
 
   const char* fallback_script_string = NULL;
   const char* default_script_string = NULL;
+
   TA_Style fallback_style = TA_STYLE_NONE_DFLT;
   TA_Script default_script = TA_SCRIPT_LATN;
 
@@ -176,6 +178,8 @@ TTF_autohint(const char* options,
       err_data = va_arg(ap, void*);
     else if (COMPARE("error-string"))
       error_stringp = va_arg(ap, const unsigned char**);
+    else if (COMPARE("fallback-scaling"))
+      fallback_scaling = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("fallback-script"))
       fallback_script_string = va_arg(ap, const char*);
     else if (COMPARE("fallback-stem-width"))
@@ -393,6 +397,7 @@ TTF_autohint(const char* options,
   font->adjust_subglyphs = adjust_subglyphs;
   font->hint_composites = hint_composites;
   font->fallback_style = fallback_style;
+  font->fallback_scaling = fallback_scaling;
   font->default_script = default_script;
   font->symbol = symbol;
 

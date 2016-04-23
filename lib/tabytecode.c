@@ -2591,28 +2591,36 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     goto Done1;
   }
 
-#if 0
-  if (font->loader->metrics->style_class == &ta_none_dflt_style_class
-      && font->fallback_scaling)
-  {
-    /* since `TA_init_recorder' hasn't been called yet, */
-    /* we manually initialize the `sfnt', `font', and `glyph' fields */
-    recorder.sfnt = sfnt;
-    recorder.font = font;
-    recorder.glyph = glyph;
 
-    bufp = TA_sfnt_build_glyph_scaler(sfnt, &recorder, ins_buf);
-    if (!bufp)
+  if (font->fallback_scaling)
+  {
+    if (font->loader->metrics->style_class == &ta_none_dflt_style_class)
     {
-      error = FT_Err_Out_Of_Memory;
-      goto Err;
+      /* the scaling value of `none_dflt' */
+      /* (this is, hinting without script-specific blue zones) */
+      /* is always 1, which corresponds to a no-op */
+      bufp = ins_buf;
+    }
+    else
+    {
+      /* since `TA_init_recorder' hasn't been called yet, */
+      /* we manually initialize the `sfnt', `font', and `glyph' fields */
+      recorder.sfnt = sfnt;
+      recorder.font = font;
+      recorder.glyph = glyph;
+
+      bufp = TA_sfnt_build_glyph_scaler(sfnt, &recorder, ins_buf);
+      if (!bufp)
+      {
+        error = FT_Err_Out_Of_Memory;
+        goto Err;
+      }
     }
 
     use_gstyle_data = 0;
 
     goto Done1;
   }
-#endif
 
   error = TA_init_recorder(&recorder, sfnt, font, glyph, hints);
   if (error)

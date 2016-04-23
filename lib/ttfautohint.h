@@ -462,11 +462,22 @@ typedef int
  *     `ttfautohint-scripts.h`.
  *
  * `fallback-script`
- * :   A string consisting of four lowercase characters that specifies the
+ * :   A string consisting of four lowercase characters, specifying the
  *     default script for glyphs that can't be mapped to a script
- *     automatically.  If set to `"none"` (which is the default), no script
- *     is used.  Valid values can be found in the header file
- *     `ttfautohint-scripts.h`.
+ *     automatically.  By default, such glyphs are hinted; if option
+ *     `fallback-scaling` is set, they are scaled only instead.  Valid
+ *     values can be found in the header file `ttfautohint-scripts.h`.
+ *
+ *     Default value is `"none"`, which means hinting without using a
+ *     script's blue zones if `fallback-scaling` isn't set.  If
+ *     `fallback_scaling` is set, value `"none"` implies no hinting for
+ *     unmapped glyphs.
+ *
+ * `fallback-scaling`
+ * :   Set this integer to\ 1 if glyphs handled by the fallback script
+ *     should be scaled only with the fallback script's scaling value,
+ *     instead of being hinted with the fallback script's hinting
+ *     parameters.
  *
  * `symbol`
  * :   Set this integer to\ 1 if you want to process a font that ttfautohint

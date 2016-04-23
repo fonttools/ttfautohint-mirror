@@ -277,6 +277,7 @@ struct FONT_
   FT_Bool hint_composites;
   FT_Bool ignore_restrictions;
   TA_Style fallback_style;
+  FT_Bool fallback_scaling;
   TA_Script default_script;
   FT_Bool symbol;
   FT_Bool dehint;
