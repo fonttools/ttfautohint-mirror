@@ -5,6 +5,14 @@ Version 1.6 (2016-XXX-XX)
 
 * New option `--ttfa-info` to display a font's `TTFA` table (if present).
 
+* Glyphs covered by the fallback script are now hinted by default.
+  Previously, they were scaled only.  The default fallback script `none` now
+  implies hinting without script-specific blue zones (but still aligning
+  stems to the grid if possible).
+
+* The new option `--fallback-scaling` changes the behaviour of the fallback
+  script from hinting to scaling (as implemented in previous versions).
+
 
 Version 1.5 (2016-Jan-24)
 -------------------------
