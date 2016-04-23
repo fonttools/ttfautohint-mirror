@@ -319,6 +319,7 @@ show_help(bool
 "  -r, --hinting-range-max=N  the maximum PPEM value for hint sets\n"
 "                             (default: %d)\n"
 "  -s, --symbol               input is symbol font\n"
+"  -S, --fallback-scaling     use fallback scaling, not hinting\n"
 "  -t, --ttfa-table           add TTFA information table\n"
 #ifndef BUILD_GUI
 "  -T, --ttfa-info            display TTFA table in IN-FILE and exit\n"
@@ -413,9 +414,12 @@ show_help(bool
 "\n");
   fprintf(handle,
 "Options -f and -D take a four-letter string that identifies a script.\n"
-"Option -f sets the script used as a fallback for glyphs that have\n"
-"character codes outside of known script ranges.  Option -D sets the\n"
-"default script for handling OpenType features.  Possible values are\n"
+"Option -f sets the script used as a fallback for glyphs that can't be\n"
+"associated with a known script.  By default, such glyphs are hinted;\n"
+"if option -S is set, they are scaled only instead.  Option -D sets the\n"
+"default script for handling OpenType features.\n"
+"\n"
+"Possible four-letter string values are\n"
 "\n");
   const Tag_Names* sn = script_names;
   for(;;)
@@ -688,6 +692,7 @@ main(int argc,
   bool show_TTFA_info = false;
 #endif
   bool symbol = false;
+  bool fallback_scaling = false;
 
   const char* default_script = NULL;
   bool have_default_script = false;
@@ -751,6 +756,7 @@ main(int argc,
       {"default-script", required_argument, NULL, 'D'},
       {"dehint", no_argument, NULL, 'd'},
       {"detailed-info", no_argument, NULL, 'I'},
+      {"fallback-scaling", no_argument, NULL, 'S'},
       {"fallback-script", required_argument, NULL, 'f'},
       {"fallback-stem-width", required_argument, NULL, 'H'},
       {"family-suffix", required_argument, NULL, 'F'},
@@ -804,9 +810,9 @@ main(int argc,
     int option_index;
     int c = getopt_long_only(argc, argv,
 #ifdef BUILD_GUI
-                             "cdD:f:F:G:hH:iIl:npr:stVvw:Wx:X:",
+                             "cdD:f:F:G:hH:iIl:npr:sStvVw:Wx:X:",
 #else
-                             "cdD:f:F:G:hH:iIl:m:npr:stTVvw:Wx:X:",
+                             "cdD:f:F:G:hH:iIl:m:npr:sStTvVw:Wx:X:",
 #endif
                              long_options, &option_index);
     if (c == -1)
@@ -889,6 +895,10 @@ main(int argc,
 
     case 's':
       symbol = true;
+      break;
+
+    case 'S':
+      fallback_scaling = true;
       break;
 
     case 't':
@@ -1079,10 +1089,10 @@ main(int argc,
 
   if (symbol
       && have_fallback_stem_width
-      && !strcmp(fallback_script, "none"))
+      && fallback_scaling)
     fprintf(stderr,
             "Warning: Setting a fallback stem width for a symbol font\n"
-            "         without setting a fallback script has no effect\n");
+            "         with fallback scaling only has no effect\n");
 
   if (const char* pos = check_family_suffix(family_suffix))
   {
@@ -1203,6 +1213,7 @@ main(int argc,
   info_data.family_data_head = NULL;
   info_data.fallback_stem_width = fallback_stem_width;
   info_data.symbol = symbol;
+  info_data.fallback_scaling = fallback_scaling;
   info_data.TTFA_info = TTFA_info;
 
   strncpy(info_data.default_script,
@@ -1241,7 +1252,8 @@ main(int argc,
                  "ignore-restrictions, windows-compatibility,"
                  "adjust-subglyphs, hint-composites,"
                  "increase-x-height, x-height-snapping-exceptions,"
-                 "fallback-stem-width, default-script, fallback-script,"
+                 "fallback-stem-width, default-script,"
+                 "fallback-script, fallback-scaling,"
                  "symbol, dehint, debug, TTFA-info",
                  in, out, control,
                  hinting_range_min, hinting_range_max, hinting_limit,
@@ -1253,7 +1265,8 @@ main(int argc,
                  ignore_restrictions, windows_compatibility,
                  adjust_subglyphs, hint_composites,
                  increase_x_height, x_height_snapping_exceptions_string,
-                 fallback_stem_width, default_script, fallback_script,
+                 fallback_stem_width, default_script,
+                 fallback_script, fallback_scaling,
                  symbol, dehint, debug, TTFA_info);
 
   if (!no_info)
@@ -1318,8 +1331,8 @@ main(int argc,
                    x_height_snapping_exceptions_string, fallback_stem_width,
                    ignore_restrictions, windows_compatibility, adjust_subglyphs,
                    hint_composites, no_info, detailed_info,
-                   default_script, fallback_script, family_suffix,
-                   symbol, dehint, TTFA_info);
+                   default_script, fallback_script, fallback_scaling,
+                   family_suffix, symbol, dehint, TTFA_info);
 
     dummy.move(-50000, -50000);
     dummy.show();
@@ -1338,8 +1351,8 @@ main(int argc,
                x_height_snapping_exceptions_string, fallback_stem_width,
                ignore_restrictions, windows_compatibility, adjust_subglyphs,
                hint_composites, no_info, detailed_info,
-               default_script, fallback_script, family_suffix,
-               symbol, dehint, TTFA_info);
+               default_script, fallback_script, fallback_scaling,
+               family_suffix, symbol, dehint, TTFA_info);
   gui.show();
 
   return app.exec();

@@ -68,8 +68,8 @@ public:
            const char*, int,
            bool, bool, bool,
            bool, bool, bool,
-           const char*, const char*, const char*,
-           bool, bool, bool);
+           const char*, const char*, bool,
+           const char*, bool, bool, bool);
   ~Main_GUI();
 
 protected:
@@ -117,10 +117,17 @@ private:
   int detailed_info;
   int default_script_idx;
   int fallback_script_idx;
+  int fallback_scaling;
   QString family_suffix;
   int symbol;
   int dehint;
   int TTFA_info;
+
+  const int fallback_do_scale;
+  const int fallback_do_hint;
+
+  int latn_script_idx;
+  int none_script_idx;
 
   void create_layout(bool);
   void create_horizontal_layout();
@@ -177,6 +184,7 @@ private:
   QComboBox* default_box;
   QLabel* fallback_label;
   QComboBox* fallback_box;
+  QComboBox* fallback_hint_or_scale_box;
 
   QLabel* limit_label;
   QString limit_label_text_with_key;

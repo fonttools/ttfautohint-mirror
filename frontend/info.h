@@ -49,6 +49,7 @@ typedef struct Info_Data_
   bool hint_composites;
   char default_script[5];
   char fallback_script[5];
+  bool fallback_scaling;
   bool symbol;
   bool dehint;
   bool TTFA_info;

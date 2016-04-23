@@ -128,6 +128,8 @@ build_version_string(Info_Data* idata)
     d = sdscat(d, " -c");
   if (idata->symbol)
     d = sdscat(d, " -s");
+  if (idata->fallback_scaling)
+    d = sdscat(d, " -S");
   if (idata->TTFA_info)
     d = sdscat(d, " -t");
 

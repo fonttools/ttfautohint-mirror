@@ -121,6 +121,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
                    bool detailed,
                    const char* dflt,
                    const char* fallback,
+                   bool scaling,
                    const char* suffix,
                    bool symb,
                    bool dh,
@@ -140,35 +141,34 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   hint_composites(composites),
   no_info(no),
   detailed_info(detailed),
+  fallback_scaling(scaling),
   family_suffix(suffix),
   symbol(symb),
   dehint(dh),
-  TTFA_info(TTFA)
+  TTFA_info(TTFA),
+  // constants
+  fallback_do_scale(1),
+  fallback_do_hint(0)
 {
   int i;
 
-  // map default script tag to an index,
-  // replacing an invalid one with the default value
-  int latn_script_idx = 0;
   for (i = 0; script_names[i].tag; i++)
   {
     if (!strcmp("latn", script_names[i].tag))
       latn_script_idx = i;
-    if (!strcmp(dflt, script_names[i].tag))
-      break;
-  }
-  default_script_idx = script_names[i].tag ? i : latn_script_idx;
-
-  // map fallback script tag to an index,
-  // replacing an invalid one with the default value
-  int none_script_idx = 0;
-  for (i = 0; script_names[i].tag; i++)
-  {
     if (!strcmp("none", script_names[i].tag))
       none_script_idx = i;
+  }
+
+  // map default script and fallback script tags to indices
+  for (i = 0; script_names[i].tag; i++)
+    if (!strcmp(dflt, script_names[i].tag))
+      break;
+  default_script_idx = script_names[i].tag ? i : latn_script_idx;
+
+  for (i = 0; script_names[i].tag; i++)
     if (!strcmp(fallback, script_names[i].tag))
       break;
-  }
   fallback_script_idx = script_names[i].tag ? i : none_script_idx;
 
   x_height_snapping_exceptions = NULL;
@@ -339,6 +339,7 @@ Main_GUI::check_dehint()
     default_label->setEnabled(false);
     default_box->setEnabled(false);
     fallback_label->setEnabled(false);
+    fallback_hint_or_scale_box->setEnabled(false);
     fallback_box->setEnabled(false);
 
     no_limit_box->setEnabled(false);
@@ -377,6 +378,7 @@ Main_GUI::check_dehint()
     default_label->setEnabled(true);
     default_box->setEnabled(true);
     fallback_label->setEnabled(true);
+    fallback_hint_or_scale_box->setEnabled(true);
     fallback_box->setEnabled(true);
 
     no_limit_box->setEnabled(true);
@@ -1077,6 +1079,7 @@ again:
   info_data.adjust_subglyphs = adjust_box->isChecked();
   info_data.hint_composites = hint_box->isChecked();
   info_data.symbol = symbol_box->isChecked();
+  info_data.fallback_scaling = fallback_hint_or_scale_box->currentIndex();
   info_data.no_info = info_box->currentIndex() == 0;
   info_data.detailed_info = info_box->currentIndex() == 2;
   info_data.dehint = dehint_box->isChecked();
@@ -1115,12 +1118,12 @@ again:
 
   if (info_data.symbol
       && info_data.fallback_stem_width
-      && !strcmp(info_data.fallback_script, "none"))
+      && info_data.fallback_scaling)
     QMessageBox::information(
       this,
       "TTFautohint",
       tr("Setting a fallback stem width for a symbol font"
-         " without setting a fallback script has no effect."),
+         " with fallback scaling only has no effect."),
       QMessageBox::Ok,
       QMessageBox::Ok);
 
@@ -1145,7 +1148,8 @@ again:
                  "hint-composites,"
                  "increase-x-height,"
                  "x-height-snapping-exceptions, fallback-stem-width,"
-                 "default-script, fallback-script,"
+                 "default-script,"
+                 "fallback-script, fallback-scaling,"
                  "symbol, dehint, TTFA-info",
                  input, output, control,
                  info_data.hinting_range_min, info_data.hinting_range_max,
@@ -1162,7 +1166,8 @@ again:
                  info_data.hint_composites,
                  info_data.increase_x_height,
                  snapping_string.constData(), info_data.fallback_stem_width,
-                 info_data.default_script, info_data.fallback_script,
+                 info_data.default_script,
+                 info_data.fallback_script, info_data.fallback_scaling,
                  info_data.symbol, info_data.dehint, info_data.TTFA_info);
 
   if (info_box->currentIndex())
@@ -1417,12 +1422,18 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // hinting and fallback controls
   //
-  fallback_label = new QLabel(tr("Fallbac&k Script:"));
+  fallback_label = new QLabel(tr("Fallbac&k Script"));
+  fallback_hint_or_scale_box = new QComboBox;
   fallback_box = new QComboBox;
-  fallback_label->setBuddy(fallback_box);
+  fallback_label->setBuddy(fallback_hint_or_scale_box);
   fallback_label->setToolTip(
     tr("This sets the fallback script for glyphs"
-       " that <b>TTFautohint</b> can't map to a script automatically."));
+       " that <b>TTFautohint</b> can't map to a script automatically."
+       "  Either hinting with the script's blue zone values"
+       " or simple scaling with the script's scaling value"
+       " can be selected."));
+  fallback_hint_or_scale_box->insertItem(fallback_do_scale, tr("Scaling:"));
+  fallback_hint_or_scale_box->insertItem(fallback_do_hint, tr("Hinting:"));
   for (int i = 0; script_names[i].tag; i++)
   {
     // XXX: how to provide translations?
@@ -1723,7 +1734,12 @@ Main_GUI::create_vertical_layout()
 
   gui_layout->addWidget(default_label, row, 0, Qt::AlignRight);
   gui_layout->addWidget(default_box, row++, 1, Qt::AlignLeft);
-  gui_layout->addWidget(fallback_label, row, 0, Qt::AlignRight);
+
+  QGridLayout* fallback_layout = new QGridLayout;
+  fallback_layout->addWidget(fallback_label, 0, 0, Qt::AlignRight);
+  fallback_layout->addWidget(fallback_hint_or_scale_box, 0, 1, Qt::AlignLeft);
+
+  gui_layout->addLayout(fallback_layout, row++, 0, Qt::AlignRight);
   gui_layout->addWidget(fallback_box, row++, 1, Qt::AlignLeft);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
@@ -1848,7 +1864,12 @@ Main_GUI::create_horizontal_layout()
 
   gui_layout->addWidget(default_label, row, 1, Qt::AlignRight);
   gui_layout->addWidget(default_box, row++, 2, Qt::AlignLeft);
-  gui_layout->addWidget(fallback_label, row, 1, Qt::AlignRight);
+
+  QGridLayout* fallback_layout = new QGridLayout;
+  fallback_layout->addWidget(fallback_label, 0, 0, Qt::AlignRight);
+  fallback_layout->addWidget(fallback_hint_or_scale_box, 0, 1, Qt::AlignLeft);
+
+  gui_layout->addLayout(fallback_layout, row, 1, Qt::AlignRight);
   gui_layout->addWidget(fallback_box, row++, 2, Qt::AlignLeft);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
@@ -2021,6 +2042,7 @@ Main_GUI::set_defaults()
   max_box->setValue(hinting_range_max);
 
   default_box->setCurrentIndex(default_script_idx);
+  fallback_hint_or_scale_box->setCurrentIndex(fallback_scaling);
   fallback_box->setCurrentIndex(fallback_script_idx);
 
   limit_box->setValue(hinting_limit ? hinting_limit : hinting_range_max);
