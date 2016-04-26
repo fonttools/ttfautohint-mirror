@@ -1131,10 +1131,8 @@ main(int argc,
     in = stdin;
   }
 
-#ifndef BUILD_GUI
   if (show_TTFA_info)
     display_TTFA(in); // this function doesn't return
-#endif
 
   FILE* out;
   if (num_args > 1)
