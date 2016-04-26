@@ -714,6 +714,8 @@ Table: script-specific standard characters of the 'latin' writing system
               'ⴙ', U+2D19, GEORGIAN SMALL LETTER CHIN
   `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
               'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
+  `gujr`      'ટ', U+0A9F, GUJARATI LETTER TTA
+              '૦', U+0AE6, GUJARATI DIGIT ZERO
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
   `knda`      '೦', U+0CE6, KANNADA DIGIT ZERO
               'ಬ', U+0CAC, KANNADA LETTER BA
@@ -875,6 +877,17 @@ Table: `grek` blue zones
   4*    top of small letters                   α ε ι ο π σ τ ω
   5     bottom of small letters                α ε ι ο π σ τ ω
   6     bottom of descenders of small letters  β γ η μ ρ φ χ ψ
+
+
+Table: `gujr` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1*    top of letters                         ત ન ઋ ઌ છ ટ ર ૦
+  2     bottom of letters                      ખ ગ ઘ ઞ ઇ ઈ ઠ જ
+  3     top of ascenders                       ઈ ઊ િ ી લી શ્ચિ જિ સી
+  4     bottom of descenders                   ુ ૃ ૄ ખુ છૃ છૄ
+  5     top of Gujarati digits                 ૦ ૧ ૨ ૩ ૭
 
 
 Table: `hebr` blue zones

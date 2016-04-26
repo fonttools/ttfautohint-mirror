@@ -8,6 +8,7 @@ History\
 
 /^[{}]/ d
 
+/geo[rk]_nonbase_uniranges/ d
 /lat[bp]_nonbase_uniranges/ d
 /khms_nonbase_uniranges/ d
 
