@@ -620,7 +620,7 @@ display_TTFA(FILE* in)
     exit(EXIT_FAILURE);
   }
 
-  FT_Byte* ttfa_buf;
+  FT_Byte* ttfa_buf = NULL;
   FT_ULong ttfa_len = 0;
 
   error = FT_Load_Sfnt_Table(face, TTAG_TTFA, 0, NULL, &ttfa_len);
