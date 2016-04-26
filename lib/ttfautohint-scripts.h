@@ -75,6 +75,12 @@ SCRIPT(grek, GREK,
        HINTING_BOTTOM_TO_TOP,
        "\xCE\xBF \xCE\x9F") /* ο Ο */
 
+SCRIPT(gujr, GUJR,
+       "Gujarati",
+       HB_SCRIPT_GUJARATI,
+       HINTING_BOTTOM_TO_TOP,
+       "\xE0\xAA\x9F \xE0\xAB\xA6") /* ટ ૦ */
+
 SCRIPT(hebr, HEBR,
        "Hebrew",
        HB_SCRIPT_HEBREW,

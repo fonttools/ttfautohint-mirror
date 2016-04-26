@@ -126,6 +126,13 @@ STYLE(geok_dflt, GEOK_DFLT,
 
 META_STYLE_LATIN(grek, GREK, "Greek")
 
+STYLE(gujr_dflt, GUJR_DFLT,
+      "Gujarati default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_GUJR,
+      TA_BLUE_STRINGSET_GUJR,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(hebr_dflt, HEBR_DFLT,
       "Hebrew default style",
       TA_WRITING_SYSTEM_LATIN,

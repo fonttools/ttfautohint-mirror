@@ -230,6 +230,23 @@ const TA_Script_UniRangeRec ta_grek_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_gujr_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0A80UL, 0x0AFFUL), /* Gujarati */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_gujr_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0A81UL, 0x0A82UL),
+  TA_UNIRANGE_REC(0x0ABCUL, 0x0ABCUL),
+  TA_UNIRANGE_REC(0x0AC1UL, 0x0AC8UL),
+  TA_UNIRANGE_REC(0x0ACDUL, 0x0ACDUL),
+  TA_UNIRANGE_REC(0x0AE2UL, 0x0AE3UL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_hebr_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0590UL, 0x05FFUL), /* Hebrew */
