@@ -247,6 +247,23 @@ const TA_Script_UniRangeRec ta_gujr_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_guru_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0A00UL, 0x0A7FUL), /* Gurmukhi */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_guru_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0A01UL, 0x0A02UL),
+  TA_UNIRANGE_REC(0x0A3CUL, 0x0A3EUL),
+  TA_UNIRANGE_REC(0x0A41UL, 0x0A51UL),
+  TA_UNIRANGE_REC(0x0A70UL, 0x0A71UL),
+  TA_UNIRANGE_REC(0x0A75UL, 0x0A75UL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_hebr_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0590UL, 0x05FFUL), /* Hebrew */

@@ -81,6 +81,12 @@ SCRIPT(gujr, GUJR,
        HINTING_BOTTOM_TO_TOP,
        "\xE0\xAA\x9F \xE0\xAB\xA6") /* ટ ૦ */
 
+SCRIPT(guru, GURU,
+       "Gurmukhi",
+       HB_SCRIPT_GURMUKHI,
+       HINTING_TOP_TO_BOTTOM,
+       "\xE0\xA8\xA0 \xE0\xA8\xB0 \xE0\xA9\xA6") /* ਠ ਰ ੦*/
+
 SCRIPT(hebr, HEBR,
        "Hebrew",
        HB_SCRIPT_HEBREW,

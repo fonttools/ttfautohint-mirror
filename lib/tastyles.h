@@ -133,6 +133,13 @@ STYLE(gujr_dflt, GUJR_DFLT,
       TA_BLUE_STRINGSET_GUJR,
       TA_COVERAGE_DEFAULT)
 
+STYLE(guru_dflt, GURU_DFLT,
+      "Gurmukhi default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_GURU,
+      TA_BLUE_STRINGSET_GURU,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(hebr_dflt, HEBR_DFLT,
       "Hebrew default style",
       TA_WRITING_SYSTEM_LATIN,
