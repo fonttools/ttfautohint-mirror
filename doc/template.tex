@@ -1,6 +1,6 @@
 % For non-ASCII characters, this template only works with luatex or XeTeX. 
-% Arabic, Bengali, Devanagari, Georgian, Gujarati, Khmer, Lao, Sinhala,
-% Telugu, and Thai support currently works with XeTeX only.
+% Arabic, Bengali, Devanagari, Georgian, Gujarati, Gurmukhim, Khmer, Lao,
+% Sinhala, Telugu, and Thai support currently works with XeTeX only.
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$%
                $if(lang)$$lang$,$endif$%
@@ -19,6 +19,7 @@
   \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
   \newfontfamily{\georgianfont}[Script=Georgian]{NotoSerifGeorgian}
   \newfontfamily{\gujaratifont}[Script=Gujarati]{NotoSerifGujarati}
+  \newfontfamily{\gurmukhifont}[Script=Gurmukhi]{FreeSerif}
   % alas, `Sampige.ttf' crashes the TeXLive 2015 version of xdvipdfmx
   % \newfontfamily{\kannadafont}[Script=Kannada]{Sampige}
   \newfontfamily{\kannadafont}[Script=Kannada]{Lohit Kannada}
@@ -45,6 +46,8 @@
   \setTransitionFrom{GeorgianSupplement}{\endgroup}
   \setTransitionTo{Gujarati}{\begingroup\gujaratifont}
   \setTransitionFrom{Gujarati}{\endgroup}
+  \setTransitionTo{Gurmukhi}{\begingroup\gurmukhifont}
+  \setTransitionFrom{Gurmukhi}{\endgroup}
   \setTransitionTo{Kannada}{\begingroup\kannadafont}
   \setTransitionFrom{Kannada}{\endgroup}
   \setTransitionTo{Khmer}{\begingroup\khmerfont}

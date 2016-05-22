@@ -716,6 +716,9 @@ Table: script-specific standard characters of the 'latin' writing system
               'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
   `gujr`      'ટ', U+0A9F, GUJARATI LETTER TTA
               '૦', U+0AE6, GUJARATI DIGIT ZERO
+  `guru`      'ਠ', U+0A20, GURMUKHI LETTER TTHA
+              'ਰ', U+0A30, GURMUKHI LETTER RA
+              '੦', U+0A66, GURMUKHI DIGIT ZERO
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
   `knda`      '೦', U+0CE6, KANNADA DIGIT ZERO
               'ಬ', U+0CAC, KANNADA LETTER BA
@@ -825,10 +828,10 @@ Table: `deva` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     baseline (flat glyphs only)            क न म उ छ ट ठ ड
-  2     top of ascenders                       ई ऐ ओ औ ि ी ो ौ
-  3*    top of baseline                        क म अ आ थ ध भ श
-  4     bottom of base characters              क म अ आ थ ध भ श
+  1     top of ascenders                       ई ऐ ओ औ ि ी ो ौ
+  2     top of baseline                        क म अ आ थ ध भ श
+  3*    top of baseline (flat glyphs only)     क न म उ छ ट ठ ड
+  4     bottom of base characters              क न म उ छ ट ठ ड
   5     bottom of descenders                   ु ृ
 
 Contrary to scripts like latin, the baseline in Devanagari is on the top,
@@ -888,6 +891,17 @@ Table: `gujr` blue zones
   3     top of ascenders                       ઈ ઊ િ ી લી શ્ચિ જિ સી
   4     bottom of descenders                   ુ ૃ ૄ ખુ છૃ છૄ
   5     top of Gujarati digits                 ૦ ૧ ૨ ૩ ૭
+
+
+Table: `guru` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of ascenders                       ਇ ਈ ਉ ਏ ਓ ੳ ਿ ੀ
+  2     top of baseline                        ਕ ਗ ਙ ਚ ਜ ਤ ਧ ਸ
+  3*    top of baseline (flat glyphs only)     ਕ ਗ ਙ ਚ ਜ ਤ ਧ ਸ
+  4     bottom of characters                   ਅ ਏ ਓ ਗ ਜ ਠ ਰ ਸ
+  5     top of Gurmukhi digits                 ੦ ੧ ੨ ੩ ੭
 
 
 Table: `hebr` blue zones

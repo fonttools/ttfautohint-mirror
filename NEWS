@@ -1,8 +1,8 @@
 Version 1.6 (2016-XXX-XX)
 -------------------------
 
-* Support for Georgian, Gujarati, Kannada, Malayalam, Sinhala, and Tamil
-  scripts.
+* Support for Georgian, Gujarati, Gurmukhi, Kannada, Malayalam, Sinhala, and
+  Tamil scripts.
 
 * New option `--ttfa-info` to display a font's `TTFA` table (if present).
 
