@@ -699,6 +699,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `arab`      'ـ', U+0640, ARABIC TATWEEL
               'ل', U+0644, ARABIC LETTER LAM
               'ح', U+062D, ARABIC LETTER HAH
+  `armn`      'օ', U+0585, ARMENIAN SMALL LETTER OH
+              'Օ', U+0555, ARMENIAN CAPITAL LETTER OH
   `beng`      '০', U+09E6, BENGALI DIGIT ZERO
               '৪', U+09EA, BENGALI DIGIT FOUR
   `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
@@ -798,6 +800,18 @@ Table: `arab` blue zones
   1     top of letters with vertical stroke    ا إ ل ك ط ظ
   2     bottom of letters                      ت ث ط ظ ك
   3     glyph joining                          ـ
+
+
+Table: `armn` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 Ա Մ Ւ Փ Բ Գ Դ Օ
+  2     bottom of capital letters              Ւ Ո Փ Ճ Շ Ս Տ Օ
+  3     top of ascenders of small letters      ե է ի մ վ փ ֆ փ
+  4*    top of small letters                   ա յ ւ ս գ ջ ր օ
+  5     bottom of small letters                հ ո ճ ա ե ծ ս օ
+  6     bottom of descenders of small letters  բ ը ի լ ղ պ փ ց
 
 
 Table: `beng` blue zones
