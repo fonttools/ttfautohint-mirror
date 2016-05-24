@@ -94,6 +94,13 @@ STYLE(arab_dflt, ARAB_DFLT,
       TA_BLUE_STRINGSET_ARAB,
       TA_COVERAGE_DEFAULT)
 
+STYLE(armn_dflt, ARMN_DFLT,
+      "Armenian default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_ARMN,
+      TA_BLUE_STRINGSET_ARMN,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(beng_dflt, BENG_DFLT,
       "Bengali default style",
       TA_WRITING_SYSTEM_LATIN,

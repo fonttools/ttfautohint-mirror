@@ -113,6 +113,21 @@ const TA_Script_UniRangeRec ta_arab_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_armn_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0530UL, 0x0558UL), /* Armenian */
+  TA_UNIRANGE_REC(0x0560UL, 0x058FUL),
+  TA_UNIRANGE_REC(0xFB13UL, 0xFB17UL), /* Alphab. Present. Forms (Armenian) */
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+const TA_Script_UniRangeRec ta_armn_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x0559UL, 0x055FUL),
+  TA_UNIRANGE_REC(     0UL,      0UL)
+};
+
+
 const TA_Script_UniRangeRec ta_beng_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0980UL, 0x09FFUL), /* Bengali */
