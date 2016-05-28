@@ -80,86 +80,86 @@
 
 const TA_Script_UniRangeRec ta_arab_uniranges[] =
 {
-  TA_UNIRANGE_REC( 0x0600UL,  0x06FFUL), /* Arabic */
-  TA_UNIRANGE_REC( 0x0750UL,  0x07FFUL), /* Arabic Supplement */
-  TA_UNIRANGE_REC( 0x08A0UL,  0x08FFUL), /* Arabic Extended-A */
-  TA_UNIRANGE_REC( 0xFB50UL,  0xFDFFUL), /* Arabic Presentation Forms-A */
-  TA_UNIRANGE_REC( 0xFE70UL,  0xFEFFUL), /* Arabic Presentation Forms-B */
-  TA_UNIRANGE_REC(0x1EE00UL, 0x1EEFFUL), /* Arabic Mathematical Alphabetic Symbols */
-  TA_UNIRANGE_REC(      0UL,       0UL)
+  TA_UNIRANGE_REC( 0x0600,  0x06FF), /* Arabic */
+  TA_UNIRANGE_REC( 0x0750,  0x07FF), /* Arabic Supplement */
+  TA_UNIRANGE_REC( 0x08A0,  0x08FF), /* Arabic Extended-A */
+  TA_UNIRANGE_REC( 0xFB50,  0xFDFF), /* Arabic Presentation Forms-A */
+  TA_UNIRANGE_REC( 0xFE70,  0xFEFF), /* Arabic Presentation Forms-B */
+  TA_UNIRANGE_REC(0x1EE00, 0x1EEFF), /* Arabic Mathematical Alphabetic Symbols */
+  TA_UNIRANGE_REC(      0,       0)
 };
 
 const TA_Script_UniRangeRec ta_arab_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0600UL, 0x0605UL),
-  TA_UNIRANGE_REC(0x0610UL, 0x061AUL),
-  TA_UNIRANGE_REC(0x064BUL, 0x065FUL),
-  TA_UNIRANGE_REC(0x0670UL, 0x0670UL),
-  TA_UNIRANGE_REC(0x06D6UL, 0x06DCUL),
-  TA_UNIRANGE_REC(0x06DFUL, 0x06E4UL),
-  TA_UNIRANGE_REC(0x06E7UL, 0x06E8UL),
-  TA_UNIRANGE_REC(0x06EAUL, 0x06EDUL),
-  TA_UNIRANGE_REC(0x08E3UL, 0x08FFUL),
-  TA_UNIRANGE_REC(0xFBB2UL, 0xFBC1UL),
-  TA_UNIRANGE_REC(0xFE70UL, 0xFE70UL),
-  TA_UNIRANGE_REC(0xFE72UL, 0xFE72UL),
-  TA_UNIRANGE_REC(0xFE74UL, 0xFE74UL),
-  TA_UNIRANGE_REC(0xFE76UL, 0xFE76UL),
-  TA_UNIRANGE_REC(0xFE78UL, 0xFE78UL),
-  TA_UNIRANGE_REC(0xFE7AUL, 0xFE7AUL),
-  TA_UNIRANGE_REC(0xFE7CUL, 0xFE7CUL),
-  TA_UNIRANGE_REC(0xFE7EUL, 0xFE7EUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0600, 0x0605),
+  TA_UNIRANGE_REC(0x0610, 0x061A),
+  TA_UNIRANGE_REC(0x064B, 0x065F),
+  TA_UNIRANGE_REC(0x0670, 0x0670),
+  TA_UNIRANGE_REC(0x06D6, 0x06DC),
+  TA_UNIRANGE_REC(0x06DF, 0x06E4),
+  TA_UNIRANGE_REC(0x06E7, 0x06E8),
+  TA_UNIRANGE_REC(0x06EA, 0x06ED),
+  TA_UNIRANGE_REC(0x08E3, 0x08FF),
+  TA_UNIRANGE_REC(0xFBB2, 0xFBC1),
+  TA_UNIRANGE_REC(0xFE70, 0xFE70),
+  TA_UNIRANGE_REC(0xFE72, 0xFE72),
+  TA_UNIRANGE_REC(0xFE74, 0xFE74),
+  TA_UNIRANGE_REC(0xFE76, 0xFE76),
+  TA_UNIRANGE_REC(0xFE78, 0xFE78),
+  TA_UNIRANGE_REC(0xFE7A, 0xFE7A),
+  TA_UNIRANGE_REC(0xFE7C, 0xFE7C),
+  TA_UNIRANGE_REC(0xFE7E, 0xFE7E),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_armn_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0530UL, 0x058FUL), /* Armenian */
-  TA_UNIRANGE_REC(0xFB13UL, 0xFB17UL), /* Alphab. Present. Forms (Armenian) */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0530, 0x058F), /* Armenian */
+  TA_UNIRANGE_REC(0xFB13, 0xFB17), /* Alphab. Present. Forms (Armenian) */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_armn_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0559UL, 0x055FUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0559, 0x055F),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_beng_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0980UL, 0x09FFUL), /* Bengali */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0980, 0x09FF), /* Bengali */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_beng_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0981UL, 0x0981UL),
-  TA_UNIRANGE_REC(0x09BCUL, 0x09BCUL),
-  TA_UNIRANGE_REC(0x09C1UL, 0x09C4UL),
-  TA_UNIRANGE_REC(0x09CDUL, 0x09CDUL),
-  TA_UNIRANGE_REC(0x09E2UL, 0x09E3UL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0981, 0x0981),
+  TA_UNIRANGE_REC(0x09BC, 0x09BC),
+  TA_UNIRANGE_REC(0x09C1, 0x09C4),
+  TA_UNIRANGE_REC(0x09CD, 0x09CD),
+  TA_UNIRANGE_REC(0x09E2, 0x09E3),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0400UL, 0x04FFUL), /* Cyrillic */
-  TA_UNIRANGE_REC(0x0500UL, 0x052FUL), /* Cyrillic Supplement */
-  TA_UNIRANGE_REC(0x2DE0UL, 0x2DFFUL), /* Cyrillic Extended-A */
-  TA_UNIRANGE_REC(0xA640UL, 0xA69FUL), /* Cyrillic Extended-B */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0400, 0x04FF), /* Cyrillic */
+  TA_UNIRANGE_REC(0x0500, 0x052F), /* Cyrillic Supplement */
+  TA_UNIRANGE_REC(0x2DE0, 0x2DFF), /* Cyrillic Extended-A */
+  TA_UNIRANGE_REC(0xA640, 0xA69F), /* Cyrillic Extended-B */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_cyrl_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0483UL, 0x0489UL),
-  TA_UNIRANGE_REC(0x2DE0UL, 0x2DFFUL),
-  TA_UNIRANGE_REC(0xA66FUL, 0xA67FUL),
-  TA_UNIRANGE_REC(0xA69EUL, 0xA69FUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0483, 0x0489),
+  TA_UNIRANGE_REC(0x2DE0, 0x2DFF),
+  TA_UNIRANGE_REC(0xA66F, 0xA67F),
+  TA_UNIRANGE_REC(0xA69E, 0xA69F),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
@@ -169,400 +169,400 @@ const TA_Script_UniRangeRec ta_cyrl_nonbase_uniranges[] =
 
 const TA_Script_UniRangeRec ta_deva_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0900UL, 0x093BUL), /* Devanagari */
+  TA_UNIRANGE_REC(0x0900, 0x093B), /* Devanagari */
   /* omitting U+093C nukta */
-  TA_UNIRANGE_REC(0x093DUL, 0x0950UL), /* ... continued */
+  TA_UNIRANGE_REC(0x093D, 0x0950), /* ... continued */
   /* omitting U+0951 udatta, U+0952 anudatta */
-  TA_UNIRANGE_REC(0x0953UL, 0x0963UL), /* ... continued */
+  TA_UNIRANGE_REC(0x0953, 0x0963), /* ... continued */
   /* omitting U+0964 danda, U+0965 double danda */
-  TA_UNIRANGE_REC(0x0966UL, 0x097FUL), /* ... continued */
-  TA_UNIRANGE_REC(0x20B9UL, 0x20B9UL), /* (new) Rupee sign */
-  TA_UNIRANGE_REC(0xA8E0UL, 0xA8FFUL), /* Devanagari Extended */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0966, 0x097F), /* ... continued */
+  TA_UNIRANGE_REC(0x20B9, 0x20B9), /* (new) Rupee sign */
+  TA_UNIRANGE_REC(0xA8E0, 0xA8FF), /* Devanagari Extended */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_deva_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0900UL, 0x0902UL),
-  TA_UNIRANGE_REC(0x093AUL, 0x093AUL),
-  TA_UNIRANGE_REC(0x0941UL, 0x0948UL),
-  TA_UNIRANGE_REC(0x094DUL, 0x094DUL),
-  TA_UNIRANGE_REC(0x0953UL, 0x0957UL),
-  TA_UNIRANGE_REC(0x0962UL, 0x0963UL),
-  TA_UNIRANGE_REC(0xA8E0UL, 0xA8F1UL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0900, 0x0902),
+  TA_UNIRANGE_REC(0x093A, 0x093A),
+  TA_UNIRANGE_REC(0x0941, 0x0948),
+  TA_UNIRANGE_REC(0x094D, 0x094D),
+  TA_UNIRANGE_REC(0x0953, 0x0957),
+  TA_UNIRANGE_REC(0x0962, 0x0963),
+  TA_UNIRANGE_REC(0xA8E0, 0xA8F1),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_geor_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x10D0UL, 0x10FFUL), /* Georgian (Mkhedruli) */
+  TA_UNIRANGE_REC(0x10D0, 0x10FF), /* Georgian (Mkhedruli) */
 #if 0
   /* the following range is proposed for inclusion in Unicode */
-  TA_UNIRANGE_REC(0x1C90UL, 0x1CBFUL), /* Georgian (Mtavruli) */
+  TA_UNIRANGE_REC(0x1C90, 0x1CBF), /* Georgian (Mtavruli) */
 #endif
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_geor_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0UL, 0UL)
+  TA_UNIRANGE_REC(0, 0)
 };
 
 
 const TA_Script_UniRangeRec ta_geok_uniranges[] =
 {
   /* Khutsuri */
-  TA_UNIRANGE_REC(0x10A0UL, 0x10CDUL), /* Georgian (Asomtavruli) */
-  TA_UNIRANGE_REC(0x2D00UL, 0x2D2DUL), /* Georgian (Nuskhuri) */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x10A0, 0x10CD), /* Georgian (Asomtavruli) */
+  TA_UNIRANGE_REC(0x2D00, 0x2D2D), /* Georgian (Nuskhuri) */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_geok_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0UL, 0UL)
+  TA_UNIRANGE_REC(0, 0)
 };
 
 
 const TA_Script_UniRangeRec ta_grek_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0370UL, 0x03FFUL), /* Greek and Coptic */
-  TA_UNIRANGE_REC(0x1F00UL, 0x1FFFUL), /* Greek Extended */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0370, 0x03FF), /* Greek and Coptic */
+  TA_UNIRANGE_REC(0x1F00, 0x1FFF), /* Greek Extended */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_grek_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x037AUL, 0x037AUL),
-  TA_UNIRANGE_REC(0x0384UL, 0x0385UL),
-  TA_UNIRANGE_REC(0x1FBDUL, 0x1FC1UL),
-  TA_UNIRANGE_REC(0x1FCDUL, 0x1FCFUL),
-  TA_UNIRANGE_REC(0x1FDDUL, 0x1FDFUL),
-  TA_UNIRANGE_REC(0x1FEDUL, 0x1FEFUL),
-  TA_UNIRANGE_REC(0x1FFDUL, 0x1FFEUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x037A, 0x037A),
+  TA_UNIRANGE_REC(0x0384, 0x0385),
+  TA_UNIRANGE_REC(0x1FBD, 0x1FC1),
+  TA_UNIRANGE_REC(0x1FCD, 0x1FCF),
+  TA_UNIRANGE_REC(0x1FDD, 0x1FDF),
+  TA_UNIRANGE_REC(0x1FED, 0x1FEF),
+  TA_UNIRANGE_REC(0x1FFD, 0x1FFE),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_gujr_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0A80UL, 0x0AFFUL), /* Gujarati */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0A80, 0x0AFF), /* Gujarati */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_gujr_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0A81UL, 0x0A82UL),
-  TA_UNIRANGE_REC(0x0ABCUL, 0x0ABCUL),
-  TA_UNIRANGE_REC(0x0AC1UL, 0x0AC8UL),
-  TA_UNIRANGE_REC(0x0ACDUL, 0x0ACDUL),
-  TA_UNIRANGE_REC(0x0AE2UL, 0x0AE3UL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0A81, 0x0A82),
+  TA_UNIRANGE_REC(0x0ABC, 0x0ABC),
+  TA_UNIRANGE_REC(0x0AC1, 0x0AC8),
+  TA_UNIRANGE_REC(0x0ACD, 0x0ACD),
+  TA_UNIRANGE_REC(0x0AE2, 0x0AE3),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_guru_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0A00UL, 0x0A7FUL), /* Gurmukhi */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0A00, 0x0A7F), /* Gurmukhi */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_guru_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0A01UL, 0x0A02UL),
-  TA_UNIRANGE_REC(0x0A3CUL, 0x0A3CUL),
-  TA_UNIRANGE_REC(0x0A41UL, 0x0A51UL),
-  TA_UNIRANGE_REC(0x0A70UL, 0x0A71UL),
-  TA_UNIRANGE_REC(0x0A75UL, 0x0A75UL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0A01, 0x0A02),
+  TA_UNIRANGE_REC(0x0A3C, 0x0A3C),
+  TA_UNIRANGE_REC(0x0A41, 0x0A51),
+  TA_UNIRANGE_REC(0x0A70, 0x0A71),
+  TA_UNIRANGE_REC(0x0A75, 0x0A75),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_hebr_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0590UL, 0x05FFUL), /* Hebrew */
-  TA_UNIRANGE_REC(0xFB1DUL, 0xFB4FUL), /* Alphab. Present. Forms (Hebrew) */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0590, 0x05FF), /* Hebrew */
+  TA_UNIRANGE_REC(0xFB1D, 0xFB4F), /* Alphab. Present. Forms (Hebrew) */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_hebr_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0591UL, 0x05BFUL),
-  TA_UNIRANGE_REC(0x05C1UL, 0x05C2UL),
-  TA_UNIRANGE_REC(0x05C4UL, 0x05C5UL),
-  TA_UNIRANGE_REC(0x05C7UL, 0x05C7UL),
-  TA_UNIRANGE_REC(0xFB1EUL, 0xFB1EUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0591, 0x05BF),
+  TA_UNIRANGE_REC(0x05C1, 0x05C2),
+  TA_UNIRANGE_REC(0x05C4, 0x05C5),
+  TA_UNIRANGE_REC(0x05C7, 0x05C7),
+  TA_UNIRANGE_REC(0xFB1E, 0xFB1E),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_knda_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0C80UL, 0x0CFFUL), /* Kannada */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0C80, 0x0CFF), /* Kannada */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_knda_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0C81UL, 0x0C81UL),
-  TA_UNIRANGE_REC(0x0CBCUL, 0x0CBCUL),
-  TA_UNIRANGE_REC(0x0CBFUL, 0x0CBFUL),
-  TA_UNIRANGE_REC(0x0CC6UL, 0x0CC6UL),
-  TA_UNIRANGE_REC(0x0CCCUL, 0x0CCDUL),
-  TA_UNIRANGE_REC(0x0CE2UL, 0x0CE3UL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0C81, 0x0C81),
+  TA_UNIRANGE_REC(0x0CBC, 0x0CBC),
+  TA_UNIRANGE_REC(0x0CBF, 0x0CBF),
+  TA_UNIRANGE_REC(0x0CC6, 0x0CC6),
+  TA_UNIRANGE_REC(0x0CCC, 0x0CCD),
+  TA_UNIRANGE_REC(0x0CE2, 0x0CE3),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_khmr_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x1780UL, 0x17FFUL), /* Khmer */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x1780, 0x17FF), /* Khmer */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_khmr_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x17B7UL, 0x17BDUL),
-  TA_UNIRANGE_REC(0x17C6UL, 0x17C6UL),
-  TA_UNIRANGE_REC(0x17C9UL, 0x17D3UL),
-  TA_UNIRANGE_REC(0x17DDUL, 0x17DDUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x17B7, 0x17BD),
+  TA_UNIRANGE_REC(0x17C6, 0x17C6),
+  TA_UNIRANGE_REC(0x17C9, 0x17D3),
+  TA_UNIRANGE_REC(0x17DD, 0x17DD),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_khms_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x19E0UL, 0x19FFUL), /* Khmer Symbols */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x19E0, 0x19FF), /* Khmer Symbols */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_khms_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0UL, 0UL)
+  TA_UNIRANGE_REC(0, 0)
 };
 
 
 const TA_Script_UniRangeRec ta_lao_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0E80UL, 0x0EFFUL), /* Lao */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0E80, 0x0EFF), /* Lao */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_lao_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0EB1UL, 0x0EB1UL),
-  TA_UNIRANGE_REC(0x0EB4UL, 0x0EBCUL),
-  TA_UNIRANGE_REC(0x0EC8UL, 0x0ECDUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0EB1, 0x0EB1),
+  TA_UNIRANGE_REC(0x0EB4, 0x0EBC),
+  TA_UNIRANGE_REC(0x0EC8, 0x0ECD),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_latn_uniranges[] =
 {
-  TA_UNIRANGE_REC( 0x0020UL,  0x007FUL), /* Basic Latin (no control chars) */
-  TA_UNIRANGE_REC( 0x00A0UL,  0x00A9UL), /* Latin-1 Supplement (no control chars) */
-  TA_UNIRANGE_REC( 0x00ABUL,  0x00B1UL), /* ... continued */
-  TA_UNIRANGE_REC( 0x00B4UL,  0x00B8UL), /* ... continued */
-  TA_UNIRANGE_REC( 0x00BBUL,  0x00FFUL), /* ... continued */
-  TA_UNIRANGE_REC( 0x0100UL,  0x017FUL), /* Latin Extended-A */
-  TA_UNIRANGE_REC( 0x0180UL,  0x024FUL), /* Latin Extended-B */
-  TA_UNIRANGE_REC( 0x0250UL,  0x02AFUL), /* IPA Extensions */
-  TA_UNIRANGE_REC( 0x02B9UL,  0x02DFUL), /* Spacing Modifier Letters */
-  TA_UNIRANGE_REC( 0x02E5UL,  0x02FFUL), /* ... continued */
-  TA_UNIRANGE_REC( 0x0300UL,  0x036FUL), /* Combining Diacritical Marks */
-  TA_UNIRANGE_REC( 0x1AB0UL,  0x1ABEUL), /* Combining Diacritical Marks Extended */
-  TA_UNIRANGE_REC( 0x1D00UL,  0x1D2BUL), /* Phonetic Extensions */
-  TA_UNIRANGE_REC( 0x1D6BUL,  0x1D77UL), /* ... continued */
-  TA_UNIRANGE_REC( 0x1D79UL,  0x1D7FUL), /* ... continued */
-  TA_UNIRANGE_REC( 0x1D80UL,  0x1D9AUL), /* Phonetic Extensions Supplement */
-  TA_UNIRANGE_REC( 0x1DC0UL,  0x1DFFUL), /* Combining Diacritical Marks Supplement */
-  TA_UNIRANGE_REC( 0x1E00UL,  0x1EFFUL), /* Latin Extended Additional */
-  TA_UNIRANGE_REC( 0x2000UL,  0x206FUL), /* General Punctuation */
-  TA_UNIRANGE_REC( 0x20A0UL,  0x20B8UL), /* Currency Symbols ... */
-  TA_UNIRANGE_REC( 0x20BAUL,  0x20CFUL), /* ... except new Rupee sign */
-  TA_UNIRANGE_REC( 0x2150UL,  0x218FUL), /* Number Forms */
-  TA_UNIRANGE_REC( 0x2C60UL,  0x2C7BUL), /* Latin Extended-C */
-  TA_UNIRANGE_REC( 0x2C7EUL,  0x2C7FUL), /* ... continued */
-  TA_UNIRANGE_REC( 0x2E00UL,  0x2E7FUL), /* Supplemental Punctuation */
-  TA_UNIRANGE_REC( 0xA720UL,  0xA76FUL), /* Latin Extended-D */
-  TA_UNIRANGE_REC( 0xA771UL,  0xA7F7UL), /* ... continued */
-  TA_UNIRANGE_REC( 0xA7FAUL,  0xA7FFUL), /* ... continued */
-  TA_UNIRANGE_REC( 0xAB30UL,  0xAB5BUL), /* Latin Extended-E */
-  TA_UNIRANGE_REC( 0xAB60UL,  0xAB6FUL), /* ... continued */
-  TA_UNIRANGE_REC( 0xFB00UL,  0xFB06UL), /* Alphab. Present. Forms (Latin Ligs) */
-  TA_UNIRANGE_REC(0x1D400UL, 0x1D7FFUL), /* Mathematical Alphanumeric Symbols */
-  TA_UNIRANGE_REC(      0UL,       0UL)
+  TA_UNIRANGE_REC( 0x0020,  0x007F), /* Basic Latin (no control chars) */
+  TA_UNIRANGE_REC( 0x00A0,  0x00A9), /* Latin-1 Supplement (no control chars) */
+  TA_UNIRANGE_REC( 0x00AB,  0x00B1), /* ... continued */
+  TA_UNIRANGE_REC( 0x00B4,  0x00B8), /* ... continued */
+  TA_UNIRANGE_REC( 0x00BB,  0x00FF), /* ... continued */
+  TA_UNIRANGE_REC( 0x0100,  0x017F), /* Latin Extended-A */
+  TA_UNIRANGE_REC( 0x0180,  0x024F), /* Latin Extended-B */
+  TA_UNIRANGE_REC( 0x0250,  0x02AF), /* IPA Extensions */
+  TA_UNIRANGE_REC( 0x02B9,  0x02DF), /* Spacing Modifier Letters */
+  TA_UNIRANGE_REC( 0x02E5,  0x02FF), /* ... continued */
+  TA_UNIRANGE_REC( 0x0300,  0x036F), /* Combining Diacritical Marks */
+  TA_UNIRANGE_REC( 0x1AB0,  0x1ABE), /* Combining Diacritical Marks Extended */
+  TA_UNIRANGE_REC( 0x1D00,  0x1D2B), /* Phonetic Extensions */
+  TA_UNIRANGE_REC( 0x1D6B,  0x1D77), /* ... continued */
+  TA_UNIRANGE_REC( 0x1D79,  0x1D7F), /* ... continued */
+  TA_UNIRANGE_REC( 0x1D80,  0x1D9A), /* Phonetic Extensions Supplement */
+  TA_UNIRANGE_REC( 0x1DC0,  0x1DFF), /* Combining Diacritical Marks Supplement */
+  TA_UNIRANGE_REC( 0x1E00,  0x1EFF), /* Latin Extended Additional */
+  TA_UNIRANGE_REC( 0x2000,  0x206F), /* General Punctuation */
+  TA_UNIRANGE_REC( 0x20A0,  0x20B8), /* Currency Symbols ... */
+  TA_UNIRANGE_REC( 0x20BA,  0x20CF), /* ... except new Rupee sign */
+  TA_UNIRANGE_REC( 0x2150,  0x218F), /* Number Forms */
+  TA_UNIRANGE_REC( 0x2C60,  0x2C7B), /* Latin Extended-C */
+  TA_UNIRANGE_REC( 0x2C7E,  0x2C7F), /* ... continued */
+  TA_UNIRANGE_REC( 0x2E00,  0x2E7F), /* Supplemental Punctuation */
+  TA_UNIRANGE_REC( 0xA720,  0xA76F), /* Latin Extended-D */
+  TA_UNIRANGE_REC( 0xA771,  0xA7F7), /* ... continued */
+  TA_UNIRANGE_REC( 0xA7FA,  0xA7FF), /* ... continued */
+  TA_UNIRANGE_REC( 0xAB30,  0xAB5B), /* Latin Extended-E */
+  TA_UNIRANGE_REC( 0xAB60,  0xAB6F), /* ... continued */
+  TA_UNIRANGE_REC( 0xFB00,  0xFB06), /* Alphab. Present. Forms (Latin Ligs) */
+  TA_UNIRANGE_REC(0x1D400, 0x1D7FF), /* Mathematical Alphanumeric Symbols */
+  TA_UNIRANGE_REC(      0,       0)
 };
 
 const TA_Script_UniRangeRec ta_latn_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x005EUL, 0x0060UL),
-  TA_UNIRANGE_REC(0x007EUL, 0x007EUL),
-  TA_UNIRANGE_REC(0x00A8UL, 0x00A9UL),
-  TA_UNIRANGE_REC(0x00AEUL, 0x00B0UL),
-  TA_UNIRANGE_REC(0x00B4UL, 0x00B4UL),
-  TA_UNIRANGE_REC(0x00B8UL, 0x00B8UL),
-  TA_UNIRANGE_REC(0x00BCUL, 0x00BEUL),
-  TA_UNIRANGE_REC(0x02B9UL, 0x02DFUL),
-  TA_UNIRANGE_REC(0x02E5UL, 0x02FFUL),
-  TA_UNIRANGE_REC(0x0300UL, 0x036FUL),
-  TA_UNIRANGE_REC(0x1AB0UL, 0x1ABEUL),
-  TA_UNIRANGE_REC(0x1DC0UL, 0x1DFFUL),
-  TA_UNIRANGE_REC(0x2017UL, 0x2017UL),
-  TA_UNIRANGE_REC(0x203EUL, 0x203EUL),
-  TA_UNIRANGE_REC(0xA788UL, 0xA788UL),
-  TA_UNIRANGE_REC(0xA7F8UL, 0xA7FAUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x005E, 0x0060),
+  TA_UNIRANGE_REC(0x007E, 0x007E),
+  TA_UNIRANGE_REC(0x00A8, 0x00A9),
+  TA_UNIRANGE_REC(0x00AE, 0x00B0),
+  TA_UNIRANGE_REC(0x00B4, 0x00B4),
+  TA_UNIRANGE_REC(0x00B8, 0x00B8),
+  TA_UNIRANGE_REC(0x00BC, 0x00BE),
+  TA_UNIRANGE_REC(0x02B9, 0x02DF),
+  TA_UNIRANGE_REC(0x02E5, 0x02FF),
+  TA_UNIRANGE_REC(0x0300, 0x036F),
+  TA_UNIRANGE_REC(0x1AB0, 0x1ABE),
+  TA_UNIRANGE_REC(0x1DC0, 0x1DFF),
+  TA_UNIRANGE_REC(0x2017, 0x2017),
+  TA_UNIRANGE_REC(0x203E, 0x203E),
+  TA_UNIRANGE_REC(0xA788, 0xA788),
+  TA_UNIRANGE_REC(0xA7F8, 0xA7FA),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_latb_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x1D62UL, 0x1D6AUL), /* some small subscript letters */
-  TA_UNIRANGE_REC(0x2080UL, 0x209CUL), /* subscript digits and letters */
-  TA_UNIRANGE_REC(0x2C7CUL, 0x2C7CUL), /* latin subscript small letter j */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x1D62, 0x1D6A), /* some small subscript letters */
+  TA_UNIRANGE_REC(0x2080, 0x209C), /* subscript digits and letters */
+  TA_UNIRANGE_REC(0x2C7C, 0x2C7C), /* latin subscript small letter j */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_latb_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0UL, 0UL)
+  TA_UNIRANGE_REC(0, 0)
 };
 
 
 const TA_Script_UniRangeRec ta_latp_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x00AAUL, 0x00AAUL), /* feminine ordinal indicator */
-  TA_UNIRANGE_REC(0x00B2UL, 0x00B3UL), /* superscript two and three */
-  TA_UNIRANGE_REC(0x00B9UL, 0x00BAUL), /* superscript one, masc. ord. indic. */
-  TA_UNIRANGE_REC(0x02B0UL, 0x02B8UL), /* some latin superscript mod. letters */
-  TA_UNIRANGE_REC(0x02E0UL, 0x02E4UL), /* some IPA modifier letters */
-  TA_UNIRANGE_REC(0x1D2CUL, 0x1D61UL), /* latin superscript modifier letters */
-  TA_UNIRANGE_REC(0x1D78UL, 0x1D78UL), /* modifier letter cyrillic en */
-  TA_UNIRANGE_REC(0x1D9BUL, 0x1DBFUL), /* more modifier letters */
-  TA_UNIRANGE_REC(0x2070UL, 0x207FUL), /* superscript digits and letters */
-  TA_UNIRANGE_REC(0x2C7DUL, 0x2C7DUL), /* modifier letter capital v */
-  TA_UNIRANGE_REC(0xA770UL, 0xA770UL), /* modifier letter us */
-  TA_UNIRANGE_REC(0xA7F8UL, 0xA7F9UL), /* more modifier letters */
-  TA_UNIRANGE_REC(0xAB5CUL, 0xAB5FUL), /* more modifier letters */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x00AA, 0x00AA), /* feminine ordinal indicator */
+  TA_UNIRANGE_REC(0x00B2, 0x00B3), /* superscript two and three */
+  TA_UNIRANGE_REC(0x00B9, 0x00BA), /* superscript one, masc. ord. indic. */
+  TA_UNIRANGE_REC(0x02B0, 0x02B8), /* some latin superscript mod. letters */
+  TA_UNIRANGE_REC(0x02E0, 0x02E4), /* some IPA modifier letters */
+  TA_UNIRANGE_REC(0x1D2C, 0x1D61), /* latin superscript modifier letters */
+  TA_UNIRANGE_REC(0x1D78, 0x1D78), /* modifier letter cyrillic en */
+  TA_UNIRANGE_REC(0x1D9B, 0x1DBF), /* more modifier letters */
+  TA_UNIRANGE_REC(0x2070, 0x207F), /* superscript digits and letters */
+  TA_UNIRANGE_REC(0x2C7D, 0x2C7D), /* modifier letter capital v */
+  TA_UNIRANGE_REC(0xA770, 0xA770), /* modifier letter us */
+  TA_UNIRANGE_REC(0xA7F8, 0xA7F9), /* more modifier letters */
+  TA_UNIRANGE_REC(0xAB5C, 0xAB5F), /* more modifier letters */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_latp_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0UL, 0UL)
+  TA_UNIRANGE_REC(0, 0)
 };
 
 
 const TA_Script_UniRangeRec ta_mlym_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0D00UL, 0x0D7FUL), /* Malayalam */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0D00, 0x0D7F), /* Malayalam */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_mlym_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0D01UL, 0x0D01UL),
-  TA_UNIRANGE_REC(0x0D4DUL, 0x0D4EUL),
-  TA_UNIRANGE_REC(0x0D62UL, 0x0D63UL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0D01, 0x0D01),
+  TA_UNIRANGE_REC(0x0D4D, 0x0D4E),
+  TA_UNIRANGE_REC(0x0D62, 0x0D63),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_mymr_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x1000UL, 0x109FUL), /* Myanmar */
-  TA_UNIRANGE_REC(0xA9E0UL, 0xA9FFUL), /* Myanmar Extended-B */
-  TA_UNIRANGE_REC(0xAA60UL, 0xAA7FUL), /* Myanmar Extended-A */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x1000, 0x109F), /* Myanmar */
+  TA_UNIRANGE_REC(0xA9E0, 0xA9FF), /* Myanmar Extended-B */
+  TA_UNIRANGE_REC(0xAA60, 0xAA7F), /* Myanmar Extended-A */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_mymr_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x102DUL, 0x1030UL),
-  TA_UNIRANGE_REC(0x1032UL, 0x1037UL),
-  TA_UNIRANGE_REC(0x103AUL, 0x103AUL),
-  TA_UNIRANGE_REC(0x103DUL, 0x103EUL),
-  TA_UNIRANGE_REC(0x1058UL, 0x1059UL),
-  TA_UNIRANGE_REC(0x105EUL, 0x1060UL),
-  TA_UNIRANGE_REC(0x1071UL, 0x1074UL),
-  TA_UNIRANGE_REC(0x1082UL, 0x1082UL),
-  TA_UNIRANGE_REC(0x1085UL, 0x1086UL),
-  TA_UNIRANGE_REC(0x108DUL, 0x108DUL),
-  TA_UNIRANGE_REC(0xA9E5UL, 0xA9E5UL),
-  TA_UNIRANGE_REC(0xAA7CUL, 0xAA7CUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x102D, 0x1030),
+  TA_UNIRANGE_REC(0x1032, 0x1037),
+  TA_UNIRANGE_REC(0x103A, 0x103A),
+  TA_UNIRANGE_REC(0x103D, 0x103E),
+  TA_UNIRANGE_REC(0x1058, 0x1059),
+  TA_UNIRANGE_REC(0x105E, 0x1060),
+  TA_UNIRANGE_REC(0x1071, 0x1074),
+  TA_UNIRANGE_REC(0x1082, 0x1082),
+  TA_UNIRANGE_REC(0x1085, 0x1086),
+  TA_UNIRANGE_REC(0x108D, 0x108D),
+  TA_UNIRANGE_REC(0xA9E5, 0xA9E5),
+  TA_UNIRANGE_REC(0xAA7C, 0xAA7C),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_sinh_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0D80UL, 0x0DFFUL), /* Sinhala */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0D80, 0x0DFF), /* Sinhala */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_sinh_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0DCAUL, 0x0DCAUL),
-  TA_UNIRANGE_REC(0x0DD2UL, 0x0DD6UL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0DCA, 0x0DCA),
+  TA_UNIRANGE_REC(0x0DD2, 0x0DD6),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_taml_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0B80UL, 0x0BFFUL), /* Tamil */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0B80, 0x0BFF), /* Tamil */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_taml_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0B82UL, 0x0B82UL),
-  TA_UNIRANGE_REC(0x0BC0UL, 0x0BC2UL),
-  TA_UNIRANGE_REC(0x0BCDUL, 0x0BCDUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0B82, 0x0B82),
+  TA_UNIRANGE_REC(0x0BC0, 0x0BC2),
+  TA_UNIRANGE_REC(0x0BCD, 0x0BCD),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_telu_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0C00UL, 0x0C7FUL), /* Telugu */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0C00, 0x0C7F), /* Telugu */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_telu_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0C00UL, 0x0C00UL),
-  TA_UNIRANGE_REC(0x0C3EUL, 0x0C40UL),
-  TA_UNIRANGE_REC(0x0C46UL, 0x0C56UL),
-  TA_UNIRANGE_REC(0x0C62UL, 0x0C63UL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0C00, 0x0C00),
+  TA_UNIRANGE_REC(0x0C3E, 0x0C40),
+  TA_UNIRANGE_REC(0x0C46, 0x0C56),
+  TA_UNIRANGE_REC(0x0C62, 0x0C63),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_thai_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0E00UL, 0x0E7FUL), /* Thai */
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0E00, 0x0E7F), /* Thai */
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 const TA_Script_UniRangeRec ta_thai_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0E31UL, 0x0E31UL),
-  TA_UNIRANGE_REC(0x0E34UL, 0x0E3AUL),
-  TA_UNIRANGE_REC(0x0E47UL, 0x0E4EUL),
-  TA_UNIRANGE_REC(     0UL,      0UL)
+  TA_UNIRANGE_REC(0x0E31, 0x0E31),
+  TA_UNIRANGE_REC(0x0E34, 0x0E3A),
+  TA_UNIRANGE_REC(0x0E47, 0x0E4E),
+  TA_UNIRANGE_REC(     0,      0)
 };
 
 
 const TA_Script_UniRangeRec ta_none_uniranges[] =
 {
-  TA_UNIRANGE_REC(0UL, 0UL)
+  TA_UNIRANGE_REC(0, 0)
 };
 
 const TA_Script_UniRangeRec ta_none_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0UL, 0UL)
+  TA_UNIRANGE_REC(0, 0)
 };
 
 /* end of taranges.c */
