@@ -1461,7 +1461,7 @@ Main_GUI::create_layout(bool horizontal_layout)
 
   no_limit_box_text_with_key = tr("No Hinting &Limit");
   no_limit_box_text = tr("No Hinting Limit");
-  no_limit_box = new QCheckBox(no_limit_box_text, this);
+  no_limit_box = new QCheckBox(no_limit_box_text);
   no_limit_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> adds no hinting limit"
        " to the bytecode.<br>"
@@ -1486,7 +1486,7 @@ Main_GUI::create_layout(bool horizontal_layout)
 
   no_increase_box_text_with_key = tr("No x Height In&crease");
   no_increase_box_text = tr("No x Height Increase");
-  no_increase_box = new QCheckBox(no_increase_box_text, this);
+  no_increase_box = new QCheckBox(no_increase_box_text);
   no_increase_box->setToolTip(
     tr("If switched on,"
        " <b>TTFautohint</b> does not increase the x&nbsp;height."));
@@ -1540,7 +1540,7 @@ Main_GUI::create_layout(bool horizontal_layout)
 
   default_stem_width_box_text_with_key = tr("Default Fallback &Stem Width");
   default_stem_width_box_text = tr("Default Fallback Stem Width");
-  default_stem_width_box = new QCheckBox(default_stem_width_box_text, this);
+  default_stem_width_box = new QCheckBox(default_stem_width_box_text);
   default_stem_width_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> uses a default value"
        " for the fallback stem width (50 font units at 2048 UPEM)."));
@@ -1548,7 +1548,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // flags
   //
-  wincomp_box = new QCheckBox(tr("Windows Com&patibility"), this);
+  wincomp_box = new QCheckBox(tr("Windows Com&patibility"));
   wincomp_box->setToolTip(
     tr("If switched on, add two artificial blue zones positioned at the"
        " <tt>usWinAscent</tt> and <tt>usWinDescent</tt> values"
@@ -1559,7 +1559,7 @@ Main_GUI::create_layout(bool horizontal_layout)
        " should be used if those two <i>OS/2</i> values are tight,"
        " and you are experiencing clipping during rendering."));
 
-  adjust_box = new QCheckBox(tr("Ad&just Subglyphs"), this);
+  adjust_box = new QCheckBox(tr("Ad&just Subglyphs"));
   adjust_box->setToolTip(
     tr("If switched on, the original bytecode of the input font"
        " gets applied (at EM size, usually 2048ppem)"
@@ -1569,7 +1569,7 @@ Main_GUI::create_layout(bool horizontal_layout)
        "Note that the original bytecode will always be discarded."));
 
   hint_box = new QCheckBox(tr("Hint Co&mposites")
-                           + "                ", this); // make label wider
+                           + "                "); // make label wider
   hint_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> hints composite glyphs"
        " as a whole, including subglyphs."
@@ -1577,14 +1577,14 @@ Main_GUI::create_layout(bool horizontal_layout)
        "Deactivating this flag reduces the bytecode size enormously,"
        " however, it might yield worse results."));
 
-  symbol_box = new QCheckBox(tr("S&ymbol Font"), this);
+  symbol_box = new QCheckBox(tr("S&ymbol Font"));
   symbol_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> accepts fonts"
        " that don't contain a single standard character"
        " for any of the supported scripts.<br>"
        "Use this for symbol or dingbat fonts, for example."));
 
-  dehint_box = new QCheckBox(tr("&Dehint"), this);
+  dehint_box = new QCheckBox(tr("&Dehint"));
   dehint_box->setToolTip(
     tr("If set, remove all hints from the font.<br>"
        "For testing only."));
@@ -1600,7 +1600,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   info_box->insertItem(1, tr("Version"));
   info_box->insertItem(2, tr("Version and Parameters"));
 
-  TTFA_box = new QCheckBox(tr("Add TTFA Info Ta&ble"), this);
+  TTFA_box = new QCheckBox(tr("Add TTFA Info Ta&ble"));
   TTFA_box->setToolTip(
     tr("If switched on, an SFNT table called <i>TTFA</i>"
        " gets added to the output font,"
@@ -1625,12 +1625,12 @@ Main_GUI::create_layout(bool horizontal_layout)
        "  This only slightly increases the contrast"
        " but avoids larger outline distortion.</p>"));
 
-  gray_box = new QCheckBox(tr("Grayscale"), this);
+  gray_box = new QCheckBox(tr("Grayscale"));
   gray_box->setToolTip(
     tr("<b></b>Grayscale rendering, no ClearType activated."));
   stem_label->setBuddy(gray_box);
 
-  gdi_box = new QCheckBox(tr("GDI ClearType"), this);
+  gdi_box = new QCheckBox(tr("GDI ClearType"));
   gdi_box->setToolTip(
     tr("GDI ClearType rendering,"
        " introduced in 2000 for Windows XP.<br>"
@@ -1639,7 +1639,7 @@ Main_GUI::create_layout(bool horizontal_layout)
        " 36&nbsp;&le; version &lt;&nbsp;38, and ClearType is enabled.<br>"
        "Along the vertical axis, this mode behaves like B/W rendering."));
 
-  dw_box = new QCheckBox(tr("DW ClearType"), this);
+  dw_box = new QCheckBox(tr("DW ClearType"));
   dw_box->setToolTip(
     tr("DirectWrite ClearType rendering,"
        " introduced in 2008 for Windows Vista.<br>"
@@ -1651,7 +1651,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // running
   //
-  watch_box = new QCheckBox(tr("&Watch Input Files"), this);
+  watch_box = new QCheckBox(tr("&Watch Input Files"));
   watch_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> automatically re-runs"
        " the hinting process as soon as an input file"
@@ -1942,61 +1942,61 @@ Main_GUI::create_horizontal_layout()
 void
 Main_GUI::create_connections()
 {
-  connect(input_button, SIGNAL(clicked()), this,
+  connect(input_button, SIGNAL(clicked()),
           SLOT(browse_input()));
-  connect(output_button, SIGNAL(clicked()), this,
+  connect(output_button, SIGNAL(clicked()),
           SLOT(browse_output()));
-  connect(control_button, SIGNAL(clicked()), this,
+  connect(control_button, SIGNAL(clicked()),
           SLOT(browse_control()));
 
-  connect(input_line, SIGNAL(textChanged(QString)), this,
+  connect(input_line, SIGNAL(textChanged(QString)),
           SLOT(check_run()));
-  connect(output_line, SIGNAL(textChanged(QString)), this,
+  connect(output_line, SIGNAL(textChanged(QString)),
           SLOT(check_run()));
 
-  connect(input_line, SIGNAL(editingFinished()), this,
+  connect(input_line, SIGNAL(editingFinished()),
           SLOT(absolute_input()));
-  connect(output_line, SIGNAL(editingFinished()), this,
+  connect(output_line, SIGNAL(editingFinished()),
           SLOT(absolute_output()));
-  connect(control_line, SIGNAL(editingFinished()), this,
+  connect(control_line, SIGNAL(editingFinished()),
           SLOT(absolute_control()));
 
-  connect(min_box, SIGNAL(valueChanged(int)), this,
+  connect(min_box, SIGNAL(valueChanged(int)),
           SLOT(check_min()));
-  connect(max_box, SIGNAL(valueChanged(int)), this,
+  connect(max_box, SIGNAL(valueChanged(int)),
           SLOT(check_max()));
 
-  connect(limit_box, SIGNAL(valueChanged(int)), this,
+  connect(limit_box, SIGNAL(valueChanged(int)),
           SLOT(check_limit()));
-  connect(no_limit_box, SIGNAL(clicked()), this,
+  connect(no_limit_box, SIGNAL(clicked()),
           SLOT(check_no_limit()));
 
-  connect(no_increase_box, SIGNAL(clicked()), this,
+  connect(no_increase_box, SIGNAL(clicked()),
           SLOT(check_no_increase()));
 
-  connect(snapping_line, SIGNAL(editingFinished()), this,
+  connect(snapping_line, SIGNAL(editingFinished()),
           SLOT(check_number_set()));
-  connect(snapping_line, SIGNAL(textEdited(QString)), this,
+  connect(snapping_line, SIGNAL(textEdited(QString)),
           SLOT(clear_status_bar()));
 
-  connect(family_suffix_line, SIGNAL(editingFinished()), this,
+  connect(family_suffix_line, SIGNAL(editingFinished()),
           SLOT(check_family_suffix()));
-  connect(family_suffix_line, SIGNAL(textEdited(QString)), this,
+  connect(family_suffix_line, SIGNAL(textEdited(QString)),
           SLOT(clear_status_bar()));
 
-  connect(default_stem_width_box, SIGNAL(clicked()), this,
+  connect(default_stem_width_box, SIGNAL(clicked()),
           SLOT(check_default_stem_width()));
 
-  connect(dehint_box, SIGNAL(clicked()), this,
+  connect(dehint_box, SIGNAL(clicked()),
           SLOT(check_dehint()));
 
-  connect(timer, SIGNAL(timeout()), this,
+  connect(timer, SIGNAL(timeout()),
           SLOT(watch_files()));
 
-  connect(watch_box, SIGNAL(clicked()), this,
+  connect(watch_box, SIGNAL(clicked()),
           SLOT(check_watch()));
 
-  connect(run_button, SIGNAL(clicked()), this,
+  connect(run_button, SIGNAL(clicked()),
           SLOT(run()));
 }
 
@@ -2006,10 +2006,10 @@ Main_GUI::create_actions()
 {
   exit_act = new QAction(tr("E&xit"), this);
   exit_act->setShortcuts(QKeySequence::Quit);
-  connect(exit_act, SIGNAL(triggered()), this, SLOT(close()));
+  connect(exit_act, SIGNAL(triggered()), SLOT(close()));
 
   about_act = new QAction(tr("&About"), this);
-  connect(about_act, SIGNAL(triggered()), this, SLOT(about()));
+  connect(about_act, SIGNAL(triggered()), SLOT(about()));
 
   about_Qt_act = new QAction(tr("About &Qt"), this);
   connect(about_Qt_act, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
