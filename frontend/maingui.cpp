@@ -173,9 +173,12 @@ Main_GUI::Main_GUI(bool horizontal_layout,
 
   x_height_snapping_exceptions = NULL;
 
-  // if file watching is active, we regularly poll the file status
+  // if the current input files have been updated
+  // we wait a given time interval, then we reload the files
+  file_watcher = new QFileSystemWatcher(this);
   timer = new QTimer(this);
-  timer->setInterval(1000);
+  timer->setInterval(1000); // XXX make this configurable
+  timer->setSingleShot(true);
   fileinfo_input_file.setCaching(false);
   fileinfo_control_file.setCaching(false);
 
@@ -661,7 +664,7 @@ Main_GUI::check_filenames(const QString& input_name,
   }
 
   // silently overwrite if watching is active
-  if (QFile::exists(output_name) && !timer->isActive())
+  if (QFile::exists(output_name) && !watch_box->isChecked())
   {
     int ret = QMessageBox::warning(
                 this,
@@ -760,9 +763,34 @@ Main_GUI::open_files(const QString& input_name,
 void
 Main_GUI::check_watch()
 {
-  if (!watch_box->isChecked())
-    timer->stop();
-  // the timer gets started in the `run' function
+  if (watch_box->isChecked())
+  {
+    // file watching gets started in the `run' function
+    check = DoCheck;
+  }
+  else
+    stop_watching();
+}
+
+
+void
+Main_GUI::start_timer()
+{
+  // we delay the file watching action, mainly to ensure
+  // that newly generated files have been completely written to disk
+  check = CheckNow;
+  timer->start();
+}
+
+
+void
+Main_GUI::stop_watching()
+{
+  check = DoCheck;
+  if (!fileinfo_input_file.fileName().isEmpty())
+    file_watcher->removePath(fileinfo_input_file.fileName());
+  if (!fileinfo_control_file.fileName().isEmpty())
+    file_watcher->removePath(fileinfo_control_file.fileName());
 }
 
 
@@ -771,17 +799,40 @@ Main_GUI::watch_files()
 {
   if (fileinfo_input_file.exists()
       && fileinfo_input_file.isReadable()
-      && fileinfo_control_file.exists()
-      && fileinfo_control_file.isReadable())
+      && (fileinfo_control_file.fileName().isEmpty()
+          ? true
+          : (fileinfo_control_file.exists()
+             && fileinfo_control_file.isReadable())))
   {
     QDateTime modified_input = fileinfo_input_file.lastModified();
     QDateTime modified_control = fileinfo_control_file.lastModified();
-    if (modified_input > datetime_input_file
-        || modified_control > datetime_control_file)
+    // XXX make this configurable
+    if (datetime_input_file.msecsTo(modified_input) > 1000
+        || datetime_control_file.msecsTo(modified_control) > 1000)
+    {
+      check = CheckNow;
       run(); // this function sets `datetime_XXX'
+    }
+    else
+    {
+      // restart timer for symlinks
+      if (watch_box->isChecked())
+      {
+        if (fileinfo_input_file.isSymLink()
+            || fileinfo_control_file.isSymLink())
+          timer->start();
+      }
+    }
   }
   else
+  {
+    if (check == DoCheck)
+      check = CheckLater;
+    else if (check == CheckLater)
+      check = CheckNow;
+
     run(); // let this routine handle all errors
+  }
 }
 
 
@@ -1003,14 +1054,20 @@ gui_error(TA_Error error,
 void
 Main_GUI::run()
 {
-  statusBar()->clearMessage();
+  clear_status_bar();
+
+  if (check == CheckLater)
+  {
+    timer->start();
+    return;
+  }
 
   QString input_name = QDir::fromNativeSeparators(input_line->text());
   QString output_name = QDir::fromNativeSeparators(output_line->text());
   QString control_name = QDir::fromNativeSeparators(control_line->text());
   if (!check_filenames(input_name, output_name, control_name))
   {
-    timer->stop();
+    stop_watching();
     return;
   }
 
@@ -1024,7 +1081,7 @@ again:
                   output_name, &output,
                   control_name, &control))
   {
-    timer->stop();
+    stop_watching();
     return;
   }
 
@@ -1187,7 +1244,7 @@ again:
     if (gui_error_data.retry)
       goto again;
 
-    timer->stop();
+    stop_watching();
   }
   else
   {
@@ -1200,7 +1257,20 @@ again:
     // we have successfully processed a file;
     // start file watching now if requested
     if (watch_box->isChecked())
-      timer->start();
+    {
+      check = DoCheck;
+
+      // Qt's file watcher doesn't handle symlinks;
+      // we thus fall back to polling
+      if (fileinfo_input_file.isSymLink()
+          || fileinfo_control_file.isSymLink())
+        timer->start();
+      else
+      {
+        file_watcher->addPath(input_name);
+        file_watcher->addPath(control_name);
+      }
+    }
   }
 }
 
@@ -1990,6 +2060,8 @@ Main_GUI::create_connections()
   connect(dehint_box, SIGNAL(clicked()),
           SLOT(check_dehint()));
 
+  connect(file_watcher, SIGNAL(fileChanged(const QString&)),
+          SLOT(start_timer()));
   connect(timer, SIGNAL(timeout()),
           SLOT(watch_files()));
 
@@ -2108,6 +2180,8 @@ Main_GUI::set_defaults()
   check_no_limit();
   check_no_increase();
   check_number_set();
+
+  check_watch();
 
   // do this last since it disables almost everything
   check_dehint();

@@ -24,6 +24,7 @@
 #include <QDesktopWidget>
 #include <QFileDialog>
 #include <QFileSystemModel>
+#include <QFileSystemWatcher>
 #include <QGridLayout>
 #include <QLabel>
 #include <QMainWindow>
@@ -93,6 +94,7 @@ private slots:
   void check_number_set();
   void check_family_suffix();
   void clear_status_bar();
+  void start_timer();
   void check_watch();
   void watch_files();
   void check_run();
@@ -133,11 +135,19 @@ private:
   void create_horizontal_layout();
   void create_vertical_layout();
 
+  enum CheckState {
+    DoCheck,
+    CheckNow,
+    CheckLater
+  };
+
+  QFileSystemWatcher* file_watcher;
   QTimer* timer;
   QFileInfo fileinfo_input_file;
   QFileInfo fileinfo_control_file;
   QDateTime datetime_input_file;
   QDateTime datetime_control_file;
+  CheckState check;
 
   void create_connections();
   void create_actions();
@@ -154,6 +164,8 @@ private:
                  const QString&, FILE**,
                  const QString&, FILE**);
   int handle_error(TA_Error, const unsigned char*, QString);
+
+  void stop_watching();
 
   QMenu* file_menu;
   QMenu* help_menu;
