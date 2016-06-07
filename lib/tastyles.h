@@ -117,6 +117,13 @@ STYLE(deva_dflt, DEVA_DFLT,
       TA_BLUE_STRINGSET_DEVA,
       TA_COVERAGE_DEFAULT)
 
+STYLE(ethi_dflt, ETHI_DFLT,
+      "Ethiopic default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_ETHI,
+      TA_BLUE_STRINGSET_ETHI,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(geor_dflt, GEOR_DFLT,
       "Georgian (Mkhedruli) default style",
       TA_WRITING_SYSTEM_LATIN,

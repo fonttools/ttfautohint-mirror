@@ -194,6 +194,22 @@ const TA_Script_UniRangeRec ta_deva_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_ethi_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x1200, 0x137F), /* Ethiopic */
+  TA_UNIRANGE_REC(0x1380, 0x139F), /* Ethiopic Supplement */
+  TA_UNIRANGE_REC(0x2D80, 0x2DDF), /* Ethiopic Extended */
+  TA_UNIRANGE_REC(0xAB00, 0xAB2F), /* Ethiopic Extended-A */
+  TA_UNIRANGE_REC(     0,      0)
+};
+
+const TA_Script_UniRangeRec ta_ethi_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x135D, 0x135F),
+  TA_UNIRANGE_REC(     0,      0)
+};
+
+
 const TA_Script_UniRangeRec ta_geor_uniranges[] =
 {
   TA_UNIRANGE_REC(0x10D0, 0x10FF), /* Georgian (Mkhedruli) */
