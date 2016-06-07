@@ -708,6 +708,7 @@ Table: script-specific standard characters of the 'latin' writing system
   `deva`      'ठ', U+0920, DEVANAGARI LETTER TTHA
               'व', U+0935, DEVANAGARI LETTER VA
               'ट', U+091F, DEVANAGARI LETTER TTA
+  `ethi`      'ዐ', U+12D0, ETHIOPIC SYLLABLE PHARYNGEAL A
   `geor`      'ი', U+10D8, GEORGIAN LETTER IN
               'ე', U+10D4, GEORGIAN LETTER EN
               'ა', U+10D0, GEORGIAN LETTER AN
@@ -852,6 +853,14 @@ Contrary to scripts like latin, the baseline in Devanagari is on the top,
 and we hint from top to bottom.  Note that some fonts have extreme variation
 in the height of the round elements in Zone\ 3; for this reason we also
 define Zone\ 1, which must be always present.
+
+
+Table: `ethi` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ሀ ሃ ዘ ፐ ማ በ ዋ ዐ
+  2     bottom of letters                      ለ ሐ በ ዘ ሀ ሪ ዐ ጨ
 
 
 Table: `geok` blue zones

@@ -1,7 +1,7 @@
 % For non-ASCII characters, this template only works with luatex or XeTeX. 
-% Arabic, Armenian, Bengali, Devanagari, Georgian, Gujarati, Gurmukhi,
-% Khmer, Lao, Sinhala, Telugu, and Thai support currently works with XeTeX
-% only.
+% Arabic, Armenian, Bengali, Devanagari, Ethiopic, Georgian, Gujarati,
+% Gurmukhi, Khmer, Lao, Sinhala, Telugu, and Thai support currently works
+% with XeTeX only.
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$%
                $if(lang)$$lang$,$endif$%
@@ -19,6 +19,7 @@
   \newfontfamily{\armenianfont}[Script=Armenian]{FreeSerif}
   \newfontfamily{\bengalifont}[Script=Bengali]{SagarNormal}
   \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
+  \newfontfamily{\ethiopicfont}[Script=Ethiopic]{NotoSansEthiopic}
   \newfontfamily{\georgianfont}[Script=Georgian]{NotoSerifGeorgian}
   \newfontfamily{\gujaratifont}[Script=Gujarati]{NotoSerifGujarati}
   \newfontfamily{\gurmukhifont}[Script=Gurmukhi]{FreeSerif}
@@ -44,6 +45,8 @@
   \setTransitionFrom{Bengali}{\endgroup}
   \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
   \setTransitionFrom{Devanagari}{\endgroup}
+  \setTransitionTo{Ethiopic}{\begingroup\ethiopicfont}
+  \setTransitionFrom{Ethiopic}{\endgroup}
   \setTransitionTo{Georgian}{\begingroup\georgianfont}
   \setTransitionFrom{Georgian}{\endgroup}
   \setTransitionTo{GeorgianSupplement}{\begingroup\georgianfont}
