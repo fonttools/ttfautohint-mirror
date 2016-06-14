@@ -108,6 +108,13 @@ STYLE(beng_dflt, BENG_DFLT,
       TA_BLUE_STRINGSET_BENG,
       TA_COVERAGE_DEFAULT)
 
+STYLE(cher_dflt, CHER_DFLT,
+      "Cherokee default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_CHER,
+      TA_BLUE_STRINGSET_CHER,
+      TA_COVERAGE_DEFAULT)
+
 META_STYLE_LATIN(cyrl, CYRL, "Cyrillic")
 
 STYLE(deva_dflt, DEVA_DFLT,

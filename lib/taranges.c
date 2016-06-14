@@ -144,6 +144,19 @@ const TA_Script_UniRangeRec ta_beng_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_cher_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x13A0, 0x13FF), /* Cherokee */
+  TA_UNIRANGE_REC(0xAB70, 0xABBF), /* Cherokee Supplement */
+  TA_UNIRANGE_REC(     0,      0)
+};
+
+const TA_Script_UniRangeRec ta_cher_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0, 0)
+};
+
+
 const TA_Script_UniRangeRec ta_cyrl_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0400, 0x04FF), /* Cyrillic */

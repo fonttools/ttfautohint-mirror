@@ -109,6 +109,15 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_BENGALI_HEAD
     "ও এ ড ত ন ব ল ক"
 
+  TA_BLUE_STRING_CHEROKEE_CAPITAL
+    "Ꮖ Ꮋ Ꭼ Ꮓ Ꭴ Ꮳ Ꭶ Ꮥ"
+  TA_BLUE_STRING_CHEROKEE_SMALL_ASCENDER
+    "ꮒ ꮤ ꮶ ꭴ ꭾ ꮗ ꮝ ꮿ"
+  TA_BLUE_STRING_CHEROKEE_SMALL
+    "ꮖ ꭼ ꮓ ꮠ ꮳ ꭶ ꮥ ꮻ"
+  TA_BLUE_STRING_CHEROKEE_SMALL_DESCENDER
+    "ᏸ ꮐ ꭹ ꭻ"
+
   TA_BLUE_STRING_CYRILLIC_CAPITAL_TOP
     "Б В Е П З О С Э"
   TA_BLUE_STRING_CYRILLIC_CAPITAL_BOTTOM
@@ -426,6 +435,16 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
                                      TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
     { TA_BLUE_STRING_BENGALI_BASE,   0                                 }
     { TA_BLUE_STRING_MAX,            0                                 }
+
+  TA_BLUE_STRINGSET_CHER
+    { TA_BLUE_STRING_CHEROKEE_CAPITAL,         TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_CHEROKEE_CAPITAL,         0                                 }
+    { TA_BLUE_STRING_CHEROKEE_SMALL_ASCENDER,  TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_CHEROKEE_SMALL,           TA_BLUE_PROPERTY_LATIN_TOP      |
+                                               TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_CHEROKEE_SMALL,           0                                 }
+    { TA_BLUE_STRING_CHEROKEE_SMALL_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_MAX,                      0                                 }
 
   TA_BLUE_STRINGSET_CYRL
     { TA_BLUE_STRING_CYRILLIC_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
