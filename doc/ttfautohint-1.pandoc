@@ -705,6 +705,9 @@ Table: script-specific standard characters of the 'latin' writing system
               '৪', U+09EA, BENGALI DIGIT FOUR
   `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
               'О', U+041E, CYRILLIC CAPITAL LETTER O
+  `cher`      'Ꭴ', U+13A4, CHEROKEE LETTER U
+              'Ꮕ', U+13C5, CHEROKEE LETTER NV
+              'ꮕ', U+AB95, CHEROKEE SMALL LETTER NV
   `deva`      'ठ', U+0920, DEVANAGARI LETTER TTHA
               'व', U+0935, DEVANAGARI LETTER VA
               'ट', U+091F, DEVANAGARI LETTER TTA
@@ -826,6 +829,18 @@ Table: `beng` blue zones
 
 Contrary to scripts like latin, the baseline in Bengali is on the top, and
 we hint from top to bottom.
+
+
+Table: `cher` blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 Ꮖ Ꮋ Ꭼ Ꮓ Ꭴ Ꮳ Ꭶ Ꮥ
+  2     bottom of capital letters              Ꮖ Ꮋ Ꭼ Ꮓ Ꭴ Ꮳ Ꭶ Ꮥ
+  3     top of ascenders of small letters      ꮒ ꮤ ꮶ ꭴ ꭾ ꮗ ꮝ ꮿ
+  4*    top of small letters                   ꮖ ꭼ ꮓ ꮠ ꮳ ꭶ ꮥ ꮻ
+  5     bottom of small letters                ꮖ ꭼ ꮓ ꮠ ꮳ ꭶ ꮥ ꮻ
+  6     bottom of descenders of small letters  ᏸ ꮐ ꭹ ꭻ
 
 
 Table: `cyrl` blue zones

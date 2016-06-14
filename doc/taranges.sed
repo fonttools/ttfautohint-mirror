@@ -10,6 +10,7 @@ History\
 /^#if/,/^#endif/ d
 /^  *\/\*/ d
 
+/cher_nonbase_uniranges/ d
 /geo[rk]_nonbase_uniranges/ d
 /lat[bp]_nonbase_uniranges/ d
 /khms_nonbase_uniranges/ d
