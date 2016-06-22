@@ -714,6 +714,8 @@ main(int argc,
   TA_Info_Post_Func info_post_func = info_post;
 
   const char* control_name = NULL;
+
+  unsigned long long epoch = ULLONG_MAX;
 #endif
 
   // For real numbers (both parsing and displaying) we only use `.' as the
@@ -1018,11 +1020,57 @@ main(int argc,
   if (!have_x_height_snapping_exceptions_string)
     x_height_snapping_exceptions_string = "";
   if (!have_fallback_stem_width)
-    fallback_stem_width = 0; /* redundant, but avoids a compiler warning */
+    fallback_stem_width = 0; // redundant, but avoids a compiler warning
   if (!have_family_suffix)
     family_suffix = "";
 
 #ifndef BUILD_GUI
+
+  // check SOURE_DATE_EPOCH environment variable
+  const char* source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+  if (source_date_epoch)
+  {
+    char* endptr;
+    errno = 0;
+
+    epoch = strtoull(source_date_epoch, &endptr, 10);
+    if ((errno == ERANGE && (epoch == ULLONG_MAX
+                             || epoch == 0))
+        || (errno != 0
+            && epoch == 0))
+    {
+      fprintf(stderr,
+              "Environment variable `SOURCE_DATE_EPOCH' ignored:\n"
+              "  strtoull: %s\n",
+              strerror(errno));
+      epoch = ULLONG_MAX;
+    }
+    else if (endptr == source_date_epoch)
+    {
+      fprintf(stderr,
+              "Environment variable `SOURCE_DATE_EPOCH' ignored:\n"
+              " No digits were found: %s\n",
+              endptr);
+      epoch = ULLONG_MAX;
+    }
+    else if (*endptr != '\0')
+    {
+      fprintf(stderr,
+              "Environment variable `SOURCE_DATE_EPOCH' ignored:\n"
+              " Trailing garbage: %s\n",
+              endptr);
+      epoch = ULLONG_MAX;
+    }
+    else if (epoch > ULONG_MAX)
+    {
+      fprintf(stderr,
+              "Environment variable `SOURCE_DATE_EPOCH' ignored\n"
+              " value must be smaller than or equal to %lu\n"
+              " but was found to be %llu\n",
+              ULONG_MAX, epoch);
+      epoch = ULLONG_MAX;
+    }
+  }
 
   if (!isatty(fileno(stderr)) && !debug)
     setvbuf(stderr, (char*)NULL, _IONBF, BUFSIZ);
@@ -1252,7 +1300,7 @@ main(int argc,
                  "increase-x-height, x-height-snapping-exceptions,"
                  "fallback-stem-width, default-script,"
                  "fallback-script, fallback-scaling,"
-                 "symbol, dehint, debug, TTFA-info",
+                 "symbol, dehint, debug, TTFA-info, epoch",
                  in, out, control,
                  hinting_range_min, hinting_range_max, hinting_limit,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
@@ -1265,7 +1313,7 @@ main(int argc,
                  increase_x_height, x_height_snapping_exceptions_string,
                  fallback_stem_width, default_script,
                  fallback_script, fallback_scaling,
-                 symbol, dehint, debug, TTFA_info);
+                 symbol, dehint, debug, TTFA_info, epoch);
 
   if (!no_info)
   {

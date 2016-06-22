@@ -16,6 +16,7 @@
 /* This file needs FreeType 2.4.5 or newer. */
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -107,6 +108,7 @@ TTF_autohint(const char* options,
   FT_Bool dehint = 0;
   FT_Bool debug = 0;
   FT_Bool TTFA_info = 0;
+  unsigned long long epoch = ULLONG_MAX;
 
   const char* op;
 
@@ -172,6 +174,8 @@ TTF_autohint(const char* options,
     }
     else if (COMPARE("dw-cleartype-strong-stem-width"))
       dw_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("epoch"))
+      epoch = (unsigned long long)va_arg(ap, unsigned long long);
     else if (COMPARE("error-callback"))
       err = va_arg(ap, TA_Error_Func);
     else if (COMPARE("error-callback-data"))
@@ -411,6 +415,7 @@ No_check:
   font->debug = debug;
   font->dehint = dehint;
   font->TTFA_info = TTFA_info;
+  font->epoch = epoch;
 
   font->gasp_idx = MISSING;
 

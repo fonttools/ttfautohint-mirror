@@ -14,6 +14,10 @@ Version 1.6 (2016-XXX-XX)
 * The new option `--fallback-scaling` changes the behaviour of the fallback
   script from hinting to scaling (as implemented in previous versions).
 
+* ttfautohint (but not ttfautohintGUI) now honours the SOURCE_DATE_EPOCH
+  environment variable for reproducible builds.  This corresponds to the new
+  library option `epoch`.
+
 
 Version 1.5 (2016-Jan-24)
 -------------------------

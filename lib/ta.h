@@ -283,6 +283,7 @@ struct FONT_
   FT_Bool dehint;
   FT_Bool debug;
   FT_Bool TTFA_info;
+  unsigned long long epoch;
 };
 
 
@@ -304,7 +305,8 @@ TA_font_dump_parameters(FONT* font,
                         FT_Bool format);
 
 void
-TA_get_current_time(FT_ULong* high,
+TA_get_current_time(FONT* font,
+                    FT_ULong* high,
                     FT_ULong* low);
 
 FT_Byte*

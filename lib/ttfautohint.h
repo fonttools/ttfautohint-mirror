@@ -17,6 +17,7 @@
 #define TTFAUTOHINT_H_
 
 #include <stdarg.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -534,6 +535,14 @@ typedef int
  * `dehint`
  * :   If set to\ 1, remove all hints from the font.  All other hinting
  *     options are ignored.
+ *
+ * `epoch`
+ * :   An integer of type `unsigned long long`, defined as the number of
+ *     seconds (excluding leap seconds) since 01 Jan 1970 00:00:00 UTC.  If
+ *     set, or if the value is not equal to `ULLONG_MAX`, this epoch gets
+ *     used instead of the current date and time for the 'modification time'
+ *     field in the TTF header.  Use this to get [reproducible
+ *     builds](https://reproducible-builds.org/).
  *
  *
  * ### Remarks

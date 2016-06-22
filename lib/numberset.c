@@ -435,7 +435,7 @@ number_set_show(number_range* number_set,
 
   number_range* nr = number_set;
 
-  const char *comma;
+  const char* comma;
 
 
   if (min < 0)

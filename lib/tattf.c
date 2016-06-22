@@ -133,7 +133,7 @@ TA_sfnt_build_TTF_header(SFNT* sfnt,
       head_buf[17] &= ~0x10U;
 
       /* update modification time */
-      TA_get_current_time(&date_high, &date_low);
+      TA_get_current_time(font, &date_high, &date_low);
 
       head_buf[28] = BYTE1(date_high);
       head_buf[29] = BYTE2(date_high);

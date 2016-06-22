@@ -14,20 +14,26 @@
 
 
 #include <time.h>
-#include <stdint.h>
 
 #include "ta.h"
 
 
 void
-TA_get_current_time(FT_ULong* high,
+TA_get_current_time(FONT* font,
+                    FT_ULong* high,
                     FT_ULong* low)
 {
   /* there have been 24107 days between January 1st, 1904 (the epoch of */
   /* OpenType), and January 1st, 1970 (the epoch of the `time' function) */
-  uint64_t seconds_to_1970 = 24107 * 24 * 60 * 60;
-  uint64_t seconds_to_today = seconds_to_1970 + (uint64_t)time(NULL);
+  const unsigned long long seconds_to_1970 = 24107 * 24 * 60 * 60;
+  unsigned long long seconds_to_today = seconds_to_1970;
 
+
+  if (font->epoch != ULLONG_MAX)
+    // we don't take care of potential overflow
+    seconds_to_today += font->epoch;
+  else
+    seconds_to_today += (unsigned long long)time(NULL);
 
   *high = (FT_ULong)(seconds_to_today >> 32);
   *low = (FT_ULong)seconds_to_today;
