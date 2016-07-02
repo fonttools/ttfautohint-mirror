@@ -266,7 +266,6 @@ typedef struct TA_SegmentRec_
 
   TA_Segment link; /* (stem) link segment */
   TA_Segment serif; /* primary segment for serifs */
-  FT_Pos num_linked; /* number of linked segments */
   FT_Pos score; /* used during stem matching */
   FT_Pos len; /* used during stem matching */
 
@@ -291,7 +290,6 @@ typedef struct TA_EdgeRec_
 
   TA_Edge link; /* link edge */
   TA_Edge serif; /* primary edge for serifs */
-  FT_Short num_linked; /* number of linked edges */
   FT_Int score; /* used during stem matching */
 
   TA_Segment first; /* first segment in edge */
