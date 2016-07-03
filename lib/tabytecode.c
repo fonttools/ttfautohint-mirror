@@ -157,9 +157,6 @@ typedef struct Recorder_
   ip_after_points ip_after_points_head;
   ip_on_points ip_on_points_head;
   ip_between_points ip_between_points_head;
-
-  FT_UShort num_strong_points;
-  FT_UShort num_segments;
 } Recorder;
 
 
@@ -2308,13 +2305,11 @@ TA_init_recorder(Recorder* recorder,
   TA_Segment seg_limit = segments + axis->num_segments;
   TA_Segment seg;
 
-  FT_UShort num_strong_points = 0;
   FT_UShort* wrap_around_segment;
 
   recorder->sfnt = sfnt;
   recorder->font = font;
   recorder->glyph = glyph;
-  recorder->num_segments = (FT_UShort)axis->num_segments;
 
   LLRB_INIT(&recorder->ip_before_points_head);
   LLRB_INIT(&recorder->ip_after_points_head);
@@ -2350,11 +2345,7 @@ TA_init_recorder(Recorder* recorder,
     /* (or rather, it can vary between different pixel sizes) */
     if (point->flags & TA_FLAG_WEAK_INTERPOLATION)
       continue;
-
-    num_strong_points++;
   }
-
-  recorder->num_strong_points = num_strong_points;
 
   return FT_Err_Ok;
 }
