@@ -1518,9 +1518,6 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
     FT_Pos prev_max_on_coord = max_on_coord;
 
 
-    if (point == last) /* skip singletons -- just in case */
-      continue;
-
     if (TA_ABS(last->out_dir) == major_dir
         && TA_ABS(point->out_dir) == major_dir)
     {
@@ -1737,8 +1734,12 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
         passed = 1;
       }
 
+      /* if we are not on an edge, check whether the major direction */
+      /* coincides with the current point's `out' direction, or */
+      /* whether we have a single-point contour */
       if (!on_edge
-          && TA_ABS(point->out_dir) == major_dir)
+          && (TA_ABS(point->out_dir) == major_dir
+              || point == point->prev))
       {
         /* this is the start of a new segment! */
         segment_dir = (TA_Direction)point->out_dir;
@@ -1773,9 +1774,18 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
 
         on_edge = 1;
 
-        if (point->out_dir != point->next->in_dir)
+        if (point->out_dir != point->next->in_dir
+            || point == point->prev)
         {
-          /* we have a one-point segment */
+          /*
+           * We have a one-point segment.  This is either
+           *
+           * . a one-point contour (with `in' and `out' direction
+           *   set to TA_DIR_NONE by default), or
+           *
+           * . an artificial one-point segment (with a forced
+           *   `out' direction).
+           */
           segment->pos = (FT_Short)min_pos;
 
           if (point->flags & TA_FLAG_CONTROL)
@@ -2078,7 +2088,10 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
     FT_Int ee;
 
 
-    if (seg->height < segment_length_threshold)
+    /* ignore too short segments and, in this loop, */
+    /* one-point segments without a direction */
+    if (seg->height < segment_length_threshold
+        || seg->dir == TA_DIR_NONE)
       continue;
 
     /* a special case for serif edges: */
@@ -2131,6 +2144,44 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
     else
     {
       /* if an edge was found, simply add the segment to the edge's list */
+      seg->edge_next = found->first;
+      found->last->edge_next = seg;
+      found->last = seg;
+    }
+  }
+
+  /* we loop again over all segments to catch one-point segments */
+  /* without a direction: if possible, link them to existing edges */
+  for (seg = segments; seg < segment_limit; seg++)
+  {
+    TA_Edge found = NULL;
+    FT_Int ee;
+
+
+    if (seg->dir != TA_DIR_NONE)
+      continue;
+
+    /* look for an edge corresponding to the segment */
+    for (ee = 0; ee < axis->num_edges; ee++)
+    {
+      TA_Edge edge = axis->edges + ee;
+      FT_Pos dist;
+
+
+      dist = seg->pos - edge->fpos;
+      if (dist < 0)
+        dist = -dist;
+
+      if (dist < edge_distance_threshold)
+      {
+        found = edge;
+        break;
+      }
+    }
+
+    /* one-point segments without a match are ignored */
+    if (found)
+    {
       seg->edge_next = found->first;
       found->last->edge_next = seg;
       found->last = seg;
