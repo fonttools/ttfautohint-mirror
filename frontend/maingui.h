@@ -86,7 +86,7 @@ private slots:
   void check_limit();
   void check_dehint();
   void check_no_limit();
-  void check_no_increase();
+  void check_no_x_increase();
   void check_default_stem_width();
   void absolute_input();
   void absolute_output();
@@ -206,13 +206,13 @@ private:
   QString no_limit_box_text_with_key;
   QString no_limit_box_text;
 
-  QLabel* increase_label;
-  QString increase_label_text_with_key;
-  QString increase_label_text;
-  QSpinBox* increase_box;
-  QCheckBox* no_increase_box;
-  QString no_increase_box_text_with_key;
-  QString no_increase_box_text;
+  QLabel* x_increase_label;
+  QString x_increase_label_text_with_key;
+  QString x_increase_label_text;
+  QSpinBox* x_increase_box;
+  QCheckBox* no_x_increase_box;
+  QString no_x_increase_box_text_with_key;
+  QString no_x_increase_box_text;
 
   QLabel* snapping_label;
   Tooltip_Line_Edit* snapping_line;

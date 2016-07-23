@@ -349,9 +349,9 @@ Main_GUI::check_dehint()
     limit_label->setEnabled(false);
     limit_box->setEnabled(false);
 
-    no_increase_box->setEnabled(false);
-    increase_label->setEnabled(false);
-    increase_box->setEnabled(false);
+    no_x_increase_box->setEnabled(false);
+    x_increase_label->setEnabled(false);
+    x_increase_box->setEnabled(false);
 
     snapping_label->setEnabled(false);
     snapping_line->setEnabled(false);
@@ -387,8 +387,8 @@ Main_GUI::check_dehint()
     no_limit_box->setEnabled(true);
     check_no_limit();
 
-    no_increase_box->setEnabled(true);
-    check_no_increase();
+    no_x_increase_box->setEnabled(true);
+    check_no_x_increase();
 
     snapping_label->setEnabled(true);
     snapping_line->setEnabled(true);
@@ -430,21 +430,21 @@ Main_GUI::check_no_limit()
 
 
 void
-Main_GUI::check_no_increase()
+Main_GUI::check_no_x_increase()
 {
-  if (no_increase_box->isChecked())
+  if (no_x_increase_box->isChecked())
   {
-    increase_label->setEnabled(false);
-    increase_label->setText(increase_label_text);
-    increase_box->setEnabled(false);
-    no_increase_box->setText(no_increase_box_text_with_key);
+    x_increase_label->setEnabled(false);
+    x_increase_label->setText(x_increase_label_text);
+    x_increase_box->setEnabled(false);
+    no_x_increase_box->setText(no_x_increase_box_text_with_key);
   }
   else
   {
-    increase_label->setEnabled(true);
-    increase_label->setText(increase_label_text_with_key);
-    increase_box->setEnabled(true);
-    no_increase_box->setText(no_increase_box_text);
+    x_increase_label->setEnabled(true);
+    x_increase_label->setText(x_increase_label_text_with_key);
+    x_increase_box->setEnabled(true);
+    no_x_increase_box->setText(no_x_increase_box_text);
   }
 }
 
@@ -1118,9 +1118,9 @@ again:
   info_data.gdi_cleartype_strong_stem_width = gdi_box->isChecked();
   info_data.dw_cleartype_strong_stem_width = dw_box->isChecked();
 
-  info_data.increase_x_height = no_increase_box->isChecked()
+  info_data.increase_x_height = no_x_increase_box->isChecked()
                                 ? 0
-                                : increase_box->value();
+                                : x_increase_box->value();
   info_data.x_height_snapping_exceptions_string =
     qPrintable(x_height_snapping_exceptions_string);
 
@@ -1540,24 +1540,24 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // x height increase limit
   //
-  increase_label_text_with_key = tr("x Height In&crease Limit:");
-  increase_label_text = tr("x Height Increase Limit:");
-  increase_label = new QLabel(increase_label_text_with_key);
-  increase_box = new QSpinBox;
-  increase_label->setBuddy(increase_box);
-  increase_label->setToolTip(
+  x_increase_label_text_with_key = tr("x Height In&crease Limit:");
+  x_increase_label_text = tr("x Height Increase Limit:");
+  x_increase_label = new QLabel(x_increase_label_text_with_key);
+  x_increase_box = new QSpinBox;
+  x_increase_label->setBuddy(x_increase_box);
+  x_increase_label->setToolTip(
     tr("For PPEM values in the range 6&nbsp;&le; PPEM &le;&nbsp;<i>n</i>,"
        " where <i>n</i> is the value selected by this spin box,"
        " round up the font's x&nbsp;height much more often than normally.<br>"
        "Use this if holes in letters like <i>e</i> get filled,"
        " for example."));
-  increase_box->setKeyboardTracking(false);
-  increase_box->setRange(6, 10000);
+  x_increase_box->setKeyboardTracking(false);
+  x_increase_box->setRange(6, 10000);
 
-  no_increase_box_text_with_key = tr("No x Height In&crease");
-  no_increase_box_text = tr("No x Height Increase");
-  no_increase_box = new QCheckBox(no_increase_box_text);
-  no_increase_box->setToolTip(
+  no_x_increase_box_text_with_key = tr("No x Height In&crease");
+  no_x_increase_box_text = tr("No x Height Increase");
+  no_x_increase_box = new QCheckBox(no_x_increase_box_text);
+  no_x_increase_box->setToolTip(
     tr("If switched on,"
        " <b>TTFautohint</b> does not increase the x&nbsp;height."));
 
@@ -1819,9 +1819,9 @@ Main_GUI::create_vertical_layout()
   gui_layout->addWidget(limit_box, row++, 1, Qt::AlignLeft);
   gui_layout->addWidget(no_limit_box, row++, 1);
 
-  gui_layout->addWidget(increase_label, row, 0, Qt::AlignRight);
-  gui_layout->addWidget(increase_box, row++, 1, Qt::AlignLeft);
-  gui_layout->addWidget(no_increase_box, row++, 1);
+  gui_layout->addWidget(x_increase_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(x_increase_box, row++, 1, Qt::AlignLeft);
+  gui_layout->addWidget(no_x_increase_box, row++, 1);
 
   gui_layout->addWidget(snapping_label, row, 0, Qt::AlignRight);
   gui_layout->addWidget(snapping_line, row++, 1, Qt::AlignLeft);
@@ -1949,9 +1949,9 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(limit_box, row++, 2, Qt::AlignLeft);
   gui_layout->addWidget(no_limit_box, row++, 2);
 
-  gui_layout->addWidget(increase_label, row, 1, Qt::AlignRight);
-  gui_layout->addWidget(increase_box, row++, 2, Qt::AlignLeft);
-  gui_layout->addWidget(no_increase_box, row++, 2);
+  gui_layout->addWidget(x_increase_label, row, 1, Qt::AlignRight);
+  gui_layout->addWidget(x_increase_box, row++, 2, Qt::AlignLeft);
+  gui_layout->addWidget(no_x_increase_box, row++, 2);
 
   gui_layout->addWidget(snapping_label, row, 1, Qt::AlignRight);
   gui_layout->addWidget(snapping_line, row++, 2, Qt::AlignLeft);
@@ -2041,8 +2041,8 @@ Main_GUI::create_connections()
   connect(no_limit_box, SIGNAL(clicked()),
           SLOT(check_no_limit()));
 
-  connect(no_increase_box, SIGNAL(clicked()),
-          SLOT(check_no_increase()));
+  connect(no_x_increase_box, SIGNAL(clicked()),
+          SLOT(check_no_x_increase()));
 
   connect(snapping_line, SIGNAL(editingFinished()),
           SLOT(check_number_set()));
@@ -2125,13 +2125,13 @@ Main_GUI::set_defaults()
     no_limit_box->setChecked(true);
   }
 
-  increase_box->setValue(increase_x_height ? increase_x_height
-                                           : TA_INCREASE_X_HEIGHT);
+  x_increase_box->setValue(increase_x_height ? increase_x_height
+                                             : TA_INCREASE_X_HEIGHT);
   // handle command line option `--increase-x-height=0'
   if (!increase_x_height)
   {
     increase_x_height = TA_INCREASE_X_HEIGHT;
-    no_increase_box->setChecked(true);
+    no_x_increase_box->setChecked(true);
   }
 
   snapping_line->setText(x_height_snapping_exceptions_string);
@@ -2178,7 +2178,7 @@ Main_GUI::set_defaults()
   check_limit();
 
   check_no_limit();
-  check_no_increase();
+  check_no_x_increase();
   check_number_set();
 
   check_watch();
