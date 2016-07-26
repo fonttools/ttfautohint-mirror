@@ -1123,7 +1123,7 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
       FT_UInt limit;
 
 
-      scaled = FT_MulFix(blue->shoot.org, scaler->y_scale);
+      scaled = FT_MulFix(blue->shoot.org, scale);
       limit = metrics->root.globals->increase_x_height;
       threshold = 40;
 
@@ -1161,8 +1161,6 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
 
           if (dist == 0)
           {
-            scale = new_scale;
-
             TA_LOG_GLOBAL((
               "ta_latin_metrics_scale_dim:"
               " x height alignment (style `%s'):\n"
@@ -1170,9 +1168,11 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
               " vertical scaling changed from %.4f to %.4f (by %d%%)\n"
               "\n",
               ta_style_names[metrics->root.style_class->style],
-              axis->org_scale / 65536.0,
               scale / 65536.0,
+              new_scale / 65536.0,
               (fitted - scaled) * 100 / scaled));
+
+            scale = new_scale;
           }
 #ifdef TA_DEBUG
           else
