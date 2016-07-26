@@ -1592,6 +1592,7 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
 
             segment->last = point;
             segment->pos = (FT_Short)((min_pos + max_pos) >> 1);
+            segment->delta = (FT_Short)((max_pos - min_pos) >> 1);
 
             /* a segment is round if either its first or last point */
             /* is a control point, and the length of the on points */
@@ -2034,6 +2035,7 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
   FT_Fixed scale;
   FT_Pos edge_distance_threshold;
   FT_Pos segment_length_threshold;
+  FT_Pos segment_width_threshold;
 
 
   axis->num_edges = 0;
@@ -2056,6 +2058,12 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
     segment_length_threshold = FT_DivFix(64, hints->y_scale);
   else
     segment_length_threshold = 0;
+
+  /*
+   *  Similarly, we ignore segments that have a width delta
+   *  larger than 0.5px (i.e., a width larger than 1px).
+   */
+  segment_width_threshold = FT_DivFix(32, scale);
 
   /********************************************************************/
   /*                                                                  */
@@ -2088,9 +2096,10 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
     FT_Int ee;
 
 
-    /* ignore too short segments and, in this loop, */
+    /* ignore too short segments, too wide ones, and, in this loop, */
     /* one-point segments without a direction */
     if (seg->height < segment_length_threshold
+        || seg->delta > segment_width_threshold
         || seg->dir == TA_DIR_NONE)
       continue;
 

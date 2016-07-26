@@ -420,19 +420,19 @@ ta_glyph_hints_dump_segments(TA_GlyphHints hints)
             dimension == TA_DIMENSION_HORZ ? "vertical"
                                            : "horizontal"));
     if (axis->num_segments)
-      TA_LOG(("  index   pos    dir   from   to"
-              "   link  serif  edge"
+      TA_LOG(("  index   pos   delta   dir   from   to"
+              "  link  serif  edge"
               "  height  extra     flags\n"));
     else
       TA_LOG(("  (none)\n"));
 
     for (seg = segments; seg < limit; seg++)
-      TA_LOG(("  %5d  %5.2g  %5s  %4d  %4d"
+      TA_LOG(("  %5d  %5d  %5d  %5s  %4d  %4d"
               "  %4s  %5s  %4s"
               "  %6d  %5d  %11s\n",
               TA_INDEX_NUM(seg, segments),
-              dimension == TA_DIMENSION_HORZ ? (int)seg->first->ox / 64.0
-                                             : (int)seg->first->oy / 64.0,
+              seg->pos,
+              seg->delta,
               ta_dir_str((TA_Direction)seg->dir),
               TA_INDEX_NUM(seg->first, points),
               TA_INDEX_NUM(seg->last, points),
@@ -471,18 +471,26 @@ ta_glyph_hints_dump_edges(TA_GlyphHints hints)
 
     /* note that TA_DIMENSION_HORZ corresponds to _vertical_ edges */
     /* since they have a constant X coordinate */
-    TA_LOG(("Table of %s edges:\n",
-            dimension == TA_DIMENSION_HORZ ? "vertical"
-                                           : "horizontal"));
+    if (dimension == TA_DIMENSION_HORZ)
+      TA_LOG(("Table of %s edges (1px=%.2fu, 10u=%.2fpx):\n",
+              "vertical",
+              65536.0 * 64.0 / hints->x_scale,
+              10.0 * hints->x_scale / 65536.0 / 64.0));
+    else
+      TA_LOG(("Table of %s edges (1px=%.2fu, 10u=%.2fpx):\n",
+              "horizontal",
+              65536.0 * 64.0 / hints->y_scale,
+              10.0 * hints->y_scale / 65536.0 / 64.0));
+
     if (axis->num_edges)
-      TA_LOG(("  index   pos    dir   link  serif"
-              "  blue  opos    pos      flags\n"));
+      TA_LOG(("  index    pos     dir   link  serif"
+              "  blue    opos     pos       flags\n"));
     else
       TA_LOG(("  (none)\n"));
 
     for (edge = edges; edge < limit; edge++)
-      TA_LOG(("  %5d  %5.2g  %5s  %4s  %5s"
-              "    %c   %5.2f  %5.2f  %11s\n",
+      TA_LOG(("  %5d  %7.2f  %5s  %4s  %5s"
+              "    %c   %7.2f  %7.2f  %11s\n",
               TA_INDEX_NUM(edge, edges),
               (int)edge->opos / 64.0,
               ta_dir_str((TA_Direction)edge->dir),
