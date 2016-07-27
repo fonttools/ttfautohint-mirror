@@ -153,7 +153,7 @@
 
 
 /*
- * bci_align_top
+ * bci_align_x_height
  *
  *   Optimize the alignment of the top of small letters to the pixel grid.
  *
@@ -165,11 +165,11 @@
  *             gets incremented by 1 after execution)
  */
 
-static const unsigned char FPGM(bci_align_top_a) [] =
+static const unsigned char FPGM(bci_align_x_height_a) [] =
 {
 
   PUSHB_1,
-    bci_align_top,
+    bci_align_x_height,
   FDEF,
 
   /* only get CVT value for non-zero index */
@@ -188,7 +188,7 @@ static const unsigned char FPGM(bci_align_top_a) [] =
 /* if (font->increase_x_height) */
 /* { */
 
-static const unsigned char FPGM(bci_align_top_b1a) [] =
+static const unsigned char FPGM(bci_align_x_height_b1a) [] =
 {
 
   /* apply much `stronger' rounding up of x height for */
@@ -200,7 +200,7 @@ static const unsigned char FPGM(bci_align_top_b1a) [] =
 
 /*  %d, x height increase limit */
 
-static const unsigned char FPGM(bci_align_top_b1b) [] =
+static const unsigned char FPGM(bci_align_x_height_b1b) [] =
 {
 
   LTEQ,
@@ -228,7 +228,7 @@ static const unsigned char FPGM(bci_align_top_b1b) [] =
 /* if (!font->increase_x_height) */
 /* { */
 
-static const unsigned char FPGM(bci_align_top_b2) [] =
+static const unsigned char FPGM(bci_align_x_height_b2) [] =
 {
 
   PUSHB_1,
@@ -240,7 +240,7 @@ static const unsigned char FPGM(bci_align_top_b2) [] =
 
 /* } */
 
-static const unsigned char FPGM(bci_align_top_c) [] =
+static const unsigned char FPGM(bci_align_x_height_c) [] =
 {
 
   DUP, /* s: blue blue fitted fitted */
@@ -1084,7 +1084,7 @@ static const unsigned char FPGM(bci_vwidth_data_store) [] =
  *   Round a blue ref value and adjust its corresponding shoot value.
  *
  *   This is the equivalent to the following code (function
- *   `ta_latin_metrics_scale_dim':
+ *   `ta_latin_metrics_scale_dim'):
  *
  *     delta = dist
  *     if dist < 0:
@@ -6747,13 +6747,13 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   /* (depending on options of `TTFautohint'), */
   /* but implementing dynamic FDEF indices would be a lot of work */
 
-  buf_len = sizeof (FPGM(bci_align_top_a))
+  buf_len = sizeof (FPGM(bci_align_x_height_a))
             + (font->increase_x_height
-                ? (sizeof (FPGM(bci_align_top_b1a))
+                ? (sizeof (FPGM(bci_align_x_height_b1a))
                    + 2
-                   + sizeof (FPGM(bci_align_top_b1b)))
-                : sizeof (FPGM(bci_align_top_b2)))
-            + sizeof (FPGM(bci_align_top_c))
+                   + sizeof (FPGM(bci_align_x_height_b1b)))
+                : sizeof (FPGM(bci_align_x_height_b2)))
+            + sizeof (FPGM(bci_align_x_height_c))
             + sizeof (FPGM(bci_round))
             + sizeof (FPGM(bci_smooth_stem_width))
             + sizeof (FPGM(bci_get_best_width))
@@ -6952,17 +6952,17 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   /* copy font program into buffer and fill in the missing variables */
   bufp = buf;
 
-  COPY_FPGM(bci_align_top_a);
+  COPY_FPGM(bci_align_x_height_a);
   if (font->increase_x_height)
   {
-    COPY_FPGM(bci_align_top_b1a);
+    COPY_FPGM(bci_align_x_height_b1a);
     *(bufp++) = HIGH(font->increase_x_height);
     *(bufp++) = LOW(font->increase_x_height);
-    COPY_FPGM(bci_align_top_b1b);
+    COPY_FPGM(bci_align_x_height_b1b);
   }
   else
-    COPY_FPGM(bci_align_top_b2);
-  COPY_FPGM(bci_align_top_c);
+    COPY_FPGM(bci_align_x_height_b2);
+  COPY_FPGM(bci_align_x_height_c);
 
   COPY_FPGM(bci_round);
   COPY_FPGM(bci_smooth_stem_width);

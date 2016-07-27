@@ -325,8 +325,8 @@
 /* bytecode function numbers */
 
 /* 0 */
-#define bci_align_top 0
-#define bci_round bci_align_top + 1
+#define bci_align_x_height 0
+#define bci_round bci_align_x_height + 1
 #define bci_smooth_stem_width bci_round + 1
 #define bci_get_best_width bci_smooth_stem_width + 1
 #define bci_strong_stem_width bci_get_best_width + 1

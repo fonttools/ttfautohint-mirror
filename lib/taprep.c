@@ -82,7 +82,7 @@ static const unsigned char PREP(test_exception_a) [] =
 
 /* provide scaling factors for all styles */
 
-static const unsigned char PREP(align_top_a) [] =
+static const unsigned char PREP(align_x_height_a) [] =
 {
 
     PUSHB_2,
@@ -98,10 +98,10 @@ static const unsigned char PREP(align_top_a) [] =
 /*    %c, style 0's x height blue zone idx */
 /*    %c, num_used_styles */
 
-static const unsigned char PREP(align_top_b) [] =
+static const unsigned char PREP(align_x_height_b) [] =
 {
 
-      bci_align_top,
+      bci_align_x_height,
     LOOPCALL,
 
 };
@@ -621,10 +621,10 @@ TA_table_build_prep(FT_Byte** prep,
   if (font->x_height_snapping_exceptions)
     buf_new_len += sizeof (PREP(test_exception_a));
 
-  buf_new_len += sizeof (PREP(align_top_a))
+  buf_new_len += sizeof (PREP(align_x_height_a))
                  + (num_used_styles > 6 ? num_used_styles + 3
                                         : num_used_styles + 2)
-                 + sizeof (PREP(align_top_b));
+                 + sizeof (PREP(align_x_height_b));
   buf_new_len += sizeof (PREP(loop_cvt_a))
                  + (num_used_styles > 3 ? 2 * num_used_styles + 3
                                         : 2 * num_used_styles + 2)
@@ -695,7 +695,7 @@ TA_table_build_prep(FT_Byte** prep,
   if (font->x_height_snapping_exceptions)
     COPY_PREP(test_exception_a);
 
-  COPY_PREP(align_top_a);
+  COPY_PREP(align_x_height_a);
   if (num_used_styles > 6)
   {
     BCI(NPUSHB);
@@ -714,7 +714,7 @@ TA_table_build_prep(FT_Byte** prep,
                   : (unsigned char)CVT_X_HEIGHT_BLUE_OFFSET(i);
   }
   *(bufp++) = num_used_styles;
-  COPY_PREP(align_top_b);
+  COPY_PREP(align_x_height_b);
 
   COPY_PREP(loop_cvt_a);
   if (num_used_styles > 3)
