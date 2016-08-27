@@ -321,8 +321,8 @@ bytecode larger.
     see '[x Height Snapping Exceptions](#x-height-snapping-exceptions)'.
 
     The following FontForge snapshot images use the font '[Mertz
-    Bold](http://code.newtypography.co.uk/mertz-sans/)' (still under
-    development) from [Vernon Adams].
+    Bold](https://github.com/vernnobile/mertzFont/tree/master/FINAL/Mertz-Bold)'
+    from Vernon Adams.
 
     ![At 17px, without option `-x` and '`-w ""`', the hole in glyph 'e'
       looks very grey in the FontForge snapshot, and the GDI ClearType
