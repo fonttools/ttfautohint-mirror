@@ -119,18 +119,24 @@ TA_glyph_get_components(GLYPH* glyph,
 
 
 static FT_Error
-TA_glyph_parse_composite(GLYPH* glyph,
+TA_glyph_parse_composite(GLYPH* glyphs,
+                         FT_UShort idx,
                          FT_Byte* buf,
                          FT_ULong len,
                          FT_UShort num_glyphs,
                          FT_Bool hint_composites)
 {
+  GLYPH* glyph = &glyphs[idx];
+
   FT_ULong flags_offset; /* after the loop, this is the offset */
                          /* to the last element in the flags array */
   FT_UShort flags;
 
   FT_Byte* p;
   FT_Byte* q;
+
+  FT_UShort* curr_component;
+  FT_UShort curr_num_points;
 
 
   /* we allocate too large a buffer */
@@ -210,6 +216,9 @@ TA_glyph_parse_composite(GLYPH* glyph,
     }
   }
 
+  curr_component = glyph->components;
+  curr_num_points = 0;
+
   /* walk over component records */
   do
   {
@@ -240,7 +249,9 @@ TA_glyph_parse_composite(GLYPH* glyph,
       /* handle point numbers */
       FT_UShort arg1;
       FT_UShort arg2;
+      FT_UShort idx2;
       FT_UShort i;
+      FT_UShort j;
 
 
       if (flags & ARGS_ARE_WORDS)
@@ -256,17 +267,22 @@ TA_glyph_parse_composite(GLYPH* glyph,
         arg2 = *(p++);
       }
 
-      /* adjust point numbers */
+      curr_num_points += glyphs[*curr_component++].num_points;
+
+      /* compute the point index of arg2 after adding the subglyph */
+      idx2 = curr_num_points + arg2;
+
+      /* adjust point indices */
       /* (see `TA_adjust_point_index' in `tabytecode.c' for more) */
       for (i = 0; i < glyph->num_pointsums; i++)
         if (arg1 < glyph->pointsums[i])
           break;
       arg1 += i;
 
-      for (i = 0; i < glyph->num_pointsums; i++)
-        if (arg2 < glyph->pointsums[i])
+      for (j = 0; j < glyph->num_pointsums; j++)
+        if (idx2 < glyph->pointsums[j])
           break;
-      arg2 += i;
+      arg2 += j - i;
 
       if (arg1 <= 0xFF && arg2 <= 0xFF)
       {
@@ -537,6 +553,9 @@ TA_sfnt_compute_composite_pointsums(SFNT* sfnt,
         return error;
 
       glyph->num_composite_contours = num_composite_contours;
+      /* we set the number of points (after expanding all subglyphs) */
+      /* for composite glyphs also */
+      glyph->num_points = num_composite_points;
 
       if (font->hint_composites)
       {
@@ -734,7 +753,7 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
       /* is more or less invalid. */
 
       if (glyph->num_contours < 0)
-        error = TA_glyph_parse_composite(glyph, buf, len,
+        error = TA_glyph_parse_composite(data->glyphs, i, buf, len,
                                          data->num_glyphs,
                                          font->hint_composites);
       else
