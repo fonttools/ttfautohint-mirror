@@ -149,6 +149,7 @@ typedef struct Recorder_
   /* to split them into 24-26 and 0-2 */
   FT_UShort* wrap_around_segments;
   FT_UShort num_wrap_around_segments;
+  FT_Bool wrap_around_segments_initialized;
 
   FT_UShort num_stack_elements; /* the necessary stack depth so far */
 
@@ -1983,6 +1984,23 @@ TA_hints_recorder(TA_Action action,
   if (dim == TA_DIMENSION_HORZ)
     return;
 
+  if (!recorder->wrap_around_segments_initialized)
+  {
+    FT_UShort* wrap_around_segment;
+
+    TA_Segment segments = axis->segments;
+    TA_Segment seg_limit = segments + axis->num_segments;
+    TA_Segment seg;
+
+
+    wrap_around_segment = recorder->wrap_around_segments;
+    for (seg = segments; seg < seg_limit; seg++)
+      if (seg->first > seg->last)
+        *(wrap_around_segment++) = TA_get_segment_index(seg, axis);
+
+    recorder->wrap_around_segments_initialized = 1;
+  }
+
   /* we collect point hints for later processing */
   switch (action)
   {
@@ -2447,7 +2465,6 @@ TA_init_recorder(Recorder* recorder,
   TA_Segment seg_limit = segments + axis->num_segments;
   TA_Segment seg;
 
-  FT_UShort* wrap_around_segment;
 
   recorder->sfnt = sfnt;
   recorder->font = font;
@@ -2474,10 +2491,10 @@ TA_init_recorder(Recorder* recorder,
   if (!recorder->wrap_around_segments)
     return FT_Err_Out_Of_Memory;
 
-  wrap_around_segment = recorder->wrap_around_segments;
-  for (seg = segments; seg < seg_limit; seg++)
-    if (seg->first > seg->last)
-      *(wrap_around_segment++) = TA_get_segment_index(seg, axis);
+  /* `wrap_around_segments' gets initialized later on; */
+  /* it needs function `TA_get_segment_index' which uses data */
+  /* that hasn't been initialized yet either */
+  recorder->wrap_around_segments_initialized = 0;
 
   return FT_Err_Ok;
 }
