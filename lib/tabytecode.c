@@ -2442,9 +2442,6 @@ TA_init_recorder(Recorder* recorder,
                  TA_GlyphHints hints)
 {
   TA_AxisHints axis = &hints->axis[TA_DIMENSION_VERT];
-  TA_Point points = hints->points;
-  TA_Point point_limit = points + hints->num_points;
-  TA_Point point;
 
   TA_Segment segments = axis->segments;
   TA_Segment seg_limit = segments + axis->num_segments;
@@ -2481,16 +2478,6 @@ TA_init_recorder(Recorder* recorder,
   for (seg = segments; seg < seg_limit; seg++)
     if (seg->first > seg->last)
       *(wrap_around_segment++) = TA_get_segment_index(seg, axis);
-
-  /* get number of strong points */
-  for (point = points; point < point_limit; point++)
-  {
-    /* actually, we need to test `TA_FLAG_TOUCH_Y' also; */
-    /* however, this value isn't known yet */
-    /* (or rather, it can vary between different pixel sizes) */
-    if (point->flags & TA_FLAG_WEAK_INTERPOLATION)
-      continue;
-  }
 
   return FT_Err_Ok;
 }
