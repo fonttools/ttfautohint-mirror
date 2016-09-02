@@ -419,8 +419,11 @@ TA_adjust_point_index(Recorder* recorder,
 
 static FT_UShort
 TA_get_segment_index(TA_Segment segment,
-                     TA_AxisHints axis)
+                     Recorder* recorder)
 {
+  FONT* font = recorder->font;
+  TA_GlyphHints hints = &font->loader->hints;
+  TA_AxisHints axis = &hints->axis[TA_DIMENSION_VERT];
   TA_Segment segments = axis->segments;
   TA_Segment limit = segments + axis->num_segments;
   TA_Segment seg;
@@ -482,7 +485,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 
 
   seg_limit = segments + axis->num_segments;
-  num_segments = TA_get_segment_index(NULL, axis);
+  num_segments = TA_get_segment_index(NULL, recorder);
 
   /* to pack the data in the bytecode more tightly, */
   /* we store up to the first nine segments in nibbles if possible, */
@@ -1391,7 +1394,7 @@ TA_build_point_hints(Recorder* recorder,
     recorder->hints_record.num_actions++;
 
     edge = edges;
-    edge_first_idx = TA_get_segment_index(edge->first, axis);
+    edge_first_idx = TA_get_segment_index(edge->first, recorder);
 
     *(p++) = 0;
     *(p++) = (FT_Byte)ta_ip_before + ACTION_OFFSET;
@@ -1439,7 +1442,7 @@ TA_build_point_hints(Recorder* recorder,
     recorder->hints_record.num_actions++;
 
     edge = edges + axis->num_edges - 1;
-    edge_first_idx = TA_get_segment_index(edge->first, axis);
+    edge_first_idx = TA_get_segment_index(edge->first, recorder);
 
     *(p++) = 0;
     *(p++) = (FT_Byte)ta_ip_after + ACTION_OFFSET;
@@ -1505,7 +1508,7 @@ TA_build_point_hints(Recorder* recorder,
 
 
       edge = edges + on_node->edge;
-      edge_first_idx = TA_get_segment_index(edge->first, axis);
+      edge_first_idx = TA_get_segment_index(edge->first, recorder);
 
       *(p++) = HIGH(edge_first_idx);
       *(p++) = LOW(edge_first_idx);
@@ -1602,8 +1605,8 @@ TA_build_point_hints(Recorder* recorder,
 
       before = edges + between_node->before_edge;
       after = edges + between_node->after_edge;
-      before_first_idx = TA_get_segment_index(before->first, axis);
-      after_first_idx = TA_get_segment_index(after->first, axis);
+      before_first_idx = TA_get_segment_index(before->first, recorder);
+      after_first_idx = TA_get_segment_index(after->first, recorder);
 
       *(p++) = HIGH(after_first_idx);
       *(p++) = LOW(after_first_idx);
@@ -1873,7 +1876,7 @@ TA_free_hints_records(Hints_Record* hints_records,
 
 static FT_Byte*
 TA_hints_recorder_handle_segments(FT_Byte* bufp,
-                                  TA_AxisHints axis,
+                                  Recorder* recorder,
                                   TA_Edge edge,
                                   FT_UShort* wraps)
 {
@@ -1884,8 +1887,8 @@ TA_hints_recorder_handle_segments(FT_Byte* bufp,
   FT_UShort num_segments;
 
 
-  seg_idx = TA_get_segment_index(edge->first, axis);
-  num_segments = TA_get_segment_index(NULL, axis);
+  seg_idx = TA_get_segment_index(edge->first, recorder);
+  num_segments = TA_get_segment_index(NULL, recorder);
 
   /* we store everything as 16bit numbers */
   *(bufp++) = HIGH(seg_idx);
@@ -1928,7 +1931,7 @@ TA_hints_recorder_handle_segments(FT_Byte* bufp,
   seg = edge->first->edge_next;
   while (seg != edge->first)
   {
-    seg_idx = TA_get_segment_index(seg, axis);
+    seg_idx = TA_get_segment_index(seg, recorder);
 
     *(bufp++) = HIGH(seg_idx);
     *(bufp++) = LOW(seg_idx);
@@ -1996,7 +1999,7 @@ TA_hints_recorder(TA_Action action,
     wrap_around_segment = recorder->wrap_around_segments;
     for (seg = segments; seg < seg_limit; seg++)
       if (seg->first > seg->last)
-        *(wrap_around_segment++) = TA_get_segment_index(seg, axis);
+        *(wrap_around_segment++) = TA_get_segment_index(seg, recorder);
 
     recorder->wrap_around_segments_initialized = 1;
   }
@@ -2101,8 +2104,8 @@ TA_hints_recorder(TA_Action action,
       FT_UShort stem_first_idx;
 
 
-      base_first_idx = TA_get_segment_index(base_edge->first, axis);
-      stem_first_idx = TA_get_segment_index(stem_edge->first, axis);
+      base_first_idx = TA_get_segment_index(base_edge->first, recorder);
+      stem_first_idx = TA_get_segment_index(stem_edge->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
@@ -2114,7 +2117,7 @@ TA_hints_recorder(TA_Action action,
       *(p++) = HIGH(stem_first_idx);
       *(p++) = LOW(stem_first_idx);
 
-      p = TA_hints_recorder_handle_segments(p, axis, stem_edge, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, stem_edge, wraps);
     }
     break;
 
@@ -2126,8 +2129,8 @@ TA_hints_recorder(TA_Action action,
       FT_UShort edge2_first_idx;
 
 
-      edge_first_idx = TA_get_segment_index(edge->first, axis);
-      edge2_first_idx = TA_get_segment_index(edge2->first, axis);
+      edge_first_idx = TA_get_segment_index(edge->first, recorder);
+      edge2_first_idx = TA_get_segment_index(edge2->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
@@ -2139,7 +2142,7 @@ TA_hints_recorder(TA_Action action,
       *(p++) = HIGH(edge2_first_idx);
       *(p++) = LOW(edge2_first_idx);
 
-      p = TA_hints_recorder_handle_segments(p, axis, edge, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, edge, wraps);
     }
     break;
 
@@ -2152,8 +2155,8 @@ TA_hints_recorder(TA_Action action,
       FT_UShort edge2_first_idx;
 
 
-      edge_first_idx = TA_get_segment_index(edge->first, axis);
-      edge2_first_idx = TA_get_segment_index(edge2->first, axis);
+      edge_first_idx = TA_get_segment_index(edge->first, recorder);
+      edge2_first_idx = TA_get_segment_index(edge2->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
@@ -2174,13 +2177,13 @@ TA_hints_recorder(TA_Action action,
 
 
         edge_minus_one_first_idx = TA_get_segment_index(
-                                     edge_minus_one->first, axis);
+                                     edge_minus_one->first, recorder);
 
         *(p++) = HIGH(edge_minus_one_first_idx);
         *(p++) = LOW(edge_minus_one_first_idx);
       }
 
-      p = TA_hints_recorder_handle_segments(p, axis, edge, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, edge, wraps);
     }
     break;
 
@@ -2192,8 +2195,8 @@ TA_hints_recorder(TA_Action action,
       FT_UShort edge_first_idx;
 
 
-      blue_first_idx = TA_get_segment_index(blue->first, axis);
-      edge_first_idx = TA_get_segment_index(edge->first, axis);
+      blue_first_idx = TA_get_segment_index(blue->first, recorder);
+      edge_first_idx = TA_get_segment_index(edge->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET;
@@ -2215,7 +2218,7 @@ TA_hints_recorder(TA_Action action,
       *(p++) = HIGH(edge_first_idx);
       *(p++) = LOW(edge_first_idx);
 
-      p = TA_hints_recorder_handle_segments(p, axis, edge, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, edge, wraps);
     }
     break;
 
@@ -2228,8 +2231,8 @@ TA_hints_recorder(TA_Action action,
       FT_UShort edge2_first_idx;
 
 
-      edge_first_idx = TA_get_segment_index(edge->first, axis);
-      edge2_first_idx = TA_get_segment_index(edge2->first, axis);
+      edge_first_idx = TA_get_segment_index(edge->first, recorder);
+      edge2_first_idx = TA_get_segment_index(edge2->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
@@ -2250,14 +2253,14 @@ TA_hints_recorder(TA_Action action,
 
 
         edge_minus_one_first_idx = TA_get_segment_index(
-                                     edge_minus_one->first, axis);
+                                     edge_minus_one->first, recorder);
 
         *(p++) = HIGH(edge_minus_one_first_idx);
         *(p++) = LOW(edge_minus_one_first_idx);
       }
 
-      p = TA_hints_recorder_handle_segments(p, axis, edge, wraps);
-      p = TA_hints_recorder_handle_segments(p, axis, edge2, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, edge, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, edge2, wraps);
     }
     break;
 
@@ -2267,7 +2270,7 @@ TA_hints_recorder(TA_Action action,
       FT_UShort edge_first_idx;
 
 
-      edge_first_idx = TA_get_segment_index(edge->first, axis);
+      edge_first_idx = TA_get_segment_index(edge->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET;
@@ -2286,7 +2289,7 @@ TA_hints_recorder(TA_Action action,
       *(p++) = HIGH(edge_first_idx);
       *(p++) = LOW(edge_first_idx);
 
-      p = TA_hints_recorder_handle_segments(p, axis, edge, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, edge, wraps);
     }
     break;
 
@@ -2298,8 +2301,8 @@ TA_hints_recorder(TA_Action action,
       FT_UShort base_first_idx;
 
 
-      serif_first_idx = TA_get_segment_index(serif->first, axis);
-      base_first_idx = TA_get_segment_index(base->first, axis);
+      serif_first_idx = TA_get_segment_index(serif->first, recorder);
+      base_first_idx = TA_get_segment_index(base->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
@@ -2319,7 +2322,7 @@ TA_hints_recorder(TA_Action action,
 
 
         lower_bound_first_idx = TA_get_segment_index(lower_bound->first,
-                                                     axis);
+                                                     recorder);
 
         *(p++) = HIGH(lower_bound_first_idx);
         *(p++) = LOW(lower_bound_first_idx);
@@ -2330,13 +2333,13 @@ TA_hints_recorder(TA_Action action,
 
 
         upper_bound_first_idx = TA_get_segment_index(upper_bound->first,
-                                                     axis);
+                                                     recorder);
 
         *(p++) = HIGH(upper_bound_first_idx);
         *(p++) = LOW(upper_bound_first_idx);
       }
 
-      p = TA_hints_recorder_handle_segments(p, axis, serif, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, serif, wraps);
     }
     break;
 
@@ -2347,7 +2350,7 @@ TA_hints_recorder(TA_Action action,
       FT_UShort edge_first_idx;
 
 
-      edge_first_idx = TA_get_segment_index(edge->first, axis);
+      edge_first_idx = TA_get_segment_index(edge->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
@@ -2365,7 +2368,7 @@ TA_hints_recorder(TA_Action action,
 
 
         lower_bound_first_idx = TA_get_segment_index(lower_bound->first,
-                                                     axis);
+                                                     recorder);
 
         *(p++) = HIGH(lower_bound_first_idx);
         *(p++) = LOW(lower_bound_first_idx);
@@ -2376,13 +2379,13 @@ TA_hints_recorder(TA_Action action,
 
 
         upper_bound_first_idx = TA_get_segment_index(upper_bound->first,
-                                                     axis);
+                                                     recorder);
 
         *(p++) = HIGH(upper_bound_first_idx);
         *(p++) = LOW(upper_bound_first_idx);
       }
 
-      p = TA_hints_recorder_handle_segments(p, axis, edge, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, edge, wraps);
     }
     break;
 
@@ -2396,9 +2399,9 @@ TA_hints_recorder(TA_Action action,
       FT_UShort after_first_idx;
 
 
-      before_first_idx = TA_get_segment_index(before->first, axis);
-      edge_first_idx = TA_get_segment_index(edge->first, axis);
-      after_first_idx = TA_get_segment_index(after->first, axis);
+      before_first_idx = TA_get_segment_index(before->first, recorder);
+      edge_first_idx = TA_get_segment_index(edge->first, recorder);
+      after_first_idx = TA_get_segment_index(after->first, recorder);
 
       *(p++) = 0;
       *(p++) = (FT_Byte)action + ACTION_OFFSET
@@ -2420,7 +2423,7 @@ TA_hints_recorder(TA_Action action,
 
 
         lower_bound_first_idx = TA_get_segment_index(lower_bound->first,
-                                                     axis);
+                                                     recorder);
 
         *(p++) = HIGH(lower_bound_first_idx);
         *(p++) = LOW(lower_bound_first_idx);
@@ -2431,13 +2434,13 @@ TA_hints_recorder(TA_Action action,
 
 
         upper_bound_first_idx = TA_get_segment_index(upper_bound->first,
-                                                     axis);
+                                                     recorder);
 
         *(p++) = HIGH(upper_bound_first_idx);
         *(p++) = LOW(upper_bound_first_idx);
       }
 
-      p = TA_hints_recorder_handle_segments(p, axis, edge, wraps);
+      p = TA_hints_recorder_handle_segments(p, recorder, edge, wraps);
     }
     break;
 
