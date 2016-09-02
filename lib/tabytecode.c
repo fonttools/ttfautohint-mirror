@@ -158,6 +158,11 @@ typedef struct Recorder_
   ip_after_points ip_after_points_head;
   ip_on_points ip_on_points_head;
   ip_between_points ip_between_points_head;
+
+  /* we omit one-point segments not part of an edge, */
+  /* thus we have to adjust indices into the `segments' array */
+  FT_UShort* segment_map;
+  FT_Bool segment_map_initialized;
 } Recorder;
 
 
@@ -424,23 +429,10 @@ TA_get_segment_index(TA_Segment segment,
   FONT* font = recorder->font;
   TA_GlyphHints hints = &font->loader->hints;
   TA_AxisHints axis = &hints->axis[TA_DIMENSION_VERT];
-  TA_Segment segments = axis->segments;
-  TA_Segment limit = segments + axis->num_segments;
-  TA_Segment seg;
-  FT_UShort idx;
 
 
-  idx = 0;
-  for (seg = segments; seg < limit; seg++)
-  {
-    if (!seg->edge)
-      continue;
-    if (seg == segment)
-      break;
-    idx++;
-  }
-
-  return idx;
+  return segment ? recorder->segment_map[segment - axis->segments]
+                 : recorder->segment_map[axis->num_segments];
 }
 
 
@@ -498,7 +490,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
     FT_UInt last = (FT_UInt)(seg->last - points);
 
 
-    if (!seg->edge)
+    if (TA_get_segment_index(seg, recorder) == 0xFFFF)
       continue;
 
     first = TA_adjust_point_index(recorder, first);
@@ -555,7 +547,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
     FT_UInt high_nibble;
 
 
-    if (!seg->edge)
+    if (TA_get_segment_index(seg, recorder) == 0xFFFF)
       continue;
     if (n >= num_packed_segments)
       break;
@@ -578,7 +570,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
     FT_UInt last = (FT_UInt)(seg->last - points);
 
 
-    if (!seg->edge)
+    if (TA_get_segment_index(seg, recorder) == 0xFFFF)
       continue;
 
     *(arg--) = TA_adjust_point_index(recorder, first);
@@ -621,7 +613,7 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
     FT_UInt last = (FT_UInt)(seg->last - points);
 
 
-    if (!seg->edge)
+    if (TA_get_segment_index(seg, recorder) == 0xFFFF)
       continue;
 
     if (first > last)
@@ -1971,6 +1963,10 @@ TA_hints_recorder(TA_Action action,
   TA_Edge edges = axis->edges;
   TA_Point points = hints->points;
 
+  TA_Segment segments = axis->segments;
+  TA_Segment seg_limit = segments + axis->num_segments;
+  TA_Segment seg;
+
   Recorder* recorder = (Recorder*)hints->user;
   SFNT* sfnt = recorder->sfnt;
   FONT* font = recorder->font;
@@ -1987,13 +1983,30 @@ TA_hints_recorder(TA_Action action,
   if (dim == TA_DIMENSION_HORZ)
     return;
 
+  if (!recorder->segment_map_initialized)
+  {
+    FT_UShort* segment_map = recorder->segment_map;
+    FT_UShort idx;
+
+
+    idx = 0;
+    for (seg = segments; seg < seg_limit; seg++)
+    {
+      if (seg->edge)
+        *segment_map = idx++;
+      else
+        *segment_map = 0xFFFF;
+
+      segment_map++;
+    }
+    *segment_map = idx;
+
+    recorder->segment_map_initialized = 1;
+  }
+
   if (!recorder->wrap_around_segments_initialized)
   {
     FT_UShort* wrap_around_segment;
-
-    TA_Segment segments = axis->segments;
-    TA_Segment seg_limit = segments + axis->num_segments;
-    TA_Segment seg;
 
 
     wrap_around_segment = recorder->wrap_around_segments;
@@ -2483,6 +2496,17 @@ TA_init_recorder(Recorder* recorder,
   /* no need to clean up allocated arrays in case of error; */
   /* this is handled later by `TA_free_recorder' */
 
+  /* we use segment_map[axis->num_segments] */
+  /* as the total number of mapped segments, so allocate one more element */
+  recorder->segment_map =
+    (FT_UShort*)malloc((axis->num_segments + 1) * sizeof (FT_UShort));
+  if (!recorder->segment_map)
+    return FT_Err_Out_Of_Memory;
+
+  /* `segment_map' gets initialized later on, */
+  /* after the first call of `ta_loader_load_glyph' */
+  recorder->segment_map_initialized = 0;
+
   recorder->num_wrap_around_segments = 0;
   for (seg = segments; seg < seg_limit; seg++)
     if (seg->first > seg->last)
@@ -2595,6 +2619,7 @@ TA_rewind_recorder(Recorder* recorder,
 static void
 TA_free_recorder(Recorder* recorder)
 {
+  free(recorder->segment_map);
   free(recorder->wrap_around_segments);
 
   TA_rewind_recorder(recorder, NULL, 0);
@@ -2797,6 +2822,13 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
                                     TA_hints_recorder,
                                     (void*)&recorder);
 
+  /*
+   * It is important that we start the loop with the smallest PPEM value
+   * used for hinting, since the number of segments that form an edge can
+   * become smaller for larger PPEM values.  For efficiency, we skip
+   * non-edge one-point segments, and `TA_get_segment_index' would return
+   * wrong indices otherwise.
+   */
   for (size = font->hinting_range_min;
        size <= font->hinting_range_max;
        size++)
