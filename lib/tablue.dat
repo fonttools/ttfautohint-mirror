@@ -90,13 +90,13 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "ـ"
 
   TA_BLUE_STRING_ARMENIAN_CAPITAL_TOP
-    "Ա Մ Ւ Փ Բ Գ Դ Օ"
+    "Ա Մ Ւ Ս Բ Գ Դ Օ"
   TA_BLUE_STRING_ARMENIAN_CAPITAL_BOTTOM
-    "Ւ Ո Փ Ճ Շ Ս Տ Օ"
+    "Ւ Ո Դ Ճ Շ Ս Տ Օ"
   TA_BLUE_STRING_ARMENIAN_SMALL_ASCENDER
-    "ե է ի մ վ փ ֆ փ"
+    "ե է ի մ վ ֆ ճ"
   TA_BLUE_STRING_ARMENIAN_SMALL_TOP
-    "ա յ ւ ս գ ջ ր օ"
+    "ա յ ւ ս գ շ ր օ"
   TA_BLUE_STRING_ARMENIAN_SMALL_BOTTOM
     "հ ո ճ ա ե ծ ս օ"
   TA_BLUE_STRING_ARMENIAN_SMALL_DESCENDER
