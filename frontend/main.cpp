@@ -981,9 +981,9 @@ main(int argc,
     have_default_script = false;
     have_fallback_script = false;
     have_fallback_stem_width = false;
+    have_hinting_limit = false;
     have_hinting_range_max = false;
     have_hinting_range_min = false;
-    have_hinting_limit = false;
     have_increase_x_height = false;
     have_x_height_snapping_exceptions_string = false;
   }
@@ -995,12 +995,12 @@ main(int argc,
     have_default_script = false;
     have_fallback_script = false;
     have_fallback_stem_width = false;
+    have_family_suffix = false;
+    have_hinting_limit = false;
     have_hinting_range_max = false;
     have_hinting_range_min = false;
-    have_hinting_limit = false;
     have_increase_x_height = false;
     have_x_height_snapping_exceptions_string = false;
-    have_family_suffix = false;
     debug = false;
   }
 #endif
