@@ -3597,12 +3597,12 @@ const TA_WritingSystemClassRec ta_latin_writing_system_class =
 
   sizeof (TA_LatinMetricsRec),
 
-  (TA_WritingSystem_InitMetricsFunc)ta_latin_metrics_init,
-  (TA_WritingSystem_ScaleMetricsFunc)ta_latin_metrics_scale,
-  (TA_WritingSystem_DoneMetricsFunc)NULL,
+  (TA_WritingSystem_InitMetricsFunc)ta_latin_metrics_init, /* style_metrics_init */
+  (TA_WritingSystem_ScaleMetricsFunc)ta_latin_metrics_scale, /* style_metrics_scale */
+  (TA_WritingSystem_DoneMetricsFunc)NULL, /* style_metrics_done */
 
-  (TA_WritingSystem_InitHintsFunc)ta_latin_hints_init,
-  (TA_WritingSystem_ApplyHintsFunc)ta_latin_hints_apply
+  (TA_WritingSystem_InitHintsFunc)ta_latin_hints_init, /* style_hints_init */
+  (TA_WritingSystem_ApplyHintsFunc)ta_latin_hints_apply /* style_hints_apply */
 };
 
 /* end of talatin.c */

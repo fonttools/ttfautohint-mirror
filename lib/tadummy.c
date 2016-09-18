@@ -60,12 +60,12 @@ const TA_WritingSystemClassRec ta_dummy_writing_system_class =
 
   sizeof (TA_StyleMetricsRec),
 
-  (TA_WritingSystem_InitMetricsFunc)NULL,
-  (TA_WritingSystem_ScaleMetricsFunc)NULL,
-  (TA_WritingSystem_DoneMetricsFunc)NULL,
+  (TA_WritingSystem_InitMetricsFunc)NULL, /* style_metrics_init */
+  (TA_WritingSystem_ScaleMetricsFunc)NULL, /* style_metrics_scale */
+  (TA_WritingSystem_DoneMetricsFunc)NULL, /* style_metrics_done */
 
-  (TA_WritingSystem_InitHintsFunc)ta_dummy_hints_init,
-  (TA_WritingSystem_ApplyHintsFunc)ta_dummy_hints_apply
+  (TA_WritingSystem_InitHintsFunc)ta_dummy_hints_init, /* style_hints_init */
+  (TA_WritingSystem_ApplyHintsFunc)ta_dummy_hints_apply /* style_hints_apply */
 };
 
 /* end of tadummy.c */
