@@ -337,7 +337,8 @@ TA_glyph_parse_composite(GLYPH* glyphs,
 static FT_Error
 TA_glyph_parse_simple(GLYPH* glyph,
                       FT_Byte* buf,
-                      FT_ULong len)
+                      FT_ULong len,
+                      FT_Bool dehint)
 {
   FT_ULong ins_offset;
   FT_Byte* flags_start;
@@ -371,7 +372,8 @@ TA_glyph_parse_simple(GLYPH* glyph,
   /* (a font with a `post' table version 3.0 doesn't contain glyph names, */
   /* so we have to check it this way) */
   if (glyph->num_points == 1
-      && num_ins >= sizeof (ttfautohint_glyph_bytecode))
+      && num_ins >= sizeof (ttfautohint_glyph_bytecode)
+      && !dehint)
   {
     if (!strncmp((char*)p, (char*)ttfautohint_glyph_bytecode,
                  sizeof (ttfautohint_glyph_bytecode)))
@@ -757,7 +759,7 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
                                          data->num_glyphs,
                                          font->hint_composites);
       else
-        error = TA_glyph_parse_simple(glyph, buf, len);
+        error = TA_glyph_parse_simple(glyph, buf, len, font->dehint);
       if (error)
         return error;
     }

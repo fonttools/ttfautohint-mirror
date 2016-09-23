@@ -478,7 +478,7 @@ No_check:
     /* assure that the font hasn't been already processed by ttfautohint; */
     /* another, more thorough check is done in TA_glyph_parse_simple */
     idx = FT_Get_Name_Index(sfnt->face, (FT_String*)TTFAUTOHINT_GLYPH);
-    if (idx)
+    if (idx && !dehint)
     {
       error = TA_Err_Already_Processed;
       goto Err;
