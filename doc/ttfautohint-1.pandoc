@@ -1518,6 +1518,36 @@ of vital importance to compare ttfautohint's results with similar fonts to
 exclude any systematic effect not related to the outlines themselves.
 
 
+Extending ttfautohint with new scripts
+--------------------------------------
+
+Right now, adding new scripts to ttfautohint only works on the source code
+level, this is, you have to patch the C\ source code.
+
+The process itself isn't very complicated; it is demonstrated best by
+example.  The following commits in ttfautohint add Ethiopian and Armenian,
+respectively.
+
+| [http://repo.or.cz/ttfautohint.git/commitdiff/d14c7c0758539921b58f2854777175fde1267fb1]([http://repo.or.cz/ttfautohint.git/commitdiff/d14c7c0758539921b58f2854777175fde1267fb1)
+| [http://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9635b8b0d3b910310b69f4a57fe055fd0]([http://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9635b8b0d3b910310b69f4a57fe055fd0)
+
+It shows that you have to do the following steps.
+
+  * Add blue zone character data to the file `lib/tablue.dat`.
+
+  * Add the proper Unicode ranges to `lib/taranges.c`, following the
+    structure of similar entries.
+
+  * Similarly, the files `lib/tastyles.h` and `lib/ttfautohint-script.h`
+    must be updated.  The latter holds the information on the used default
+    character or characters; it also references the corresponding script tag
+    `HB_SCRIPT_XXX` as used by the HarfBuzz library.
+
+If there are any questions, please contact the [FreeType mailing
+list](https://lists.nongnu.org/mailman/listinfo/freetype) for help.  Note
+that the script data in ttfautohint are hold in sync with FreeType's
+auto-hinter.
+
 
 Control Instructions
 ====================
