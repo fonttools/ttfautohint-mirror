@@ -150,12 +150,6 @@ TTF_autohint(const char* options,
     /* handle options -- don't forget to update parameter dump below! */
     if (COMPARE("adjust-subglyphs"))
       adjust_subglyphs = (FT_Bool)va_arg(ap, FT_Int);
-    else if (COMPARE("debug"))
-      debug = (FT_Bool)va_arg(ap, FT_Int);
-    else if (COMPARE("default-script"))
-      default_script_string = va_arg(ap, const char*);
-    else if (COMPARE("dehint"))
-      dehint = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("control-buffer"))
     {
       control_file = NULL;
@@ -172,6 +166,12 @@ TTF_autohint(const char* options,
       control_buf = NULL;
       control_len = 0;
     }
+    else if (COMPARE("debug"))
+      debug = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("default-script"))
+      default_script_string = va_arg(ap, const char*);
+    else if (COMPARE("dehint"))
+      dehint = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("dw-cleartype-strong-stem-width"))
       dw_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("epoch"))
@@ -423,7 +423,7 @@ No_check:
 
   if (in_file)
   {
-    error = TA_font_file_read(font, in_file);
+    error = TA_font_file_read(in_file, &font->in_buf, &font->in_len);
     if (error)
       goto Err;
   }

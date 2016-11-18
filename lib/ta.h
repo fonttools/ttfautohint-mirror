@@ -325,8 +325,9 @@ TA_font_unload(FONT* font,
                const char* control_buf);
 
 FT_Error
-TA_font_file_read(FONT* font,
-                  FILE* in_file);
+TA_font_file_read(FILE* file,
+                  FT_Byte** buffer,
+                  size_t* length);
 FT_Error
 TA_font_file_write(FONT* font,
                    FILE* out_file);
