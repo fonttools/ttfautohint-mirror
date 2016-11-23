@@ -759,12 +759,21 @@ Err:
   TA_font_unload(font, in_buf, out_bufp, control_buf, reference_buf);
 
 Err1:
-  if (!error_string)
-    error_string = (char*)TA_get_error_message(error);
+  {
+    FT_Error e = error;
 
-  /* this must be a static value */
-  if (error_stringp)
-    *error_stringp = (const unsigned char*)TA_get_error_message(error);
+
+    /* use standard FreeType error strings for reference file errors */
+    if (error >= 0x300 && error < 0x400)
+      e -= 0x300;
+
+    if (!error_string)
+      error_string = (char*)TA_get_error_message(e);
+
+    /* this must be a static value */
+    if (error_stringp)
+      *error_stringp = (const unsigned char*)TA_get_error_message(e);
+  }
 
   if (err)
     err(error,
