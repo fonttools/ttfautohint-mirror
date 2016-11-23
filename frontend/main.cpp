@@ -235,6 +235,13 @@ err(TA_Error error,
       if (errpos && errline)
         fprintf(stderr, "  %*s\n", int(errpos - errline + 1), "^");
     }
+    else if (error >= 0x300 && error < 0x400)
+    {
+      error -= 0x300;
+      fprintf(stderr, "An error with code 0x%02x occurred"
+                        " while loading the reference font\n",
+                      error);
+    }
   }
 }
 
@@ -318,6 +325,9 @@ show_help(bool
   fprintf(handle,
 "  -r, --hinting-range-max=N  the maximum PPEM value for hint sets\n"
 "                             (default: %d)\n"
+#ifndef BUILD_GUI
+"  -R, --reference=FILE       derive blue zones from reference font FILE\n"
+#endif
 "  -s, --symbol               input is symbol font\n"
 "  -S, --fallback-scaling     use fallback scaling, not hinting\n"
 "  -t, --ttfa-table           add TTFA information table\n"
@@ -341,6 +351,9 @@ show_help(bool
 "                             specify a comma-separated list of\n"
 "                             x-height snapping exceptions, for example\n"
 "                             \"-9, 13-17, 19\" (default: \"\")\n"
+#ifndef BUILD_GUI
+"  -Z, --reference-index=N    face index of reference font (default: 0)\n"
+#endif
 "\n",
           TA_HINTING_RANGE_MAX, TA_INCREASE_X_HEIGHT);
 
@@ -606,7 +619,8 @@ display_TTFA(FILE* in)
   if (error)
   {
     fprintf(stderr, "Can't initialize FreeType library:\n"
-                    "%s\n", FT_get_error_message(error));
+                    "%s\n",
+                    FT_get_error_message(error));
     exit(EXIT_FAILURE);
   }
 
@@ -616,7 +630,8 @@ display_TTFA(FILE* in)
   if (error)
   {
     fprintf(stderr, "Can't open input font:\n"
-                    "%s\n", FT_get_error_message(error));
+                    "%s\n",
+                    FT_get_error_message(error));
     exit(EXIT_FAILURE);
   }
 
@@ -641,7 +656,8 @@ display_TTFA(FILE* in)
   if (error)
   {
     fprintf(stderr, "Error loading `TTFA' table:\n"
-                    "%s\n", FT_get_error_message(error));
+                    "%s\n",
+                    FT_get_error_message(error));
     exit(EXIT_FAILURE);
   }
 
@@ -714,6 +730,8 @@ main(int argc,
   TA_Info_Post_Func info_post_func = info_post;
 
   const char* control_name = NULL;
+  const char* reference_name = NULL;
+  int reference_index = 0;
 
   unsigned long long epoch = ULLONG_MAX;
 #endif
@@ -769,6 +787,10 @@ main(int argc,
       {"increase-x-height", required_argument, NULL, 'x'},
       {"no-info", no_argument, NULL, 'n'},
       {"pre-hinting", no_argument, NULL, 'p'},
+#ifndef BUILD_GUI
+      {"reference", required_argument, NULL, 'R'},
+      {"reference-index", required_argument, NULL, 'Z'},
+#endif
       {"strong-stem-width", required_argument, NULL, 'w'},
       {"symbol", no_argument, NULL, 's'},
       {"ttfa-table", no_argument, NULL, 't'},
@@ -814,7 +836,7 @@ main(int argc,
 #ifdef BUILD_GUI
                              "cdD:f:F:G:hH:iIl:npr:sStvVw:Wx:X:",
 #else
-                             "cdD:f:F:G:hH:iIl:m:npr:sStTvVw:Wx:X:",
+                             "cdD:f:F:G:hH:iIl:m:npr:R:sStTvVw:Wx:X:Z:",
 #endif
                              long_options, &option_index);
     if (c == -1)
@@ -895,6 +917,12 @@ main(int argc,
       have_hinting_range_max = true;
       break;
 
+#ifndef BUILD_GUI
+    case 'R':
+      reference_name = optarg;
+      break;
+#endif
+
     case 's':
       symbol = true;
       break;
@@ -942,6 +970,12 @@ main(int argc,
       x_height_snapping_exceptions_string = optarg;
       have_x_height_snapping_exceptions_string = true;
       break;
+
+#ifndef BUILD_GUI
+    case 'Z':
+      reference_index = atoi(optarg);
+      break;
+#endif
 
 #ifndef BUILD_GUI
     case DEBUG_OPTION:
@@ -1216,7 +1250,8 @@ main(int argc,
     if (!control)
     {
       fprintf(stderr,
-              "The following error occurred while open control file `%s':\n"
+              "The following error occurred"
+                " while opening control file `%s':\n"
               "\n"
               "  %s\n",
               control_name, strerror(errno));
@@ -1225,6 +1260,61 @@ main(int argc,
   }
   else
     control = NULL;
+
+  FILE* reference = NULL;
+  if (reference_name)
+  {
+    reference = fopen(reference_name, "r");
+    if (!reference)
+    {
+      fprintf(stderr,
+              "The following error occurred"
+                " while opening reference font `%s':\n"
+              "\n"
+              "  %s\n",
+              reference_name, strerror(errno));
+      exit(EXIT_FAILURE);
+    }
+
+    if (reference_index != 0)
+    {
+      FT_Library library;
+      FT_Face face;
+      FT_Error error;
+
+      error = FT_Init_FreeType(&library);
+      if (error)
+      {
+        fprintf(stderr, "Can't initialize FreeType library:\n"
+                        "%s\n",
+                        FT_get_error_message(error));
+        exit(EXIT_FAILURE);
+      }
+
+      error = FT_New_Face(library, reference_name, -1, &face);
+      if (error)
+      {
+        fprintf(stderr, "Can't check number of faces in reference font:\n"
+                        "%s\n",
+                        FT_get_error_message(error));
+        exit(EXIT_FAILURE);
+      }
+
+      if (reference_index < 0
+          || reference_index >= face->num_faces)
+      {
+        fprintf(stderr, "Face index for reference font must be"
+                          " in the range [0;%ld]\n",
+                        face->num_faces - 1);
+        exit(EXIT_FAILURE);
+      }
+
+      FT_Done_Face(face);
+      FT_Done_FreeType(library);
+    }
+  }
+  else
+    reference = NULL;
 
   Progress_Data progress_data = {-1, 1, 0};
   Error_Data error_data = {control_name};
@@ -1241,6 +1331,8 @@ main(int argc,
   info_data.info_string_wide_len = 0;
 
   info_data.control_name = control_name;
+  info_data.reference_name = reference_name;
+  info_data.reference_index = reference_index;
 
   info_data.hinting_range_min = hinting_range_min;
   info_data.hinting_range_max = hinting_range_max;
@@ -1289,6 +1381,7 @@ main(int argc,
 
   TA_Error error =
     TTF_autohint("in-file, out-file, control-file,"
+                 "reference-file, reference-index, reference-name,"
                  "hinting-range-min, hinting-range-max, hinting-limit,"
                  "gray-strong-stem-width, gdi-cleartype-strong-stem-width,"
                  "dw-cleartype-strong-stem-width,"
@@ -1302,6 +1395,7 @@ main(int argc,
                  "fallback-script, fallback-scaling,"
                  "symbol, dehint, debug, TTFA-info, epoch",
                  in, out, control,
+                 reference, reference_index, reference_name,
                  hinting_range_min, hinting_range_max, hinting_limit,
                  gray_strong_stem_width, gdi_cleartype_strong_stem_width,
                  dw_cleartype_strong_stem_width,
@@ -1327,6 +1421,8 @@ main(int argc,
     fclose(out);
   if (control)
     fclose(control);
+  if (reference)
+    fclose(reference);
 
   exit(error ? EXIT_FAILURE : EXIT_SUCCESS);
 

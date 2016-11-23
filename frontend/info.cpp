@@ -103,6 +103,14 @@ build_version_string(Info_Data* idata)
     d = sdscatprintf(d, " -m \"%s\"", bn ? bn : idata->control_name);
     free(bn);
   }
+  if (idata->reference_name)
+  {
+    char* bn = base_name(idata->reference_name);
+    d = sdscatprintf(d, " -R \"%s\"", bn ? bn : idata->reference_name);
+    free(bn);
+
+    d = sdscatprintf(d, " -Z %d", idata->reference_index);
+  }
 
   count = 0;
   strong[0] = '\0';

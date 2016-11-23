@@ -55,6 +55,8 @@ typedef struct Info_Data_
   bool TTFA_info;
 
   const char* control_name;
+  const char* reference_name;
+  int reference_index;
 } Info_Data;
 
 
