@@ -205,9 +205,13 @@ err(TA_Error error,
   else
   {
     if (error < 0x100)
+    {
       fprintf(stderr, "An error with code 0x%02x occurred"
                         " while autohinting fonts\n",
                       error);
+      if (error_string)
+        fprintf(stderr, " %s", error_string);
+    }
     else if (error >= 0x100 && error < 0x200)
     {
       fprintf(stderr, "An error with code 0x%03x occurred"
@@ -241,6 +245,8 @@ err(TA_Error error,
       fprintf(stderr, "An error with code 0x%02x occurred"
                         " while loading the reference font\n",
                       error);
+      if (error_string)
+        fprintf(stderr, " %s", error_string);
     }
   }
 }
