@@ -1035,7 +1035,8 @@ ta_latin_metrics_check_digits(TA_LatinMetrics metrics,
 
 FT_Error
 ta_latin_metrics_init(TA_LatinMetrics metrics,
-                      FT_Face face)
+                      FT_Face face,
+                      FT_Face reference)
 {
   FT_CharMap oldmap = face->charmap;
 
@@ -1045,7 +1046,7 @@ ta_latin_metrics_init(TA_LatinMetrics metrics,
   if (!FT_Select_Charmap(face, FT_ENCODING_UNICODE))
   {
     ta_latin_metrics_init_widths(metrics, face, 1);
-    ta_latin_metrics_init_blues(metrics, face);
+    ta_latin_metrics_init_blues(metrics, reference ? reference : face);
     ta_latin_metrics_check_digits(metrics, face);
   }
   else

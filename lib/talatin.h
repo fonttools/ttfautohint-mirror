@@ -100,7 +100,8 @@ typedef struct TA_LatinMetricsRec_
 
 FT_Error
 ta_latin_metrics_init(TA_LatinMetrics metrics,
-                      FT_Face face);
+                      FT_Face face,
+                      FT_Face reference);
 
 void
 ta_latin_metrics_scale(TA_LatinMetrics metrics,

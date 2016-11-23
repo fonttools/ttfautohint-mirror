@@ -249,7 +249,8 @@ typedef int
  *
  * Read a TrueType font, remove existing bytecode (in the SFNT tables
  * `prep`, `fpgm`, `cvt `, and `glyf`), and write a new TrueType font with
- * new bytecode based on the autohinting of the FreeType library.
+ * new bytecode based on the autohinting of the FreeType library, optionally
+ * using a reference font to derive blue zones.
  *
  * It expects a format string *options* and a variable number of arguments,
  * depending on the fields in *options*.  The fields are comma separated;
@@ -304,6 +305,29 @@ typedef int
  * `control-buffer-len`
  * :   A value of type `size_t`, giving the length of the control
  *     instructions buffer.  Needs `control-buffer`.
+ *
+ * `reference-file`
+ * :   A pointer of type `FILE*` to the data stream of the reference font,
+ *     opened for binary reading.  Mutually exclusive with
+ *     `reference-buffer`.
+ *
+ * `reference-buffer`
+ * :   A pointer of type `const char*` to a buffer that contains the
+ *     reference font.  Needs `reference-buffer-len`.  Mutually exclusive
+ *     with `reference-file`.
+ *
+ * `reference-buffer-len`
+ * :   A value of type `size_t`, giving the length of the reference buffer.
+ *     Needs `reference-buffer`.
+ *
+ * `reference-index`
+ * :   The face index to be used in the reference font.  The default value
+ *     is\ 0.
+ *
+ * `reference-name`
+ * :   A string that specifies the name of the reference font.  It is only
+ *     used to emit a sensible value for the `TTFA` table if `TTFA-info` is
+ *     set.
  *
  *
  * ### Messages and Callbacks

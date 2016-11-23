@@ -61,12 +61,18 @@ TTF_autohint(const char* options,
   FILE* out_file = NULL;
   FILE* control_file = NULL;
 
+  FILE* reference_file = NULL;
+  FT_Long reference_index = 0;
+  const char* reference_name = NULL;
+
   const char* in_buf = NULL;
   size_t in_len = 0;
   char** out_bufp = NULL;
   size_t* out_lenp = NULL;
   const char* control_buf = NULL;
   size_t control_len = 0;
+  const char* reference_buf = NULL;
+  size_t reference_len = 0;
 
   const unsigned char** error_stringp = NULL;
 
@@ -248,6 +254,26 @@ TTF_autohint(const char* options,
       progress = va_arg(ap, TA_Progress_Func);
     else if (COMPARE("progress-callback-data"))
       progress_data = va_arg(ap, void*);
+    else if (COMPARE("reference-buffer"))
+    {
+      reference_file = NULL;
+      reference_buf = va_arg(ap, const char*);
+    }
+    else if (COMPARE("reference-buffer-len"))
+    {
+      reference_file = NULL;
+      reference_len = va_arg(ap, size_t);
+    }
+    else if (COMPARE("reference-file"))
+    {
+      reference_file = va_arg(ap, FILE*);
+      reference_buf = NULL;
+      reference_len = 0;
+    }
+    else if (COMPARE("reference-index"))
+      reference_index = (FT_Long)va_arg(ap, FT_UInt);
+    else if (COMPARE("reference-name"))
+      reference_name = va_arg(ap, const char*);
     else if (COMPARE("symbol"))
       symbol = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("TTFA-info"))
@@ -385,6 +411,9 @@ TTF_autohint(const char* options,
     }
   }
 
+  font->reference_index = reference_index;
+  font->reference_name = reference_name;
+
   font->hinting_range_min = (FT_UInt)hinting_range_min;
   font->hinting_range_max = (FT_UInt)hinting_range_max;
   font->hinting_limit = (FT_UInt)hinting_limit;
@@ -449,6 +478,26 @@ No_check:
   {
     font->control_buf = (char*)control_buf;
     font->control_len = control_len;
+  }
+
+  if (reference_file)
+  {
+    error = TA_font_file_read(reference_file,
+                              &font->reference_buf,
+                              &font->reference_len);
+    if (error)
+      goto Err;
+  }
+  else if (reference_buf)
+  {
+    /* a valid TTF can never be that small */
+    if (reference_len < 100)
+    {
+      error = TA_Err_Invalid_Font_Type + 0x300;
+      goto Err1;
+    }
+    font->reference_buf = (FT_Byte*)reference_buf;
+    font->reference_len = reference_len;
   }
 
   error = TA_font_init(font);
@@ -707,7 +756,7 @@ No_check:
 Err:
   TA_control_free(font->control);
   TA_control_free_tree(font);
-  TA_font_unload(font, in_buf, out_bufp, control_buf);
+  TA_font_unload(font, in_buf, out_bufp, control_buf, reference_buf);
 
 Err1:
   if (!error_string)

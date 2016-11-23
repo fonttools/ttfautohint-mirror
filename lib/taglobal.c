@@ -558,8 +558,10 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
 
     if (writing_system_class->style_metrics_init)
     {
-      error = writing_system_class->style_metrics_init(metrics,
-                                                       globals->face);
+      error = writing_system_class->style_metrics_init(
+                                      metrics,
+                                      globals->face,
+                                      globals->font->reference);
       if (error)
       {
         if (writing_system_class->style_metrics_done)

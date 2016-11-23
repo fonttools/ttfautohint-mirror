@@ -180,10 +180,12 @@ typedef struct TA_ScalerRec_
 typedef struct TA_StyleMetricsRec_* TA_StyleMetrics;
 
 /* this function parses an FT_Face to compute global metrics */
-/* for a specific style */
+/* for a specific style, optionally using another FT_Face to */
+/* derive blue zones                                         */
 typedef FT_Error
 (*TA_WritingSystem_InitMetricsFunc)(TA_StyleMetrics metrics,
-                                    FT_Face face);
+                                    FT_Face face,
+                                    FT_Face reference);
 typedef void
 (*TA_WritingSystem_ScaleMetricsFunc)(TA_StyleMetrics metrics,
                                      TA_Scaler scaler);

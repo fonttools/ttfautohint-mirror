@@ -118,6 +118,9 @@ TA_ERRORDEF_(Control_Allocation_Error,     0x210,
 TA_ERRORDEF_(Control_Flex_Error,           0x211,
              "internal flex error")
 
+/* error codes in the range 0x300-0x3FF are related to the reference font; */
+/* subtract 0x300 to get the normal FreeType meaning */
+
 #ifdef TA_ERROR_END_LIST
   TA_ERROR_END_LIST
 #endif

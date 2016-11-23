@@ -106,6 +106,17 @@ TA_font_dump_parameters(FONT* font,
           font->ignore_restrictions);
   DUMPVAL("increase-x-height",
           font->increase_x_height);
+  if (font->reference_name)
+    DUMPSTR("reference",
+            font->reference_name);
+  else if (font->reference_buf)
+    DUMPSTR("reference",
+            "<yes>");
+  else
+    DUMPSTR("reference",
+            "");
+  DUMPVAL("reference-index",
+          font->reference_index);
   DUMPVAL("symbol",
           font->symbol);
   DUMPVAL("TTFA-info",

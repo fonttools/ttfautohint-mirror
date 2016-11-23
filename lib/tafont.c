@@ -49,6 +49,17 @@ TA_font_init(FONT* font)
   if (!font->sfnts)
     return FT_Err_Out_Of_Memory;
 
+  if (font->reference_buf)
+  {
+    error = FT_New_Memory_Face(font->lib,
+                               font->reference_buf,
+                               (FT_Long)font->reference_len,
+                               font->reference_index,
+                               &font->reference);
+    if (error)
+      return error + 0x300;
+  }
+
   return TA_Err_Ok;
 }
 
@@ -57,7 +68,8 @@ void
 TA_font_unload(FONT* font,
                const char* in_buf,
                char** out_bufp,
-               const char* control_buf)
+               const char* control_buf,
+               const char* reference_buf)
 {
   /* in case of error it is expected that unallocated pointers */
   /* are NULL (and counters are zero) */
@@ -113,6 +125,8 @@ TA_font_unload(FONT* font,
     free(font->sfnts);
   }
 
+  FT_Done_Face(font->reference);
+
   number_set_free(font->x_height_snapping_exceptions);
 
   FT_Done_FreeType(font->lib);
@@ -125,6 +139,9 @@ TA_font_unload(FONT* font,
     free(font->out_buf);
   if (!control_buf)
     free(font->control_buf);
+  if (!reference_buf)
+    free(font->reference_buf);
+
   free(font);
 }
 

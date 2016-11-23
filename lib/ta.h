@@ -232,6 +232,13 @@ struct FONT_
   char* control_buf;
   size_t control_len;
 
+  FT_Byte* reference_buf;
+  size_t reference_len;
+
+  FT_Face reference;
+  FT_Long reference_index;
+  const char* reference_name;
+
   SFNT* sfnts;
   FT_Long num_sfnts;
 
@@ -322,7 +329,8 @@ void
 TA_font_unload(FONT* font,
                const char* in_buf,
                char** out_bufp,
-               const char* control_buf);
+               const char* control_buf,
+               const char* reference_buf);
 
 FT_Error
 TA_font_file_read(FILE* file,
