@@ -1220,11 +1220,6 @@ again:
   QByteArray except_str = x_height_snapping_exceptions_string.toLocal8Bit();
   QByteArray fam_suff = family_suffix_line->text().toLocal8Bit();
 
-  // prepare C strings
-  QByteArray ctrl_name = fileinfo_control_file.fileName().toLocal8Bit();
-  QByteArray except_str = x_height_snapping_exceptions_string.toLocal8Bit();
-  QByteArray fam_suff = family_suffix_line->text().toLocal8Bit();
-
   Info_Data info_data;
 
   info_data.info_string = NULL; // must be deallocated after use
