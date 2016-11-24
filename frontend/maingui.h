@@ -81,6 +81,7 @@ private slots:
   void browse_input();
   void browse_output();
   void browse_control();
+  void browse_reference();
   void check_min();
   void check_max();
   void check_limit();
@@ -91,6 +92,8 @@ private slots:
   void absolute_input();
   void absolute_output();
   void absolute_control();
+  void absolute_reference();
+  void set_ref_idx_box_max();
   void check_number_set();
   void check_family_suffix();
   void clear_status_bar();
@@ -121,6 +124,7 @@ private:
   int fallback_script_idx;
   int fallback_scaling;
   QString family_suffix;
+  int reference_index;
   int symbol;
   int dehint;
   int TTFA_info;
@@ -145,8 +149,10 @@ private:
   QTimer* timer;
   QFileInfo fileinfo_input_file;
   QFileInfo fileinfo_control_file;
+  QFileInfo fileinfo_reference_file;
   QDateTime datetime_input_file;
   QDateTime datetime_control_file;
+  QDateTime datetime_reference_file;
   CheckState check;
 
   void create_connections();
@@ -159,8 +165,10 @@ private:
 
   int check_filenames(const QString&,
                       const QString&,
+                      const QString&,
                       const QString&);
   int open_files(const QString&, FILE**,
+                 const QString&, FILE**,
                  const QString&, FILE**,
                  const QString&, FILE**);
   int handle_error(TA_Error, const unsigned char*, QString);
@@ -181,6 +189,13 @@ private:
   QLabel* control_label;
   Drag_Drop_Line_Edit* control_line;
   QPushButton* control_button;
+
+  QLabel* reference_label;
+  Drag_Drop_Line_Edit* reference_line;
+  QPushButton* reference_button;
+
+  QLabel* ref_idx_label;
+  QSpinBox* ref_idx_box;
 
   QLabel* min_label;
   QSpinBox* min_box;

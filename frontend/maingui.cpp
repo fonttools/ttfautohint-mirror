@@ -20,6 +20,9 @@
 
 #include <QtGui>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include "info.h"
 #include "maingui.h"
 
@@ -101,7 +104,7 @@ const Tag_Names feature_names[] =
 //   w: &Watch Input Files
 //   x: Hint Set Range Ma&ximum
 //   y: S&ymbol Font
-//   z: --
+//   z: Blue &Zone Reference Font
 //   :: Family Suffix&:
 
 Main_GUI::Main_GUI(bool horizontal_layout,
@@ -182,6 +185,7 @@ Main_GUI::Main_GUI(bool horizontal_layout,
   timer->setSingleShot(true);
   fileinfo_input_file.setCaching(false);
   fileinfo_control_file.setCaching(false);
+  fileinfo_reference_file.setCaching(false);
 
   // XXX register translations somewhere and loop over them
   if (QLocale::system().name() == "en_US")
@@ -287,6 +291,21 @@ Main_GUI::browse_control()
 
   if (!file.isEmpty())
     control_line->setText(QDir::toNativeSeparators(file));
+}
+
+
+void
+Main_GUI::browse_reference()
+{
+  // XXX remember last directory
+  QString file = QFileDialog::getOpenFileName(
+                   this,
+                   tr("Open Blue Zone Reference Font"),
+                   QDir::homePath(),
+                   "");
+
+  if (!file.isEmpty())
+    reference_line->setText(QDir::toNativeSeparators(file));
 }
 
 
@@ -520,6 +539,41 @@ Main_GUI::absolute_control()
 
 
 void
+Main_GUI::absolute_reference()
+{
+  QString reference_name = QDir::fromNativeSeparators(reference_line->text());
+  if (!reference_name.isEmpty()
+      && QDir::isRelativePath(reference_name))
+  {
+    QDir cur_path(QDir::currentPath() + "/" + reference_name);
+    reference_line->setText(QDir::toNativeSeparators(cur_path.absolutePath()));
+  }
+}
+
+
+void
+Main_GUI::set_ref_idx_box_max()
+{
+  QString reference_name = QDir::fromNativeSeparators(reference_line->text());
+
+  FT_Library library = NULL;
+  FT_Face face = NULL;
+  FT_Error error;
+
+  // we don't handle errors
+  // since `TTF_autohint' checks the reference font (and index) later on
+  error = FT_Init_FreeType(&library);
+  if (!error)
+    error = FT_New_Face(library, qPrintable(reference_name), -1, &face);
+
+  ref_idx_box->setRange(0, error ? 100 : int(face->num_faces - 1));
+
+  FT_Done_Face(face);
+  FT_Done_FreeType(library);
+}
+
+
+void
 Main_GUI::check_number_set()
 {
   QString text = snapping_line->text();
@@ -639,7 +693,8 @@ Main_GUI::clear_status_bar()
 int
 Main_GUI::check_filenames(const QString& input_name,
                           const QString& output_name,
-                          const QString& control_name)
+                          const QString& control_name,
+                          const QString& reference_name)
 {
   if (!QFile::exists(input_name))
   {
@@ -691,6 +746,18 @@ Main_GUI::check_filenames(const QString& input_name,
     return 0;
   }
 
+  if (!reference_name.isEmpty() && !QFile::exists(reference_name))
+  {
+    QMessageBox::warning(
+      this,
+      "TTFautohint",
+      tr("The file %1 cannot be found.")
+         .arg(QUOTE_STRING(QDir::toNativeSeparators(reference_name))),
+      QMessageBox::Ok,
+      QMessageBox::Ok);
+    return 0;
+  }
+
   return 1;
 }
 
@@ -701,7 +768,9 @@ Main_GUI::open_files(const QString& input_name,
                      const QString& output_name,
                      FILE** out,
                      const QString& control_name,
-                     FILE** control)
+                     FILE** control,
+                     const QString& reference_name,
+                     FILE** reference)
 {
   const int buf_len = 1024;
   char buf[buf_len];
@@ -757,6 +826,27 @@ Main_GUI::open_files(const QString& input_name,
   else
     *control = NULL;
 
+  if (!reference_name.isEmpty())
+  {
+    *reference = fopen(qPrintable(reference_name), "rb");
+    if (!*reference)
+    {
+      strerror_r(errno, buf, buf_len);
+      QMessageBox::warning(
+        this,
+        "TTFautohint",
+        tr("The following error occurred"
+           " while opening blue zone reference file %1:\n")
+           .arg(QUOTE_STRING(QDir::toNativeSeparators(reference_name)))
+          + QString::fromLocal8Bit(buf),
+        QMessageBox::Ok,
+        QMessageBox::Ok);
+      return 0;
+    }
+  }
+  else
+    *reference = NULL;
+
   return 1;
 }
 
@@ -792,6 +882,8 @@ Main_GUI::stop_watching()
     file_watcher->removePath(fileinfo_input_file.fileName());
   if (!fileinfo_control_file.fileName().isEmpty())
     file_watcher->removePath(fileinfo_control_file.fileName());
+  if (!fileinfo_reference_file.fileName().isEmpty())
+    file_watcher->removePath(fileinfo_reference_file.fileName());
 }
 
 
@@ -803,13 +895,19 @@ Main_GUI::watch_files()
       && (fileinfo_control_file.fileName().isEmpty()
           ? true
           : (fileinfo_control_file.exists()
-             && fileinfo_control_file.isReadable())))
+             && fileinfo_control_file.isReadable()))
+      && (fileinfo_reference_file.fileName().isEmpty()
+          ? true
+          : (fileinfo_reference_file.exists()
+             && fileinfo_reference_file.isReadable())))
   {
     QDateTime modified_input = fileinfo_input_file.lastModified();
     QDateTime modified_control = fileinfo_control_file.lastModified();
+    QDateTime modified_reference = fileinfo_reference_file.lastModified();
     // XXX make this configurable
     if (datetime_input_file.msecsTo(modified_input) > 1000
-        || datetime_control_file.msecsTo(modified_control) > 1000)
+        || datetime_control_file.msecsTo(modified_control) > 1000
+        || datetime_reference_file.msecsTo(modified_reference) > 1000)
     {
       check = CheckNow;
       run(); // this function sets `datetime_XXX'
@@ -820,7 +918,8 @@ Main_GUI::watch_files()
       if (watch_box->isChecked())
       {
         if (fileinfo_input_file.isSymLink()
-            || fileinfo_control_file.isSymLink())
+            || fileinfo_control_file.isSymLink()
+            || fileinfo_reference_file.isSymLink())
           timer->start();
       }
     }
@@ -907,6 +1006,7 @@ struct GUI_Error_Data
   QLocale* locale;
   QString output_name;
   QString control_name;
+  QString reference_name;
   int* ignore_restrictions_p;
   bool retry;
 };
@@ -1021,6 +1121,15 @@ gui_error(TA_Error error,
                              .replace(" ", "&nbsp;"),
       QMessageBox::Ok,
       QMessageBox::Ok);
+  else if (error >= 0x300 && error < 0x400)
+    QMessageBox::warning(
+      data->gui,
+      "TTFautohint",
+      Tr("Error code 0x%1 while loading blue zone reference file:\n")
+         .arg(error - 0x300, 2, 16, QLatin1Char('0'))
+        + QString::fromLocal8Bit(error_string),
+      QMessageBox::Ok,
+      QMessageBox::Ok);
   else
     QMessageBox::warning(
       data->gui,
@@ -1066,7 +1175,8 @@ Main_GUI::run()
   QString input_name = QDir::fromNativeSeparators(input_line->text());
   QString output_name = QDir::fromNativeSeparators(output_line->text());
   QString control_name = QDir::fromNativeSeparators(control_line->text());
-  if (!check_filenames(input_name, output_name, control_name))
+  QString reference_name = QDir::fromNativeSeparators(reference_line->text());
+  if (!check_filenames(input_name, output_name, control_name, reference_name))
   {
     stop_watching();
     return;
@@ -1076,11 +1186,13 @@ Main_GUI::run()
   FILE* input;
   FILE* output;
   FILE* control;
+  FILE* reference;
 
 again:
   if (!open_files(input_name, &input,
                   output_name, &output,
-                  control_name, &control))
+                  control_name, &control,
+                  reference_name, &reference))
   {
     stop_watching();
     return;
@@ -1094,11 +1206,19 @@ again:
   TA_Info_Func info_func = info;
   TA_Info_Post_Func info_post_func = info_post;
   GUI_Progress_Data gui_progress_data = {-1, true, &dialog};
-  GUI_Error_Data gui_error_data = {this, locale, output_name, control_name,
+  GUI_Error_Data gui_error_data = {this, locale,
+                                   output_name, control_name, reference_name,
                                    &ignore_restrictions, false};
 
   fileinfo_input_file.setFile(input_name);
   fileinfo_control_file.setFile(control_name);
+  fileinfo_reference_file.setFile(reference_name);
+
+  // prepare C strings
+  QByteArray ctrl_name = fileinfo_control_file.fileName().toLocal8Bit();
+  QByteArray ref_name = fileinfo_reference_file.fileName().toLocal8Bit();
+  QByteArray except_str = x_height_snapping_exceptions_string.toLocal8Bit();
+  QByteArray fam_suff = family_suffix_line->text().toLocal8Bit();
 
   // prepare C strings
   QByteArray ctrl_name = fileinfo_control_file.fileName().toLocal8Bit();
@@ -1114,6 +1234,9 @@ again:
 
   info_data.control_name = ctrl_name.isEmpty() ? NULL
                                                : ctrl_name.constData();
+  info_data.reference_name = ref_name.isEmpty() ? NULL
+                                                : ref_name.constData();
+  info_data.reference_index = ref_idx_box->value();
 
   info_data.hinting_range_min = min_box->value();
   info_data.hinting_range_max = max_box->value();
@@ -1191,11 +1314,13 @@ again:
 
   datetime_input_file = fileinfo_input_file.lastModified();
   datetime_control_file = fileinfo_control_file.lastModified();
+  datetime_reference_file = fileinfo_reference_file.lastModified();
 
   QByteArray snapping_string = snapping_line->text().toLocal8Bit();
 
   TA_Error error =
-    TTF_autohint("in-file, out-file, control-file,"
+    TTF_autohint("in-file, out-file, control-file, reference-file,"
+                 "reference-index, reference-name,"
                  "hinting-range-min, hinting-range-max,"
                  "hinting-limit,"
                  "gray-strong-stem-width,"
@@ -1212,8 +1337,10 @@ again:
                  "x-height-snapping-exceptions, fallback-stem-width,"
                  "default-script,"
                  "fallback-script, fallback-scaling,"
-                 "symbol, dehint, TTFA-info",
-                 input, output, control,
+                 "symbol, dehint, TTFA-info,"
+                 "debug",
+                 input, output, control, reference,
+                 info_data.reference_index, info_data.reference_name,
                  info_data.hinting_range_min, info_data.hinting_range_max,
                  info_data.hinting_limit,
                  info_data.gray_strong_stem_width,
@@ -1230,7 +1357,8 @@ again:
                  snapping_string.constData(), info_data.fallback_stem_width,
                  info_data.default_script,
                  info_data.fallback_script, info_data.fallback_scaling,
-                 info_data.symbol, info_data.dehint, info_data.TTFA_info);
+                 info_data.symbol, info_data.dehint, info_data.TTFA_info,
+                 1);
 
   if (info_box->currentIndex())
   {
@@ -1242,6 +1370,8 @@ again:
   fclose(output);
   if (control)
     fclose(control);
+  if (reference)
+    fclose(reference);
 
   if (error)
   {
@@ -1268,12 +1398,14 @@ again:
       // Qt's file watcher doesn't handle symlinks;
       // we thus fall back to polling
       if (fileinfo_input_file.isSymLink()
-          || fileinfo_control_file.isSymLink())
+          || fileinfo_control_file.isSymLink()
+          || fileinfo_reference_file.isSymLink())
         timer->start();
       else
       {
         file_watcher->addPath(input_name);
         file_watcher->addPath(control_name);
+        file_watcher->addPath(reference_name);
       }
     }
   }
@@ -1440,6 +1572,26 @@ Main_GUI::create_layout(bool horizontal_layout)
 
   control_label->setToolTip(tooltip_string);
   control_line->setCompleter(completer);
+
+  reference_label = new QLabel(tr("Blue &Zone Reference Font:"));
+  reference_line = new Drag_Drop_Line_Edit(DRAG_DROP_TRUETYPE);
+  reference_button = new QPushButton(tr("Browse..."));
+  reference_label->setBuddy(reference_line);
+  reference_label->setToolTip(
+    tr("<b></b>A reference font file"
+       " from which all blue zone values are taken."));
+  reference_line->setCompleter(completer);
+
+  ref_idx_label = new QLabel(tr("Reference Face Index"));
+  ref_idx_box = new QSpinBox;
+  ref_idx_label->setBuddy(ref_idx_box);
+  ref_idx_label->setToolTip(
+    tr("The face index of the blue zone reference font to be used"
+       " in case it is a TrueType Collection (<tt>.ttc</tt>)."));
+  ref_idx_box->setKeyboardTracking(false);
+  // the range maximum gets updated interactively
+  // after a (more or less) valid reference font has been selected
+  ref_idx_box->setRange(0, 100);
 
   //
   // minmax controls
@@ -1771,6 +1923,12 @@ Main_GUI::create_vertical_layout()
   file_layout->addWidget(control_line, 4, 1);
   file_layout->addWidget(control_button, 4, 2);
 
+  file_layout->setRowStretch(5, 1);
+
+  file_layout->addWidget(reference_label, 6, 0, Qt::AlignRight);
+  file_layout->addWidget(reference_line, 6, 1);
+  file_layout->addWidget(reference_button, 6, 2);
+
   // bottom area
   QGridLayout* run_layout = new QGridLayout;
 
@@ -1849,6 +2007,8 @@ Main_GUI::create_vertical_layout()
   gui_layout->addWidget(TTFA_box, row++, 1);
   gui_layout->addWidget(family_suffix_label, row, 0, Qt::AlignRight);
   gui_layout->addWidget(family_suffix_line, row++, 1, Qt::AlignLeft);
+  gui_layout->addWidget(ref_idx_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(ref_idx_box, row++, 1, Qt::AlignLeft);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
@@ -1894,6 +2054,12 @@ Main_GUI::create_horizontal_layout()
   file_layout->addWidget(control_label, 4, 0, Qt::AlignRight);
   file_layout->addWidget(control_line, 4, 1);
   file_layout->addWidget(control_button, 4, 2);
+
+  file_layout->setRowStretch(5, 1);
+
+  file_layout->addWidget(reference_label, 6, 0, Qt::AlignRight);
+  file_layout->addWidget(reference_line, 6, 1);
+  file_layout->addWidget(reference_button, 6, 2);
 
   // bottom area
   QGridLayout* run_layout = new QGridLayout;
@@ -1987,6 +2153,8 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(TTFA_box, row++, 4);
   gui_layout->addWidget(family_suffix_label, row, 3, Qt::AlignRight);
   gui_layout->addWidget(family_suffix_line, row++, 4, Qt::AlignLeft);
+  gui_layout->addWidget(ref_idx_label, row, 3, Qt::AlignRight);
+  gui_layout->addWidget(ref_idx_box, row++, 4, Qt::AlignLeft);
 
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
@@ -2023,6 +2191,8 @@ Main_GUI::create_connections()
           SLOT(browse_output()));
   connect(control_button, SIGNAL(clicked()),
           SLOT(browse_control()));
+  connect(reference_button, SIGNAL(clicked()),
+          SLOT(browse_reference()));
 
   connect(input_line, SIGNAL(textChanged(QString)),
           SLOT(check_run()));
@@ -2035,6 +2205,11 @@ Main_GUI::create_connections()
           SLOT(absolute_output()));
   connect(control_line, SIGNAL(editingFinished()),
           SLOT(absolute_control()));
+  connect(reference_line, SIGNAL(editingFinished()),
+          SLOT(absolute_reference()));
+
+  connect(reference_line, SIGNAL(editingFinished()),
+          SLOT(set_ref_idx_box_max()));
 
   connect(min_box, SIGNAL(valueChanged(int)),
           SLOT(check_min()));
