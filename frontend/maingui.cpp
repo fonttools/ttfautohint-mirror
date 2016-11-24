@@ -102,6 +102,7 @@ const Tag_Names feature_names[] =
 //   x: Hint Set Range Ma&ximum
 //   y: S&ymbol Font
 //   z: --
+//   :: Family Suffix&:
 
 Main_GUI::Main_GUI(bool horizontal_layout,
                    int range_min,
@@ -250,7 +251,7 @@ Main_GUI::browse_input()
   // XXX remember last directory
   QString file = QFileDialog::getOpenFileName(
                    this,
-                   tr("Open Input File"),
+                   tr("Open Input Font"),
                    QDir::homePath(),
                    "");
 
@@ -265,7 +266,7 @@ Main_GUI::browse_output()
   // XXX remember last directory
   QString file = QFileDialog::getSaveFileName(
                    this,
-                   tr("Open Output File"),
+                   tr("Open Output Font"),
                    QDir::homePath(),
                    "");
 
@@ -280,7 +281,7 @@ Main_GUI::browse_control()
   // XXX remember last directory
   QString file = QFileDialog::getOpenFileName(
                    this,
-                   tr("Open Control INstructions File"),
+                   tr("Open Control Instructions File"),
                    QDir::homePath(),
                    "");
 
@@ -595,7 +596,7 @@ Main_GUI::check_number_set()
 
     snapping_line->setText(qs);
     snapping_line->setFocus(Qt::OtherFocusReason);
-    snapping_line->setCursorPosition(s - str.constData());
+    snapping_line->setCursorPosition(int(s - str.constData()));
 
     x_height_snapping_exceptions = NULL;
   }
@@ -622,7 +623,7 @@ Main_GUI::check_family_suffix()
     statusBar()->showMessage(
       tr("invalid character (use printable ASCII except %()/<>[]{})"));
     family_suffix_line->setFocus(Qt::OtherFocusReason);
-    family_suffix_line->setCursorPosition(pos - s);
+    family_suffix_line->setCursorPosition(int(pos - s));
   }
 }
 
@@ -886,12 +887,12 @@ gui_progress(long curr_idx,
     if (num_sfnts == 1)
       data->dialog->setLabelText(Tr("Auto-hinting %1 glyphs...")
                                     .arg(num_glyphs));
-    data->dialog->setMaximum(num_glyphs - 1);
+    data->dialog->setMaximum(int(num_glyphs - 1));
 
     data->begin = false;
   }
 
-  data->dialog->setValue(curr_idx);
+  data->dialog->setValue(int(curr_idx));
 
   if (data->dialog->wasCanceled())
     return 1;

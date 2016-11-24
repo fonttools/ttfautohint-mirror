@@ -643,7 +643,7 @@ info_post(void* user)
       *(fps++) = c;
   }
   // set correct size
-  sdsIncrLen(family_ps_suffix, fps - family_ps_suffix);
+  sdsIncrLen(family_ps_suffix, (int)(fps - family_ps_suffix));
 
   size_t family_ps_suffix_len = sdslen(family_ps_suffix);
 
@@ -799,7 +799,7 @@ info_post(void* user)
       }
     }
     // set correct size
-    sdsIncrLen(family_ps_name, fpn - family_ps_name);
+    sdsIncrLen(family_ps_name, (int)(fpn - family_ps_name));
 
     sds ps_suffix = is_wide ? family_ps_suffix_wide : family_ps_suffix;
     insert_suffix(ps_suffix,

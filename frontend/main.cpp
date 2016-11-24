@@ -35,7 +35,7 @@
 #include <vector>
 #include <string>
 
-#if BUILD_GUI
+#ifdef BUILD_GUI
 #  include <QApplication>
 #  include "maingui.h"
 #else
@@ -49,16 +49,18 @@
 #include <numberset.h>
 
 
-#ifdef _WIN32
-#  include <fcntl.h>
-#  define SET_BINARY(f) do { \
-                          if (!isatty(fileno(f))) \
-                            setmode(fileno(f), O_BINARY); \
-                        } while (0)
-#endif
+#ifndef BUILD_GUI
+#  ifdef _WIN32
+#    include <fcntl.h>
+#    define SET_BINARY(f) do { \
+                            if (!isatty(fileno(f))) \
+                              setmode(fileno(f), O_BINARY); \
+                          } while (0)
+#  endif
 
-#ifndef SET_BINARY
-#  define SET_BINARY(f) do {} while (0)
+#  ifndef SET_BINARY
+#    define SET_BINARY(f) do {} while (0)
+#  endif
 #endif
 
 
@@ -85,17 +87,19 @@ const Tag_Names script_names[] =
 };
 
 
-// the available feature tags and its descriptions are directly extracted
-// from `ttfautohint-coverages.h'
-#undef COVERAGE
-#define COVERAGE(n, N, d, t, t1, t2, t3, t4) \
-          {#t, d},
+#ifndef BUILD_GUI
+  // the available feature tags and its descriptions are directly extracted
+  // from `ttfautohint-coverages.h'
+#  undef COVERAGE
+#  define COVERAGE(n, N, d, t, t1, t2, t3, t4) \
+            {#t, d},
 
 const Tag_Names feature_names[] =
 {
 #include <ttfautohint-coverages.h>
   {NULL, NULL}
 };
+#endif
 
 
 #ifndef BUILD_GUI
@@ -134,7 +138,7 @@ progress(long curr_idx,
   }
 
   // print progress approx. every 10%
-  int curr_percent = curr_idx * 100 / num_glyphs;
+  int curr_percent = int(curr_idx * 100 / num_glyphs);
   int curr_diff = curr_percent - data->last_percent;
 
   if (curr_diff >= 10)
@@ -617,8 +621,8 @@ display_TTFA(FILE* in)
     exit(EXIT_FAILURE);
   }
 
-  FT_Library library;
-  FT_Face face;
+  FT_Library library = NULL;
+  FT_Face face = NULL;
   FT_Error error;
 
   error = FT_Init_FreeType(&library);
@@ -945,8 +949,10 @@ main(int argc,
     case 'T':
       show_TTFA_info = true;
       break;
+#endif
 
     case 'v':
+#ifndef BUILD_GUI
       progress_func = progress;
 #endif
       break;
@@ -1284,8 +1290,8 @@ main(int argc,
 
     if (reference_index != 0)
     {
-      FT_Library library;
-      FT_Face face;
+      FT_Library library = NULL;
+      FT_Face face = NULL;
       FT_Error error;
 
       error = FT_Init_FreeType(&library);
@@ -1440,7 +1446,7 @@ main(int argc,
   char** new_argv = new char*[new_argc];
 
   // construct new argc and argv variables from collected data
-  for (int i = 0; i < new_argc; i++)
+  for (unsigned int i = 0; i < (unsigned int)new_argc; i++)
     new_argv[i] = const_cast<char*>(new_arg_string[i].data());
 
   QApplication app(new_argc, new_argv);
