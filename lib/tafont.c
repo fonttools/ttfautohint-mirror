@@ -77,8 +77,7 @@ TA_font_unload(FONT* font,
   if (!font)
     return;
 
-  if (font->loader)
-    ta_loader_done(font);
+  ta_loader_done(font);
 
   if (font->tables)
   {

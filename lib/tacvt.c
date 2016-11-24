@@ -141,7 +141,7 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
 
 Symbol:
   load_flags = 1 << 29; /* vertical hinting only */
-  error = ta_loader_load_glyph(font, face, glyph_index, load_flags);
+  error = ta_loader_load_glyph(font, face, (FT_UInt)glyph_index, load_flags);
 
   return error;
 }

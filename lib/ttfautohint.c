@@ -691,8 +691,7 @@ No_check:
     if (error)
       goto Err;
 
-    if (font->loader)
-      ta_loader_done(font);
+    ta_loader_done(font);
   }
 
   for (i = 0; i < font->num_sfnts; i++)

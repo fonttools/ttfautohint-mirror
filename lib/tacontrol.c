@@ -349,7 +349,7 @@ Fail:
       *errlinenum_p = 0;
       *errline_p = NULL;
       *errpos_p = NULL;
-      if (context.errmsg)
+      if (*context.errmsg)
         *error_string_p = strdup(context.errmsg);
       else
         *error_string_p = strdup(TA_get_error_message(context.error));
@@ -409,7 +409,7 @@ Fail:
                 SHRT_MIN,
                 SHRT_MAX);
       else if (context.error == TA_Err_Control_Invalid_Range)
-        sprintf(auxbuf, " (values must be within [%ld;%ld])",
+        sprintf(auxbuf, " (values must be within [%d;%d])",
                 context.number_set_min,
                 context.number_set_max);
       else
@@ -462,7 +462,7 @@ TA_control_apply_coverage(SFNT* sfnt,
 
     /* `control->glyph_idx' holds the style; */
     /* `control->points' holds the glyph index set */
-    style = control->glyph_idx;
+    style = (int)control->glyph_idx;
     glyph_idx_iter.range = control->points;
     glyph_idx = number_set_get_first(&glyph_idx_iter);
 
@@ -824,7 +824,7 @@ TA_control_segment_dir_get_next(FONT* font,
   }
 
   /* the `glyph_idx' field gets abused for `point_idx' */
-  *point_idx = control_segment_dirs_cur->glyph_idx;
+  *point_idx = (int)control_segment_dirs_cur->glyph_idx;
   *dir = control_segment_dirs_cur->type == Control_Segment_Left
            ? TA_DIR_LEFT
            : control_segment_dirs_cur->type == Control_Segment_Right

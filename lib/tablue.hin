@@ -16,8 +16,8 @@
 /* originally file `afblue.h' (2013-Sep-11) from FreeType */
 
 
-#ifndef __TABLUE_H__
-#define __TABLUE_H__
+#ifndef TABLUE_H_
+#define TABLUE_H_
 
 
   /* an auxiliary macro to decode a UTF-8 character -- since we only use */
@@ -119,6 +119,6 @@ typedef struct TA_Blue_StringRec_
 
 extern const TA_Blue_StringRec ta_blue_stringsets[];
 
-#endif /* __TABLUE_H__ */
+#endif /* TABLUE_H_ */
 
 /* end of tablue.h */

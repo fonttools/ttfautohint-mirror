@@ -155,8 +155,8 @@ typedef struct Control_Context_
    * If the returned error is `TA_Err_Control_Invalid_Range', these two
    * values set up the allowed range.
    */
-  long number_set_min;
-  long number_set_max;
+  int number_set_min;
+  int number_set_max;
 
   /* private flex data */
   void* scanner;

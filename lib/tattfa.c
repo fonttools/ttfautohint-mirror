@@ -32,7 +32,7 @@ TA_table_build_TTFA(FT_Byte** TTFA,
   buf = (FT_Byte*)TA_font_dump_parameters(font, 0);
   if (!buf)
     return FT_Err_Out_Of_Memory;
-  buf_len = strlen((char*)buf);
+  buf_len = (FT_UInt)strlen((char*)buf);
 
   /* buffer length must be a multiple of four */
   len = (buf_len + 3) & ~3U;

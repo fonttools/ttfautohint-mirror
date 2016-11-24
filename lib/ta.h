@@ -52,13 +52,13 @@
 /* utility macros to get data from a pointer (with auto-increment) */
 
 #define NEXT_USHORT(buffer) \
-          ((FT_UShort)(buffer += 2, buffer[-2] << 8 \
-                                    | buffer[-1]))
+          ((FT_UShort)(buffer += 2, (FT_UShort)buffer[-2] << 8 \
+                                    | (FT_UShort)buffer[-1]))
 #define NEXT_ULONG(buffer) \
-          ((FT_ULong)(buffer += 4, buffer[-4] << 24 \
-                                   | buffer[-3] << 16 \
-                                   | buffer[-2] << 8 \
-                                   | buffer[-1]))
+          ((FT_ULong)(buffer += 4, (FT_ULong)buffer[-4] << 24 \
+                                   | (FT_ULong)buffer[-3] << 16 \
+                                   | (FT_ULong)buffer[-2] << 8 \
+                                   | (FT_ULong)buffer[-1]))
 
 
 /* an SFNT tag for our information table */

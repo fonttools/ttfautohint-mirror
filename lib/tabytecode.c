@@ -184,7 +184,7 @@ FT_Byte ttfautohint_glyph_bytecode[7] =
 
 
 /* if we have y delta exceptions before IUP_y, this code gets inserted */
-FT_Byte ins_extra_delta_exceptions[4] =
+static FT_Byte ins_extra_delta_exceptions[4] =
 {
 
   /* tell bci_{scale,scale_composite,hint}_glyph to not call IUP_y */
@@ -197,7 +197,7 @@ FT_Byte ins_extra_delta_exceptions[4] =
 
 
 /* if we have a non-base glyph, this code gets inserted */
-FT_Byte ins_extra_ignore_std_width[4] =
+static FT_Byte ins_extra_ignore_std_width[4] =
 {
 
   /* tell bci_{smooth,strong}_stem_width to ignore std_width */
@@ -2499,7 +2499,7 @@ TA_init_recorder(Recorder* recorder,
   /* we use segment_map[axis->num_segments] */
   /* as the total number of mapped segments, so allocate one more element */
   recorder->segment_map =
-    (FT_UShort*)malloc((axis->num_segments + 1) * sizeof (FT_UShort));
+    (FT_UShort*)malloc((size_t)(axis->num_segments + 1) * sizeof (FT_UShort));
   if (!recorder->segment_map)
     return FT_Err_Out_Of_Memory;
 

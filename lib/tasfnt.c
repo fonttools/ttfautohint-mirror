@@ -61,7 +61,7 @@ TA_sfnt_split_into_SFNT_tables(SFNT* sfnt,
 
     *table_info = MISSING;
 
-    error = FT_Sfnt_Table_Info(sfnt->face, i, &tag, &len);
+    error = FT_Sfnt_Table_Info(sfnt->face, (FT_UInt)i, &tag, &len);
     if (error)
     {
       if (error == FT_Err_Table_Missing)

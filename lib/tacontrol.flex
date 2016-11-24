@@ -163,7 +163,7 @@ TA_control_scanner_fatal_error(const char* msg,
   /* and we don't support localized formats like using `,' instead of `.' */
   errno = 0;
   yylval->real = strtod(yytext, NULL);
-  if (yylval->real && errno == ERANGE)
+  if (yylval->real != 0 && errno == ERANGE)
   {
     /* overflow */
     yyextra->error = TA_Err_Control_Overflow;

@@ -676,7 +676,7 @@ right_limited:
   '-' integer
     {
       $right_limited = number_set_new(context->number_set_min,
-                                      $integer,
+                                      (int)$integer,
                                       context->number_set_min,
                                       context->number_set_max);
       if ($right_limited == NUMBERSET_INVALID_RANGE)
@@ -695,7 +695,7 @@ right_limited:
 left_limited:
   integer '-'
     {
-      $left_limited = number_set_new($integer,
+      $left_limited = number_set_new((int)$integer,
                                      context->number_set_max,
                                      context->number_set_min,
                                      context->number_set_max);
@@ -738,8 +738,8 @@ range_elems[result]:
 range_elem:
   integer
     {
-      $range_elem = number_set_new($integer,
-                                   $integer,
+      $range_elem = number_set_new((int)$integer,
+                                   (int)$integer,
                                    context->number_set_min,
                                    context->number_set_max);
       if ($range_elem == NUMBERSET_INVALID_RANGE)
@@ -760,8 +760,8 @@ range_elem:
 range:
   integer[left] '-' integer[right]
     {
-      $range = number_set_new($left,
-                              $right,
+      $range = number_set_new((int)$left,
+                              (int)$right,
                               context->number_set_min,
                               context->number_set_max);
       if ($range == NUMBERSET_INVALID_RANGE)
@@ -784,7 +784,7 @@ glyph_idx_set:
 
 
       context->number_set_min = 0;
-      context->number_set_max = face->num_glyphs - 1;
+      context->number_set_max = (int)(face->num_glyphs - 1);
     }
   glyph_idx_range_elems
     { $glyph_idx_set = $glyph_idx_range_elems; }
@@ -810,8 +810,8 @@ glyph_idx_range_elems[result]:
 glyph_idx_range_elem:
   glyph_idx
     {
-      $glyph_idx_range_elem = number_set_new($glyph_idx,
-                                             $glyph_idx,
+      $glyph_idx_range_elem = number_set_new((int)$glyph_idx,
+                                             (int)$glyph_idx,
                                              context->number_set_min,
                                              context->number_set_max);
       /* glyph_idx is always valid */
@@ -829,8 +829,8 @@ glyph_idx_range_elem:
 glyph_idx_range:
   glyph_idx[left] '-' glyph_idx[right]
     {
-      $glyph_idx_range = number_set_new($left,
-                                        $right,
+      $glyph_idx_range = number_set_new((int)$left,
+                                        (int)$right,
                                         context->number_set_min,
                                         context->number_set_max);
       /* glyph range is always valid */
