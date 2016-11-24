@@ -314,6 +314,9 @@ TA_optimize_push(FT_Byte* buf,
     pos[2] = NULL;
   }
 
+  /* only needed for the algorithm loops below */
+  pos[3] = NULL;
+
   /* there are at least two NPUSHB instructions */
   /* (one of them directly at the start) */
   sizes[0] = *(pos[0] + 1);
@@ -2662,7 +2665,9 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
   FT_Int32 load_flags;
   FT_UInt size;
 
-  FT_Byte* pos[3];
+  /* we store only three positions, but it simplifies the algorithm in */
+  /* `TA_optimize_push' if we have one additional element */
+  FT_Byte* pos[4];
 
 #ifdef TA_DEBUG
   int _ta_debug_save;

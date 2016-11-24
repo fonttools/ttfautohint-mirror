@@ -886,8 +886,11 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
           memcpy(p, glyph->ins_extra_buf, glyph->ins_extra_len);
           p += glyph->ins_extra_len;
         }
-        memcpy(p, glyph->ins_buf, glyph->ins_len);
-        p += glyph->ins_len;
+        if (glyph->ins_len)
+        {
+          memcpy(p, glyph->ins_buf, glyph->ins_len);
+          p += glyph->ins_len;
+        }
         memcpy(p, glyph->buf + glyph->len1, glyph->len2);
         p += glyph->len2;
       }
