@@ -614,8 +614,8 @@ Main_GUI::check_number_set()
 void
 Main_GUI::check_family_suffix()
 {
-  QString text = family_suffix_line->text();
-  const char* s = qPrintable(text);
+  QByteArray text = family_suffix_line->text().toLocal8Bit();
+  const char* s = text.constData();
 
   if (const char* pos = ::check_family_suffix(s))
   {
@@ -1100,6 +1100,11 @@ again:
   fileinfo_input_file.setFile(input_name);
   fileinfo_control_file.setFile(control_name);
 
+  // prepare C strings
+  QByteArray ctrl_name = fileinfo_control_file.fileName().toLocal8Bit();
+  QByteArray except_str = x_height_snapping_exceptions_string.toLocal8Bit();
+  QByteArray fam_suff = family_suffix_line->text().toLocal8Bit();
+
   Info_Data info_data;
 
   info_data.info_string = NULL; // must be deallocated after use
@@ -1107,7 +1112,8 @@ again:
   info_data.info_string_len = 0;
   info_data.info_string_wide_len = 0;
 
-  info_data.control_name = qPrintable(fileinfo_control_file.fileName());
+  info_data.control_name = ctrl_name.isEmpty() ? NULL
+                                               : ctrl_name.constData();
 
   info_data.hinting_range_min = min_box->value();
   info_data.hinting_range_max = max_box->value();
@@ -1122,11 +1128,9 @@ again:
   info_data.increase_x_height = no_x_increase_box->isChecked()
                                 ? 0
                                 : x_increase_box->value();
-  info_data.x_height_snapping_exceptions_string =
-    qPrintable(x_height_snapping_exceptions_string);
+  info_data.x_height_snapping_exceptions_string = except_str.constData();
 
-  info_data.family_suffix =
-    family_suffix_line->text().toLocal8Bit().constData();
+  info_data.family_suffix = fam_suff.constData();
   info_data.family_data_head = NULL;
 
   info_data.fallback_stem_width = default_stem_width_box->isChecked()
