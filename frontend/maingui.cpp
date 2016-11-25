@@ -87,13 +87,13 @@ const Tag_Names feature_names[] =
 //   f: &File (menu)
 //   g: Stron&g Stem Width and Positioning
 //   h: &Help (menu)
-//   i: &Input File
+//   i: &Input Font
 //   j: Ad&just Subglyphs
 //   k: Fallbac&k Script
 //   l: Hinting &Limit / No Hinting &Limit
 //   m: Hint Co&mposites
 //   n: Hint Set Range Mi&nimum
-//   o: &Output File
+//   o: &Output Font
 //   p: Windows Com&patibility
 //   q: --
 //   r: &Run
@@ -353,6 +353,14 @@ Main_GUI::check_dehint()
 {
   if (dehint_box->isChecked())
   {
+    control_label->setEnabled(false);
+    control_line->setEnabled(false);
+    control_button->setEnabled(false);
+
+    reference_label->setEnabled(false);
+    reference_line->setEnabled(false);
+    reference_button->setEnabled(false);
+
     min_label->setEnabled(false);
     min_box->setEnabled(false);
 
@@ -385,6 +393,9 @@ Main_GUI::check_dehint()
     hint_box->setEnabled(false);
     symbol_box->setEnabled(false);
 
+    ref_idx_label->setEnabled(false);
+    ref_idx_box->setEnabled(false);
+
     stem_label->setEnabled(false);
     gray_box->setEnabled(false);
     gdi_box->setEnabled(false);
@@ -392,6 +403,14 @@ Main_GUI::check_dehint()
   }
   else
   {
+    control_label->setEnabled(true);
+    control_line->setEnabled(true);
+    control_button->setEnabled(true);
+
+    reference_label->setEnabled(true);
+    reference_line->setEnabled(true);
+    reference_button->setEnabled(true);
+
     min_label->setEnabled(true);
     min_box->setEnabled(true);
 
@@ -420,6 +439,9 @@ Main_GUI::check_dehint()
     adjust_box->setEnabled(true);
     hint_box->setEnabled(true);
     symbol_box->setEnabled(true);
+
+    ref_idx_label->setEnabled(true);
+    ref_idx_box->setEnabled(true);
 
     stem_label->setEnabled(true);
     gray_box->setEnabled(true);
@@ -1420,7 +1442,7 @@ Main_GUI::create_layout(bool horizontal_layout)
   model->setRootPath(QDir::rootPath());
   completer->setModel(model);
 
-  input_label = new QLabel(tr("&Input File:"));
+  input_label = new QLabel(tr("&Input Font:"));
   input_line = new Drag_Drop_Line_Edit(DRAG_DROP_TRUETYPE);
   input_button = new QPushButton(tr("Browse..."));
   input_label->setBuddy(input_line);
@@ -1430,7 +1452,7 @@ Main_GUI::create_layout(bool horizontal_layout)
        " TrueType collection (TTC), or a TrueType-based OpenType font."));
   input_line->setCompleter(completer);
 
-  output_label = new QLabel(tr("&Output File:"));
+  output_label = new QLabel(tr("&Output Font:"));
   output_line = new Drag_Drop_Line_Edit(DRAG_DROP_TRUETYPE);
   output_button = new QPushButton(tr("Browse..."));
   output_label->setBuddy(output_line);
@@ -1577,7 +1599,7 @@ Main_GUI::create_layout(bool horizontal_layout)
        " from which all blue zone values are taken."));
   reference_line->setCompleter(completer);
 
-  ref_idx_label = new QLabel(tr("Reference Face Index"));
+  ref_idx_label = new QLabel(tr("Reference Face Index:"));
   ref_idx_box = new QSpinBox;
   ref_idx_label->setBuddy(ref_idx_box);
   ref_idx_label->setToolTip(
@@ -1631,7 +1653,9 @@ Main_GUI::create_layout(bool horizontal_layout)
     tr("This sets the default script for OpenType features:"
        "  After applying all features that are handled specially"
        " (for example small caps or superscript glyphs),"
-       " <b>TTFautohint</b> uses this value for the remaining features."));
+       " <b>TTFautohint</b> uses this value for the remaining features."
+       ""
+       "<p>In most cases, you don't want to change this value.</p>"));
   for (int i = 0; script_names[i].tag; i++)
   {
     // XXX: how to provide translations?
@@ -1817,7 +1841,9 @@ Main_GUI::create_layout(bool horizontal_layout)
   info_label->setToolTip(
     tr("Specify which information about <b>TTFautohint</b>"
        " and its calling parameters gets added to the version string(s)"
-       " (name ID&nbsp;5) in the <i>name</i> table."));
+       " (name ID&nbsp;5) in the <i>name</i> table.<br>"
+       "If you want to archive control instruction information,"
+       " use a <i>TTFA</i> table."));
   info_box->insertItem(0, tr("None"));
   info_box->insertItem(1, tr("Version"));
   info_box->insertItem(2, tr("Version and Parameters"));
@@ -1832,7 +1858,8 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // stem width and positioning
   //
-  stem_label = new QLabel(tr("Stron&g Stem Width and Positioning:"));
+  stem_label = new QLabel(tr("Stron&g Stem Width&nbsp;<br>"
+                             "and Positioning:"));
   stem_label->setToolTip(
     tr("<b>TTFautohint</b> provides two different hinting algorithms"
        " that can be selected for various hinting modes."
@@ -2008,8 +2035,8 @@ Main_GUI::create_vertical_layout()
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
-  gui_layout->addWidget(stem_label, row, 0, Qt::AlignRight);
-  gui_layout->addWidget(gray_box, row++, 1);
+  gui_layout->addWidget(stem_label, row, 0, Qt::AlignRight | Qt::AlignBottom);
+  gui_layout->addWidget(gray_box, row++, 1, Qt::AlignBottom);
   gui_layout->addWidget(gdi_box, row++, 1);
   gui_layout->addWidget(dw_box, row++, 1);
 
@@ -2154,16 +2181,10 @@ Main_GUI::create_horizontal_layout()
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
-  gui_layout->addWidget(stem_label, row++, 4);
-
-  QGridLayout* stem_layout = new QGridLayout;
-  stem_layout->setColumnMinimumWidth(0, 20); // XXX urgh, pixels...
-  stem_layout->addWidget(gray_box, 0, 1);
-  stem_layout->addWidget(gdi_box, 1, 1);
-  stem_layout->addWidget(dw_box, 2, 1);
-
-  gui_layout->addLayout(stem_layout, row, 4, 3, 1);
-  row += 3;
+  gui_layout->addWidget(stem_label, row, 3, Qt::AlignRight | Qt::AlignBottom);
+  gui_layout->addWidget(gray_box, row++, 4, Qt::AlignBottom);
+  gui_layout->addWidget(gdi_box, row++, 4);
+  gui_layout->addWidget(dw_box, row++, 4);
 
   // margin
   gui_layout->setColumnMinimumWidth(5, 10); // XXX urgh, pixels...
