@@ -1,6 +1,10 @@
 Version 1.6 (2016-XXX-XX)
 -------------------------
 
+* A new option `--reference' (and `--reference-index' to select a font
+  within a TTC) makes ttfautohint use the blue zones from another font.
+  This helps synchronize the ascenders and descenders of font families.
+
 * Support for Armenian, Cherokee, Ethiopic, Georgian, Gujarati, Gurmukhi,
   Kannada, Malayalam, Sinhala, and Tamil scripts.
 
@@ -17,6 +21,8 @@ Version 1.6 (2016-XXX-XX)
 * ttfautohint (but not ttfautohintGUI) now honours the SOURCE_DATE_EPOCH
   environment variable for reproducible builds.  This corresponds to the new
   library option `epoch`.
+
+* Bug fix: Allow dehinting of fonts that contain a `.ttfautohint' glyph.
 
 
 Version 1.5 (2016-Jan-24)

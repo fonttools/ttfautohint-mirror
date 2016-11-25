@@ -164,9 +164,9 @@ black-and-white renderers, this approach yields poor results because in
 black-and-white you cannot render a fraction of a pixel, so some stems
 become one pixel and some become two.
 
-The TrueType autohinters in [FontForge] and [FontLab Studio], to name two
+The TrueType auto-hinters in [FontForge] and [FontLab Studio], to name two
 well-known font editors, take the 'sharp' approach, while the TrueType
-autohinter in ttfautohint takes the 'fuzzy' approach.
+auto-hinter in ttfautohint takes the 'fuzzy' approach.
 
 In theory, a hybrid approach is possible, using TrueType conditional hints:
 If the rasterizer is black-and-white, 'sharp' rendering could happen, while
@@ -248,6 +248,33 @@ option and its short equivalent, followed by a description.
 
 Background and technical details on the meaning of the various options are
 given [afterwards](#background-and-technical-details).
+
+### Control Instructions File
+
+`--control-file=`*file*, `-m`\ *file*\ \ \ (not in `ttfautohintGUI`)
+:   Specify the name of a control instructions file to manually tweak the
+    hinting process.  This feature can be used to correct glitches in
+    ttfautohint's hinting algorithm.  The syntax used in a control
+    instructions file is given [below](#control-instructions).
+
+### Blue Zone Reference Font
+
+`--reference=`*file*, `-R`\ *file*\ \ \ (not in `ttfautohintGUI`)
+:   Derive all blue zones from the given font, which can either be a normal
+    TrueType font or a TrueType collection – for the latter you can select
+    the face index with a [separate option](#reference-face-index).
+
+    Use this to harmonize font families, avoiding ugly height differences at
+    small sizes.
+
+    ![Fira Regular and Bold (version 4.106), auto-hinted with ttfautohint
+    and displayed at 16px using Internet Explorer\ 11 under Windows\ 8.1.
+    The bold series shown on the right side uses the regular variant as the
+    reference font.](img/fira-16px-ie11-win81.png)
+
+    To make this work the reference font must obviously be similar enough to
+    the font to be hinted; in particular, it must have proper blue zone
+    characters so that ttfautohint can derive blue zones at all.
 
 ### Hint Set Range Minimum, Hint Set Range Maximum
 
@@ -512,6 +539,14 @@ to value 'Version' in the 'ttfautohint info' combo box.
     system to simultaneously display several instances of a font that are
     processed with different ttfautohint parameters.
 
+### Reference Face Index
+
+`--reference-index=`*n*, `-Z`\ *n*\ \ \ (not in `ttfautohintGUI`)
+:   Set the face index for the [blue zone reference
+    font](#blue-zone-reference-font) if the font is a TrueType collection
+    (`.ttc`).  For normal TrueType fonts, the value is always zero (which is
+    also the default).
+
 ### Strong Stem Width and Positioning
 
 `--strong-stem-width=`*string*, `-w`\ *string*
@@ -565,19 +600,12 @@ to value 'Version' in the 'ttfautohint info' combo box.
      algorithm.  Note how the stems are aligned to the pixel
      grid.](img/ff-g-26px-wD.png)
 
-### Control Instructions File
-`--control-file=`*file*, `-m`\ *file* (not in `ttfautohintGUI`)
-:   Specify the name of a control instructions file to manually tweak the
-    hinting process.  This feature can be used to correct glitches in
-    ttfautohint's hinting algorithm.  The syntax used in a control
-    instructions file is given [below](#control-instructions).
-
 ### Miscellaneous
 
-Watch input files (`ttfautohintGUI` only)
+Watch input files\ \ \ (`ttfautohintGUI` only)
 :   If this checkbox is set, automatically regenerate the output file as
-    soon as an input file (either the font or the control instructions file)
-    gets modified.
+    soon as an input file (either the font, the control instructions file,
+    or the reference font) gets modified.
 
     Pressing the 'Run' button starts watching.  If an error occurs, watching
     stops and must be restarted with the 'Run' button.
@@ -598,7 +626,7 @@ Watch input files (`ttfautohintGUI` only)
 :   On the console, print version information on standard output and exit.
     This doesn't work with `ttfautohintGUI` on MS Windows.
 
-`--ttfa-info`, `-T` (not in `ttfautohintGUI`)
+`--ttfa-info`, `-T`\ \ \ (not in `ttfautohintGUI`)
 :   Print [`TTFA` table](#add-ttfa-info-table) of the input font on standard
     output if present, then exit.
 

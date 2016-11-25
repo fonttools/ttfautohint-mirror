@@ -23,18 +23,19 @@ and
 ttfautohint library together with its front-ends using a POSIX compatible
 shell and compiler.
 
+
 Unix-like Platforms
 -------------------
 
 The generic instructions should work just fine.  Since ttfautohint depends
-on [Qt] version 4.x.x, [FreeType] version 2.4.5 or newer, and [HarfBuzz]
-version 0.9.19 or newer, you should install packages for these libraries
-(called 'libqt4', 'libfreetype6'^[The number\ '6' indicates the version of
-the shared library of FreeType, which is not directly related to the source
-code version of FreeType.], and 'libharfbuzz0' or similar) together with its
-development bundles (called 'libqt4-devel', 'freetype2-devel', and
-'harfbuzz-devel' or similar) before running ttfautohint's `configure`
-script.
+on [Qt] version\ 4 or newer, [FreeType] version 2.4.5 or newer, and
+[HarfBuzz] version 0.9.19 or newer, you should install packages for these
+libraries (called 'libqt4' or similar, 'libfreetype6'^[The number\ '6'
+indicates the version of the shared library of FreeType, which is not
+directly related to the source code version of FreeType.], and
+'libharfbuzz0' or similar) together with its development bundles (called
+'libqt4-devel', 'freetype2-devel', and 'harfbuzz-devel' or similar) before
+running ttfautohint's `configure` script.
 
 
 MS Windows
@@ -53,7 +54,9 @@ Mac OS X
 --------
 
 Right now, only a precompiled binary `ttfautohint` is offered; a
-ready-to-run app bundle for the GUI version is not yet available.
+ready-to-run app bundle for the GUI version is not yet available; however,
+ttfautohint is part of [Homebrew](http://brew.sh), making compilation and
+installation very simple.
 
 Detailed instructions to compile both `ttfautohint` and `ttfautohintGUI` can
 be found on [ttfautohint's
