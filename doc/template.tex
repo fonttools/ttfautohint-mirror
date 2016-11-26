@@ -1,7 +1,7 @@
 % For non-ASCII characters, this template only works with luatex or XeTeX. 
 % Arabic, Armenian, Bengali, Cherokee, Devanagari, Ethiopic, Georgian,
-% Gujarati, Gurmukhi, Khmer, Lao, Sinhala, Telugu, and Thai support
-% currently works with XeTeX only.
+% Gujarati, Gurmukhi, Kannada, Khmer, Lao, Malayalam, Myanmar, Sinhala,
+% Tamil, Telugu, and Thai support currently works with XeTeX only.
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$%
                $if(lang)$$lang$,$endif$%
@@ -205,6 +205,14 @@ $endif$
   \setlength{\itemsep}{0pt}%
   \setlength{\parskip}{0pt}}
 
+% avoid float pages as much as possible
+\renewcommand{\topfraction}{.99}
+\renewcommand{\bottomfraction}{.99}
+\setcounter{topnumber}{9}
+\setcounter{bottomnumber}{9}
+\renewcommand{\textfraction}{.1}
+\renewcommand{\floatpagefraction}{.9}
+
 % We want a break after the description label (if there is one).
 \makeatletter
 
@@ -293,7 +301,7 @@ $endif$
 \renewenvironment{quote}{%
   \list{}{\rightmargin\leftmargin}%
   \item\relax
-  \itshape
+  \em
 }{%
   \endlist
 }
