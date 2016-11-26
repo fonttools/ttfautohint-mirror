@@ -1,7 +1,7 @@
-Version 1.6 (2016-XXX-XX)
+Version 1.6 (2016-Nov-27)
 -------------------------
 
-* A new option `--reference' (and `--reference-index' to select a font
+* A new option `--reference` (and `--reference-index` to select a font
   within a TTC) makes ttfautohint use the blue zones from another font.
   This helps synchronize the ascenders and descenders of font families.
 
@@ -22,7 +22,7 @@ Version 1.6 (2016-XXX-XX)
   environment variable for reproducible builds.  This corresponds to the new
   library option `epoch`.
 
-* Bug fix: Allow dehinting of fonts that contain a `.ttfautohint' glyph.
+* Bug fix: Allow dehinting of fonts that contain a `.ttfautohint` glyph.
 
 
 Version 1.5 (2016-Jan-24)

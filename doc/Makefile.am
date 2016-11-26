@@ -39,6 +39,7 @@ DOCIMGPNG = img/ttfautohintGUI.png \
             img/composite-round-xy-to-grid.png \
             img/e-17px-x14.png \
             img/e-17px-x17.png \
+            img/fira-16px-ie11-win81.png \
             img/ff-g-26px.png \
             img/ff-g-26px-wD.png \
             img/Halant-Regular-O-Q.png \
