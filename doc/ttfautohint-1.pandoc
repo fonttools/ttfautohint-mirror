@@ -230,8 +230,18 @@ Calling `ttfautohintGUI`
 ```
 
 `ttfautohintGUI` doesn't send any output to a console; however, it accepts
-the same command line options as `ttfautohint`, setting default values for
-the GUI.
+(almost) the same command line options as `ttfautohint`, setting default
+values for the GUI.
+
+The following command line options are not available in `ttfautohintGUI`;
+however, the corresponding functionality can be selected interactively:
+[`--control-file`](#control-instructions-file),
+[`--reference`](#blue-zone-reference-font),
+[`--reference-index`](#reference-face-index).
+
+Two options, namely `--ttfa-info` and `--debug`, emit information at
+standard output and standard error, respectively; they are thus not
+available in `ttfautohintGUI` at all.
 
 
 Options
@@ -251,15 +261,17 @@ given [afterwards](#background-and-technical-details).
 
 ### Control Instructions File
 
-`--control-file=`*file*, `-m`\ *file*\ \ \ (not in `ttfautohintGUI`)
+`--control-file=`*file*, `-m`\ *file*
 :   Specify the name of a control instructions file to manually tweak the
     hinting process.  This feature can be used to correct glitches in
     ttfautohint's hinting algorithm.  The syntax used in a control
     instructions file is given [below](#control-instructions).
 
+    `ttfautohintGUI` doesn't have this command line option.
+
 ### Blue Zone Reference Font
 
-`--reference=`*file*, `-R`\ *file*\ \ \ (not in `ttfautohintGUI`)
+`--reference=`*file*, `-R`\ *file*
 :   Derive all blue zones from the given font, which can either be a normal
     TrueType font or a TrueType collection – for the latter you can select
     the face index with a [separate option](#reference-face-index).
@@ -275,6 +287,8 @@ given [afterwards](#background-and-technical-details).
     To make this work the reference font must obviously be similar enough to
     the font to be hinted; in particular, it must have proper blue zone
     characters so that ttfautohint can derive blue zones at all.
+
+    `ttfautohintGUI` doesn't have this command line option.
 
 ### Hint Set Range Minimum, Hint Set Range Maximum
 
@@ -541,11 +555,13 @@ to value 'Version' in the 'ttfautohint info' combo box.
 
 ### Reference Face Index
 
-`--reference-index=`*n*, `-Z`\ *n*\ \ \ (not in `ttfautohintGUI`)
+`--reference-index=`*n*, `-Z`\ *n*
 :   Set the face index for the [blue zone reference
     font](#blue-zone-reference-font) if the font is a TrueType collection
     (`.ttc`).  For normal TrueType fonts, the value is always zero (which is
     also the default).
+
+    `ttfautohintGUI` doesn't have this command line option.
 
 ### Strong Stem Width and Positioning
 
@@ -1287,7 +1303,7 @@ ttfautohint it consists of three components: '\.ttfautohint', 'A', and
   .ttfautohint   increase `cvtl_is_subglyph` (now: 1)
   A              do nothing because `cvtl_is_subglyph` > 0
   grave          do nothing because `cvtl_is_subglyph` > 0
-  Agrave         decrease `cvtl_is_subglyph` (now: 0)\
+  Agrave         decrease `cvtl_is_subglyph` (now: 0)
                  apply hints because `cvtl_is_subglyph` == 0
 
 Some technical details (which you might skip): All glyph point indices get

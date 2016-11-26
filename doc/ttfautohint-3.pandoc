@@ -96,3 +96,7 @@ the ttfautohint library.
 Character Ranges
 ================
 
+For the FreeType auto-hinter (and thus ttfautohint), a 'non-base character'
+is something that should not be affected by blue zones, regardless of
+whether this is a spacing or no-spacing glyph.
+
