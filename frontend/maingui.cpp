@@ -1354,8 +1354,7 @@ again:
                  "x-height-snapping-exceptions, fallback-stem-width,"
                  "default-script,"
                  "fallback-script, fallback-scaling,"
-                 "symbol, dehint, TTFA-info,"
-                 "debug",
+                 "symbol, dehint, TTFA-info",
                  input, output, control, reference,
                  info_data.reference_index, info_data.reference_name,
                  info_data.hinting_range_min, info_data.hinting_range_max,
@@ -1374,8 +1373,7 @@ again:
                  snapping_string.constData(), info_data.fallback_stem_width,
                  info_data.default_script,
                  info_data.fallback_script, info_data.fallback_scaling,
-                 info_data.symbol, info_data.dehint, info_data.TTFA_info,
-                 1);
+                 info_data.symbol, info_data.dehint, info_data.TTFA_info);
 
   if (info_box->currentIndex())
   {

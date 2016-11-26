@@ -630,10 +630,9 @@ Watch input files\ \ \ (`ttfautohintGUI` only)
 :   Print [`TTFA` table](#add-ttfa-info-table) of the input font on standard
     output if present, then exit.
 
-`--debug`
+`--debug`\ \ \ (not in `ttfautohintGUI`)
 :   Print *a lot* of debugging information on standard error while
-    processing a font (you should redirect stderr to a file).  This
-    doesn't work with `ttfautohintGUI` on MS Windows.
+    processing a font (you should redirect stderr to a file).
 
     To reduce the amount of debug data it is recommended to restrict the
     hinting process to a single PPEM value, e.g.,
