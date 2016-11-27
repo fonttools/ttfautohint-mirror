@@ -1902,7 +1902,8 @@ Main_GUI::create_layout(bool horizontal_layout)
   watch_box->setToolTip(
     tr("If switched on, <b>TTFautohint</b> automatically re-runs"
        " the hinting process as soon as an input file"
-       " (either the font or the control instructions file) is modified.<br>"
+       " (either the font, the reference font,"
+       " or the control instructions file) is modified.<br>"
        "Pressing the %1 button starts watching.<br>"
        "If an error occurs, watching stops and must be restarted"
        " with the %1 button.")
