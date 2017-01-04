@@ -1,6 +1,6 @@
 // maingui.cpp
 
-// Copyright (C) 2012-2016 by Werner Lemberg.
+// Copyright (C) 2012-2017 by Werner Lemberg.
 //
 // This file is part of the ttfautohint library, and may only be used,
 // modified, and distributed under the terms given in `COPYING'.  By
@@ -233,7 +233,7 @@ Main_GUI::about()
   QMessageBox::about(this,
                      tr("About TTFautohint"),
                      tr("<p>This is <b>TTFautohint</b> version %1<br>"
-                        " Copyright %2 2011-2016<br>"
+                        " Copyright %2 2011-2017<br>"
                         " by Werner Lemberg <tt>&lt;wl@gnu.org&gt;</tt></p>"
                         ""
                         "<p><b>TTFautohint</b> adds new auto-generated hints"

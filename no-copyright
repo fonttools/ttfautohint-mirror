@@ -12,6 +12,7 @@
 .gitmodules
 #
 m4/autotroll.m4
+m4/ax_cxx_compile_stdcxx.m4
 m4/ltlize_lang.m4
 m4/pkg.m4
 FTL.TXT
