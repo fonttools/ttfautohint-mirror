@@ -237,7 +237,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
     TA_Script_UniRange range;
 
 
-    if (script_class->script_uni_ranges->first == 0)
+    if (!script_class->script_uni_ranges->first)
       continue;
 
     /* scan all Unicode points in the range and */
@@ -492,20 +492,14 @@ ta_face_globals_free(TA_FaceGlobals globals)
           writing_system_class->style_metrics_done(globals->metrics[nn]);
 
         free(globals->metrics[nn]);
-        globals->metrics[nn] = NULL;
       }
     }
 
     hb_font_destroy(globals->hb_font);
-    globals->hb_font = NULL;
-
     hb_buffer_destroy(globals->hb_buf);
-    globals->hb_buf = NULL;
 
-    globals->glyph_count = 0;
-    globals->glyph_styles = NULL; /* no need to free this one! */
-    globals->face = NULL;
-
+    /* no need to free `globals->glyph_styles'; */
+    /* it is part of the `globals' array */
     free(globals);
   }
 }
@@ -542,7 +536,7 @@ ta_face_globals_get_metrics(TA_FaceGlobals globals,
     ta_writing_system_classes[style_class->writing_system];
 
   metrics = globals->metrics[style];
-  if (metrics == NULL)
+  if (!metrics)
   {
     /* create the global metrics object if necessary */
     metrics = (TA_StyleMetrics)

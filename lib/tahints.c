@@ -36,7 +36,7 @@ ta_axis_hints_new_segment(TA_AxisHints axis,
 
   if (axis->num_segments < TA_SEGMENTS_EMBEDDED)
   {
-    if (axis->segments == NULL)
+    if (!axis->segments)
     {
       axis->segments = axis->embedded.segments;
       axis->max_segments = TA_SEGMENTS_EMBEDDED;
@@ -110,7 +110,7 @@ ta_axis_hints_new_edge(TA_AxisHints axis,
 
   if (axis->num_edges < TA_EDGES_EMBEDDED)
   {
-    if (axis->edges == NULL)
+    if (!axis->edges)
     {
       axis->edges = axis->embedded.edges;
       axis->max_edges = TA_EDGES_EMBEDDED;
@@ -700,7 +700,7 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
 
   if (new_max <= TA_CONTOURS_EMBEDDED)
   {
-    if (hints->contours == NULL)
+    if (!hints->contours)
     {
       hints->contours = hints->embedded.contours;
       hints->max_contours = TA_CONTOURS_EMBEDDED;
@@ -732,7 +732,7 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
 
   if (new_max <= TA_POINTS_EMBEDDED)
   {
-    if (hints->points == NULL)
+    if (!hints->points)
     {
       hints->points = hints->embedded.points;
       hints->max_points = TA_POINTS_EMBEDDED;
@@ -1170,7 +1170,7 @@ ta_glyph_hints_align_edge_points(TA_GlyphHints hints,
       TA_Point point, first, last;
 
 
-      if (edge == NULL)
+      if (!edge)
         continue;
 
       first = seg->first;
@@ -1196,7 +1196,7 @@ ta_glyph_hints_align_edge_points(TA_GlyphHints hints,
       TA_Point point, first, last;
 
 
-      if (edge == NULL)
+      if (!edge)
         continue;
 
       first = seg->first;

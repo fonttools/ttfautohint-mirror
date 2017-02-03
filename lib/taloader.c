@@ -72,7 +72,7 @@ ta_loader_reset(FONT* font,
 
   TA_GlyphLoader_Rewind(loader->gloader);
 
-  if (loader->globals == NULL)
+  if (!loader->globals)
   {
     error = ta_face_globals_new(face, &loader->globals, font);
     if (!error)
@@ -222,7 +222,8 @@ ta_loader_load_g(TA_Loader loader,
       if (axis->num_edges > 1 && TA_HINTS_DO_ADVANCE(hints))
       {
         old_rsb = loader->pp2.x - edge2->opos;
-        old_lsb = edge1->opos;
+        /* loader->pp1.x is always zero at this point of time */
+        old_lsb = edge1->opos /* - loader->pp1.x */;
         new_lsb = edge1->pos;
 
         /* remember unhinted values to later account */

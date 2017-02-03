@@ -979,7 +979,7 @@ ta_latin_metrics_check_digits(TA_LatinMetrics metrics,
                               FT_Face face)
 {
   FT_Bool started = 0, same_width = 1;
-  FT_Fixed advance, old_advance = 0;
+  FT_Fixed advance = 0, old_advance = 0;
 
   void* shaper_buf;
 
@@ -1166,7 +1166,7 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
               "ta_latin_metrics_scale_dim:"
               " x height alignment (style `%s'):\n"
               "                           "
-              " vertical scaling changed from %.4f to %.4f (by %d%%)\n"
+              " vertical scaling changed from %.5f to %.5f (by %d%%)\n"
               "\n",
               ta_style_names[metrics->root.style_class->style],
               scale / 65536.0,
@@ -2271,7 +2271,7 @@ ta_latin_hints_compute_edges(TA_GlyphHints hints,
                              && seg->serif->edge
                              && seg->serif->edge != edge);
 
-        if ((seg->link && seg->link->edge != NULL)
+        if ((seg->link && seg->link->edge)
             || is_serif)
         {
           TA_Edge edge2;
