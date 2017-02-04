@@ -15,6 +15,11 @@
 -->
 
 
+---
+header-includes:
+  - \hyphenation{ttf-auto-hint}
+---
+
 
 Introduction
 ============
