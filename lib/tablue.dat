@@ -245,8 +245,10 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "H E Z L O C U S"
   TA_BLUE_STRING_LATIN_SMALL_F_TOP
     "f i j k d b h"
-  TA_BLUE_STRING_LATIN_SMALL
-    "x z r o e s c"
+  TA_BLUE_STRING_LATIN_SMALL_TOP
+    "u v x z o e s c"
+  TA_BLUE_STRING_LATIN_SMALL_BOTTOM
+    "n r x z o e s c"
   TA_BLUE_STRING_LATIN_SMALL_DESCENDER
     "p q g j y"
 
@@ -558,9 +560,9 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_LATIN_CAPITAL_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
     { TA_BLUE_STRING_LATIN_CAPITAL_BOTTOM,  0                                 }
     { TA_BLUE_STRING_LATIN_SMALL_F_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
-    { TA_BLUE_STRING_LATIN_SMALL,           TA_BLUE_PROPERTY_LATIN_TOP      |
+    { TA_BLUE_STRING_LATIN_SMALL_TOP,       TA_BLUE_PROPERTY_LATIN_TOP      |
                                             TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
-    { TA_BLUE_STRING_LATIN_SMALL,           0                                 }
+    { TA_BLUE_STRING_LATIN_SMALL_BOTTOM,    0                                 }
     { TA_BLUE_STRING_LATIN_SMALL_DESCENDER, 0                                 }
     { TA_BLUE_STRING_MAX,                   0                                 }
 
