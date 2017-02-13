@@ -27,8 +27,7 @@ void
 ta_sort_pos(FT_UInt count,
             FT_Pos* table)
 {
-  FT_UInt i;
-  FT_UInt j;
+  FT_UInt i, j;
   FT_Pos swap;
 
 

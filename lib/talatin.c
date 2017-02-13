@@ -262,6 +262,46 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
 }
 
 
+void
+ta_latin_sort_blue(FT_UInt count,
+                   TA_LatinBlue* table)
+{
+  FT_UInt i;
+  FT_UInt j;
+  TA_LatinBlue swap;
+
+
+  /* we sort from bottom to top */
+  for (i = 1; i < count; i++)
+  {
+    for (j = i; j > 0; j--)
+    {
+      FT_Pos a, b;
+
+
+      if (table[j - 1]->flags & (TA_LATIN_BLUE_TOP
+                                 | TA_LATIN_BLUE_SUB_TOP))
+        a = table[j - 1]->ref.org;
+      else
+        a = table[j - 1]->shoot.org;
+
+      if (table[j]->flags & (TA_LATIN_BLUE_TOP
+                             | TA_LATIN_BLUE_SUB_TOP))
+        b = table[j]->ref.org;
+      else
+        b = table[j]->shoot.org;
+
+      if (b >= a)
+        break;
+
+      swap = table[j];
+      table[j] = table[j - 1];
+      table[j - 1] = swap;
+    }
+  }
+}
+
+
 /* find all blue zones; flat segments give the reference points, */
 /* round segments the overshoot positions */
 
@@ -963,6 +1003,60 @@ ta_latin_metrics_init_blues(TA_LatinMetrics metrics,
       blue->flags =
       blue->ref.org =
       blue->shoot.org = 0;
+    }
+  }
+
+  /* we finally check whether blue zones are ordered; */
+  /* `ref' and `shoot' values of two blue zones must not overlap */
+  if (axis->blue_count)
+  {
+    FT_UInt i;
+    TA_LatinBlue blue_sorted[TA_BLUE_STRINGSET_MAX_LEN + 2];
+
+
+    for (i = 0; i < axis->blue_count; i++)
+      blue_sorted[i] = &axis->blues[i];
+
+    /* sort bottoms of blue zones... */
+    ta_latin_sort_blue(axis->blue_count, blue_sorted);
+
+    /* ...and adjust top values if necessary */
+    for (i = 0; i < axis->blue_count - 1; i++)
+    {
+      FT_Pos* a;
+      FT_Pos* b;
+
+#ifdef TA_DEBUG
+      FT_Bool a_is_top = 0;
+#endif
+
+
+      if (blue_sorted[i]->flags & (TA_LATIN_BLUE_TOP
+                                   | TA_LATIN_BLUE_SUB_TOP))
+      {
+        a = &blue_sorted[i]->shoot.org;
+#ifdef TA_DEBUG
+        a_is_top = 1;
+#endif
+      }
+      else
+        a = &blue_sorted[i]->ref.org;
+
+      if (blue_sorted[i + 1]->flags & (TA_LATIN_BLUE_TOP
+                                       | TA_LATIN_BLUE_SUB_TOP))
+        b = &blue_sorted[i + 1]->shoot.org;
+      else
+        b = &blue_sorted[i + 1]->ref.org;
+
+      if (*a > *b)
+      {
+        *a = *b;
+        TA_LOG_GLOBAL(("blue zone overlap:"
+                       " adjusting %s %d to %ld\n",
+                       a_is_top ? "overshoot" : "reference",
+                       blue_sorted[i] - axis->blues,
+                       *a));
+      }
     }
   }
 
