@@ -70,6 +70,11 @@ TA_font_dump_parameters(FONT* font,
 
   s = sdscat(s, "\n");
 
+  DUMPSTR("ttfautohint version",
+          VERSION);
+
+  s = sdscat(s, "\n");
+
   if (font->dehint)
   {
     if (format)
