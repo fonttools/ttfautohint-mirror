@@ -124,7 +124,7 @@ ta_loader_load_g(TA_Loader loader,
   TA_GlyphHints hints = &loader->hints;
   FT_GlyphSlot slot = face->glyph;
 #if 0
-  FT_Slot_Internal internal = slot->internal;
+  FT_Slot_Internal slot_internal = slot->internal;
 #endif
   FT_Int32 flags;
 
@@ -135,14 +135,14 @@ ta_loader_load_g(TA_Loader loader,
     goto Exit;
 
 #if 0
-  loader->transformed = internal->glyph_transformed;
+  loader->transformed = slot_internal->glyph_transformed;
   if (loader->transformed)
   {
     FT_Matrix inverse;
 
 
-    loader->trans_matrix = internal->glyph_matrix;
-    loader->trans_delta = internal->glyph_delta;
+    loader->trans_matrix = slot_internal->glyph_matrix;
+    loader->trans_delta = slot_internal->glyph_delta;
 
     inverse = loader->trans_matrix;
     if (!FT_Matrix_Invert(&inverse))
@@ -257,21 +257,23 @@ ta_loader_load_g(TA_Loader loader,
         FT_Pos pp2x = loader->pp2.x;
 
 
-        loader->pp1.x = TA_PIX_ROUND(pp1x);
-        loader->pp2.x = TA_PIX_ROUND(pp2x);
+        loader->pp1.x = TA_PIX_ROUND(pp1x + hints->xmin_delta);
+        loader->pp2.x = TA_PIX_ROUND(pp2x + hints->xmax_delta);
 
         slot->lsb_delta = loader->pp1.x - pp1x;
         slot->rsb_delta = loader->pp2.x - pp2x;
       }
     }
+    /* `light' mode uses integer advance widths */
+    /* but sets `lsb_delta' and `rsb_delta' */
     else
     {
       FT_Pos pp1x = loader->pp1.x;
       FT_Pos pp2x = loader->pp2.x;
 
 
-      loader->pp1.x = TA_PIX_ROUND(pp1x + hints->xmin_delta);
-      loader->pp2.x = TA_PIX_ROUND(pp2x + hints->xmax_delta);
+      loader->pp1.x = TA_PIX_ROUND(pp1x);
+      loader->pp2.x = TA_PIX_ROUND(pp2x);
 
       slot->lsb_delta = loader->pp1.x - pp1x;
       slot->rsb_delta = loader->pp2.x - pp2x;
@@ -515,9 +517,9 @@ ta_loader_load_glyph(FONT* font,
 
   scaler.face = face;
   scaler.x_scale = size->metrics.x_scale;
-  scaler.x_delta = 0; /* XXX: TODO: add support for sub-pixel hinting */
+  scaler.x_delta = 0;
   scaler.y_scale = size->metrics.y_scale;
-  scaler.y_delta = 0; /* XXX: TODO: add support for sub-pixel hinting */
+  scaler.y_delta = 0;
 
   scaler.render_mode = FT_LOAD_TARGET_MODE(load_flags);
   scaler.flags = 0; /* XXX: fix this */

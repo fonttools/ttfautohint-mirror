@@ -262,7 +262,7 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
 }
 
 
-void
+static void
 ta_latin_sort_blue(FT_UInt count,
                    TA_LatinBlue* table)
 {
@@ -2645,18 +2645,18 @@ ta_latin_hints_init(TA_GlyphHints hints,
       || mode == FT_RENDER_MODE_LCD_V)
     other_flags |= TA_LATIN_HINTS_VERT_SNAP;
 
-  /* we adjust stems to full pixels only if we don't use the `light' mode */
-  if (mode != FT_RENDER_MODE_LIGHT)
+  /* we adjust stems to full pixels unless in `light' or `lcd' mode */
+  if (mode != FT_RENDER_MODE_LIGHT && mode != FT_RENDER_MODE_LCD)
     other_flags |= TA_LATIN_HINTS_STEM_ADJUST;
 
   if (mode == FT_RENDER_MODE_MONO)
     other_flags |= TA_LATIN_HINTS_MONO;
 
-  /* in `light' hinting mode we disable horizontal hinting completely; */
+  /* in `light' or `lcd' mode we disable horizontal hinting completely; */
   /* we also do it if the face is italic -- */
   /* however, if warping is enabled (which only works in `light' hinting */
   /* mode), advance widths get adjusted, too */
-  if (mode == FT_RENDER_MODE_LIGHT
+  if (mode == FT_RENDER_MODE_LIGHT || mode == FT_RENDER_MODE_LCD
       || (face->style_flags & FT_STYLE_FLAG_ITALIC) != 0)
     scaler_flags |= TA_SCALER_FLAG_NO_HORIZONTAL;
 
@@ -3617,13 +3617,7 @@ ta_latin_hints_apply(FT_UInt glyph_index,
     goto Exit;
 
   /* analyze glyph outline */
-#ifdef TA_CONFIG_OPTION_USE_WARPER
-  if ((metrics->root.scaler.render_mode == FT_RENDER_MODE_LIGHT
-       && TA_HINTS_DO_WARP(hints))
-      || TA_HINTS_DO_HORIZONTAL(hints))
-#else
   if (TA_HINTS_DO_HORIZONTAL(hints))
-#endif
   {
     axis = &metrics->axis[TA_DIMENSION_HORZ];
     error = ta_latin_hints_detect_features(hints,
@@ -3654,7 +3648,7 @@ ta_latin_hints_apply(FT_UInt glyph_index,
   {
 #ifdef TA_CONFIG_OPTION_USE_WARPER
     if (dim == TA_DIMENSION_HORZ
-        && metrics->root.scaler.render_mode == FT_RENDER_MODE_LIGHT
+        && metrics->root.scaler.render_mode == FT_RENDER_MODE_NORMAL
         && TA_HINTS_DO_WARP(hints))
     {
       TA_WarperRec warper;
