@@ -1576,8 +1576,8 @@ The process itself isn't very complicated; it is demonstrated best by
 example.  The following commits in ttfautohint add Ethiopian and Armenian,
 respectively.
 
-| [http://repo.or.cz/ttfautohint.git/commitdiff/d14c7c0758539921b58f2854777175fde1267fb1](http://repo.or.cz/ttfautohint.git/commitdiff/d14c7c0758539921b58f2854777175fde1267fb1)
-| [http://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9635b8b0d3b910310b69f4a57fe055fd0](http://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9635b8b0d3b910310b69f4a57fe055fd0)
+| [http://repo.or.cz/ttfautohint.git/commitdiff/d14c7c07](http://repo.or.cz/ttfautohint.git/commitdiff/d14c7c07)
+| [http://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9](http://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9)
 
 It shows that you have to do the following steps.
 
