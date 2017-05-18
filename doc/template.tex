@@ -191,6 +191,12 @@ $endif$
 \def\label@hyperref[#1]#2{%
   #2 (\autoref{#1})}
 
+% pandoc >= 1.15.2 uses \hyperlink instead.
+
+\def\hyperlink#1#2{%
+  #2 (\autoref{#1})}
+
+
 \makeatother
 
 $if(subscript)$
