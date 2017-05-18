@@ -887,17 +887,6 @@ const TA_Script_UniRangeRec ta_thai_nonbase_uniranges[] =
 };
 
 
-const TA_Script_UniRangeRec ta_none_uniranges[] =
-{
-  TA_UNIRANGE_REC(0, 0)
-};
-
-const TA_Script_UniRangeRec ta_none_nonbase_uniranges[] =
-{
-  TA_UNIRANGE_REC(0, 0)
-};
-
-
 const TA_Script_UniRangeRec ta_tfng_uniranges[] =
 {
   TA_UNIRANGE_REC(0x2D30, 0x2D7F), /* Tifinagh */
@@ -917,6 +906,17 @@ const TA_Script_UniRangeRec ta_vaii_uniranges[] =
 };
 
 const TA_Script_UniRangeRec ta_vaii_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0, 0)
+};
+
+
+const TA_Script_UniRangeRec ta_none_uniranges[] =
+{
+  TA_UNIRANGE_REC(0, 0)
+};
+
+const TA_Script_UniRangeRec ta_none_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0, 0)
 };
