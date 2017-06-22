@@ -598,6 +598,11 @@ to value 'Version' in the 'ttfautohint info' combo box.
     what it's worth, the rasterizers version\ 36 and version\ 38 in
     Microsoft Windows are two completely different rendering engines.
 
+    [Note that the GDI framework on Windows\ 10 no longer uses B/W rendering
+     along the vertical axis; we consequently treat it as DW ClearType also.
+     We test this by looking at bit\ 11 of the GETINFO instruction, which
+     was introduced in rasterizer version\ 40.]
+
     The command line option expects *string* to contain up to three letters
     with possible values '`g`' for grayscale, '`G`' for GDI ClearType, and
     '`D`' for DW ClearType.  If a letter is found in *string*, the strong

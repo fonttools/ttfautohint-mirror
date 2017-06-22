@@ -225,27 +225,52 @@ static const unsigned char PREP(store_vwidth_data_e) [] =
 
 static const unsigned char PREP(set_smooth_or_strong_a) [] =
 {
-
   /*
-   * There are two ClearType flavours available on Windows: The older GDI
-   * ClearType, introduced in 2000, and the recent DW ClearType, introduced
-   * in 2008.  The main difference is that the older incarnation behaves
-   * like a B/W renderer along the y axis, while the newer version does
-   * vertical smoothing also.
+   * ttfautohint provides two different functions for stem width computation
+   * and blue zone rounding: `smooth' and `strong'.  The former tries to
+   * align stem widths and blue zones to some discrete, possibly non-integer
+   * values.  The latter snaps everything to integer pixels as much as
+   * possible.
    *
-   * The only possibility to differentiate between GDI and DW ClearType is
-   * testing bit 10 in the GETINFO instruction (with return value in bit 17;
-   * this works for TrueType version >= 38), checking whether sub-pixel
-   * positioning is available.
+   * We test ClearType capabilities to find out which of the two functions
+   * should be used.  Due to the various TrueType interpreter versions this
+   * is quite convoluted.
    *
-   * If GDI ClearType is active, we use different functions for stem width
-   * computation and blue zone rounding that snap to integer pixels as much
-   * as possible.
+   *   interpreter version  action
+   *   ---------------------------------------------------------------------
+   *          <= 35         this version predates ClearType -> smooth
+   *
+   *          36, 37        use bit 6 in the GETINFO instruction to check
+   *                        whether ClearType is enabled; if set, we have
+   *                        (old) GDI ClearType -> strong, otherwise
+   *                        grayscale rendering -> smooth
+   *
+   *          38, 39        if ClearType is enabled, use bit 10 in the
+   *                        GETINFO instruction to check whether ClearType
+   *                        sub-pixel positioning is available; if set, we
+   *                        have DW ClearType -> smooth, else GDI ClearType
+   *                        -> strong
+   *
+   *          >= 40         if ClearType is enabled, use bit 11 in the
+   *                        GETINFO instruction to check whether ClearType
+   *                        symmetric rendering is available; if not set,
+   *                        the engine behaves like a B/W renderer along the
+   *                        y axis -> strong, else it does vertical
+   *                        smoothing -> smooth
+   *
+   * ClearType on Windows was introduced in 2000 for the GDI framework (no
+   * symmetric rendering, no sub-pixel positioning).  In 2008, Windows got
+   * the DirectWrite (DW) framework which uses symmetric rendering and
+   * sub-pixel positioning.
+   *
+   * Note that in 2017 GDI on Windows 10 has changed rendering parameters:
+   * it now uses symmetric rendering but no sub-pixel positioning.
+   * Consequently, we treat this as `DW ClearType' also.
    */
 
   /* set default value */
   PUSHB_2,
-    cvtl_use_strong_functions,
+    cvtl_use_strong_functions, /* target: grayscale rendering */
 
 };
 
@@ -262,8 +287,7 @@ static const unsigned char PREP(set_smooth_or_strong_b) [] =
     0x01,
   GETINFO,
 
-  /* `GDI ClearType': */
-  /* version >= 36 and version < 38, ClearType enabled */
+  /* `(old) GDI ClearType': version == 36 || version == 37 */
   LTEQ,
   IF,
     /* check whether ClearType is enabled (bit 6) */
@@ -272,7 +296,7 @@ static const unsigned char PREP(set_smooth_or_strong_b) [] =
     GETINFO,
     IF,
       PUSHB_2,
-        cvtl_use_strong_functions,
+        cvtl_use_strong_functions, /* target: GDI ClearType */
 };
 
 /*      %c, either 0 or 100 */
@@ -284,31 +308,21 @@ static const unsigned char PREP(set_smooth_or_strong_c) [] =
 
       /* get rasterizer version (bit 0) */
       PUSHB_2,
-        38,
+        40,
         0x01,
       GETINFO,
 
-      /* `DW ClearType': */
-      /* version >= 38, sub-pixel positioning is enabled */
+      /* `DW ClearType': version >= 40 */
       LTEQ,
       IF,
-        /* check whether sub-pixel positioning is enabled (bit 10) -- */
-        /* due to a bug in FreeType 2.5.0 and earlier, */
-        /* bit 6 must be set also to get the correct information, */
-        /* so we test that both return values (in bits 13 and 17) are set */
-        PUSHW_3,
-          0x08, /* bits 13 and 17 shifted by 6 bits */
-          0x80,
-          0x00, /* we do `MUL' with value 1, */
-          0x01, /* which is essentially a division by 64 */
-          0x04, /* bits 6 and 10 */
-          0x40,
+        /* check whether symmetric rendering is enabled (bit 11) */
+        PUSHW_1,
+          0x08,
+          0x00,
         GETINFO,
-        MUL,
-        EQ,
         IF,
           PUSHB_2,
-            cvtl_use_strong_functions,
+            cvtl_use_strong_functions, /* target: DirectWrite ClearType */
 
 };
 
@@ -318,6 +332,45 @@ static const unsigned char PREP(set_smooth_or_strong_d) [] =
 {
 
           WCVTP,
+        EIF,
+
+      ELSE,
+        /* get rasterizer version (bit 0) */
+        PUSHB_2,
+          38,
+          0x01,
+        GETINFO,
+
+        /* `DW ClearType': version == 38 || version == 39 */
+        LTEQ,
+        IF,
+          /* check whether sub-pixel positioning is enabled (bit 10) -- */
+          /* due to a bug in FreeType 2.5.0 and earlier, */
+          /* bit 6 must be set also to get the correct information, */
+          /* so we test that both return values (in bits 13 and 17) are set */
+          PUSHW_3,
+            0x08, /* bits 13 and 17 right-shifted by 6 bits */
+            0x80,
+            0x00, /* we do `MUL' with value 1, */
+            0x01, /* which is essentially a division by 64 */
+            0x04, /* bits 6 and 10 */
+            0x40,
+          GETINFO,
+          MUL,
+          EQ,
+          IF,
+            PUSHB_2,
+              cvtl_use_strong_functions, /* target: DirectWrite ClearType */
+
+};
+
+/*            %c, either 0 or 100 */
+
+static const unsigned char PREP(set_smooth_or_strong_e) [] =
+{
+
+            WCVTP,
+          EIF,
         EIF,
       EIF,
     EIF,
@@ -653,7 +706,9 @@ TA_table_build_prep(FT_Byte** prep,
                  + 1
                  + sizeof (PREP(set_smooth_or_strong_c))
                  + 1
-                 + sizeof (PREP(set_smooth_or_strong_d));
+                 + sizeof (PREP(set_smooth_or_strong_d))
+                 + 1
+                 + sizeof (PREP(set_smooth_or_strong_e));
   buf_new_len += (num_used_styles > 3 ? 2 * num_used_styles + 3
                                       : 2 * num_used_styles + 2)
                  + sizeof (PREP(round_blues));
@@ -818,6 +873,8 @@ TA_table_build_prep(FT_Byte** prep,
   COPY_PREP(set_smooth_or_strong_c);
   *(bufp++) = font->dw_cleartype_strong_stem_width ? 100 : 0;
   COPY_PREP(set_smooth_or_strong_d);
+  *(bufp++) = font->dw_cleartype_strong_stem_width ? 100 : 0;
+  COPY_PREP(set_smooth_or_strong_e);
 
   if (num_used_styles > 3)
   {
