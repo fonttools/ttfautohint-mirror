@@ -1247,8 +1247,8 @@ TA_font_build_subglyph_shifter(FONT* font,
 
   TA_GlyphLoader gloader = font->loader->gloader;
 
-  TA_SubGlyph subglyphs = gloader->base.subglyphs;
-  TA_SubGlyph subglyph_limit = subglyphs + gloader->base.num_subglyphs;
+  TA_SubGlyph subglyphs = gloader->current.subglyphs;
+  TA_SubGlyph subglyph_limit = subglyphs + gloader->current.num_subglyphs;
   TA_SubGlyph subglyph;
 
   FT_Int curr_contour = 0;
@@ -2720,7 +2720,8 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     return error;
 
   /* do nothing if we have an empty glyph */
-  if (!face->glyph->outline.n_contours)
+  if (!(font->loader->gloader->current.num_subglyphs
+        || face->glyph->outline.n_contours))
     return FT_Err_Ok;
 
   hints = &font->loader->hints;
@@ -2750,7 +2751,7 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
     return FT_Err_Out_Of_Memory;
 
   /* handle composite glyph */
-  if (font->loader->gloader->base.num_subglyphs)
+  if (font->loader->gloader->current.num_subglyphs)
   {
     bufp = TA_font_build_subglyph_shifter(font, ins_buf);
     if (!bufp)

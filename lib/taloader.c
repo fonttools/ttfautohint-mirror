@@ -302,6 +302,11 @@ ta_loader_load_g(TA_Loader loader,
              num_subglyphs * sizeof (TA_SubGlyphRec));
 
       gloader->current.num_subglyphs = num_subglyphs;
+
+      /* stop processing if list of composites is requested */
+      if ( load_flags & FT_LOAD_NO_RECURSE )
+        goto Exit;
+
       num_base_subgs = gloader->base.num_subglyphs;
 
       /* now read each subglyph independently */
