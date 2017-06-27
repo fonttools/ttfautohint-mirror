@@ -240,12 +240,12 @@ static const unsigned char PREP(set_smooth_or_strong_a) [] =
    *   ---------------------------------------------------------------------
    *          <= 35         this version predates ClearType -> smooth
    *
-   *          36, 37        use bit 6 in the GETINFO instruction to check
+   *          36-38         use bit 6 in the GETINFO instruction to check
    *                        whether ClearType is enabled; if set, we have
    *                        (old) GDI ClearType -> strong, otherwise
    *                        grayscale rendering -> smooth
    *
-   *          38, 39        if ClearType is enabled, use bit 10 in the
+   *          39            if ClearType is enabled, use bit 10 in the
    *                        GETINFO instruction to check whether ClearType
    *                        sub-pixel positioning is available; if set, we
    *                        have DW ClearType -> smooth, else GDI ClearType
@@ -287,7 +287,7 @@ static const unsigned char PREP(set_smooth_or_strong_b) [] =
     0x01,
   GETINFO,
 
-  /* `(old) GDI ClearType': version == 36 || version == 37 */
+  /* `(old) GDI ClearType': version >= 36 || version <= 38 */
   LTEQ,
   IF,
     /* check whether ClearType is enabled (bit 6) */
@@ -337,11 +337,11 @@ static const unsigned char PREP(set_smooth_or_strong_d) [] =
       ELSE,
         /* get rasterizer version (bit 0) */
         PUSHB_2,
-          38,
+          39,
           0x01,
         GETINFO,
 
-        /* `DW ClearType': version == 38 || version == 39 */
+        /* `DW ClearType': version == 39 */
         LTEQ,
         IF,
           /* check whether sub-pixel positioning is enabled (bit 10) -- */

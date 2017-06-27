@@ -580,17 +580,17 @@ to value 'Version' in the 'ttfautohint info' combo box.
 
     These two routines are mapped onto three possible rendering targets:
 
-    - grayscale rendering, with or without optimization for subpixel
-      positioning (e.g. Android)
+    - Grayscale rendering, with or without optimization for subpixel
+      positioning (e.g., Android).
 
     - 'GDI ClearType' rendering: the rasterizer version, as returned by the
-      GETINFO bytecode instruction, is in the range 36\ <= version <\ 38 and
-      ClearType is enabled (e.g. Windows XP)
+      GETINFO bytecode instruction, is in the range 36\ <= version <=\ 38
+      and ClearType is enabled (e.g., Windows XP).
 
     - 'DirectWrite ClearType' rendering: the rasterizer version, as returned
-      by the GETINFO bytecode instruction, is >=\ 38, ClearType is enabled,
-      and subpixel positioning is enabled also (e.g. Internet Explorer\ 9
-      running on Windows\ 7)
+      by the GETINFO bytecode instruction, is >=\ 39, ClearType is enabled,
+      and subpixel positioning is enabled also (e.g., Internet Explorer\ 9
+      running on Windows\ 7).
 
     GDI ClearType uses a mode similar to B/W rendering along the vertical
     axis, while DW ClearType applies grayscale rendering.  Additionally,
