@@ -1321,19 +1321,7 @@ TA_sfnt_adjust_coverage(SFNT* sfnt,
     FT_UShort* gstyles = master_globals->glyph_styles;
 #ifdef TA_DEBUG
     FT_UInt count;
-#endif
 
-
-    for (nn = 0; nn < master_globals->glyph_count; nn++)
-    {
-      if ((gstyles[nn] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
-      {
-        gstyles[nn] &= ~TA_STYLE_MASK;
-        gstyles[nn] |= master_globals->font->fallback_style;
-      }
-    }
-
-#ifdef TA_DEBUG
 
     if (sfnt->face->num_faces > 1)
       TA_LOG_GLOBAL(("\n"
@@ -1350,8 +1338,7 @@ TA_sfnt_adjust_coverage(SFNT* sfnt,
 
     for (nn = 0; nn < master_globals->glyph_count; nn++)
     {
-      if ((gstyles[nn] & TA_STYLE_MASK)
-          == master_globals->font->fallback_style)
+      if ((gstyles[nn] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
       {
         if (!(count % 10))
           TA_LOG_GLOBAL((" "));
@@ -1370,6 +1357,15 @@ TA_sfnt_adjust_coverage(SFNT* sfnt,
       TA_LOG_GLOBAL(("\n"));
 
 #endif /* TA_DEBUG */
+
+    for (nn = 0; nn < master_globals->glyph_count; nn++)
+    {
+      if ((gstyles[nn] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
+      {
+        gstyles[nn] &= ~TA_STYLE_MASK;
+        gstyles[nn] |= master_globals->font->fallback_style;
+      }
+    }
 
     data->adjusted = 1;
   }
