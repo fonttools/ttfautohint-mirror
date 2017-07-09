@@ -129,7 +129,10 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     ta_shaper_buf_destroy(face, shaper_buf);
 
     if (!glyph_index)
+    {
+      TA_LOG_GLOBAL(("no standard character\n"));
       goto Exit;
+    }
 
     TA_LOG_GLOBAL(("standard character: U+%04lX (glyph index %d)\n",
                    ch, glyph_index));
@@ -222,9 +225,18 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
         /* if we have no standard characters, */
         /* use `fallback-stem-width', if available, */
         /* or a default width (value 50 is heuristic) */
-        stdw = (dim == TA_DIMENSION_VERT && font->fallback_stem_width)
-                 ? (FT_Pos)font->fallback_stem_width
-                 : TA_LATIN_CONSTANT(metrics, 50);
+        if (dim == TA_DIMENSION_VERT && font->fallback_stem_width)
+        {
+          stdw = (FT_Pos)font->fallback_stem_width;
+          TA_LOG_GLOBAL(("using horizontal fallback stem width\n"));
+        }
+        else
+        {
+          stdw = TA_LATIN_CONSTANT(metrics, 50);
+          TA_LOG_GLOBAL(("using a default %s stem width\n",
+                         dim == TA_DIMENSION_VERT ? "horizontal"
+                                                  : "vertical"));
+        }
 
         axis->width_count++;
         axis->widths[0].org = stdw;
