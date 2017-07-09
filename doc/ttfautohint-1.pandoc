@@ -738,6 +738,10 @@ hinting.
       + Compute standard horizontal stem width of the font.  The value
         is normally taken from glyphs that resemble letter 'o'.
 
+        If, for a given script, there is no glyph for at least one standard
+        character in the input font, a fallback stem width gets used.  See
+        also option [`--fallback-stem-width`](#fallback-stem-width).
+
       + Compute blue zones, see [below](#blue-zones).
 
     If the stem widths of single glyphs differ by a large value, or if

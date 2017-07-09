@@ -81,7 +81,7 @@ typedef struct TA_LatinAxisRec_
   FT_Bool extra_light; /* is standard width very light? */
 
   /* ignored for horizontal metrics */
-  FT_UInt blue_count;
+  FT_UInt blue_count; /* does not contain artificial blue zones */
   /* we add two artificial blue zones for usWinAscent and usWinDescent */
   TA_LatinBlueRec blues[TA_BLUE_STRINGSET_MAX + 2];
 

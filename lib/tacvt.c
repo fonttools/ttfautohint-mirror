@@ -23,8 +23,9 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
 {
   FT_Error error;
   FT_Face face = sfnt->face;
-  FT_ULong glyph_index;
   FT_Int32 load_flags;
+
+  TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
 
 
   error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
@@ -40,110 +41,15 @@ TA_sfnt_compute_global_hints(SFNT* sfnt,
       return TA_Err_Missing_Unicode_CMap;
   }
 
-  {
-    TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
-    FT_UShort* gstyles = globals->glyph_styles;
+  if (!globals->sample_glyphs[style_idx])
+    return TA_Err_Missing_Glyph;
 
-    TA_StyleClass style_class = ta_style_classes[style_idx];
-    TA_ScriptClass script_class = ta_script_classes[style_class->script];
-
-    TA_StyleMetricsRec dummy;
-
-    void* shaper_buf;
-    const char* p;
-
-
-    /* we don't have a `TA_Loader' object yet */
-    dummy.globals = globals;
-    dummy.style_class = style_class;
-
-    p = script_class->standard_charstring;
-    shaper_buf = ta_shaper_buf_create(face);
-
-    /*
-     * We check more than a single standard character to catch features
-     * like `c2sc' (small caps from caps) that don't contain lowercase
-     * letters by definition, or other features that mainly operate on
-     * numerals.
-     */
-
-    glyph_index = 0;
-    while (*p)
-    {
-      unsigned int num_idx;
-
-
-      while (*p == ' ')
-        p++;
-
-      /* reject input that maps to more than a single glyph */
-      p = ta_shaper_get_cluster(p, &dummy, shaper_buf, &num_idx);
-      if (num_idx > 1)
-        continue;
-
-      /* otherwise exit loop if we have a result */
-      glyph_index = ta_shaper_get_elem(&dummy,
-                                       shaper_buf,
-                                       0,
-                                       NULL,
-                                       NULL);
-      if (glyph_index)
-        break;
-    }
-
-    ta_shaper_buf_destroy(face, shaper_buf);
-
-    if (!glyph_index)
-    {
-      if (font->fallback_style == style_idx)
-      {
-        /* Having TA_STYLE_NONE_DFLT as the fallback script means */
-        /* hinting without default characters */
-        /* (and without script-specific blue zones), so we proceed */
-        if (style_idx == TA_STYLE_NONE_DFLT)
-          goto Symbol;
-
-        /* in case of a symbol font, we also proceed */
-        if (font->symbol)
-          goto Symbol;
-      }
-
-      /* no standard characters to set up this style */
-      return TA_Err_Missing_Glyph;
-    }
-
-    /*
-     * We now know that HarfBuzz can access the standard character in the
-     * current OpenType feature.  However, this doesn't guarantee that there
-     * actually *is* a standard character in the corresponding coverage,
-     * since glyphs shifted with data from the GPOS table are ignored in the
-     * coverage (but neverless used to derive stem widths).  For this
-     * reason, search an arbitrary character from the current coverage to
-     * trigger the coverage's metrics computation.
-     */
-    if ((gstyles[glyph_index] & TA_STYLE_MASK) != style_idx)
-    {
-      FT_ULong i;
-
-
-      for (i = 0; i < (FT_ULong)globals->glyph_count; i++)
-      {
-        if ((gstyles[i] & TA_STYLE_MASK) == style_idx)
-          break;
-      }
-
-      if (i == (FT_ULong)globals->glyph_count)
-        return TA_Err_Missing_Glyph;
-
-      glyph_index = i;
-    }
-  }
-
-Symbol:
+  /* trigger computation of the current coverage's metrics */
   load_flags = 1 << 29; /* vertical hinting only */
-  error = ta_loader_load_glyph(font, face, (FT_UInt)glyph_index, load_flags);
-
-  return error;
+  return ta_loader_load_glyph(font,
+                              face,
+                              globals->sample_glyphs[style_idx],
+                              load_flags);
 }
 
 
@@ -186,15 +92,27 @@ TA_table_build_cvt(FT_Byte** cvt,
     error = TA_sfnt_compute_global_hints(sfnt, font, (TA_Style)i);
     if (error == TA_Err_Missing_Glyph)
     {
+      data->style_ids[i] = 0xFFFFU;
+      continue;
+    }
+    else if (error)
+      return error;
+
+    /* XXX: generalize this to handle other metrics also */
+    haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
+    vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
+
+    if (!vaxis->blue_count)
+    {
       TA_FaceGlobals globals = (TA_FaceGlobals)sfnt->face->autohint.data;
       FT_UShort* gstyles = globals->glyph_styles;
       FT_Int nn;
 
 
       data->style_ids[i] = 0xFFFFU;
+      globals->sample_glyphs[i] = 0;
 
-      /* remove all references to this style; */
-      /* otherwise blue zones are computed later on, which we don't want */
+      /* remove all references to this style; we have no blue zone data */
       for (nn = 0; nn < globals->glyph_count; nn++)
       {
         if ((gstyles[nn] & TA_STYLE_MASK) == i)
@@ -206,14 +124,8 @@ TA_table_build_cvt(FT_Byte** cvt,
 
       continue;
     }
-    if (error)
-      return error;
 
     data->style_ids[i] = data->num_used_styles++;
-
-    /* XXX: generalize this to handle other metrics also */
-    haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
-    vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
 
     hwidth_count += haxis->width_count;
     vwidth_count += vaxis->width_count;
@@ -280,11 +192,14 @@ TA_table_build_cvt(FT_Byte** cvt,
     error = TA_sfnt_compute_global_hints(sfnt, font, (TA_Style)i);
     if (error == TA_Err_Missing_Glyph)
       continue;
-    if (error)
+    else if (error)
       return error;
 
     haxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[0];
     vaxis = &((TA_LatinMetrics)font->loader->hints.metrics)->axis[1];
+
+    if (!vaxis->blue_count)
+      continue;
 
     hwidth_count = haxis->width_count;
     vwidth_count = vaxis->width_count;

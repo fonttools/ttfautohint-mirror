@@ -159,7 +159,8 @@ typedef struct glyf_Data_
   FT_ULong fpgm_idx;
   FT_ULong prep_idx;
 
-  /* styles present in a font get a running number */
+  /* styles present in a font get a running number; */
+  /* unavailable styles get value 0xFFFF */
   FT_UInt style_ids[TA_STYLE_MAX];
   FT_UInt num_used_styles;
 
