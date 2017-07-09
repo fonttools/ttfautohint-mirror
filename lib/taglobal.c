@@ -233,6 +233,7 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
   for (ss = 0; ta_style_classes[ss]; ss++)
   {
     TA_StyleClass style_class = ta_style_classes[ss];
+    FT_UInt* sample_glyph = &globals->sample_glyphs[ss];
     TA_ScriptClass script_class = ta_script_classes[style_class->script];
     TA_Script_UniRange range;
 
@@ -260,7 +261,11 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
         if (gindex != 0
             && gindex < (FT_ULong)globals->glyph_count
             && (gstyles[gindex] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
+        {
           gstyles[gindex] = (FT_UShort)ss;
+          if (!*sample_glyph)
+            *sample_glyph = gindex;
+        }
 
         for (;;)
         {
@@ -271,7 +276,11 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
           if (gindex < (FT_ULong)globals->glyph_count
               && (gstyles[gindex] & TA_STYLE_MASK) == TA_STYLE_UNASSIGNED)
+          {
             gstyles[gindex] = (FT_UShort)ss;
+            if (!*sample_glyph)
+              *sample_glyph = gindex;
+          }
         }
       }
 
@@ -289,7 +298,11 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
         if (gindex != 0
             && gindex < (FT_ULong)globals->glyph_count
             && (gstyles[gindex] & TA_STYLE_MASK) == (FT_UShort)ss)
+        {
           gstyles[gindex] |= TA_NONBASE;
+          if (!*sample_glyph)
+            *sample_glyph = gindex;
+        }
 
         for (;;)
         {
@@ -300,29 +313,46 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
 
           if (gindex < (FT_ULong)globals->glyph_count
               && (gstyles[gindex] & TA_STYLE_MASK) == (FT_UShort)ss)
+          {
             gstyles[gindex] |= TA_NONBASE;
+            if (!*sample_glyph)
+              *sample_glyph = gindex;
+          }
         }
       }
     }
     else
     {
       /* get glyphs not directly addressable by cmap */
-      ta_shaper_get_coverage(globals, style_class, gstyles, 0);
+      ta_shaper_get_coverage(globals,
+                             style_class,
+                             gstyles,
+                             sample_glyph,
+                             0);
     }
   }
 
   /* handle the remaining default OpenType features ... */
   for (ss = 0; ta_style_classes[ss]; ss++)
   {
-    TA_StyleClass  style_class = ta_style_classes[ss];
+    TA_StyleClass style_class = ta_style_classes[ss];
+    FT_UInt* sample_glyph = &globals->sample_glyphs[ss];
 
 
     if (style_class->coverage == TA_COVERAGE_DEFAULT)
-      ta_shaper_get_coverage(globals, style_class, gstyles, 0);
+      ta_shaper_get_coverage(globals,
+                             style_class,
+                             gstyles,
+                             sample_glyph,
+                             0);
   }
 
   /* ... and finally the default OpenType features of the default script */
-  ta_shaper_get_coverage(globals, ta_style_classes[dflt], gstyles, 1);
+  ta_shaper_get_coverage(globals,
+                         ta_style_classes[dflt],
+                         gstyles,
+                         &globals->sample_glyphs[dflt],
+                         1);
 
   /* mark ASCII digits */
   for (i = 0x30; i <= 0x39; i++)
@@ -341,6 +371,9 @@ ta_face_globals_compute_style_coverage(TA_FaceGlobals globals)
   {
     FT_Long nn;
 
+
+    /* no need for updating `sample_glyphs'; */
+    /* the composite itself is certainly a valid sample glyph */
 
     for (nn = 0; nn < globals->glyph_count; nn++)
     {

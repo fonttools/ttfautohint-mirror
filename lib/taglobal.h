@@ -58,7 +58,7 @@ extern const char* ta_style_names[];
 /* index of fallback style in `ta_style_classes' */
 #define TA_STYLE_FALLBACK TA_STYLE_NONE_DFLT
 /* default script for OpenType */
-#define TA_SCRIPT_DEFAULT  TA_SCRIPT_LATN
+#define TA_SCRIPT_DEFAULT TA_SCRIPT_LATN
 
 /* a bit mask for TA_DIGIT and TA_NONBASE */
 #define TA_STYLE_MASK 0x3FFF
@@ -90,6 +90,7 @@ typedef struct TA_FaceGlobalsRec_
   FT_UInt increase_x_height;
 
   TA_StyleMetrics metrics[TA_STYLE_MAX];
+  FT_UInt sample_glyphs[TA_STYLE_MAX]; /* per-style sample glyph indices */
 
   FONT* font; /* to access global properties */
 } TA_FaceGlobalsRec;

@@ -40,6 +40,7 @@ FT_Error
 ta_shaper_get_coverage(TA_FaceGlobals globals,
                        TA_StyleClass style_class,
                        FT_UShort* gstyles,
+                       FT_UInt* sample_glyph,
                        FT_Bool default_script);
 
 void*
