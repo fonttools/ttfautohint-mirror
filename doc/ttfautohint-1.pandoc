@@ -760,8 +760,8 @@ Table: script-specific standard characters of the 'latin' writing system
               'Օ', U+0555, ARMENIAN CAPITAL LETTER OH
   `beng`      '০', U+09E6, BENGALI DIGIT ZERO
               '৪', U+09EA, BENGALI DIGIT FOUR
-  `cyrl`      'о', U+043E, CYRILLIC SMALL LETTER O
-              'О', U+041E, CYRILLIC CAPITAL LETTER O
+  `cyrl`      '\Cyrillic{}о\cyrillic{}', U+043E, CYRILLIC SMALL LETTER O
+              '\Cyrillic{}О\cyrillic{}', U+041E, CYRILLIC CAPITAL LETTER O
   `cher`      'Ꭴ', U+13A4, CHEROKEE LETTER U
               'Ꮕ', U+13C5, CHEROKEE LETTER NV
               'ꮕ', U+AB95, CHEROKEE SMALL LETTER NV
@@ -775,8 +775,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `geok`      'Ⴖ', U+10B6, GEORGIAN CAPITAL LETTER GHAN
               'Ⴑ', U+10B1, GEORGIAN CAPITAL LETTER SAN
               'ⴙ', U+2D19, GEORGIAN SMALL LETTER CHIN
-  `grek`      'ο', U+03BF, GREEK SMALL LETTER OMICRON
-              'Ο', U+039F, GREEK CAPITAL LETTER OMICRON
+  `grek`      '\Greek{}ο\greek{}', U+03BF, GREEK SMALL LETTER OMICRON
+              '\Greek{}Ο\greek{}', U+039F, GREEK CAPITAL LETTER OMICRON
   `gujr`      'ટ', U+0A9F, GUJARATI LETTER TTA
               '૦', U+0AE6, GUJARATI DIGIT ZERO
   `guru`      'ਠ', U+0A20, GURMUKHI LETTER TTHA
@@ -787,9 +787,9 @@ Table: script-specific standard characters of the 'latin' writing system
               'ಬ', U+0CAC, KANNADA LETTER BA
   `khmr`      '០', U+17E0, KHMER DIGIT ZERO
   `lao`       '໐', U+0ED0, LAO DIGIT ZERO
-  `latn`      'o', U+006F, LATIN SMALL LETTER O
-              'O', U+004F, LATIN CAPITAL LETTER O
-              '0', U+0030, DIGIT ZERO
+  `latn`      '\Latin{}o\latin{}', U+006F, LATIN SMALL LETTER O
+              '\Latin{}O\latin{}', U+004F, LATIN CAPITAL LETTER O
+              '\Latin{}0\latin{}', U+0030, DIGIT ZERO
   `mlym`      'ഠ', U+0D20, MALAYALAM LETTER TTHA
               'റ', U+0D31, MALAYALAM LETTER RRA
   `mymr`      'ဝ', U+101D, MYANMAR LETTER WA
@@ -810,11 +810,11 @@ Table: standard characters of the 'latin' writing system, special scripts
   ----------  ---------------------
   `khms`      '᧡', U+19E1, KHMER SYMBOL MUOY KOET
               '᧪', U+19EA, KHMER SYMBOL DAP KOET
-  `latb`      'ₒ', U+2092, LATIN SUBSCRIPT SMALL LETTER O
-              '₀', U+2080, SUBSCRIPT ZERO
-  `latp`      'ᵒ', U+1D52, MODIFIER LETTER SMALL O
-              'ᴼ', U+1D3C, MODIFIER LETTER CAPITAL O
-              '⁰', U+2070, SUPERSCRIPT ZERO
+  `latb`      '\Latin{}ₒ\latin{}', U+2092, LATIN SUBSCRIPT SMALL LETTER O
+              '\Latin{}₀\latin{}', U+2080, SUBSCRIPT ZERO
+  `latp`      '\Latin{}ᵒ\latin{}', U+1D52, MODIFIER LETTER SMALL O
+              '\Latin{}ᴼ\latin{}', U+1D3C, MODIFIER LETTER CAPITAL O
+              '\Latin{}⁰\latin{}', U+2070, SUPERSCRIPT ZERO
 
 
   * Glyph Analysis
@@ -904,11 +904,11 @@ Table: `cyrl` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of capital letters                 Б В Е П З О С Э
-  2     bottom of capital letters              Б В Е Ш З О С Э
-  3*    top of small letters                   х п н ш е з о с
-  4     bottom of small letters                х п н ш е з о с
-  5     bottom of descenders of small letters  р у ф
+  1     top of capital letters                 \Cyrillic{}Б В Е П З О С Э\cyrillic{}
+  2     bottom of capital letters              \Cyrillic{}Б В Е Ш З О С Э\cyrillic{}
+  3*    top of small letters                   \Cyrillic{}х п н ш е з о с\cyrillic{}
+  4     bottom of small letters                \Cyrillic{}х п н ш е з о с\cyrillic{}
+  5     bottom of descenders of small letters  \Cyrillic{}р у ф\cyrillic{}
 
 
 Table: `deva` blue zones
@@ -969,12 +969,12 @@ Table: `grek` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of capital letters                 Γ Β Ε Ζ Θ Ο Ω
-  2     bottom of capital letters              Β Δ Ζ Ξ Θ Ο
-  3     top of 'small beta' like letters       β θ δ ζ λ ξ
-  4*    top of small letters                   α ε ι ο π σ τ ω
-  5     bottom of small letters                α ε ι ο π σ τ ω
-  6     bottom of descenders of small letters  β γ η μ ρ φ χ ψ
+  1     top of capital letters                 \Greek{}Γ Β Ε Ζ Θ Ο Ω\greek{}
+  2     bottom of capital letters              \Greek{}Β Δ Ζ Ξ Θ Ο\greek{}
+  3     top of 'small beta' like letters       \Greek{}β θ δ ζ λ ξ\greek{}
+  4*    top of small letters                   \Greek{}α ε ι ο π σ τ ω\greek{}
+  5     bottom of small letters                \Greek{}α ε ι ο π σ τ ω\greek{}
+  6     bottom of descenders of small letters  \Greek{}β γ η μ ρ φ χ ψ\greek{}
 
 
 Table: `gujr` blue zones
@@ -1052,12 +1052,12 @@ Table: `latb` blue zones
 
   ID    Blue zone                                 Characters
   ----  -----------                               ------------
-  1     top of capital characters                 ₀ ₃ ₅ ₇ ₈
-  2     bottom of capital characters              ₀ ₁ ₂ ₃ ₈
-  3     top of 'small f' like characters          ᵢ ⱼ ₕ ₖ ₗ
-  4*    top of small characters                   ₐ ₑ ₒ ₓ ₙ ₛ ᵥ ᵤ ᵣ
-  5     bottom of small characters                ₐ ₑ ₒ ₓ ₙ ₛ ᵥ ᵤ ᵣ
-  6     bottom of descenders of small characters  ᵦ ᵧ ᵨ ᵩ ₚ
+  1     top of capital characters                 \Latin{}₀ ₃ ₅ ₇ ₈\latin{}
+  2     bottom of capital characters              \Latin{}₀ ₁ ₂ ₃ ₈\latin{}
+  3     top of 'small f' like characters          \Latin{}ᵢ ⱼ ₕ ₖ ₗ\latin{}
+  4*    top of small characters                   \Latin{}ₐ ₑ ₒ ₓ ₙ ₛ ᵥ ᵤ ᵣ\latin{}
+  5     bottom of small characters                \Latin{}ₐ ₑ ₒ ₓ ₙ ₛ ᵥ ᵤ ᵣ\latin{}
+  6     bottom of descenders of small characters  \Latin{}ᵦ ᵧ ᵨ ᵩ ₚ\latin{}
 
 Subscript latin characters are similar to normal latin characters.
 
@@ -1066,24 +1066,24 @@ Table: `latn` blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of capital letters                 T H E Z O C Q S
-  2     bottom of capital letters              H E Z L O C U S
-  3     top of 'small f' like letters          f i j k d b h
-  4*    top of small letters                   u v x z o e s c
-  5     bottom of small letters                n r x z o e s c
-  6     bottom of descenders of small letters  p q g j y
+  1     top of capital letters                 \Latin{}T H E Z O C Q S\latin{}
+  2     bottom of capital letters              \Latin{}H E Z L O C U S\latin{}
+  3     top of 'small f' like letters          \Latin{}f i j k d b h\latin{}
+  4*    top of small letters                   \Latin{}u v x z o e s c\latin{}
+  5     bottom of small letters                \Latin{}n r x z o e s c\latin{}
+  6     bottom of descenders of small letters  \Latin{}p q g j y\latin{}
 
 
 Table: `latp` blue zones
 
   ID    Blue zone                                 Characters
   ----  -----------                               ------------
-  1     top of capital characters                 ⁰ ³ ⁵ ⁷ ᵀ ᴴ ᴱ ᴼ
-  2     bottom of capital characters              ⁰ ¹ ² ³ ᴱ ᴸ ᴼ ᵁ
-  3     top of 'small f' like characters          ᵇ ᵈ ᵏ ʰ ʲ ᶠ ⁱ
-  4*    top of small characters                   ᵉ ᵒ ʳ ˢ ˣ ᶜ ᶻ
-  5     bottom of small characters                ᵉ ᵒ ʳ ˢ ˣ ᶜ ᶻ
-  6     bottom of descenders of small characters  ᵖ ʸ ᵍ
+  1     top of capital characters                 \Latin{}⁰ ³ ⁵ ⁷ ᵀ ᴴ ᴱ ᴼ\latin{}
+  2     bottom of capital characters              \Latin{}⁰ ¹ ² ³ ᴱ ᴸ ᴼ ᵁ\latin{}
+  3     top of 'small f' like characters          \Latin{}ᵇ ᵈ ᵏ ʰ ʲ ᶠ ⁱ\latin{}
+  4*    top of small characters                   \Latin{}ᵉ ᵒ ʳ ˢ ˣ ᶜ ᶻ\latin{}
+  5     bottom of small characters                \Latin{}ᵉ ᵒ ʳ ˢ ˣ ᶜ ᶻ\latin{}
+  6     bottom of descenders of small characters  \Latin{}ᵖ ʸ ᵍ\latin{}
 
 Superscript latin characters are similar to normal latin characters.
 

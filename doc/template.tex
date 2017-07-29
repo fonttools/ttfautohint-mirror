@@ -15,28 +15,30 @@
 \ifxetex
   % with newer releases of `fontspec', fonts should be defined before
   % including `ucharclasses'
-  \newfontfamily{\arabicfont}[Script=Arabic]{Amiri}
-  \newfontfamily{\armenianfont}[Script=Armenian]{FreeSerif}
-  \newfontfamily{\bengalifont}[Script=Bengali]{SagarNormal}
-  \newfontfamily{\cherokeefont}[Script=Cherokee]{FreeSerif}
-  \newfontfamily{\devanagarifont}[Script=Devanagari]{FreeSerif}
-  \newfontfamily{\ethiopicfont}[Script=Ethiopic]{NotoSansEthiopic}
-  \newfontfamily{\georgianfont}[Script=Georgian]{NotoSerifGeorgian}
-  \newfontfamily{\gujaratifont}[Script=Gujarati]{NotoSerifGujarati}
-  \newfontfamily{\gurmukhifont}[Script=Gurmukhi]{FreeSerif}
-  % alas, `Sampige.ttf' crashes the TeXLive 2015 version of xdvipdfmx
-  % \newfontfamily{\kannadafont}[Script=Kannada]{Sampige}
-  \newfontfamily{\kannadafont}[Script=Kannada]{Lohit Kannada}
-  \newfontfamily{\khmerfont}[Script=Khmer]{KhmerOS}
-  \newfontfamily{\laofont}[Script=Lao]{NotoSerifLao}
-  \newfontfamily{\malayalamfont}[Script=Malayalam]{FreeSerif}
-  \newfontfamily{\myanmarfont}[Script=Myanmar]{NotoSansMyanmar}
-  \newfontfamily{\sinhalafont}[Script=Sinhala]{FreeSerif}
-  \newfontfamily{\tamilfont}[Script=Tamil]{NotoSerifTamil}
-  \newfontfamily{\telugufont}[Script=Telugu]{Pothana2000}
-  \newfontfamily{\thaifont}[Script=Thai]{FreeSerif}
+  \newfontfamily{\arabicfont}[Script=Arabic]{NotoSansArabic-Regular.ttf}
+  \newfontfamily{\armenianfont}[Script=Armenian]{NotoSansArmenian-Regular.ttf}
+  \newfontfamily{\bengalifont}[Script=Bengali]{NotoSansBengali-Regular.ttf}
+  \newfontfamily{\cherokeefont}[Script=Cherokee]{NotoSansCherokee-Regular.ttf}
+  \newfontfamily{\cyrillicfont}[Script=Cyrillic]{NotoSans-Regular.ttf}
+  \newfontfamily{\devanagarifont}[Script=Devanagari]{NotoSansDevanagari-Regular.ttf}
+  \newfontfamily{\ethiopicfont}[Script=Ethiopic]{NotoSansEthiopic-Regular.ttf}
+  \newfontfamily{\georgianfont}[Script=Georgian]{NotoSansGeorgian-Regular.ttf}
+  \newfontfamily{\greekfont}[Script=Greek]{NotoSans-Regular.ttf}
+  \newfontfamily{\gujaratifont}[Script=Gujarati]{NotoSansGujarati-Regular.ttf}
+  \newfontfamily{\gurmukhifont}[Script=Gurmukhi]{NotoSansGurmukhi-Regular.ttf}
+  \newfontfamily{\hebrewfont}[Script=Hebrew]{NotoSansHebrew-Regular.ttf}
+  \newfontfamily{\kannadafont}[Script=Kannada]{NotoSansKannada-Regular.ttf}
+  \newfontfamily{\khmerfont}[Script=Khmer]{NotoSansKhmer-Regular.ttf}
+  \newfontfamily{\laofont}[Script=Lao]{NotoSansLao-Regular.ttf}
+  \newfontfamily{\latinfont}[Script=Latin]{NotoSans-Regular.ttf}
+  \newfontfamily{\malayalamfont}[Script=Malayalam]{NotoSansMalayalam-Regular.ttf}
+  \newfontfamily{\myanmarfont}[Script=Myanmar]{NotoSansMyanmar-Regular.ttf}
+  \newfontfamily{\sinhalafont}[Script=Sinhala]{NotoSansSinhala-Regular.ttf}
+  \newfontfamily{\tamilfont}[Script=Tamil]{NotoSansTamil-Regular.ttf}
+  \newfontfamily{\telugufont}[Script=Telugu]{NotoSansTelugu-Regular.ttf}
+  \newfontfamily{\thaifont}[Script=Thai]{NotoSansThai-Regular.ttf}
 
-  \usepackage{ucharclasses}
+  \usepackage{ucharclasses-patched}
 
   \setTransitionTo{Arabic}{\begingroup\arabicfont}
   \setTransitionFrom{Arabic}{\endgroup}
@@ -44,20 +46,19 @@
   \setTransitionFrom{Armenian}{\endgroup}
   \setTransitionTo{Bengali}{\begingroup\bengalifont}
   \setTransitionFrom{Bengali}{\endgroup}
-  \setTransitionTo{Cherokee}{\begingroup\cherokeefont}
-  \setTransitionFrom{Cherokee}{\endgroup}
+  \setTransitionsForCherokeeFull{\begingroup\cherokeefont}{\endgroup}
+  % no transition for Cyrillic font; we do that manually
   \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
   \setTransitionFrom{Devanagari}{\endgroup}
-  \setTransitionTo{Ethiopic}{\begingroup\ethiopicfont}
-  \setTransitionFrom{Ethiopic}{\endgroup}
-  \setTransitionTo{Georgian}{\begingroup\georgianfont}
-  \setTransitionFrom{Georgian}{\endgroup}
-  \setTransitionTo{GeorgianSupplement}{\begingroup\georgianfont}
-  \setTransitionFrom{GeorgianSupplement}{\endgroup}
+  \setTransitionsForEthiopicFull{\begingroup\ethiopicfont}{\endgroup}
+  \setTransitionsForGeorgianFull{\begingroup\georgianfont}{\endgroup}
+  % no transition for Greek font; we do that manually
   \setTransitionTo{Gujarati}{\begingroup\gujaratifont}
   \setTransitionFrom{Gujarati}{\endgroup}
   \setTransitionTo{Gurmukhi}{\begingroup\gurmukhifont}
   \setTransitionFrom{Gurmukhi}{\endgroup}
+  \setTransitionTo{Hebrew}{\begingroup\hebrewfont}
+  \setTransitionFrom{Hebrew}{\endgroup}
   \setTransitionTo{Kannada}{\begingroup\kannadafont}
   \setTransitionFrom{Kannada}{\endgroup}
   \setTransitionTo{Khmer}{\begingroup\khmerfont}
@@ -66,10 +67,10 @@
   \setTransitionFrom{KhmerSymbols}{\endgroup}
   \setTransitionTo{Lao}{\begingroup\laofont}
   \setTransitionFrom{Lao}{\endgroup}
+  % no transition for Latin font; we do that manually
   \setTransitionTo{Malayalam}{\begingroup\malayalamfont}
   \setTransitionFrom{Malayalam}{\endgroup}
-  \setTransitionTo{Myanmar}{\begingroup\myanmarfont}
-  \setTransitionFrom{Myanmar}{\endgroup}
+  \setTransitionsForMyanmarFull{\begingroup\myanmarfont}{\endgroup}
   \setTransitionTo{Sinhala}{\begingroup\sinhalafont}
   \setTransitionFrom{Sinhala}{\endgroup}
   \setTransitionTo{Tamil}{\begingroup\tamilfont}
@@ -78,6 +79,14 @@
   \setTransitionFrom{Telugu}{\endgroup}
   \setTransitionTo{Thai}{\begingroup\thaifont}
   \setTransitionFrom{Thai}{\endgroup}
+
+  % the next commands are needed for manually switching fonts
+  \def\Cyrillic{\begingroup\cyrillicfont}
+  \def\cyrillic{\endgroup}
+  \def\Greek{\begingroup\greekfont}
+  \def\greek{\endgroup}
+  \def\Latin{\begingroup\latinfont}
+  \def\latin{\endgroup}
 \fi
 
 % Libertine Mono is too ugly; we use lmodern instead
