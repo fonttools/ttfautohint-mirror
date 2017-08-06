@@ -1,3 +1,12 @@
+% This is file `ucharclasses-patched.sty'.
+%
+% It is the file `ucharclasses.sty' taken from the git repository commit
+%
+%   https://github.com/Pomax/ucharclasses/tree/9fdf650d
+%
+% and temporarily renamed (until a new version is available from TeXLive) to
+% provide Unicode 10.0 support.
+%
 % ----------------------------------------------------------------------------
 %  This "ucharclasses" package sets up XeTeX character classes based on which
 %  unicode block a character is found in. It then allows transition rules to be defined
@@ -22,7 +31,8 @@
 %
 % ----------------------------------------------------------------------------
 
-\ProvidesPackage{ucharclasses}[2016/04/25 v2.2.1 Unicode block character classes for XeLaTeX]
+\ProvidesPackage{ucharclasses}
+          [2017/08/01 v2.2.1-patched Unicode block character classes for XeLaTeX]
 
 \newif\if@ucharclassverbose
 \DeclareOption{verbose}{\@ucharclassverbosetrue}
@@ -415,7 +425,7 @@
   \do{ArabicSupplement}
 }
 
-\def\CanadianSyllabics{
+\def\CanadianSyllabicsClasses{
   \do{UnifiedCanadianAboriginalSyllabics}
   \do{UnifiedCanadianAboriginalSyllabicsExtended}
 }
@@ -1041,4 +1051,4 @@
 \let\do\@undefined\let\doclass\@undefined
 \endinput
 %
-% End of file `ucharclasses.sty'.
+% End of file `ucharclasses-patched.sty'.
