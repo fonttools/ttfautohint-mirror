@@ -751,23 +751,43 @@ hinting.
 
 Table: script-specific standard characters of the 'latin' writing system
 
-    Script    Standard characters
-  ----------  ---------------------
+  Script    Standard characters
+  --------  ---------------------
+  `adlm`      '𞤌', U+1E90C, ADLAM CAPITAL LETTER O
+              '𞤮', U+1E92E, ADLAM SMALL LETTER O
   `arab`      'ـ', U+0640, ARABIC TATWEEL
               'ل', U+0644, ARABIC LETTER LAM
               'ح', U+062D, ARABIC LETTER HAH
   `armn`      'օ', U+0585, ARMENIAN SMALL LETTER OH
               'Օ', U+0555, ARMENIAN CAPITAL LETTER OH
+  `avst`      '𐬚', U+10B1A, AVESTAN LETTER THE
+  `bamu`      'ꛁ', U+A6C1, BAMUM LETTER YUQ
+              'ꛯ', U+A6EF, BAMUM LETTER KOGHOM
   `beng`      '০', U+09E6, BENGALI DIGIT ZERO
               '৪', U+09EA, BENGALI DIGIT FOUR
-  `cyrl`      '\Cyrillic{}о\cyrillic{}', U+043E, CYRILLIC SMALL LETTER O
-              '\Cyrillic{}О\cyrillic{}', U+041E, CYRILLIC CAPITAL LETTER O
+  `buhd`      'ᝋ', U+174B, BUHID LETTER MA
+              'ᝏ', U+174F, BUHID LETTER WA
+  `cakm`      '𑄤', U+11124, CHAKMA LETTER WAA
+              '𑄉', U+11109, CHAKMA LETTER GAA
+              '𑄛', U+1111B, CHAKMA LETTER PAA
+  `cans`      'ᑌ', U+144C, CANADIAN SYLLABICS TE
+              'ᓚ', U+14DA, CANADIAN SYLLABICS LA
+  `cari`      '𐊫', U+102AB, CARIAN LETTER O
+              '𐋉', U+102C9, CARIAN LETTER RR
   `cher`      'Ꭴ', U+13A4, CHEROKEE LETTER U
               'Ꮕ', U+13C5, CHEROKEE LETTER NV
               'ꮕ', U+AB95, CHEROKEE SMALL LETTER NV
+  `copt`      'Ⲟ', U+2C9E, COPTIC CAPITAL LETTER O
+              'ⲟ', U+2C9F, COPTIC SMALL LETTER O
+  `cprt`      '𐠅', U+10805, CYPRIOT SYLLABLE JA
+              '𐠣', U+10823, CYPRIOT SYLLABLE RA
+  `cyrl`      '\Cyrillic{}о\cyrillic{}', U+043E, CYRILLIC SMALL LETTER O
+              '\Cyrillic{}О\cyrillic{}', U+041E, CYRILLIC CAPITAL LETTER O
   `deva`      'ठ', U+0920, DEVANAGARI LETTER TTHA
               'व', U+0935, DEVANAGARI LETTER VA
               'ट', U+091F, DEVANAGARI LETTER TTA
+  `dsrt`      '𐐄', U+10404, DESERET CAPITAL LETTER LONG O
+              '𐐬', U+1042C, DESERET SMALL LETTER LONG O
   `ethi`      'ዐ', U+12D0, ETHIOPIC SYLLABLE PHARYNGEAL A
   `geor`      'ი', U+10D8, GEORGIAN LETTER IN
               'ე', U+10D4, GEORGIAN LETTER EN
@@ -775,6 +795,11 @@ Table: script-specific standard characters of the 'latin' writing system
   `geok`      'Ⴖ', U+10B6, GEORGIAN CAPITAL LETTER GHAN
               'Ⴑ', U+10B1, GEORGIAN CAPITAL LETTER SAN
               'ⴙ', U+2D19, GEORGIAN SMALL LETTER CHIN
+  `glag`      'Ⱅ', U+2C15, GLAGOLITIC CAPITAL LETTER TVRIDO
+              'ⱅ', U+2C45, GLAGOLITIC SMALL LETTER TVRIDO
+  `goth`      '𐌴', U+10334, GOTHIC LETTER AIHVUS
+              '𐌾', U+1033E, GOTHIC LETTER JER
+              '𐍃', U+10343, GOTHIC LETTER SAUIL
   `grek`      '\Greek{}ο\greek{}', U+03BF, GREEK SMALL LETTER OMICRON
               '\Greek{}Ο\greek{}', U+039F, GREEK CAPITAL LETTER OMICRON
   `gujr`      'ટ', U+0A9F, GUJARATI LETTER TTA
@@ -783,6 +808,8 @@ Table: script-specific standard characters of the 'latin' writing system
               'ਰ', U+0A30, GURMUKHI LETTER RA
               '੦', U+0A66, GURMUKHI DIGIT ZERO
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
+  `kali`      'ꤍ', U+A90D, KAYAH LI LETTER NGA
+              '꤀', U+A900, KAYAH LI DIGIT ZERO
   `knda`      '೦', U+0CE6, KANNADA DIGIT ZERO
               'ಬ', U+0CAC, KANNADA LETTER BA
   `khmr`      '០', U+17E0, KHMER DIGIT ZERO
@@ -790,18 +817,37 @@ Table: script-specific standard characters of the 'latin' writing system
   `latn`      '\Latin{}o\latin{}', U+006F, LATIN SMALL LETTER O
               '\Latin{}O\latin{}', U+004F, LATIN CAPITAL LETTER O
               '\Latin{}0\latin{}', U+0030, DIGIT ZERO
+  `lisu`      'ꓳ', U+A4F3, LISU LETTER
   `mlym`      'ഠ', U+0D20, MALAYALAM LETTER TTHA
               'റ', U+0D31, MALAYALAM LETTER RRA
   `mymr`      'ဝ', U+101D, MYANMAR LETTER WA
               'င', U+1004, MYANMAR LETTER NGA
               'ဂ', U+1002, MYANMAR LETTER GA
+  `nkoo`      'ߋ', U+07CB, NKO LETTER EE
+              '߀', U+07C0, NKO DIGIT ZERO
+  `olck`      'ᱛ', U+1C5B, OL CHIKI LETTER AT
+  `orkh`      '𐰗', U+10C17, OLD TURKIC LETTER YENISEI AY
+  `osge`      '𐓂', U+104C2, OSAGE CAPITAL LETTER O
+              '𐓪', U+104EA, OSAGE SMALL LETTER O
+  `osma`      '𐒆', U+10486, OSMANYA LETTER DEEL
+              '𐒠', U+104A0, OSMANYA DIGIT ZERO
+  `saur`      'ꢝ', U+A89D, SAURASHTRA LETTER TTHA
+              '꣐', U+A8D0, SAURASHTRA DIGIT ZERO
+  `shaw`      '𐑴', U+10474, SHAVIAN LETTER OAK
   `sinh`      'ට', U+0DA7, SINHALA LETTER ALPAPRAANA TTAYANNA
+  `sund`      '᮰', U+1BB0, SUNDANESE DIGIT ZERO
   `taml`      '௦', U+0BE6, TAMIL DIGIT ZERO
+  `tavt`      'ꪒ', U+AA92, TAI VIET LETTER LOW DO
+              'ꪫ', U+AAAB, TAI VIET LETTER HIGH VO
   `telu`      '౦', U+0C66, TELUGU DIGIT ZERO
               '౧', U+0C67, TELUGU DIGIT ONE
+  `tfng`      'ⵔ', U+2D54, TIFINAGH LETTER YAR
   `thai`      'า', U+0E32, THAI CHARACTER SARA AA
               'ๅ', U+0E45, THAI CHARACTER LAKKHANGYAO
               '๐', U+0E50, THAI DIGIT ZERO
+  `vaii`      'ꘓ', U+A613, VAI SYMBOL FEENG
+              'ꖜ', U+A59C, VAI SYLLABLE BHU
+              'ꖴ', U+A5B4, VAI SYLLABLE KU
 
 
 Table: standard characters of the 'latin' writing system, special scripts
@@ -854,7 +900,17 @@ scaling the remaining blue zones before they are adjusted to the grid.  See
 also option [`--increase-x-height`](#x-height-increase-limit).
 
 
-Table: `arab` blue zones
+Table: `adlm` (Adlam) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 𞤌 𞤅 𞤈 𞤏 𞤔 𞤚
+  2     bottom of capital letters              𞤂 𞤖
+  3*    top of small letters                   𞤬 𞤮 𞤻 𞤼 𞤾
+  4     bottom of small letters                𞤤 𞤨 𞤩 𞤭 𞤴 𞤸 𞤺 𞥀
+
+
+Table: `arab` (Arabic) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -863,7 +919,7 @@ Table: `arab` blue zones
   3     glyph joining                          ـ
 
 
-Table: `armn` blue zones
+Table: `armn` (Armenian) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -875,7 +931,23 @@ Table: `armn` blue zones
   6     bottom of descenders of small letters  բ ը ի լ ղ պ փ ց
 
 
-Table: `beng` blue zones
+Table: `avst` (Avestan) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𐬀 𐬁 𐬐 𐬛
+  2     bottom of letters                      𐬀 𐬁
+
+
+Table: `bamu` (Bamum) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ꚧ ꚨ ꛛ ꛉ ꛁ ꛈ ꛫ ꛯ
+  2     bottom of letters                      ꚭ ꚳ ꚶ ꛬ ꚢ ꚽ ꛯ ꛲
+
+
+Table: `beng` (Bengali) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -888,7 +960,46 @@ Contrary to scripts like latin, the baseline in Bengali is on the top, and
 we hint from top to bottom.
 
 
-Table: `cher` blue zones
+Table: `buhd` (Buhid) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ᝐ ᝈ
+  2     top of large letters                   ᝅ ᝊ ᝎ
+  3*    top of small letters                   ᝂ ᝃ ᝉ ᝌ
+  4     bottom of letters                      ᝀ ᝃ ᝆ ᝉ ᝋ ᝏ ᝑ
+
+
+Table: `cakm` (Chakma) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𑄃 𑄅 𑄉 𑄙 𑄗
+  2     bottom of letters                      𑄅 𑄛 𑄝 𑄗 𑄓
+  3     bottom of descenders of letters        𑄖𑄳𑄢 𑄘𑄳𑄢 𑄙𑄳𑄢 𑄤𑄳𑄢 𑄥𑄳𑄢
+
+
+Table: `cans` (Canadian Syllabics) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ᗜ ᖴ ᐁ ᒣ ᑫ ᑎ ᔑ ᗰ
+  2     bottom of letters                      ᗶ ᖵ ᒧ ᐃ ᑌ ᒍ ᔑ ᗢ
+  3*    top of small letters                   ᓓ ᓕ ᓀ ᓂ ᓄ ᕄ ᕆ ᘣ
+  4     bottom of small letters                ᕃ ᓂ ᓀ ᕂ ᓗ ᓚ ᕆ ᘣ
+  5     top of superscript letters             ᐪ ᙆ ᣘ ᐢ ᒾ ᣗ ᔆ
+  6     bottom of superscript letters          ᙆ ᗮ ᒻ ᐞ ᔆ ᒡ ᒢ ᓑ
+
+
+Table: `cari` (Carian) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𐊧 𐊫 𐊬 𐊭 𐊱 𐊺 𐊼 𐊿
+  2     bottom of letters                      𐊣 𐊧 𐊷 𐋀 𐊫 𐊸 𐋉
+
+
+Table: `cher` (Cherokee) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -900,7 +1011,27 @@ Table: `cher` blue zones
   6     bottom of descenders of small letters  ᏸ ꮐ ꭹ ꭻ
 
 
-Table: `cyrl` blue zones
+Table: `copt` (Coptic) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 Ⲍ Ⲏ Ⲡ Ⳟ Ⲟ Ⲑ Ⲥ Ⳋ
+  2     bottom of capital letters              Ⳑ Ⳙ Ⳟ Ⲏ Ⲟ Ⲑ Ⳝ Ⲱ
+  3*    top of small letters                   ⲍ ⲏ ⲡ ⳟ ⲟ ⲑ ⲥ ⳋ
+  4     bottom of small letters                ⳑ ⳙ ⳟ ⲏ ⲟ ⲑ ⳝ Ⳓ
+
+
+Table: `cprt` (Cypriot) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𐠍 𐠙 𐠳 𐠱 𐠅 𐠓 𐠣 𐠦
+  2     bottom of letters                      𐠃 𐠊 𐠛 𐠣 𐠳 𐠵 𐠐
+  3     top of small letters                   𐠈 𐠏 𐠖
+  4     bottom of small letters                𐠈 𐠏 𐠖
+
+
+Table: `cyrl` (Cyrillic) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -911,7 +1042,7 @@ Table: `cyrl` blue zones
   5     bottom of descenders of small letters  \Cyrillic{}р у ф\cyrillic{}
 
 
-Table: `deva` blue zones
+Table: `deva` (Devanagari) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -927,7 +1058,17 @@ in the height of the round elements in Zone\ 3; for this reason we also
 define Zone\ 1, which must be always present.
 
 
-Table: `ethi` blue zones
+Table: `dsrt` (Deseret) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 𐐂 𐐄 𐐋 𐐗 𐐑
+  2     bottom of capital letters              𐐀 𐐂 𐐄 𐐗 𐐛
+  3*    top of small letters                   𐐪 𐐬 𐐳 𐐿 𐐹
+  4     bottom of small letters                𐐨 𐐪 𐐬 𐐿 𐑃
+
+
+Table: `ethi` (Ethiopian) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -935,7 +1076,7 @@ Table: `ethi` blue zones
   2     bottom of letters                      ለ ሐ በ ዘ ሀ ሪ ዐ ጨ
 
 
-Table: `geok` blue zones
+Table: `geok` (Georgian Khutsuri) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -951,7 +1092,7 @@ Khutsuri.  Note that fonts show a great variation in height and depth of
 ascender and descender letter forms.
 
 
-Table: `geor` blue zones
+Table: `geor` (Georgian Mkhedruli) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -965,7 +1106,25 @@ for Mtavruli (which are not yet encoded in Unicode), the uppercase glyph
 variants of Mkhedruli.
 
 
-Table: `grek` blue zones
+Table: `glag` (Glagolitic) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 Ⰵ Ⱄ Ⱚ Ⰴ Ⰲ Ⰺ Ⱛ Ⰻ
+  2     bottom of capital letters              Ⰵ Ⰴ Ⰲ Ⱚ Ⱎ Ⱑ Ⰺ Ⱄ
+  3*    top of small letters                   ⰵ ⱄ ⱚ ⰴ ⰲ ⰺ ⱛ ⰻ
+  4     bottom of small letters                ⰵ ⰴ ⰲ ⱚ ⱎ ⱑ ⰺ ⱄ
+
+
+Table: `goth` (Gothic) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𐌲 𐌶 𐍀 𐍄 𐌴 𐍃 𐍈 𐌾
+  2     bottom of letters                      𐌶 𐌴 𐍃 𐍈
+
+
+Table: `grek` (Greek) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -977,7 +1136,7 @@ Table: `grek` blue zones
   6     bottom of descenders of small letters  \Greek{}β γ η μ ρ φ χ ψ\greek{}
 
 
-Table: `gujr` blue zones
+Table: `gujr` (Gujarati) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -988,7 +1147,7 @@ Table: `gujr` blue zones
   5     top of Gujarati digits                 ૦ ૧ ૨ ૩ ૭
 
 
-Table: `guru` blue zones
+Table: `guru` (Gurmukhi) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -999,7 +1158,7 @@ Table: `guru` blue zones
   5     top of Gurmukhi digits                 ੦ ੧ ੨ ੩ ੭
 
 
-Table: `hebr` blue zones
+Table: `hebr` (Hebrew) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1008,15 +1167,18 @@ Table: `hebr` blue zones
   3     bottom of descenders of letters        ק ך ן ף ץ
 
 
-Table: `knda` blue zones
+Table: `kali` (Kayah Li) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of letters                         ಇ ಊ ಐ ಣ ಸಾ ನಾ ದಾ ರಾ
-  2     bottom of letters                      ಅ ಉ ಎ ಲ ೦ ೨ ೬ ೭
+  1*    top of letters                         ꤅ ꤏ ꤁ ꤋ ꤀ ꤍ
+  2     bottom of letters                      ꤈ ꤘ ꤀ ꤍ ꤢ
+  3     top of ascending letters               ꤖ ꤡ
+  4     bottom of descending letters           ꤑ ꤜ ꤞ
+  5     bottom of large descending letters     ꤑ꤬ ꤜ꤭ ꤔ꤬
 
 
-Table: `khmr` blue zones
+Table: `khmr` (Khmer) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1027,7 +1189,7 @@ Table: `khmr` blue zones
   5     bottom of large descenders             ន្ត្រៃ ង្ខ្យ ក្បៀ ច្រៀ ន្តឿ ល្បឿ
 
 
-Table: `khms` blue zones
+Table: `khms` (Khmer Symbols) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1037,7 +1199,15 @@ Table: `khms` blue zones
 Khmer symbols are used for lunar dates.
 
 
-Table: `lao` blue zones
+Table: `knda` (Kannada) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ಇ ಊ ಐ ಣ ಸಾ ನಾ ದಾ ರಾ
+  2     bottom of letters                      ಅ ಉ ಎ ಲ ೦ ೨ ೬ ೭
+
+
+Table: `lao` (Lao) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1048,7 +1218,7 @@ Table: `lao` blue zones
   5     bottom of descenders                   ງ ຊ ຖ ຽ ໆ ຯ
 
 
-Table: `latb` blue zones
+Table: `latb` (Latin Subscripts) blue zones
 
   ID    Blue zone                                 Characters
   ----  -----------                               ------------
@@ -1062,7 +1232,7 @@ Table: `latb` blue zones
 Subscript latin characters are similar to normal latin characters.
 
 
-Table: `latn` blue zones
+Table: `latn` (Latin) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1074,7 +1244,7 @@ Table: `latn` blue zones
   6     bottom of descenders of small letters  \Latin{}p q g j y\latin{}
 
 
-Table: `latp` blue zones
+Table: `latp` (Latin Superscripts) blue zones
 
   ID    Blue zone                                 Characters
   ----  -----------                               ------------
@@ -1088,7 +1258,15 @@ Table: `latp` blue zones
 Superscript latin characters are similar to normal latin characters.
 
 
-Table: `mlym` blue zones
+Table: `lisu` (Lisu) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ꓡ ꓧ ꓱ ꓶ ꓩ ꓚ ꓵ ꓳ
+  2     bottom of letters                      ꓕ ꓜ ꓞ ꓡ ꓛ ꓢ ꓳ ꓴ
+
+
+Table: `mlym` (Malayalam) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1096,7 +1274,7 @@ Table: `mlym` blue zones
   2     bottom of letters                      ട ഠ ധ ശ ഘ ച ഥ ല
 
 
-Table: `mymr` blue zones
+Table: `mymr` (Myanmar) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1106,7 +1284,73 @@ Table: `mymr` blue zones
   3     bottom of descenders of letters        ဉ ည ဥ ဩ ဨ ၂ ၅ ၉
 
 
-Table: `sinh` blue zones
+Table: `nkoo` (N'Ko) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ߐ ߉ ߒ ߟ ߖ ߜ ߠ ߥ
+  2     bottom of letters                      ߀ ߘ ߡ ߠ ߥ
+  3*    top of small letters                   ߏ ߛ ߋ
+  4     bottom of small letters                ߎ ߏ ߛ ߋ
+
+
+Table: `olck` (Ol Chiki) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ᱛ ᱜ ᱝ ᱡ ᱢ ᱥ
+  2     bottom of letters                      ᱛ ᱜ ᱝ ᱡ ᱢ ᱥ
+
+
+Table: `orkh` (Old Turkic) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𐰗 𐰘 𐰧
+  2     bottom of letters                      𐰉 𐰗 𐰦 𐰧
+
+
+Table: `osge` (Osage) blue zones
+
+  ID    Blue zone                                Characters
+  ----  -----------                              ------------
+  1     top of capital letters                   𐒾 𐓍 𐓒 𐓓 𐒻 𐓂 𐒵 𐓆
+  2     bottom of capital letters                𐒰 𐓍 𐓂 𐒿 𐓎 𐒹
+  3     bottom of descenders of capital letters  𐒼 𐒽 𐒾
+  4*    top of small letters                     𐓵 𐓶 𐓺 𐓻 𐓝 𐓣 𐓪 𐓮
+  5     bottom of small letters                  𐓘 𐓚 𐓣 𐓵 𐓡 𐓧 𐓪 𐓶
+  6     top of ascenders of small letters        𐓤 𐓦 𐓸 𐓹 𐓛
+  7     bottom of descenders of small letters    𐓤 𐓥 𐓦
+
+
+Table: `osma` (Osmanya) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𐒆 𐒉 𐒐 𐒒 𐒘 𐒛 𐒠 𐒣
+  2     bottom of letters                      𐒀 𐒂 𐒆 𐒈 𐒊 𐒒 𐒠 𐒩
+
+
+Table: `saur` (Saurashtra) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ꢜ ꢞ ꢳ ꢂ ꢖ ꢒ ꢝ ꢛ
+  2     bottom of letters                      ꢂ ꢨ ꢺ ꢤ ꢎ
+
+
+Table: `shaw` (Shavian) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𐑕 𐑙
+  2     bottom of letters                      𐑔 𐑖 𐑗 𐑹 𐑻
+  3     bottom of descenders of letters        𐑟 𐑣
+  4*    top of small letters                   𐑱 𐑲 𐑳 𐑴 𐑸 𐑺 𐑼
+  5     bottom of small letters                𐑴 𐑻 𐑹
+
+
+Table: `sinh` (Sinhala) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1115,7 +1359,16 @@ Table: `sinh` blue zones
   3     bottom of descenders of letters        ද ඳ උ ල තූ තු බු දු
 
 
-Table: `taml` blue zones
+Table: `sund` (Sundanese) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ᮋ ᮞ ᮮ ᮽ ᮰ ᮈ
+  2     bottom of letters                      ᮄ ᮔ ᮕ ᮗ ᮰ ᮆ ᮈ ᮉ
+  3     bottom of descenders of letters        ᮼ ᳄
+
+
+Table: `taml` (Tamil) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
@@ -1123,25 +1376,49 @@ Table: `taml` blue zones
   2     bottom of letters                      க ச ல ஶ உ ங ட ப
 
 
-Table: `telu` blue zones
+Table: `tavt` (Tai Viet) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top                                    ఇ ఌ ఙ ఞ ణ ఱ ౯
-  2     bottom                                 అ క చ ర ఽ ౨ ౬
+  1     top of letters                         ꪆ ꪔ ꪒ ꪖ ꪫ
+  2     bottom of letters                      ꪉ ꪫ ꪮ
 
 
-Table: `thai` blue zones
+Table: `telu` (Telugu) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1*    top                                    บ เ แ อ ก า
-  2     bottom                                 บ ป ษ ฯ อ ย ฮ
-  3     ascender                               ป ฝ ฟ
-  4     large ascender                         โ ใ ไ
-  5     descender                              ฎ ฏ ฤ ฦ
-  6     large descender                        ญ ฐ
+  1     top of letters                         ఇ ఌ ఙ ఞ ణ ఱ ౯
+  2     bottom of letters                      అ క చ ర ఽ ౨ ౬
+
+
+Table: `tfng` (Tifinagh) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         ⵔ ⵙ ⵛ ⵞ ⴵ ⴼ ⴹ ⵎ
+  2     bottom of letters                      ⵔ ⵙ ⵛ ⵞ ⴵ ⴼ ⴹ ⵎ
+
+
+Table: `thai` (Thai) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1*    top of letters                         บ เ แ อ ก า
+  2     bottom of letters                      บ ป ษ ฯ อ ย ฮ
+  3     top of ascenders of letters            ป ฝ ฟ
+  4     top of large ascenders of letters      โ ใ ไ
+  5     bottom of descenders of letters        ฎ ฏ ฤ ฦ
+  6     bottom of large descenders of letters  ญ ฐ
   7     top of Thai digits                     ๐ ๑ ๓
+
+
+Table: `vaii` (Vai) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of vai letters                     ꗍ ꘖ ꘙ ꘜ ꖜ ꖝ ꔅ ꕢ
+  2     bottom of vai letters                  ꗍ ꘖ ꘙ ꗞ ꔅ ꕢ ꖜ ꔆ
 
 
 ![This image shows the relevant glyph terms for vertical blue zone

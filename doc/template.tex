@@ -10,48 +10,101 @@
 \usepackage{ifxetex,ifluatex}
 \usepackage[T1]{fontenc}
 \usepackage{fixltx2e}
+\usepackage{fontspec-patched}
 \usepackage{libertine}
 
 \ifxetex
   % with newer releases of `fontspec', fonts should be defined before
   % including `ucharclasses'
+  \newfontfamily{\adlamfont}[Script=Adlam]{NotoSansAdlam-Regular.ttf}
   \newfontfamily{\arabicfont}[Script=Arabic]{NotoSansArabic-Regular.ttf}
   \newfontfamily{\armenianfont}[Script=Armenian]{NotoSansArmenian-Regular.ttf}
+  \newfontfamily{\avestanfont}[Script=Avestan]{NotoSansAvestan-Regular.ttf}
+  \newfontfamily{\bamumfont}[Script=Bamum]{NotoSansBamum-Regular.ttf}
   \newfontfamily{\bengalifont}[Script=Bengali]{NotoSansBengali-Regular.ttf}
+  \newfontfamily{\buhidfont}[Script=Buhid]{NotoSansBuhid-Regular.ttf}
+  \newfontfamily{\canadianfont}[Script=Canadian Syllabics]{NotoSansCanadianAboriginal-Regular.ttf}
+  \newfontfamily{\carianfont}[Script=Carian]{NotoSansCarian-Regular.ttf}
+  \newfontfamily{\chakmafont}[Script=Chakma]{NotoSansChakma-Regular.ttf}
   \newfontfamily{\cherokeefont}[Script=Cherokee]{NotoSansCherokee-Regular.ttf}
+  \newfontfamily{\copticfont}[Script=Coptic]{NotoSansCoptic-Regular.ttf}
+  \newfontfamily{\cypriotfont}[Script=Cypriot Syllabary]{NotoSansCypriot-Regular.ttf}
   \newfontfamily{\cyrillicfont}[Script=Cyrillic]{NotoSans-Regular.ttf}
   \newfontfamily{\devanagarifont}[Script=Devanagari]{NotoSansDevanagari-Regular.ttf}
+  \newfontfamily{\deseretfont}[Script=Deseret]{NotoSansDeseret-Regular.ttf}
   \newfontfamily{\ethiopicfont}[Script=Ethiopic]{NotoSansEthiopic-Regular.ttf}
   \newfontfamily{\georgianfont}[Script=Georgian]{NotoSansGeorgian-Regular.ttf}
+  \newfontfamily{\glagoliticfont}[Script=Glagolitic]{NotoSansGlagolitic-Regular.ttf}
+  \newfontfamily{\gothicfont}[Script=Gothic]{NotoSansGothic-Regular.ttf}
   \newfontfamily{\greekfont}[Script=Greek]{NotoSans-Regular.ttf}
   \newfontfamily{\gujaratifont}[Script=Gujarati]{NotoSansGujarati-Regular.ttf}
   \newfontfamily{\gurmukhifont}[Script=Gurmukhi]{NotoSansGurmukhi-Regular.ttf}
   \newfontfamily{\hebrewfont}[Script=Hebrew]{NotoSansHebrew-Regular.ttf}
   \newfontfamily{\kannadafont}[Script=Kannada]{NotoSansKannada-Regular.ttf}
+  \newfontfamily{\kayahlifont}[Script=Kayah Li]{NotoSansKayahLi-Regular.ttf}
   \newfontfamily{\khmerfont}[Script=Khmer]{NotoSansKhmer-Regular.ttf}
   \newfontfamily{\laofont}[Script=Lao]{NotoSansLao-Regular.ttf}
   \newfontfamily{\latinfont}[Script=Latin]{NotoSans-Regular.ttf}
+  \newfontfamily{\lisufont}[Script=Lisu]{NotoSansLisu-Regular.ttf}
   \newfontfamily{\malayalamfont}[Script=Malayalam]{NotoSansMalayalam-Regular.ttf}
   \newfontfamily{\myanmarfont}[Script=Myanmar]{NotoSansMyanmar-Regular.ttf}
+  \newfontfamily{\nkofont}[Script=N'Ko]{NotoSansNKo-Regular.ttf}
+  \newfontfamily{\olchikifont}[Script=Ol Chiki]{NotoSansOlChiki-Regular.ttf}
+  \newfontfamily{\oldturkicfont}[Script=Old Turkic]{NotoSansOldTurkic-Regular.ttf}
+  \newfontfamily{\osagefont}[Script=Osage]{NotoSansOsage-Regular.ttf}
+  \newfontfamily{\osmanyafont}[Script=Osmanya]{NotoSansOsmanya-Regular.ttf}
+  \newfontfamily{\saurashtrafont}[Script=Saurashtra]{NotoSansSaurashtra-Regular.ttf}
+  \newfontfamily{\shavianfont}[Script=Shavian]{NotoSansShavian-Regular.ttf}
   \newfontfamily{\sinhalafont}[Script=Sinhala]{NotoSansSinhala-Regular.ttf}
+  \newfontfamily{\sundanesefont}[Script=Sundanese]{NotoSansSundanese-Regular.ttf}
+  \newfontfamily{\taivietfont}[Script=Tai Viet]{NotoSansTaiViet-Regular.ttf}
   \newfontfamily{\tamilfont}[Script=Tamil]{NotoSansTamil-Regular.ttf}
   \newfontfamily{\telugufont}[Script=Telugu]{NotoSansTelugu-Regular.ttf}
   \newfontfamily{\thaifont}[Script=Thai]{NotoSansThai-Regular.ttf}
+  \newfontfamily{\tifinaghfont}[Script=Tifinagh]{NotoSansTifinagh-Regular.ttf}
+  \newfontfamily{\vaifont}[Script=Vai]{NotoSansVai-Regular.ttf}
 
   \usepackage{ucharclasses-patched}
 
+  \setTransitionTo{Adlam}{\begingroup\adlamfont}
+  \setTransitionFrom{Adlam}{\endgroup}
   \setTransitionTo{Arabic}{\begingroup\arabicfont}
   \setTransitionFrom{Arabic}{\endgroup}
   \setTransitionTo{Armenian}{\begingroup\armenianfont}
   \setTransitionFrom{Armenian}{\endgroup}
+  \setTransitionTo{Avestan}{\begingroup\avestanfont}
+  \setTransitionFrom{Avestan}{\endgroup}
+  \setTransitionTo{Bamum}{\begingroup\bamumfont}
+  \setTransitionFrom{Bamum}{\endgroup}
   \setTransitionTo{Bengali}{\begingroup\bengalifont}
   \setTransitionFrom{Bengali}{\endgroup}
+  \setTransitionTo{Buhid}{\begingroup\buhidfont}
+  \setTransitionFrom{Buhid}{\endgroup}
+  \setTransitionsForCanadianSyllabics{\begingroup\canadianfont}{\endgroup}
+  \setTransitionTo{Carian}{\begingroup\carianfont}
+  \setTransitionFrom{Carian}{\endgroup}
+  \setTransitionTo{Chakma}{\begingroup\chakmafont}
+  \setTransitionFrom{Chakma}{\endgroup}
   \setTransitionsForCherokeeFull{\begingroup\cherokeefont}{\endgroup}
+  \setTransitionTo{Coptic}{\begingroup\copticfont}
+  \setTransitionFrom{Coptic}{\endgroup}
+  \setTransitionTo{CypriotSyllabary}{\begingroup\cypriotfont}
+  \setTransitionFrom{CypriotSyllabary}{\endgroup}
   % no transition for Cyrillic font; we do that manually
+  \setTransitionTo{Deseret}{\begingroup\deseretfont}
+  \setTransitionFrom{Deseret}{\endgroup}
   \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
   \setTransitionFrom{Devanagari}{\endgroup}
   \setTransitionsForEthiopicFull{\begingroup\ethiopicfont}{\endgroup}
   \setTransitionsForGeorgianFull{\begingroup\georgianfont}{\endgroup}
+  % in Noto, Glagolitic is not part of a Cyrillic font;
+  % we thus have to set up the ranges separately
+  \setTransitionTo{Glagolitic}{\begingroup\glagoliticfont}
+  \setTransitionFrom{Glagolitic}{\endgroup}
+  \setTransitionTo{GlagoliticSupplement}{\begingroup\glagoliticfont}
+  \setTransitionFrom{GlagoliticSupplement}{\endgroup}
+  \setTransitionTo{Gothic}{\begingroup\gothicfont}
+  \setTransitionFrom{Gothic}{\endgroup}
   % no transition for Greek font; we do that manually
   \setTransitionTo{Gujarati}{\begingroup\gujaratifont}
   \setTransitionFrom{Gujarati}{\endgroup}
@@ -61,6 +114,8 @@
   \setTransitionFrom{Hebrew}{\endgroup}
   \setTransitionTo{Kannada}{\begingroup\kannadafont}
   \setTransitionFrom{Kannada}{\endgroup}
+  \setTransitionTo{KayahLi}{\begingroup\kayahlifont}
+  \setTransitionFrom{KayahLi}{\endgroup}
   \setTransitionTo{Khmer}{\begingroup\khmerfont}
   \setTransitionFrom{Khmer}{\endgroup}
   \setTransitionTo{KhmerSymbols}{\begingroup\khmerfont}
@@ -68,17 +123,40 @@
   \setTransitionTo{Lao}{\begingroup\laofont}
   \setTransitionFrom{Lao}{\endgroup}
   % no transition for Latin font; we do that manually
+  \setTransitionTo{Lisu}{\begingroup\lisufont}
+  \setTransitionFrom{Lisu}{\endgroup}
   \setTransitionTo{Malayalam}{\begingroup\malayalamfont}
   \setTransitionFrom{Malayalam}{\endgroup}
   \setTransitionsForMyanmarFull{\begingroup\myanmarfont}{\endgroup}
+  \setTransitionTo{NKo}{\begingroup\nkofont}
+  \setTransitionFrom{NKo}{\endgroup}
+  \setTransitionTo{OlChiki}{\begingroup\olchikifont}
+  \setTransitionFrom{OlChiki}{\endgroup}
+  \setTransitionTo{OldTurkic}{\begingroup\oldturkicfont}
+  \setTransitionFrom{OldTurkic}{\endgroup}
+  \setTransitionTo{Osage}{\begingroup\osagefont}
+  \setTransitionFrom{Osage}{\endgroup}
+  \setTransitionTo{Osmanya}{\begingroup\osmanyafont}
+  \setTransitionFrom{Osmanya}{\endgroup}
+  \setTransitionTo{Saurashtra}{\begingroup\saurashtrafont}
+  \setTransitionFrom{Saurashtra}{\endgroup}
+  \setTransitionTo{Shavian}{\begingroup\shavianfont}
+  \setTransitionFrom{Shavian}{\endgroup}
   \setTransitionTo{Sinhala}{\begingroup\sinhalafont}
   \setTransitionFrom{Sinhala}{\endgroup}
+  \setTransitionsForSundaneseFull{\begingroup\sundanesefont}{\endgroup}
+  \setTransitionTo{TaiViet}{\begingroup\taivietfont}
+  \setTransitionFrom{TaiViet}{\endgroup}
   \setTransitionTo{Tamil}{\begingroup\tamilfont}
   \setTransitionFrom{Tamil}{\endgroup}
   \setTransitionTo{Telugu}{\begingroup\telugufont}
   \setTransitionFrom{Telugu}{\endgroup}
   \setTransitionTo{Thai}{\begingroup\thaifont}
   \setTransitionFrom{Thai}{\endgroup}
+  \setTransitionTo{Tifinagh}{\begingroup\tifinaghfont}
+  \setTransitionFrom{Tifinagh}{\endgroup}
+  \setTransitionTo{Vai}{\begingroup\vaifont}
+  \setTransitionFrom{Vai}{\endgroup}
 
   % the next commands are needed for manually switching fonts
   \def\Cyrillic{\begingroup\cyrillicfont}
