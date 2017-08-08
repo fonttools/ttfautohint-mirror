@@ -68,6 +68,10 @@ EXTRA_DIST = c2pandoc.sed \
              ttfautohint-4.pandoc \
              template.html \
              template.tex \
+             longtable-patched.sty \
+             fontspec-patched.sty \
+             fontspec-xetex-patched.sty \
+             ucharclasses-patched.sty \
              ttfautohint-css.html \
              ttfautohint-js.html
 

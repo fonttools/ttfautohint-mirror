@@ -1929,7 +1929,9 @@ Features](#opentype-features)' for more details.
 
 > *\[*\ font-idx\ *\]*\ \ script\ \ feature\ \ *`@`*\ \ glyph-ids
 
-*script* is a four-letter name of one of the scripts supported by
+*script* is a four-letter name^[The notable exception is the tag 'lao',
+which originally has a trailing space as the fourth character.  However,
+ttfautohint ignores the space.] of one of the scripts supported by
 ttfautohint.  *feature* is one of the four-letter names of features
 supported by ttfautohint.
 
