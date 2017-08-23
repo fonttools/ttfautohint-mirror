@@ -92,7 +92,7 @@
 # BUILT_SOURCES = lcdrange.moc.cpp
 # -------------------------------------------------------------------------
 #
-# Note that your MOC, UIC, and RRC files *MUST* be listed explicitly
+# Note that your MOC, UIC, and RCC files *MUST* be listed explicitly
 # in BUILT_SOURCES.  If you name them properly (e.g. `.moc.cc',
 # `.qrc.cc', `.ui.cc' -- of course you can use `.cpp' or `.cxx' or
 # `.C' rather than `.cc') AutoTroll will build them automagically for
@@ -357,17 +357,17 @@ _ASEOF
      dnl This is for Qt5; for Qt4 it does nothing special.
      _AT_TWEAK_PRO_FILE([QT], [+widgets])
 
-     dnl Tweak the value of QT in the .pro if have been the 1st arg.
+     dnl Tweak the value of QT in the .pro file if we have a first argument.
      m4_ifval([$1],
        [_AT_TWEAK_PRO_FILE([QT], [$1])])
 
-     dnl Tweak the value of CONFIG in the .pro if have been given a
-     dnl 2nd arg.
+     dnl Tweak the value of CONFIG in the .pro file if we have a second
+     dnl argument.
      m4_ifval([$2],
        [_AT_TWEAK_PRO_FILE([CONFIG], [$2])])
 
      m4_ifval([$3],
-       [ # Add the extra-settings the user wants to set in the .pro.
+       [ # Add the extra-settings the user wants to set in the .pro file.
          echo "$3" >>"$pro_file"
        ])
 
@@ -540,7 +540,7 @@ EOF
      QT_VERSION_MAJOR=`echo "$at_cv_qt_build" | sed 's/[[^0-9]]*//g'`
      AC_SUBST([QT_VERSION_MAJOR])
 
-     # This sed filter is applied after an expression of the form:
+     # This sed filter is applied after an expression of the form
      # /^FOO.*=/!d; it starts by removing the beginning of the line,
      # removing references to SUBLIBS, removing unnecessary
      # whitespaces at the beginning, and prefixes all variable uses by
@@ -553,7 +553,7 @@ EOF
      # Find the Makefile (qmake happens to generate a fake Makefile
      # which invokes a Makefile.Debug or Makefile.Release).  If we
      # have both, we'll pick the Makefile.Release.  The reason is that
-     # that release uses -Os and debug -g.  We can override -Os by
+     # this release uses -Os and debug -g.  We can override -Os by
      # passing another -O but we usually don't override -g.
      if test -f Makefile.Release; then
        at_mfile='Makefile.Release'
@@ -604,7 +604,7 @@ EOF
      AC_SUBST([QT_CPPFLAGS],
        ["$at_cv_env_QT_DEFINES $at_cv_env_QT_INCPATH"])
 
-     # Find the LFLAGS of Qt (Should have been named LDFLAGS).
+     # Find the LFLAGS of Qt (should have been named LDFLAGS).
      AC_CACHE_CHECK([for the LDFLAGS to use with Qt],
        [at_cv_env_QT_LDFLAGS],
        [at_cv_env_QT_LDFLAGS=`sed "/^LFLAGS@<:@^A-Z=@:>@*=/!d;
@@ -643,7 +643,7 @@ EOF
 # AT_REQUIRE_QT_VERSION(QT_version, [RUN-IF-FAILED], [RUN-IF-OK])
 # ---------------------------------------------------------------
 # Check (using qmake) that Qt's version "matches" QT_version.  Must be
-# run *after* AT_WITH_QT.  Requires autoconf 2.60.
+# run *AFTER* AT_WITH_QT.  Requires autoconf 2.60.
 #
 # This macro is ignored if Qt support has been disabled (using
 # `--with-qt=no' or `--without-qt').
@@ -656,7 +656,7 @@ EOF
 AC_DEFUN([AT_REQUIRE_QT_VERSION],
   [AC_PREREQ([2.60])
 
-   # this is a hack to get decent flow control with `break'
+   # This is a hack to get decent flow control with `break'.
    for _qt_ignored in once; do
 
      if test x"$with_qt" = x"no"; then
@@ -692,14 +692,14 @@ AC_DEFUN([AT_REQUIRE_QT_VERSION],
      # Run the user code
      $3
 
-   done  # end hack (useless for to be able to use break)
+   done  # end hack (useless FOR to be able to use break)
   ])
 
 
 # _AT_TWEAK_PRO_FILE(QT_VAR, VALUE)
 # ---------------------------------
 # @internal.  Tweak the variable QT_VAR in the .pro file.  VALUE is an
-# IFS-separated list of value, and each value is rewritten as follows:
+# IFS-separated list of values, and each value is rewritten as follows:
 #
 #   +value  => QT_VAR += value
 #   -value  => QT_VAR -= value
