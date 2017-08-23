@@ -195,18 +195,6 @@ AC_DEFUN([AT_WITH_QT],
      # Find Qt.
      AC_ARG_VAR([QT_PATH],
        [path to Qt binaries])
-     if test -d /usr/local/Trolltech; then
-       # Try to find the latest version.
-       tmp_qt_paths=`echo /usr/local/Trolltech/*/bin \
-                     | tr ' ' '\n' \
-                     | sort -nr \
-                     | xargs \
-                     | sed 's/  */:/g'`
-     fi
-
-     # Path to which recent MacPorts (~v1.7) install Qt4.
-     test -d /opt/local/libexec/qt4-mac/bin \
-     && tmp_qt_paths="$tmp_qt_paths:/opt/local/libexec/qt4-mac/bin"
 
      # Find qmake.
      AC_ARG_VAR([QMAKE],
@@ -214,7 +202,7 @@ AC_DEFUN([AT_WITH_QT],
      AX_PATH_TOOLS([QMAKE],
        [qmake qmake-qt5 qmake-qt4 qmake-qt3],
        [missing],
-       [$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths])
+       [$QT_PATH:$PATH])
      if test x"$QMAKE" = xmissing; then
        AX_INSTEAD_IF([$4],
          [Cannot find qmake.  Try --with-qt=PATH.])
@@ -227,7 +215,7 @@ AC_DEFUN([AT_WITH_QT],
      AX_PATH_TOOLS([MOC],
        [moc moc-qt5 moc-qt4 moc-qt3],
        [missing],
-       [$QT_PATH:$PATH:$tmp_qt_paths])
+       [$QT_PATH:$PATH])
      if test x"$MOC" = xmissing; then
        AX_INSTEAD_IF([$4],
          [Cannot find moc (Meta Object Compiler).  Try --with-qt=PATH.])
@@ -240,7 +228,7 @@ AC_DEFUN([AT_WITH_QT],
      AX_PATH_TOOLS([UIC],
        [uic uic-qt5 uic-qt4 uic-qt3 uic3],
        [missing],
-       [$QT_PATH:$PATH:$tmp_qt_paths])
+       [$QT_PATH:$PATH])
      if test x"$UIC" = xmissing; then
        AX_INSTEAD_IF([$4],
          [Cannot find uic (User Interface Compiler).  Try --with-qt=PATH.])
@@ -253,7 +241,7 @@ AC_DEFUN([AT_WITH_QT],
      AX_PATH_TOOLS([RCC],
        [rcc rcc-qt5],
        [missing],
-       [$QT_PATH:$PATH:$tmp_qt_paths])
+       [$QT_PATH:$PATH])
      if test x"$RCC" = xmissing; then
        AC_MSG_WARN(
          [Cannot find rcc (Qt Resource Compiler).  Try --with-qt=PATH.])
