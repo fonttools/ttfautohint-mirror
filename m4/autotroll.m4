@@ -4,7 +4,7 @@
 # This file is part of AutoTroll.
 #
 # Copyright (C) 2006  Benoit Sigoure <benoit.sigoure@lrde.epita.fr>
-#   modified 2012-2013 by Werner Lemberg <wl@gnu.org>
+#   modified 2012-2017 by Werner Lemberg <wl@gnu.org>
 #
 # AutoTroll is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ m4_ifdef([AX_INSTEAD_IF],
 # -------------------------------------------------------------------------
 AC_DEFUN([AX_PATH_TOOLS],
   [for ax_tool in $2; do
-     AC_PATH_TOOL([$1], [$ax_tool], , [$4])
+     AC_PATH_TOOL([$1], [$ax_tool], [], [$4])
      test -n "$$1" && break
    done
    m4_ifval([$3], [test -n "$$1" || $1="$3"])
@@ -251,6 +251,7 @@ AC_DEFUN([AT_WITH_QT],
      at_darwin=no
      at_qmake_args=
      case $host_os in
+       dnl (
        darwin*)
          at_darwin=yes
          at_qmake_args='-spec macx-g++'
@@ -345,17 +346,19 @@ _ASEOF
      dnl This is for Qt5; for Qt4 it does nothing special.
      _AT_TWEAK_PRO_FILE([QT], [+widgets])
 
-     dnl Tweak the value of QT in the .pro file if we have a first argument.
+     dnl Tweak the value of QT in the .pro file if we have a first
+     dnl argument.
      m4_ifval([$1],
        [_AT_TWEAK_PRO_FILE([QT], [$1])])
 
-     dnl Tweak the value of CONFIG in the .pro file if we have a second
-     dnl argument.
+     dnl Tweak the value of CONFIG in the .pro file if we have a
+     dnl second argument.
      m4_ifval([$2],
        [_AT_TWEAK_PRO_FILE([CONFIG], [$2])])
 
      m4_ifval([$3],
-       [ # Add the extra-settings the user wants to set in the .pro file.
+       [ # Add the extra-settings the user wants to set in the .pro
+         # file.
          echo "$3" >>"$pro_file"
        ])
 
@@ -640,6 +643,9 @@ EOF
 # if any problem happens.  If this argument is omitted, then
 # AC_MSG_ERROR will be called.  RUN-IF-OK is arbitrary code to execute
 # if Qt was successfully found.
+#
+# This macro provides the Qt version in $(QT_VERSION).
+
 
 AC_DEFUN([AT_REQUIRE_QT_VERSION],
   [AC_PREREQ([2.60])
@@ -687,7 +693,8 @@ AC_DEFUN([AT_REQUIRE_QT_VERSION],
 # _AT_TWEAK_PRO_FILE(QT_VAR, VALUE)
 # ---------------------------------
 # @internal.  Tweak the variable QT_VAR in the .pro file.  VALUE is an
-# IFS-separated list of values, and each value is rewritten as follows:
+# IFS-separated list of values, and each value is rewritten as
+# follows:
 #
 #   +value  => QT_VAR += value
 #   -value  => QT_VAR -= value
