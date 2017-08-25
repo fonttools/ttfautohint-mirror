@@ -1,18 +1,3 @@
-%% This is file `fontspec-xetex-patched.sty'.
-%%
-%% It is the file `fontspec-xetex.sty' (from the `fontspec' package provided
-%% by CTAN) with added support for new scripts to cover Unicode 10.0.
-%%
-%% This is a legal modification based on the LPPL license since the file
-%% name has been changed.
-%%
-%% The original source code files can be found at
-%%
-%%   http://ctan.org/pkg/fontspec
-%%
-%% For reference, here the original copyright notice.
-%%
-%% This is file `fontspec.sty',
 %%
 %% This is file `fontspec-xetex.sty',
 %% generated with the docstrip utility.
@@ -46,12 +31,8 @@
 %% ------------------------------------------------
 \RequirePackage{expl3}
 \RequirePackage{xparse}
-\ProvidesExplPackage{fontspec-xetex-patched}%
-  {2018/08/07}{2.6c-patched}{Font selection for XeLaTeX and LuaLaTeX}
-
-% to make LaTeX believe the `fontspec-xetex' package gets loaded
-\expandafter\def\csname ver@fontspec-xetex.sty\endcsname{2017/08/07}
-
+\ProvidesExplPackage{fontspec-xetex}%
+  {2017/08/14}{2.6d}{Font selection for XeLaTeX and LuaLaTeX}
 \bool_new:N \l__fontspec_firsttime_bool
 \bool_new:N \l__fontspec_nobf_bool
 \bool_new:N \l__fontspec_noit_bool
@@ -2338,21 +2319,25 @@
  }
 \__fontspec_keys_define_code:nnn {fontspec} {HyphenChar}
  {
+  \__fontspec_warning:nx {only-xetex-feature} {HyphenChar}
   \str_if_eq:nnTF {#1} {None}
    {
     \tl_put_right:Nn \l__fontspec_postadjust_tl
       { \hyphenchar \font = -1 \relax }
    }
    {
+
     \tl_if_single:nTF {#1}
      { \tl_set:Nn \l_fontspec_hyphenchar_tl {`#1} }
      { \tl_set:Nn \l_fontspec_hyphenchar_tl { #1} }
+
     \__fontspec_primitive_font_glyph_if_exist:NnTF \l_fontspec_font {\l_fontspec_hyphenchar_tl}
      {
       \tl_put_right:Nn \l__fontspec_postadjust_tl
         { \hyphenchar \font = \l_fontspec_hyphenchar_tl \scan_stop: }
      }
      { \__fontspec_error:nx {no-glyph}{#1} }
+
    }
  }
 \__fontspec_aff_error:n {HyphenChar}
@@ -4031,4 +4016,4 @@
 %% And the derived files: fontspec*.sty,fontspec.lua, fontspec.pdf.
 %% ------------------------------------------------
 %%
-%% End of file `fontspec-xetex-patched.sty'.
+%% End of file `fontspec-xetex.sty'.

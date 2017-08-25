@@ -69,8 +69,7 @@ EXTRA_DIST = c2pandoc.sed \
              template.html \
              template.tex \
              longtable-patched.sty \
-             fontspec-patched.sty \
-             fontspec-xetex-patched.sty \
+             fontspec-xetex.sty \
              ucharclasses-patched.sty \
              ttfautohint-css.html \
              ttfautohint-js.html
