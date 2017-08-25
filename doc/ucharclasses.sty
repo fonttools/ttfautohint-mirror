@@ -1,12 +1,3 @@
-% This is file `ucharclasses-patched.sty'.
-%
-% It is the file `ucharclasses.sty' taken from the git repository commit
-%
-%   https://github.com/Pomax/ucharclasses/tree/9fdf650d
-%
-% and temporarily renamed (until a new version is available from TeXLive) to
-% provide Unicode 10.0 support.
-%
 % ----------------------------------------------------------------------------
 %  This "ucharclasses" package sets up XeTeX character classes based on which
 %  unicode block a character is found in. It then allows transition rules to be defined
@@ -17,22 +8,22 @@
 %  Current compatibility should be Unicode 10.0.
 %
 %  Credits:
-%   v2.1-2.2: Qing Lee, Werner Lemberg
+%   v2.1-2.3: Qing Lee, Werner Lemberg
 %   v2.0: Enrico Gregorio
 %   v1.0: Mike "Pomax" Kamermans
 %
 %  Significant updates:
+%   v2.3: Unicode 10 support
 %   v2.2: Unicode 8.0 and LaTeX2e support
 %   v2.1: Uplift for the intercharclass updates introduced in XeTeX 0.99994
 %   v2.0: Rewritten to Vastly improve performance.
 %   v1.0: Unicode block switching using XeTeX intercharclasses.
 %
-%  License: public domain (http://www.tex.ac.uk/CTAN/help/Catalogue/licenses.pd.html)
+%  License: public domain (https://www.ctan.org/license/pd)
 %
 % ----------------------------------------------------------------------------
 
-\ProvidesPackage{ucharclasses}
-          [2017/08/01 v2.2.1-patched Unicode block character classes for XeLaTeX]
+\ProvidesPackage{ucharclasses}[2017/08/10 v2.3.0 Unicode block character classes for XeLaTeX]
 
 \newif\if@ucharclassverbose
 \DeclareOption{verbose}{\@ucharclassverbosetrue}
@@ -1051,4 +1042,4 @@
 \let\do\@undefined\let\doclass\@undefined
 \endinput
 %
-% End of file `ucharclasses-patched.sty'.
+% End of file `ucharclasses.sty'.
