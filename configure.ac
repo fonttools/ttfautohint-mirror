@@ -51,7 +51,7 @@ gl_INIT
 
 PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 1.3.0])
 
-AT_WITH_QT
+AT_WITH_QT([], [], [QTPLUGIN.imageformats = -])
 AT_REQUIRE_QT_VERSION([4.6])
 
 if test x"$with_qt" != x"no"; then
@@ -291,6 +291,7 @@ AC_CONFIG_FILES([Makefile
                  gnulib/src/Makefile
                  lib/Makefile
                  frontend/Makefile
+                 frontend/static-plugins.cpp
                  doc/Makefile])
 AC_OUTPUT
 

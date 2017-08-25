@@ -56,6 +56,7 @@ if USE_QT
                            ttlineedit.h
   nodist_ttfautohintGUI_SOURCES = ddlineedit.moc.cpp \
                                   maingui.moc.cpp \
+                                  static-plugins.cpp \
                                   ttlineedit.moc.cpp
 
   ttfautohintGUI_CXXFLAGS = $(QT_CXXFLAGS)
@@ -68,6 +69,7 @@ if USE_QT
 
   BUILT_SOURCES = ddlineedit.moc.cpp \
                   maingui.moc.cpp \
+                  static-plugins.cpp \
                   ttlineedit.moc.cpp
 
   manpages += ttfautohintGUI.1

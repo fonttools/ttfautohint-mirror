@@ -1,6 +1,7 @@
 /.deps/
 /Makefile
 /Makefile.in
+/static-plugins.cpp
 /ttfautohint
 /ttfautohint.1
 /ttfautohintGUI
