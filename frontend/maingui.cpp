@@ -1500,48 +1500,14 @@ Main_GUI::create_layout(bool horizontal_layout)
        "&nbsp;<br>"
 
        "<i>script</i> and <i>feature</i> are four-letter tags"
+       " (like <tt>cyrl</tt> for the Cyrillic script"
+       " or <tt>subs</tt> for the subscript feature)"
        " that define a style the <i>glyph&#8209;ids</i> are assigned to."
        "  <i>glyph&#8209;ids</i> is a comma-separated list of"
-       " <i>glyph&#8209;id</i> values and value ranges.<br>");
+       " <i>glyph&#8209;id</i> values and value ranges.<br>"
+       "&nbsp;<br>"
 
-  tooltip_string += tr("Possible values for <i>script</i> are ");
-  const Tag_Names* sn = script_names;
-  for(;;)
-  {
-    tooltip_string += QString::fromLocal8Bit("<tt>%1</tt> (%2)")
-                                             .arg(sn->tag)
-                                             .arg(sn->description);
-    sn++;
-    if (sn->tag)
-      tooltip_string += ", ";
-    else
-    {
-      tooltip_string += ".<br>";
-      break;
-    }
-  }
-
-  tooltip_string += tr("Possible values for <i>feature</i> are ");
-  const Tag_Names* fn = feature_names;
-  for(;;)
-  {
-    tooltip_string += QString::fromLocal8Bit("<tt>%1</tt> (%2)")
-                                             .arg(fn->tag)
-                                             .arg(fn->description);
-    fn++;
-    if (fn->tag)
-      tooltip_string += ", ";
-    else
-    {
-      tooltip_string += ".<br>";
-      break;
-    }
-  }
-
-  tooltip_string += "&nbsp;<br>";
-
-  tooltip_string +=
-    tr("<tt>left</tt> (<tt>right</tt>) creates one-point segments"
+       "<tt>left</tt> (<tt>right</tt>) creates one-point segments"
        " with direction left (right), possibly having a width (in font units)"
        " given by <i>left&#8209;offset</i> and <i>right&#8209;offset</i>"
        " relative to the corresponding points.<br>"
