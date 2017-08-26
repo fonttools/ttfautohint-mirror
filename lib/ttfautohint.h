@@ -40,9 +40,10 @@ extern "C" {
  * ===================
  *
  * This section documents the single function of the ttfautohint library,
- * `TTF_autohint`, together with its callback functions, `TA_Progress_Func`
- * and `TA_Info_Func`.  All information has been directly extracted from the
- * `ttfautohint.h` header file.
+ * `TTF_autohint`, together with its callback functions (`TA_Progress_Func`
+ * `TA_Error_Func`, `TA_Info_Func`, and `TA_Info_Post_Func`).  All
+ * information has been directly extracted from the `ttfautohint.h` header
+ * file.
  *
  */
 
