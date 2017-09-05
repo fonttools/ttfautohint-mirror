@@ -38,6 +38,12 @@
 %option reentrant
 %option yylineno
 
+
+%top {
+#include "config.h"
+}
+
+
 %{
 
 #include <stdio.h>

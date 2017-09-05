@@ -38,7 +38,7 @@ libttfautohint_la_SOURCES = \
   tablue.c tablue.h \
   tabytecode.c tabytecode.h \
   tacontrol.c tacontrol.h \
-  tacontrol-flex-wrapper.c tacontrol-flex.h \
+  tacontrol-flex.c tacontrol-flex.h \
   tacontrol-bison.c tacontrol-bison.h \
   tacvt.c \
   tadsig.c \
