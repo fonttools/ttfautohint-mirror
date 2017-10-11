@@ -326,8 +326,12 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
   TA_LOG(("Table of points:\n"));
 
   if (hints->num_points)
+  {
     TA_LOG(("  index  hedge  hseg  flags"
+         /* "  XXXXX  XXXXX XXXXX   XXXX" */
             "  xorg  yorg  xscale  yscale   xfit    yfit"));
+         /* " XXXXX XXXXX XXXX.XX XXXX.XX XXXX.XX XXXX.XX" */
+  }
   else
     TA_LOG(("  (none)\n"));
 
@@ -347,7 +351,7 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
     }
 
     /* we don't show vertical edges since they are never used */
-    TA_LOG(("  %5d  %5s %5s  %s "
+    TA_LOG(("  %5d  %5s %5s   %4s"
             " %5d %5d %7.2f %7.2f %7.2f %7.2f\n",
             point_idx,
             ta_print_idx(buf1,
@@ -420,9 +424,14 @@ ta_glyph_hints_dump_segments(TA_GlyphHints hints)
             dimension == TA_DIMENSION_HORZ ? "vertical"
                                            : "horizontal"));
     if (axis->num_segments)
-      TA_LOG(("  index   pos   delta   dir   from   to"
+    {
+      TA_LOG(("  index   pos   delta   dir   from   to "
+           /* "  XXXXX  XXXXX  XXXXX  XXXXX  XXXX  XXXX" */
               "  link  serif  edge"
+           /* "  XXXX  XXXXX  XXXX" */
               "  height  extra     flags\n"));
+           /* "  XXXXXX  XXXXX  XXXXXXXXXXX" */
+    }
     else
       TA_LOG(("  (none)\n"));
 
@@ -483,8 +492,12 @@ ta_glyph_hints_dump_edges(TA_GlyphHints hints)
               10.0 * hints->y_scale / 65536.0 / 64.0));
 
     if (axis->num_edges)
+    {
       TA_LOG(("  index    pos     dir   link  serif"
+           /* "  XXXXX  XXXX.XX  XXXXX  XXXX  XXXXX" */
               "  blue    opos     pos       flags\n"));
+           /* "    X   XXXX.XX  XXXX.XX  XXXXXXXXXXX" */
+    }
     else
       TA_LOG(("  (none)\n"));
 
