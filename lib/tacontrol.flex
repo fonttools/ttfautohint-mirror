@@ -57,11 +57,11 @@
 /* note we want both line number and column start with value 1 */
 
 #define YY_USER_ACTION \
-  yylloc->first_line = yylineno + 1; \
-  yylloc->last_line = yylineno + 1; \
-  yylloc->first_column = yycolumn; \
-  yylloc->last_column = yycolumn + (int)yyleng - 1; \
-  yycolumn += yyleng;
+          yylloc->first_line = yylineno + 1; \
+          yylloc->last_line = yylineno + 1; \
+          yylloc->first_column = yycolumn; \
+          yylloc->last_column = yycolumn + (int)yyleng - 1; \
+          yycolumn += yyleng;
 
 #define YY_EXTRA_TYPE Control_Context*
 

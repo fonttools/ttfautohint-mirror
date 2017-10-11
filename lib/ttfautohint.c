@@ -129,7 +129,7 @@ TTF_autohint(const char* options,
 
   op = options;
 
-  for(;;)
+  for (;;)
   {
     const char* start;
     size_t len;
