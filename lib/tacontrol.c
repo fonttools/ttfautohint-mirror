@@ -642,11 +642,9 @@ TA_control_build_tree(FONT* font)
         node->ctrl.y_shift = y_shift;
 
         val = LLRB_INSERT(control_data, control_data_head, node);
-        if (val)
-          free(node);
         if (val && font->debug)
         {
-          /* entry is already present; we ignore it */
+          /* entry is already present; we overwrite it */
           Control d;
           number_range ppems;
           number_range points;
@@ -674,11 +672,24 @@ TA_control_build_tree(FONT* font)
           s = control_show_line(font, &d);
           if (s)
           {
-            fprintf(stderr, "Control instruction `%s' ignored.\n", s);
+            fprintf(stderr, "Control instruction `%s'"
+                            " overwrites previous data.\n", s);
             sdsfree(s);
           }
 
           emit_newline = 1;
+        }
+        if (val)
+        {
+          val->ctrl.type = type;
+          val->ctrl.font_idx = font_idx;
+          val->ctrl.glyph_idx = glyph_idx;
+          val->ctrl.ppem = ppem;
+          val->ctrl.point_idx = point_idx;
+          val->ctrl.x_shift = x_shift;
+          val->ctrl.y_shift = y_shift;
+
+          free(node);
         }
 
         point_idx = number_set_get_next(&points_iter);
