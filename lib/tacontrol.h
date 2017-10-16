@@ -88,6 +88,8 @@ struct Control_
   int y_shift;
   number_range* ppems;
 
+  int line_number;
+
   struct Control_* next;
 };
 
@@ -107,6 +109,8 @@ typedef struct Ctrl_
 
   int x_shift;
   int y_shift;
+
+  int line_number;
 } Ctrl;
 
 
@@ -181,7 +185,8 @@ TA_control_new(Control_Type type,
                number_range* point_set,
                double x_shift,
                double y_shift,
-               number_range* ppem_set);
+               number_range* ppem_set,
+               int line_number);
 
 
 /*

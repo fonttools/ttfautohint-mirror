@@ -183,7 +183,8 @@ entry:
                               $number_set,
                               $x_shift,
                               $y_shift,
-                              $ppem_set);
+                              $ppem_set,
+                              @$.first_line);
       if (!$entry)
       {
         store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
@@ -198,7 +199,8 @@ entry:
                               $number_set,
                               0,
                               0,
-                              NULL);
+                              NULL,
+                              @$.first_line);
       if (!$entry)
       {
         store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
@@ -213,7 +215,8 @@ entry:
                               $number_set,
                               $left,
                               $right,
-                              NULL);
+                              NULL,
+                              @$.first_line);
       if (!$entry)
       {
         store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
@@ -228,7 +231,8 @@ entry:
                               $number_set,
                               0,
                               0,
-                              NULL);
+                              NULL,
+                              @$.first_line);
       if (!$entry)
       {
         store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
@@ -243,7 +247,8 @@ entry:
                               $glyph_idx_set,
                               0,
                               0,
-                              NULL);
+                              NULL,
+                              @$.first_line);
       if (!$entry)
       {
         store_error_data(&@$, context, TA_Err_Control_Allocation_Error);

@@ -34,7 +34,8 @@ TA_control_new(Control_Type type,
                number_range* point_set,
                double x_shift,
                double y_shift,
-               number_range* ppem_set)
+               number_range* ppem_set,
+               int line_number)
 {
   Control* control;
 
@@ -44,7 +45,6 @@ TA_control_new(Control_Type type,
     return NULL;
 
   control->type = type;
-
   control->font_idx = font_idx;
   control->glyph_idx = glyph_idx;
   control->points = number_set_normalize(number_set_reverse(point_set));
@@ -80,6 +80,8 @@ TA_control_new(Control_Type type,
 
   control->ppems = number_set_normalize(number_set_reverse(ppem_set));
   control->next = NULL;
+
+  control->line_number = line_number;
 
   return control;
 }
@@ -592,6 +594,7 @@ TA_control_build_tree(FONT* font)
     long glyph_idx = control->glyph_idx;
     int x_shift = control->x_shift;
     int y_shift = control->y_shift;
+    int line_number = control->line_number;
 
     number_set_iter ppems_iter;
     int ppem;
@@ -640,6 +643,7 @@ TA_control_build_tree(FONT* font)
         node->ctrl.point_idx = point_idx;
         node->ctrl.x_shift = x_shift;
         node->ctrl.y_shift = y_shift;
+        node->ctrl.line_number = line_number;
 
         val = LLRB_INSERT(control_data, control_data_head, node);
         if (val && font->debug)
@@ -672,8 +676,9 @@ TA_control_build_tree(FONT* font)
           s = control_show_line(font, &d);
           if (s)
           {
-            fprintf(stderr, "Control instruction `%s'"
-                            " overwrites previous data.\n", s);
+            fprintf(stderr, "Control instruction `%s' (line %d)"
+                            " overwrites data from line %d.\n",
+                            s, line_number, val->ctrl.line_number);
             sdsfree(s);
           }
 
@@ -688,6 +693,7 @@ TA_control_build_tree(FONT* font)
           val->ctrl.point_idx = point_idx;
           val->ctrl.x_shift = x_shift;
           val->ctrl.y_shift = y_shift;
+          val->ctrl.line_number = line_number;
 
           free(node);
         }
@@ -794,7 +800,8 @@ TA_control_segment_dir_collect(FONT* font,
                           NULL,
                           ctrl->x_shift,
                           ctrl->y_shift,
-                          NULL);
+                          NULL,
+                          ctrl->line_number);
     if (!elem)
     {
       TA_control_free(control_segment_dirs_head);
