@@ -60,14 +60,14 @@ TA_control_new(Control_Type type,
                              + (y_shift > 0 ? 0.5 : -0.5));
     break;
 
-  case Control_Segment_Left:
-  case Control_Segment_Right:
+  case Control_Single_Point_Segment_Left:
+  case Control_Single_Point_Segment_Right:
     /* offsets */
     control->x_shift = (int)x_shift;
     control->y_shift = (int)y_shift;
     break;
 
-  case Control_Segment_None:
+  case Control_Single_Point_Segment_None:
     control->x_shift = 0;
     control->y_shift = 0;
     break;
@@ -201,29 +201,29 @@ control_show_line(FONT* font,
                        ppems_buf);
     break;
 
-  case Control_Segment_Left:
-  case Control_Segment_Right:
+  case Control_Single_Point_Segment_Left:
+  case Control_Single_Point_Segment_Right:
     /* display glyph index if we don't have a glyph name */
     if (*glyph_name_buf)
       s = sdscatprintf(s, "%ld %s %s %s",
                        control->font_idx,
                        glyph_name_buf,
-                       control->type == Control_Segment_Left ? "left"
-                                                             : "right",
+                       control->type == Control_Single_Point_Segment_Left
+                         ? "left" : "right",
                        points_buf);
     else
       s = sdscatprintf(s, "%ld %ld %s %s",
                        control->font_idx,
                        control->glyph_idx,
-                       control->type == Control_Segment_Left ? "left"
-                                                             : "right",
+                       control->type == Control_Single_Point_Segment_Left
+                         ? "left" : "right",
                        points_buf);
 
     if (control->x_shift || control->y_shift)
       s = sdscatprintf(s, " (%d,%d)", control->x_shift, control->y_shift);
     break;
 
-  case Control_Segment_None:
+  case Control_Single_Point_Segment_None:
     /* display glyph index if we don't have a glyph name */
     if (*glyph_name_buf)
       s = sdscatprintf(s, "%ld %s nodir %s",
@@ -611,9 +611,9 @@ TA_control_build_tree(FONT* font)
     ppem = number_set_get_first(&ppems_iter);
 
     /* ppem is always zero for one-point segments */
-    if (type == Control_Segment_Left
-        || type == Control_Segment_Right
-        || type == Control_Segment_None)
+    if (type == Control_Single_Point_Segment_Left
+        || type == Control_Single_Point_Segment_Right
+        || type == Control_Single_Point_Segment_None)
       goto Points_Loop;
 
     while (ppems_iter.range)
@@ -781,9 +781,9 @@ TA_control_segment_dir_collect(FONT* font,
       break;
 
     /* check type */
-    if (!(ctrl->type == Control_Segment_Left
-          || ctrl->type == Control_Segment_Right
-          || ctrl->type == Control_Segment_None))
+    if (!(ctrl->type == Control_Single_Point_Segment_Left
+          || ctrl->type == Control_Single_Point_Segment_Right
+          || ctrl->type == Control_Single_Point_Segment_None))
       break;
 
     /* too large values of font and glyph indices in `ctrl' */
@@ -843,9 +843,9 @@ TA_control_segment_dir_get_next(FONT* font,
 
   /* the `glyph_idx' field gets abused for `point_idx' */
   *point_idx = (int)control_segment_dirs_cur->glyph_idx;
-  *dir = control_segment_dirs_cur->type == Control_Segment_Left
+  *dir = control_segment_dirs_cur->type == Control_Single_Point_Segment_Left
            ? TA_DIR_LEFT
-           : control_segment_dirs_cur->type == Control_Segment_Right
+           : control_segment_dirs_cur->type == Control_Single_Point_Segment_Right
              ? TA_DIR_RIGHT
              : TA_DIR_NONE;
   *left_offset = control_segment_dirs_cur->x_shift;

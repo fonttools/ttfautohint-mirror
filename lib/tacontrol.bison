@@ -411,12 +411,12 @@ left_right:
 left_right_:
   LEFT
     {
-      $left_right_ = Control_Segment_Left;
+      $left_right_ = Control_Single_Point_Segment_Left;
       free($LEFT);
     }
 | RIGHT
     {
-      $left_right_ = Control_Segment_Right;
+      $left_right_ = Control_Single_Point_Segment_Right;
       free($RIGHT);
     }
 ;
@@ -443,7 +443,7 @@ no_dir:
       context->number_set_min = 0;
       context->number_set_max = num_points - 1;
 
-      $no_dir = Control_Segment_None;
+      $no_dir = Control_Single_Point_Segment_None;
       free($NODIR);
     }
 ;
