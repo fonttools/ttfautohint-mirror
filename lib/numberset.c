@@ -173,48 +173,6 @@ number_set_insert(number_range* list,
 
 
 number_range*
-number_set_normalize(number_range* list)
-{
-  number_range* cur;
-  number_range* prev;
-
-
-  if (!list)
-    return NULL;
-
-  prev = list;
-  cur = list->next;
-
-  if (!cur)
-    return list; /* only a single element, nothing to do */
-
-  while (cur)
-  {
-    if (prev->end + 1 == cur->start)
-    {
-      number_range* tmp;
-
-
-      prev->end = cur->end;
-
-      tmp = cur;
-      cur = cur->next;
-      prev->next = cur;
-
-      free(tmp);
-    }
-    else
-    {
-      prev = cur;
-      cur = cur->next;
-    }
-  }
-
-  return list;
-}
-
-
-number_range*
 number_set_reverse(number_range* list)
 {
   number_range* cur;
@@ -417,7 +375,7 @@ number_set_parse(const char* s,
   {
     /* success */
     if (number_set)
-      *number_set = number_set_normalize(number_set_reverse(cur));
+      *number_set = number_set_reverse(cur);
   }
 
   return s;

@@ -84,15 +84,6 @@ number_set_insert(number_range* list,
 
 
 /*
- * Merge adjacent ranges in a list of `number_range' objects (which must be
- * in normal order), deallocating list elements where appropriate.
- */
-
-number_range*
-number_set_normalize(number_range* list);
-
-
-/*
  * Reverse a list of `number_range' objects.
  */
 

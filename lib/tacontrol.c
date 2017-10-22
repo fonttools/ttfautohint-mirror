@@ -47,7 +47,7 @@ TA_control_new(Control_Type type,
   control->type = type;
   control->font_idx = font_idx;
   control->glyph_idx = glyph_idx;
-  control->points = number_set_normalize(number_set_reverse(point_set));
+  control->points = number_set_reverse(point_set);
 
   switch (control->type)
   {
@@ -78,7 +78,7 @@ TA_control_new(Control_Type type,
     break;
   }
 
-  control->ppems = number_set_normalize(number_set_reverse(ppem_set));
+  control->ppems = number_set_reverse(ppem_set);
   control->next = NULL;
 
   control->line_number = line_number;
