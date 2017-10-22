@@ -284,6 +284,9 @@ number_set_free(number_range* number_set);
  *
  * Note that a negative value for `min' is replaced with zero, and a
  * negative value for `max' with the largest representable integer, INT_MAX.
+ *
+ * If `number_set' represents wrap-around ranges, `min' and `max' are
+ * ignored.
  */
 
 char*

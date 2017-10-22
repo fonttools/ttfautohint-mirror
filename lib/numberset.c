@@ -628,18 +628,27 @@ number_set_show(number_range* number_set,
   const char* comma;
 
 
-  if (min < 0)
-    min = 0;
-  if (max < 0)
-    max = INT_MAX;
-  if (min > max)
+  if (nr && nr->base == nr->wrap)
   {
-    int t;
+    if (min < 0)
+      min = 0;
+    if (max < 0)
+      max = INT_MAX;
+    if (min > max)
+    {
+      int t;
 
 
-    t = min;
-    min = max;
-    max = t;
+      t = min;
+      min = max;
+      max = t;
+    }
+  }
+  else
+  {
+    /* `min' and `max' are meaningless for wrap-around ranges */
+    min = INT_MIN;
+    max = INT_MAX;
   }
 
   s = sdsempty();
@@ -695,11 +704,25 @@ number_set_is_element(number_range* number_set,
 
   while (nr)
   {
-    if (number < nr->start)
-      return 0;
-    if (nr->start <= number
-        && number <= nr->end)
-      return 1;
+    if (nr->start > nr->end)
+    {
+      if (number < nr->base)
+        return 0;
+      if (number <= nr->end)
+        return 1;
+      if ( number < nr->start)
+        return 0;
+      if (number <= nr->wrap)
+        return 1;
+    }
+    else
+    {
+      if (number < nr->start)
+        return 0;
+      if (number <= nr->end)
+        return 1;
+    }
+
     nr = nr->next;
   }
 
@@ -727,14 +750,33 @@ number_set_get_next(number_set_iter* iter_p)
 
   iter_p->val++;
 
-  if (iter_p->val > iter_p->range->end)
+  if (iter_p->range->start > iter_p->range->end)
   {
-    iter_p->range = iter_p->range->next;
+    /* range really wraps around */
+    if (iter_p->val > iter_p->range->wrap)
+      iter_p->val = iter_p->range->base;
+    else if (iter_p->val < iter_p->range->start
+             && iter_p->val > iter_p->range->end)
+    {
+      iter_p->range = iter_p->range->next;
 
-    if (iter_p->range)
-      iter_p->val = iter_p->range->start;
-    else
-      return -1;
+      if (iter_p->range)
+        iter_p->val = iter_p->range->start;
+      else
+        return -1;
+    }
+  }
+  else
+  {
+    if (iter_p->val > iter_p->range->end)
+    {
+      iter_p->range = iter_p->range->next;
+
+      if (iter_p->range)
+        iter_p->val = iter_p->range->start;
+      else
+        return -1;
+    }
   }
 
   return iter_p->val;
