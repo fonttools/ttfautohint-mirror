@@ -180,6 +180,19 @@ number_set_insert(number_range* list,
 
 
 /*
+ * Insert a single wrap-around `number_range' object `element' into `list'
+ * of (wrap-around) `number_range' objects, which might be NULL.  `list' is
+ * expected to be stored in reversed order.
+ *
+ * If `element' is NULL, return `list'.
+ */
+
+number_range*
+wrap_range_insert(number_range* list,
+                  number_range* element);
+
+
+/*
  * Reverse a list of `number_range' objects.
  */
 

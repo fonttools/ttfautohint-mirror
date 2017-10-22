@@ -313,6 +313,78 @@ number_set_insert(number_range* list,
 
 
 number_range*
+wrap_range_insert(number_range* list,
+                  number_range* element)
+{
+  number_range* nr = list;
+  number_range* prev;
+
+
+  if (!element)
+    return list;
+
+  if (!list)
+    return element;
+
+  /* `list' and `element' must both be wrap-around ranges */
+  if (list->base == list->wrap || element->base == element->wrap)
+    return NUMBERSET_INVALID_RANGE;
+
+  prev = NULL;
+  while (nr)
+  {
+    /* we explicitly assume that the [base;wrap] intervals */
+    /* of `list' and `element' either don't overlap ... */
+    if (element->base < nr->base)
+      goto next;
+    if (element->base > nr->base)
+      goto insert;
+
+    /* ... or are exactly the same */
+
+    if (nr->start > nr->end)
+    {
+      /* range really wraps around */
+      if (element->start > element->end)
+        return NUMBERSET_OVERLAPPING_RANGES;
+
+      if (element->start <= nr->end
+          || element->end >= nr->start)
+        return NUMBERSET_OVERLAPPING_RANGES;
+    }
+    else
+    {
+      /* normal range */
+      if (element->start <= nr->end
+          && element->end >= nr->start)
+        return NUMBERSET_OVERLAPPING_RANGES;
+
+      /* insert element */
+      if (element->start > nr->end)
+      {
+      insert:
+        if (prev)
+          prev->next = element;
+        element->next = nr;
+
+        return prev ? list : element;
+      }
+    }
+
+  next:
+    prev = nr;
+    nr = nr->next;
+  }
+
+  /* prepend element */
+  prev->next = element;
+  element->next = NULL;
+
+  return list;
+}
+
+
+number_range*
 number_set_reverse(number_range* list)
 {
   number_range* cur;
