@@ -213,6 +213,8 @@ typedef struct number_set_iter_
  * Get first element of a number set.  `iter_p' must be initialized with the
  * `number_range' structure to iterate over.  After the call, `iter_p' is
  * ready to be used in a call to `number_set_get_next'.
+ *
+ * If there is no valid first element, return -1.
  */
 
 int
@@ -221,9 +223,8 @@ number_set_get_first(number_set_iter* iter_p);
 
 /*
  * Get next element of a number set, using `iter_p' from a previous call to
- * `number_set_get_first' or `number_set_get_next'.  If `iter_p->range' is
- * NULL after the call, there is no next element, and the return value is
- * undefined.
+ * `number_set_get_first' or `number_set_get_next'.  If there is no next
+ * valid element, return -1.
  */
 
 int

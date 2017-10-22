@@ -468,7 +468,7 @@ TA_control_apply_coverage(SFNT* sfnt,
     glyph_idx_iter.range = control->points;
     glyph_idx = number_set_get_first(&glyph_idx_iter);
 
-    while (glyph_idx_iter.range)
+    while (glyph_idx >= 0)
     {
       /* assign new style but retain digit property */
       gstyles[glyph_idx] &= TA_DIGIT;
@@ -616,7 +616,7 @@ TA_control_build_tree(FONT* font)
         || type == Control_Single_Point_Segment_None)
       goto Points_Loop;
 
-    while (ppems_iter.range)
+    while (ppem >= 0)
     {
       number_set_iter points_iter;
       int point_idx;
@@ -626,7 +626,7 @@ TA_control_build_tree(FONT* font)
       points_iter.range = control->points;
       point_idx = number_set_get_first(&points_iter);
 
-      while (points_iter.range)
+      while (point_idx >= 0)
       {
         Node* node;
         Node* val;

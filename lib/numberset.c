@@ -530,7 +530,7 @@ int
 number_set_get_first(number_set_iter* iter_p)
 {
   if (!iter_p || !iter_p->range)
-    return 0;
+    return -1;
 
   iter_p->val = iter_p->range->start;
 
@@ -542,7 +542,7 @@ int
 number_set_get_next(number_set_iter* iter_p)
 {
   if (!iter_p || !iter_p->range)
-    return 0;
+    return -1;
 
   iter_p->val++;
 
@@ -552,6 +552,8 @@ number_set_get_next(number_set_iter* iter_p)
 
     if (iter_p->range)
       iter_p->val = iter_p->range->start;
+    else
+      return -1;
   }
 
   return iter_p->val;
