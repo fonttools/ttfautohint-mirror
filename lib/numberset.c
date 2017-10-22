@@ -124,19 +124,20 @@ number_set_insert(number_range* list,
       return NUMBERSET_OVERLAPPING_RANGES;
 
     /* merge adjacent ranges */
-    if (element->start == nr->end + 1)
-    {
-      nr->end = element->end;
-
-      free(element);
-
-      return list;
-    }
     if (element->end + 1 == nr->start)
     {
       nr->start = element->start;
 
       free(element);
+
+      if (nr->next
+          && nr->next->end + 1 == nr->start)
+      {
+        element = nr->next;
+        element->end = nr->end;
+        free(nr);
+        return element;
+      }
 
       return list;
     }
@@ -144,6 +145,14 @@ number_set_insert(number_range* list,
     /* insert element */
     if (element->start > nr->end)
     {
+      /* merge adjacent ranges */
+      if (nr->end + 1 == element->start)
+      {
+        nr->end = element->end;
+        free(element);
+        return list;
+      }
+
       if (prev)
         prev->next = element;
       element->next = nr;
@@ -155,7 +164,7 @@ number_set_insert(number_range* list,
     nr = nr->next;
   }
 
-  /* append element */
+  /* prepend element */
   prev->next = element;
   element->next = NULL;
 
