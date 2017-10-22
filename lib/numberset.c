@@ -178,6 +178,67 @@ number_set_prepend(number_range* list,
 
 
 number_range*
+wrap_range_prepend(number_range* list,
+                   number_range* element)
+{
+  if (!element)
+    return list;
+
+  if (!list)
+    return element;
+
+  /* `list' and `element' must both be wrap-around ranges */
+  if (list->base == list->wrap || element->base == element->wrap)
+    return NUMBERSET_INVALID_RANGE;
+
+  /* we explicitly assume that the [base;wrap] intervals */
+  /* of `list' and `element' either don't overlap ... */
+  if (element->base < list->base)
+    return NUMBERSET_NOT_ASCENDING;
+  if (element->base > list->base)
+    goto prepend;
+
+  /* ... or are exactly the same; */
+  /* in this case, we can't append if the list's range really wraps around */
+  if (list->start > list->end)
+    return NUMBERSET_OVERLAPPING_RANGES;
+
+  if (element->start <= list->end)
+  {
+    if (element->end < list->start)
+      return NUMBERSET_NOT_ASCENDING;
+    else
+      return NUMBERSET_OVERLAPPING_RANGES;
+  }
+
+  if (element->start > element->end)
+  {
+    number_range* nr = list->next;
+
+
+    /* we must search backwards to check */
+    /* whether the wrapped part of the range overlaps */
+    /* with an already existing range */
+    /* (in the same [base;wrap] interval) */
+    while (nr)
+    {
+      if (element->base != nr->base)
+        break;
+      if (element->end > nr->start)
+        return NUMBERSET_OVERLAPPING_RANGES;
+
+      nr = nr->next;
+    }
+  }
+
+prepend:
+  element->next = list;
+
+  return element;
+}
+
+
+number_range*
 number_set_insert(number_range* list,
                   number_range* element)
 {

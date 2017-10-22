@@ -151,6 +151,21 @@ number_set_prepend(number_range* list,
 
 
 /*
+ * Prepend a single wrap-around `number_range' object `element' to `list' of
+ * (wrap-around) `number_range' objects, which might be NULL.  `list' is
+ * expected to be stored in reversed order; consequently, the range in
+ * `element' must be larger than the first element of `list', otherwise an
+ * error is returned.
+ *
+ * If `element' is NULL, return `list'.
+ */
+
+number_range*
+wrap_range_prepend(number_range* list,
+                   number_range* element);
+
+
+/*
  * Insert a single `number_range' object `element' into `list' of
  * `number_range' objects, which might be NULL.  `list' is expected to be
  * stored in reversed order.  If possible, the ranges of `element' and
