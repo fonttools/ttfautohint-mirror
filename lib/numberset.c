@@ -62,6 +62,8 @@ number_set_new(int start,
 
   nr->start = start;
   nr->end = end;
+  nr->base = 0;
+  nr->wrap = 0;
   nr->next = NULL;
 
   return nr;
@@ -77,6 +79,10 @@ number_set_prepend(number_range* list,
 
   if (!list)
     return element;
+
+  /* `list' and `element' must both be normal integer ranges */
+  if (list->base != list->wrap || element->base != element->wrap)
+    return NUMBERSET_INVALID_RANGE;
 
   if (element->start <= list->end)
   {
@@ -115,6 +121,10 @@ number_set_insert(number_range* list,
 
   if (!list)
     return element;
+
+  /* `list' and `element' must both be normal integer ranges */
+  if (list->base != list->wrap || element->base != element->wrap)
+    return NUMBERSET_INVALID_RANGE;
 
   prev = NULL;
   while (nr)
@@ -354,6 +364,8 @@ number_set_parse(const char* s,
         /* prepend new range to list */
         new_range->start = n;
         new_range->end = m;
+        new_range->base = 0;
+        new_range->wrap = 0;
         new_range->next = cur;
         cur = new_range;
       }

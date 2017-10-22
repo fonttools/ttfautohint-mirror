@@ -21,23 +21,47 @@ extern "C" {
 #endif
 
 /*
- * A structure defining an integer range, to be used as a linked list.  It
- * gets allocated by a successful call to `number_set_parse'.  Use
+ * A structure defining a range or wrap-around range of non-negative
+ * integers, to be used as a linked list.  It gets allocated by a successful
+ * call to `number_set_parse', `number_set_new', and `wrap_range_new'.  Use
  * `number_set_free' to deallocate it.
+ *
+ * If `base' and `wrap' are not equal, we have a `wrap-around range'.  These
+ * two values define a frame which encloses `start' and `end'; `start' can
+ * be larger than `end' to indicate wrapping at `wrap', starting again with
+ * value `base'.  Example:
+ *
+ *   start=17, end=14,
+ *   base=13, wrap=18  -->  17, 18, 13, 14
+ *
+ * Normal integer ranges can be merged.  For example, the ranges 3-6 and 7-8
+ * can be merged into 3-8, and functions like `number_set_prepend' do this
+ * automatically.
+ *
+ * Wrap-around ranges will not be merged; this is by design to reflect the
+ * intended usage of this library (namely to represent groups of
+ * horizontally aligned points on a closed glyph outline contour).
+ * Additionally, for a given [base;wrap] interval there can only be a single
+ * wrap-around range that actually does wrapping; it gets sorted after the
+ * other non-wrapping ranges for the same [base;wrap] interval.
  */
 
 typedef struct number_range_
 {
+  /* all values are >= 0 */
   int start;
   int end;
+  int base;
+  int wrap;
 
   struct number_range_* next;
 } number_range;
 
 
 /*
- * Create and initialize a `number_range' object.  In case of an allocation
- * error, return NUMBERSET_ALLOCATION_ERROR.
+ * Create and initialize a `number_range' object, holding a normal integer
+ * range.  In case of an allocation error, return
+ * NUMBERSET_ALLOCATION_ERROR.
  *
  * A negative value for `min' is replaced with zero, and a negative value
  * for `max' with the largest representable integer, INT_MAX.
@@ -140,6 +164,9 @@ number_set_reverse(number_range* list);
  *
  * Note that a negative value for `min' is replaced with zero, and a
  * negative value for `max' with the largest representable integer, INT_MAX.
+ *
+ * `number_set_parse' is not suited to create wrap-around ranges; this only
+ * works with `wrap_range_new'.
  */
 
 #define NUMBERSET_INVALID_CHARACTER (number_range*)-1
