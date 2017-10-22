@@ -70,6 +70,75 @@ number_set_new(int start,
 }
 
 
+int
+wrap_range_check_wraps(size_t num_wraps,
+                       int* wraps)
+{
+  size_t i;
+
+
+  /* `wraps' must have at least two elements */
+  if (!wraps || num_wraps < 2)
+    return 1;
+
+  /* first `wraps' element must be larger than or equal to -1 */
+  if (wraps[0] < -1)
+    return 1;
+
+  /* check that all elements of `wraps' are strictly ascending */
+  for (i = 1; i < num_wraps; i++)
+    if (wraps[i] <= wraps[i - 1])
+      return 1;
+
+  return 0;
+}
+
+
+number_range*
+wrap_range_new(int start,
+               int end,
+               size_t num_wraps,
+               int* wraps)
+{
+  number_range* nr;
+  size_t i;
+  int s, e;
+
+
+  if (start > end)
+  {
+    s = end;
+    e = start;
+  }
+  else
+  {
+    s = start;
+    e = end;
+  }
+
+  /* search fitting interval in `wraps' */
+  for (i = 1; i < num_wraps; i++)
+  {
+    if (s > wraps[i - 1] && e <= wraps[i])
+      break;
+  }
+  if (i == num_wraps)
+    return NUMBERSET_INVALID_RANGE;
+
+  nr = (number_range*)malloc(sizeof (number_range));
+  if (!nr)
+    return NUMBERSET_ALLOCATION_ERROR;
+
+  nr->start = start;
+  nr->end = end;
+  nr->base = wraps[i - 1] + 1;
+  nr->wrap = wraps[i];
+  nr->next = NULL;
+
+  return nr;
+}
+
+
 number_range*
 number_set_prepend(number_range* list,
                    number_range* element)

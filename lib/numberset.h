@@ -78,6 +78,63 @@ number_set_new(int start,
 
 
 /*
+ * Create and initialize a wrap-around range.  In case of an allocation
+ * error, return NUMBERSET_ALLOCATION_ERROR.
+ *
+ * `wraps' specifies an array of at least two `wrap points', in strictly
+ * ascending order, with `num_wraps' elements.  For creating a valid
+ * wrap-around range, there must exist a pair of adjacent elements in the
+ * `wraps' array that enclose `start' and `end'.  To be more precise, if
+ * `wA=wraps[n]' and `wB=wraps[n+1]' denote the two adjacent elements of
+ * `wraps', both `start' and `end' must be in the range ]wA;wB].  If this
+ * constraint is not met, return NUMBERSET_INVALID_RANGE.
+ *
+ * A corollary of the definitions of `wraps' and `number_range' is that the
+ * elements of `wraps' must be all different and non-negative except the
+ * first element, which can be -1.
+ *
+ * For convenience, normal integer ranges and wrap-around ranges use the
+ * same data structure (`number_range').  However, calls to `number_set_new'
+ * and `wrap_range_new' can't be mixed: Either use the former function for
+ * all calls, or you use the latter; you will get an NUMBERSET_INVALID_RANGE
+ * error otherwise.
+ *
+ * Here are some examples that demonstrate the resulting elements of
+ * wrap-around ranges for a given `wraps' array and various `start' and
+ * `end' values.
+ *
+ *   wraps = {-1, 4, 9}
+ *
+ *     range     elements
+ *    -------------------------------------------------
+ *      4-0      4, 0
+ *      6-8      6, 7, 8
+ *      8-6      8, 9, 5, 6
+ *      3-6      invalid, crossing wrap point 4
+ *     10-11     invalid, outside of wrap points array
+ *
+ * Note that you get undefined results if the elements of `wraps' change
+ * between calls to this function.
+ */
+
+number_range*
+wrap_range_new(int start,
+               int end,
+               size_t num_wraps,
+               int* wraps);
+
+
+/*
+ * Return 0 if the setup of `wraps', as described above, is valid,
+ * and 1 otherwise.
+ */
+
+int
+wrap_range_check_wraps(size_t num_wraps,
+                       int* wraps);
+
+
+/*
  * Prepend a single `number_range' object `element' to `list' of
  * `number_range' objects, which might be NULL.  `list' is expected to be
  * stored in reversed order; consequently, the range in `element' must be
