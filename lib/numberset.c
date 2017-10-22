@@ -32,13 +32,22 @@ number_set_new(int start,
                int max)
 {
   number_range* nr;
+  int tmp;
 
+
+  if (min < 0)
+    min = 0;
+  if (max < 0)
+    max = INT_MAX;
+  if (min > max)
+  {
+    tmp = min;
+    min = max;
+    max = tmp;
+  }
 
   if (start > end)
   {
-    int tmp;
-
-
     tmp = start;
     start = end;
     end = tmp;

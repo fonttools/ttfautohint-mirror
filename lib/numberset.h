@@ -37,8 +37,13 @@ typedef struct number_range_
 
 /*
  * Create and initialize a `number_range' object.  In case of an allocation
- * error, return NUMBERSET_ALLOCATION_ERROR.  If either `start' or `end'
- * exceeds the range [min;max], return NUMBERSET_INVALID_RANGE.
+ * error, return NUMBERSET_ALLOCATION_ERROR.
+ *
+ * A negative value for `min' is replaced with zero, and a negative value
+ * for `max' with the largest representable integer, INT_MAX.
+ *
+ * If either `start' or `end' exceeds the range [min;max], return
+ * NUMBERSET_INVALID_RANGE.
  */
 
 number_range*
