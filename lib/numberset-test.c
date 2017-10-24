@@ -74,12 +74,12 @@ main(void)
 
   /* min < 0, max < 0 */
   nr = number_set_new(1, 2, -1, -1);
-  assert(nr < NUMBERSET_ALLOCATION_ERROR);
+  assert(nr < NUMBERSET_INVALID_WRAP_RANGE);
   free(nr);
 
   /* min > max, start > end */
   nr = number_set_new(2, 1, 2, 1);
-  assert(nr < NUMBERSET_ALLOCATION_ERROR);
+  assert(nr < NUMBERSET_INVALID_WRAP_RANGE);
   free(nr);
 
   /* wrap_range_check_wraps */
@@ -120,18 +120,22 @@ main(void)
   /* wrap_range_new */
   /* -------------- */
 
+  /* num_wraps < 2 */
+  nr = wrap_range_new(0, 0, 0, NULL);
+  assert(nr == NUMBERSET_INVALID_WRAP_RANGE);
+
   /* start < wraps[n] < end */
   nr = wrap_range_new(2, 6, num_wraps, wraps);
-  assert(nr == NUMBERSET_INVALID_RANGE);
+  assert(nr == NUMBERSET_INVALID_WRAP_RANGE);
 
   /* start <= end */
   nr = wrap_range_new(1, 1, num_wraps, wraps);
-  assert(nr < NUMBERSET_ALLOCATION_ERROR);
+  assert(nr < NUMBERSET_INVALID_WRAP_RANGE);
   free(nr);
 
   /* start > end */
   nr = wrap_range_new(2, 1, num_wraps, wraps);
-  assert(nr < NUMBERSET_ALLOCATION_ERROR);
+  assert(nr < NUMBERSET_INVALID_WRAP_RANGE);
   free(nr);
 
   /* number_set_show */

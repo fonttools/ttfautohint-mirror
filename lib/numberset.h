@@ -261,6 +261,12 @@ number_set_reverse(number_range* list);
 #define NUMBERSET_NOT_ASCENDING (number_range*)-5
 #define NUMBERSET_ALLOCATION_ERROR (number_range*)-6
 
+/*
+ * `wrap_range_new' can return an additional error code in case no valid
+ * interval could be found.
+ */
+#define NUMBERSET_INVALID_WRAP_RANGE (number_range*)-7
+
 const char*
 number_set_parse(const char* s,
                  number_range** number_set,

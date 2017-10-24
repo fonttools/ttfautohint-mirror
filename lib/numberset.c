@@ -105,6 +105,9 @@ wrap_range_new(int start,
   int s, e;
 
 
+  if (num_wraps < 2)
+    return NUMBERSET_INVALID_WRAP_RANGE;
+
   if (start > end)
   {
     s = end;
@@ -123,7 +126,7 @@ wrap_range_new(int start,
       break;
   }
   if (i == num_wraps)
-    return NUMBERSET_INVALID_RANGE;
+    return NUMBERSET_INVALID_WRAP_RANGE;
 
   nr = (number_range*)malloc(sizeof (number_range));
   if (!nr)
