@@ -33,7 +33,7 @@ two (huge) git repositories and adjust the `TTFONTS' environment variable
 accordingly to make xelatex find the fonts in the proper directories.
 
 [Yes, we access github's git repositories with SVN to quickly download just
-a single directory!]
+a part of the repository!]
 
   svn checkout \
     https://github.com/googlei18n/noto-fonts-alpha/trunk/from-pipeline/unhinted/ttf/sans \
@@ -44,10 +44,12 @@ a single directory!]
 
 Here is an example how to set `TTFONTS'.
 
-  TTFONTS="/home/wl/noto-fonts-alpha/:/home/wl/noto-fonts/:"
+  TTFONTS="/home/wl/noto-fonts-alpha//:/home/wl/noto-fonts/:"
 
-Note the trailing `:' character which ensures that the directories are
-prepended to the built-in value of `TTFONTS'.
+Note the double slash ending the first path; this makes TeX and its tools
+search all subdirectories.  Also note the trailing `:' character, which
+ensures that the directories are prepended to the built-in value of
+`TTFONTS' (instead of replacing it).
 
 Say
 
