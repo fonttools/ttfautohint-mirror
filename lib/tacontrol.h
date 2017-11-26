@@ -62,7 +62,7 @@ typedef enum Control_Type_
   Control_Single_Point_Segment_Left,
   Control_Single_Point_Segment_Right,
   Control_Single_Point_Segment_None,
-  Control_Script_Feature
+  Control_Script_Feature_Glyphs
 } Control_Type;
 
 

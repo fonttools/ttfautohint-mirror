@@ -72,7 +72,7 @@ TA_control_new(Control_Type type,
     control->y_shift = 0;
     break;
 
-  case Control_Script_Feature:
+  case Control_Script_Feature_Glyphs:
     /* the `glyph_idx' field holds the style; */
     /* the `points' field holds the glyph index set */
     break;
@@ -165,7 +165,7 @@ control_show_line(FONT* font,
 
   face = font->sfnts[control->font_idx].face;
   glyph_name_buf[0] = '\0';
-  if (control->type != Control_Script_Feature
+  if (control->type != Control_Script_Feature_Glyphs
       && FT_HAS_GLYPH_NAMES(face))
     FT_Get_Glyph_Name(face, (FT_UInt)control->glyph_idx, glyph_name_buf, 64);
 
@@ -237,7 +237,7 @@ control_show_line(FONT* font,
                        points_buf);
     break;
 
-  case Control_Script_Feature:
+  case Control_Script_Feature_Glyphs:
     {
       TA_StyleClass style_class = ta_style_classes[control->glyph_idx];
       char feature_name[5];
@@ -457,7 +457,7 @@ TA_control_apply_coverage(SFNT* sfnt,
     int style;
 
 
-    if (control->type != Control_Script_Feature)
+    if (control->type != Control_Script_Feature_Glyphs)
       goto Skip;
     if (control->font_idx != sfnt->face->face_index)
       goto Skip;
@@ -601,7 +601,7 @@ TA_control_build_tree(FONT* font)
 
 
     /* we don't store style information in the tree */
-    if (type == Control_Script_Feature)
+    if (type == Control_Script_Feature_Glyphs)
     {
       control = control->next;
       continue;

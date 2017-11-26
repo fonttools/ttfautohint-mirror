@@ -241,7 +241,7 @@ entry:
     }
 | font_idx script_feature glyph_idx_set EOE
     {
-      $entry = TA_control_new(Control_Script_Feature,
+      $entry = TA_control_new(Control_Script_Feature_Glyphs,
                               $font_idx,
                               $script_feature,
                               $glyph_idx_set,
