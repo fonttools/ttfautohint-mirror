@@ -465,6 +465,8 @@ show_help(bool
 "\n"
 "  [<font idx>] <script> <feature> @ <glyph ids>\n"
 "\n"
+"  [<font idx>] <script> <feature> w <stem widths>\n"
+"\n"
 "  [<font idx>] <glyph id> l|r <points> [(<left offset>,<right offset>)]\n"
 "\n"
 "  [<font idx>] <glyph id> n <points>\n"
@@ -472,7 +474,8 @@ show_help(bool
 "  [<font idx>] <glyph id> t|p <points> [x <shift>] [y <shift>] @ <ppems>\n"
 "\n"
 "<font idx> is the current subfont, <glyph id> is a glyph name or index,\n"
-"<glyph ids> is a set of <glyph id>s, <shift> is a real number in px,\n"
+"<glyph ids> is a set of <glyph id>s, <stem widths> is an unordered set of\n"
+"integer stem widths in font units, <shift> is a real number in px,\n"
 "<points> and <ppems> are integer ranges as with option `-X'.\n"
 "\n"
 "<script> and <feature> are four-letter tags that define a style\n"
@@ -495,6 +498,7 @@ show_help(bool
   }
   fprintf(handle,
 "\n"
+"`w' assigns stem widths to a style; the first value sets the default.\n"
 "`l' (`r') creates one-point segments with direction left (right).\n"
 "<left offset> and <right offset> specify offsets (in font units)\n"
 "relative to the corresponding points to give the segments a length.\n"
@@ -504,8 +508,9 @@ show_help(bool
 "`#' starts a line comment, which gets ignored.\n"
 "Empty lines are ignored, too.\n"
 "\n"
-"Key letters `l', `r', `n', `p', `t', `x', and `y' have the verbose aliases\n"
-"`left', `right', `nodir', `point', `touch', `xshift', and `yshift'.\n"
+"Key letters `l', `r', `n', `p', `t', `w', `x', and `y'\n"
+"have the verbose aliases `left', `right', `nodir', `point', `touch',\n"
+"`width', `xshift', and `yshift', respectively.\n"
 #endif
 "\n"
 #ifdef BUILD_GUI

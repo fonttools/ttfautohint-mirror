@@ -1478,6 +1478,11 @@ Main_GUI::create_layout(bool horizontal_layout)
        "&nbsp;&nbsp;<tt>@</tt>&nbsp;<i>glyph&#8209;ids</i><br>"
 
        "&nbsp;&nbsp;[&nbsp;<i>subfont&#8209;idx</i>&nbsp;]"
+       "&nbsp;&nbsp;<i>script</i>"
+       "&nbsp;&nbsp;<i>feature</i>"
+       "&nbsp;&nbsp;<tt>width</tt>&nbsp;<i>stem&#8209;widths</i><br>"
+
+       "&nbsp;&nbsp;[&nbsp;<i>subfont&#8209;idx</i>&nbsp;]"
        "&nbsp;&nbsp;<i>glyph&#8209;id</i>"
        "&nbsp;&nbsp;<tt>left</tt>&nbsp;|&nbsp;<tt>right</tt>&nbsp;<i>points</i>"
        "&nbsp;&nbsp;[&nbsp;<tt>(</tt><i>left&#8209;offset</i><tt>,"
@@ -1507,6 +1512,11 @@ Main_GUI::create_layout(bool horizontal_layout)
        " <i>glyph&#8209;id</i> values and value ranges.<br>"
        "&nbsp;<br>"
 
+       "<i>stem&#8209;widths</i> is a comma-separated list of integer"
+       " stem widths (in font units); the first value sets the default stem"
+       " width.<br>"
+       "&nbsp;<br>"
+
        "<tt>left</tt> (<tt>right</tt>) creates one-point segments"
        " with direction left (right), possibly having a width (in font units)"
        " given by <i>left&#8209;offset</i> and <i>right&#8209;offset</i>"
@@ -1532,10 +1542,10 @@ Main_GUI::create_layout(bool horizontal_layout)
        " and ppem values as with x&nbsp;height snapping exceptions.<br>"
 
        "Keywords <tt>left</tt>, <tt>right</tt>, <tt>nodir</tt>,"
-       " <tt>point</tt>, <tt>touch</tt>, <tt>xshift</tt>, and"
-       " <tt>yshift</tt> can be abbreviated as <tt>l</tt>, <tt>r</tt>,"
-       " <tt>n</tt>, <tt>p</tt>, <tt>t</tt>, <tt>x</tt>, and <tt>y</tt>,"
-       " respectively.<br>"
+       " <tt>point</tt>, <tt>touch</tt>, <tt>width</tt>, <tt>xshift</tt>,"
+       " and <tt>yshift</tt> can be abbreviated as <tt>l</tt>, <tt>r</tt>,"
+       " <tt>n</tt>, <tt>p</tt>, <tt>t</tt>, <tt>w</tt>, <tt>x</tt>, and"
+       " <tt>y</tt>, respectively.<br>"
 
        "Control instruction entries are separated"
        " by character&nbsp;<tt>;</tt> or by a newline.<br>"

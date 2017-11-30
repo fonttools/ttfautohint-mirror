@@ -1955,6 +1955,44 @@ Use the `--debug` command line option to see how ttfautohint assigns glyph
 indices of a font to styles.
 
 
+Stem Width Adjustments
+----------------------
+
+Use the following syntax form to adjust stem width values for a given style,
+overriding ttfautohint's algorithm; see '[Scripts](#scripts)' and '[OpenType
+Features](#opentype-features)' for more details.  This adjustment doesn't
+change the glyph shapes; it only influences the hinting process.
+
+> *\[*\ font-idx\ *\]*\ \ script\ \ feature\ \ *`w[idth]`*\ \ stem-widths
+
+*script* and *feature* are the same as with style adjustments; see above.
+
+The elements of *stem-widths* are an unsorted list of comma separated
+integer *stem-width* values (in font units); the first value gives the
+style's default stem width.
+
+The effect of this adjustment depends [on the selected stem width
+algorithm](#strong-stem-width-and-positioning).  For smooth stem width
+positioning, only the first (i.e., the default) value is used; it gets a
+higher preference than other discrete stem width choices.  For strong stem
+width positioning, the stem widths are snapped to the provided values (if
+not differing too much) before rounding to an integer pixel value.
+
+A typical example is to reduce the default stem size for extra-bold latin
+fonts, where glyphs like 'e' or 'a' use a reduced stem width of, say, 100
+font units, compared to the default character 'o', which uses 150.
+
+```
+    latn dflt width 100
+```
+
+Without the adjustment chances are very high that the 'eyes' in glyphs 'e'
+or 'a' are filled at smaller ppem values.
+
+Use the `--debug` command line option to see how ttfautohint assigns stem
+widths to styles by default.
+
+
 Glyph Adjustments
 -----------------
 
