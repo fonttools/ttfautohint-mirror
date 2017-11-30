@@ -151,6 +151,19 @@ number_set_prepend(number_range* list,
 
 
 /*
+ * Prepend a single `number_range' object `element' to `list' of
+ * `number_range' objects, which might be NULL.  `list' is expected to be
+ * stored in reversed order.  By design, there is no range merging.
+ *
+ * If `element' is NULL, return `list'.
+ */
+
+number_range*
+number_set_prepend_unsorted(number_range* list,
+                            number_range* element);
+
+
+/*
  * Prepend a single wrap-around `number_range' object `element' to `list' of
  * (wrap-around) `number_range' objects, which might be NULL.  `list' is
  * expected to be stored in reversed order; consequently, the range in
@@ -170,6 +183,10 @@ wrap_range_prepend(number_range* list,
  * `number_range' objects, which might be NULL.  `list' is expected to be
  * stored in reversed order.  If possible, the ranges of `element' and
  * `list' are merged, in which case `element' gets deallocated.
+ *
+ * Don't use this function for unsorted lists (i.e., lists created with
+ * `number_set_prepend_unsorted'); you will get undefined behaviour
+ * otherwise.
  *
  * If `element' is NULL, return `list'.
  */

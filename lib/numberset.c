@@ -181,6 +181,26 @@ number_set_prepend(number_range* list,
 
 
 number_range*
+number_set_prepend_unsorted(number_range* list,
+                            number_range* element)
+{
+  if (!element)
+    return list;
+
+  if (!list)
+    return element;
+
+  /* `list' and `element' must both be normal integer ranges */
+  if (list->base != list->wrap || element->base != element->wrap)
+    return NUMBERSET_INVALID_RANGE;
+
+  element->next = list;
+
+  return element;
+}
+
+
+number_range*
 wrap_range_prepend(number_range* list,
                    number_range* element)
 {
