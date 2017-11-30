@@ -65,12 +65,14 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
   {
     FT_Error error;
     FT_ULong glyph_index;
-    int dim;
+    int dim, dim_max;
     TA_LatinMetricsRec dummy[1];
     TA_Scaler scaler = &dummy->root.scaler;
 
     TA_StyleClass style_class = metrics->root.style_class;
     TA_ScriptClass script_class = ta_script_classes[style_class->script];
+
+    FONT* font = metrics->root.globals->font;
 
     void* shaper_buf;
     const char* p;
@@ -79,6 +81,14 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     FT_ULong ch = 0;
 #endif
 
+
+    /* if the user provides horizontal stem widths, */
+    /* apply the algorithm only along the horizontal axis */
+    TA_control_set_stem_widths(metrics, font);
+    if (metrics->axis[TA_DIMENSION_VERT].width_count)
+      dim_max = TA_DIMENSION_VERT;
+    else
+      dim_max = TA_DIMENSION_MAX;
 
     if (!use_cmap)
       goto Exit;
@@ -160,7 +170,7 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     if (error)
       goto Exit;
 
-    for (dim = 0; dim < TA_DIMENSION_MAX; dim++)
+    for (dim = 0; dim < dim_max; dim++)
     {
       TA_LatinAxis axis = &metrics->axis[dim];
       TA_AxisHints axhints = &hints->axis[dim];
@@ -213,9 +223,8 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     }
 
   Exit:
-    for (dim = 0; dim < TA_DIMENSION_MAX; dim++)
+    for (dim = 0; dim < dim_max; dim++)
     {
-      FONT* font = metrics->root.globals->font;
       TA_LatinAxis axis = &metrics->axis[dim];
       FT_Pos stdw;
 
