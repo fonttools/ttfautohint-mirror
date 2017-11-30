@@ -284,6 +284,16 @@ void
 TA_control_apply_coverage(SFNT* sfnt,
                           FONT* font);
 
+
+/*
+ * Handle stem width data from the control instructions file.
+ */
+
+void
+TA_control_set_stem_widths(TA_LatinMetrics metrics,
+                           FONT* font);
+
+
 /*
  * Free the allocated data in `control'.
  */

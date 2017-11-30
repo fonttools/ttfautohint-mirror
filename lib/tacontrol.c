@@ -505,6 +505,50 @@ TA_control_apply_coverage(SFNT* sfnt,
 }
 
 
+/* handle stem width data from the control instructions file; */
+
+void
+TA_control_set_stem_widths(TA_LatinMetrics metrics,
+                           FONT* font)
+{
+  Control* control = font->control;
+  FT_Face face = font->loader->face;
+  TA_WidthRec* widths = metrics->axis[TA_DIMENSION_VERT].widths;
+
+
+  while (control)
+  {
+    number_set_iter width_iter;
+    int width;
+    int i;
+
+
+    if (control->type != Control_Script_Feature_Widths)
+      goto Skip;
+    if (control->font_idx != face->face_index)
+      goto Skip;
+    /* `control->glyph_idx' holds the style */
+    if (control->glyph_idx != metrics->root.style_class->style)
+      goto Skip;
+
+    /* `control->points' holds the width set */
+    width_iter.range = control->points;
+    width = number_set_get_first(&width_iter);
+
+    i = 0;
+    while (width >= 0)
+    {
+      widths[i++].org = width;
+      width = number_set_get_next(&width_iter);
+    }
+    metrics->axis[TA_DIMENSION_VERT].width_count = i;
+
+  Skip:
+    control = control->next;
+  }
+}
+
+
 /* node structure for control instruction data */
 
 typedef struct Node Node;
