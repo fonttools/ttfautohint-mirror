@@ -233,6 +233,13 @@ TA_control_scanner_fatal_error(const char* msg,
   return NODIR;
 }
 
+(?x:   "width"
+     | "w"
+) {
+  NAME_ASSIGN;
+  return WIDTH;
+}
+
 (?x: [A-Za-z._] [A-Za-z0-9._]*
 ) {
   NAME_ASSIGN;

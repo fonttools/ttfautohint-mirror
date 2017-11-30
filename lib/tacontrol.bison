@@ -92,6 +92,7 @@ store_error_data(const YYLTYPE *locp,
 %token <real> REAL "real number"
 %token <name> RIGHT "right"
 %token <name> TOUCH "touch"
+%token <name> WIDTH "width"
 %token <name> XSHIFT "x shift"
 %token <name> YSHIFT "y shift"
 
@@ -124,6 +125,9 @@ store_error_data(const YYLTYPE *locp,
 %type <real> shift
 %type <integer> signed_integer
 %type <range> unlimited
+%type <range> width_elem
+%type <range> width_elems
+%type <range> width_set
 %type <real> x_shift
 %type <real> y_shift
 
@@ -150,6 +154,7 @@ store_error_data(const YYLTYPE *locp,
              fprintf(yyoutput, "allocation error");
          } <range>
 %printer { fprintf(yyoutput, "`%c'", $$); } INVALID_CHARACTER
+
 
 %%
 
@@ -255,6 +260,22 @@ entry:
         YYABORT;
       }
     }
+| font_idx script_feature width_set EOE
+    {
+      $entry = TA_control_new(Control_Script_Feature_Widths,
+                              $font_idx,
+                              $script_feature,
+                              $width_set,
+                              0,
+                              0,
+                              NULL,
+                              @$.first_line);
+      if (!$entry)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
 ;
 
 font_idx:
@@ -339,6 +360,7 @@ glyph_name_:
 | POINT
 | RIGHT
 | TOUCH
+| WIDTH
 | XSHIFT
 | YSHIFT
 ;
@@ -513,7 +535,6 @@ script_feature:
       }
     }
 ;
-
 
 x_shift:
   /* empty */
@@ -841,6 +862,54 @@ glyph_idx_range:
       /* glyph range is always valid */
       /* since both `glyph_idx' values were already tested for validity */
       if ($glyph_idx_range == NUMBERSET_ALLOCATION_ERROR)
+      {
+        store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
+        YYABORT;
+      }
+    }
+;
+
+width_set:
+  WIDTH
+    {
+      context->number_set_min = 1;
+      context->number_set_max = 65535;
+      context->number_set_num_elems = 0;
+    }
+  width_elems
+    { $width_set = $width_elems; }
+;
+
+width_elems[result]:
+  width_elem
+    {
+      context->number_set_num_elems++;
+      $result = $width_elem;
+    }
+| width_elems[left] ',' width_elem
+    {
+      context->number_set_num_elems++;
+      if (context->number_set_num_elems > TA_LATIN_MAX_WIDTHS)
+      {
+        number_set_free($left);
+        number_set_free($width_elem);
+        store_error_data(&@3, context, TA_Err_Control_Too_Much_Widths);
+        YYABORT;
+      }
+
+      /* for width_set, the order of entries is preserved */
+      $result = number_set_prepend_unsorted($left, $width_elem);
+    }
+;
+
+width_elem:
+  integer
+    {
+      $width_elem = number_set_new($integer,
+                                   $integer,
+                                   context->number_set_min,
+                                   context->number_set_max);
+      if ($width_elem == NUMBERSET_ALLOCATION_ERROR)
       {
         store_error_data(&@$, context, TA_Err_Control_Allocation_Error);
         YYABORT;

@@ -76,6 +76,11 @@ TA_control_new(Control_Type type,
     /* the `glyph_idx' field holds the style; */
     /* the `points' field holds the glyph index set */
     break;
+
+  case Control_Script_Feature_Widths:
+    /* the `glyph_idx' field holds the style; */
+    /* the `points' field holds the width set; */
+    break;
   }
 
   control->ppems = number_set_reverse(ppem_set);
@@ -165,7 +170,8 @@ control_show_line(FONT* font,
 
   face = font->sfnts[control->font_idx].face;
   glyph_name_buf[0] = '\0';
-  if (control->type != Control_Script_Feature_Glyphs
+  if (!(control->type == Control_Script_Feature_Glyphs
+        || control->type == Control_Script_Feature_Widths)
       && FT_HAS_GLYPH_NAMES(face))
     FT_Get_Glyph_Name(face, (FT_UInt)control->glyph_idx, glyph_name_buf, 64);
 
@@ -253,6 +259,22 @@ control_show_line(FONT* font,
                        points_buf);
     }
     break;
+
+  case Control_Script_Feature_Widths:
+    {
+      TA_StyleClass style_class = ta_style_classes[control->glyph_idx];
+      char feature_name[5];
+
+
+      feature_name[4] = '\0';
+      hb_tag_to_string(feature_tags[style_class->coverage], feature_name);
+
+      s = sdscatprintf(s, "%ld %s %s width %s",
+                       control->font_idx,
+                       script_names[style_class->script],
+                       feature_name,
+                       points_buf);
+    }
   }
 
 Exit:

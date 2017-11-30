@@ -117,6 +117,8 @@ TA_ERRORDEF_(Control_Allocation_Error,     0x210,
              "allocation error")
 TA_ERRORDEF_(Control_Flex_Error,           0x211,
              "internal flex error")
+TA_ERRORDEF_(Control_Too_Much_Widths,      0x212,
+             "too much stem width values")
 
 /* error codes in the range 0x300-0x3FF are related to the reference font; */
 /* subtract 0x300 to get the normal FreeType meaning */

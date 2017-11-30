@@ -62,7 +62,8 @@ typedef enum Control_Type_
   Control_Single_Point_Segment_Left,
   Control_Single_Point_Segment_Right,
   Control_Single_Point_Segment_None,
-  Control_Script_Feature_Glyphs
+  Control_Script_Feature_Glyphs,
+  Control_Script_Feature_Widths
 } Control_Type;
 
 
@@ -161,6 +162,11 @@ typedef struct Control_Context_
    */
   int number_set_min;
   int number_set_max;
+
+  /*
+   * Some sets restrict the number of elements.
+   */
+  int number_set_num_elems;
 
   /* private flex data */
   void* scanner;
@@ -339,6 +345,7 @@ TA_Error
 TA_control_segment_dir_collect(FONT* font,
                                long font_idx,
                                long glyph_idx);
+
 
 /*
  * Access next one-point segment data.  Returns 1 on success or 0 if no more
