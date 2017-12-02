@@ -254,18 +254,21 @@ if test x"$with_doc" != x"no"; then
     AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [no])
     if test x"$KPSEWHICH" == x"no"; then
       AC_MSG_WARN([Can't find \`kpsewhich' to check presence of Noto font files automatically.])
-      AC_MSG_WARN([Adjust the \`TTFONTS' environment variable so that the fonts are found.])
+      TA_DOC([$pdf_file],
+             [Adjust the \`TTFONTS' environment variable so that the fonts are found.])
     else
       $KPSEWHICH $noto_font_file &> /dev/null
       if test $? -ne 0; then
         AC_MSG_WARN([Can't find \`$noto_font_file'.])
-        AC_MSG_ERROR([Adjust the \`TTFONTS' environment variable so that the Noto fonts are found.])
+        TA_DOC([$pdf_file],
+               [Adjust the \`TTFONTS' environment variable so that the Noto fonts are found.])
       fi
 
       $KPSEWHICH $noto_font_alpha_file &> /dev/null
       if test $? -ne 0; then
         AC_MSG_WARN([Can't find \`$noto_font_alpha_file'.])
-        AC_MSG_ERROR([Adjust the \`TTFONTS' environment variable so that the Noto alpha fonts are found.])
+        TA_DOC([$pdf_file],
+               [Adjust the \`TTFONTS' environment variable so that the Noto alpha fonts are found.])
       fi
     fi
   fi
