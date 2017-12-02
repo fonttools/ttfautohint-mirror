@@ -645,7 +645,8 @@ TA_sfnt_build_glyph_segments(SFNT* sfnt,
 
   BCI(CALL);
 
-  num_storage = sal_segment_offset + num_segments * 2;
+  /* see storage area layout description in `tabytecode.h' */
+  num_storage = sal_segment_offset + num_segments * 3;
   if (num_storage > sfnt->max_storage)
     sfnt->max_storage = num_storage;
 

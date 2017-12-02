@@ -317,6 +317,131 @@ static const unsigned char FPGM(bci_round) [] =
 
 
 /*
+ * bci_quantize_stem_width
+ *
+ *   Take a stem width and compare it against a set of already stored stem
+ *   widths.  If the difference to one of the values is less than 4, replace
+ *   the argument with the stored one.  Otherwise add the argument to the
+ *   array of stem widths, without changing the argument.
+ *
+ *   We do this to catch rounding errors.
+ *
+ *   in: val
+ *
+ *   out: quantized(val)
+ *
+ *   sal: sal_num_stem_widths
+ *        sal_stem_width_offset
+ *        sal_k
+ *        sal_limit
+ */
+
+static const unsigned char FPGM(bci_quantize_stem_width) [] =
+{
+
+  PUSHB_1,
+    bci_quantize_stem_width,
+  FDEF,
+
+  DUP,
+  ABS, /* s: val |val| */
+
+  PUSHB_2,
+    sal_limit,
+    sal_stem_width_offset,
+  RS,
+  PUSHB_1,
+    sal_num_stem_widths,
+  RS,
+  ADD, /* sal_limit = sal_stem_width_offset + sal_num_stem_widths */
+  WS,
+
+  PUSHB_2,
+    sal_k,
+    sal_stem_width_offset,
+  RS,
+  WS, /* sal_k = sal_stem_width_offset */
+
+/* start_loop: */
+  PUSHB_2,
+    34, /* not_in_array jump offset */
+    sal_limit,
+  RS,
+  PUSHB_1,
+    sal_k,
+  RS,
+  EQ, /* sal_limit == sal_k ? */
+  JROT,/* goto not_in_array */
+
+  DUP,
+  PUSHB_1,
+    12, /* found_stem jump offset */
+  SWAP,
+  PUSHB_1,
+    sal_k,
+  RS,
+  RS, /* cur_stem_width = sal[sal_k] */
+  SUB,
+  ABS,
+  PUSHB_1,
+    4,
+  LT, /* |val - cur_stem_width| < 4 ? */
+  JROT, /* goto found_stem */
+
+  PUSHB_3,
+    sal_k,
+    1,
+    sal_k,
+  RS,
+  ADD, /* sal_k = sal_k + 1 */
+  WS,
+
+  PUSHB_1,
+    33, /* start_loop jump offset */
+  NEG,
+  JMPR, /* goto start_loop */
+
+/* found_stem: */
+  POP, /* discard val */
+  PUSHB_1,
+    sal_k,
+  RS,
+  RS, /* val = sal[sal_k] */
+  PUSHB_1,
+    14, /* exit jump offset */
+  JMPR, /* goto exit */
+
+/* not_in_array: */
+  DUP,
+  PUSHB_1,
+    sal_k,
+  RS,
+  SWAP,
+  WS, /* sal[sal_k] = val */
+
+  PUSHB_3,
+    sal_num_stem_widths,
+    1,
+    sal_num_stem_widths,
+  RS,
+  ADD,
+  WS, /* sal_num_stem_widths = sal_num_stem_widths + 1 */
+
+/* exit: */
+  SWAP, /* s: |new_val| val */
+  PUSHB_1,
+    0,
+  LT, /* val < 0 */
+  IF,
+    NEG, /* new_val = -new_val */
+  EIF,
+
+  ENDF,
+
+};
+
+
+/*
  * bci_smooth_stem_width
  *
  *   This is the equivalent to the following code from function
@@ -389,6 +514,7 @@ static const unsigned char FPGM(bci_round) [] =
  *      cvtl_ignore_std_width
  *
  * uses: bci_round
+ *       bci_quantize_stem_width
  */
 
 static const unsigned char FPGM(bci_smooth_stem_width) [] =
@@ -397,6 +523,10 @@ static const unsigned char FPGM(bci_smooth_stem_width) [] =
   PUSHB_1,
     bci_smooth_stem_width,
   FDEF,
+
+  PUSHB_1,
+    bci_quantize_stem_width,
+  CALL,
 
   DUP,
   ABS, /* s: base_is_round stem_is_serif width dist */
@@ -734,6 +864,7 @@ static const unsigned char FPGM(bci_get_best_width) [] =
  *
  * uses: bci_get_best_width
  *       bci_round
+ *       bci_quantize_stem_width
  */
 
 static const unsigned char FPGM(bci_strong_stem_width_a) [] =
@@ -747,6 +878,11 @@ static const unsigned char FPGM(bci_strong_stem_width_a) [] =
   POP,
   SWAP,
   POP,
+
+  PUSHB_1,
+    bci_quantize_stem_width,
+  CALL,
+
   DUP,
   ABS, /* s: width dist */
 
@@ -1903,12 +2039,18 @@ static const unsigned char FPGM(bci_create_segments_b) [] =
     WS, /* sal_vwidth_data_offset = data_offset + num_used_styles */
 
     DUP,
+    PUSHB_1,
+      sal_stem_width_offset,
+    SWAP,
+    WS, /* sal_stem_width_offset = num_segments (more to come) */
+
+    DUP,
     ADD,
     PUSHB_1,
       1,
     SUB, /* delta = (2*num_segments - 1) */
 
-    PUSHB_6,
+    PUSHB_8,
       sal_segment_offset,
       sal_segment_offset,
 
@@ -1916,11 +2058,24 @@ static const unsigned char FPGM(bci_create_segments_b) [] =
       0,
       sal_base,
       0,
+      sal_num_stem_widths,
+      0,
+    WS, /* sal_num_stem_widths = 0 */
     WS, /* sal_base = 0 */
     WS, /* sal_j = 0 (point offset) */
 
     ROLL,
     ADD, /* s: ... sal_segment_offset (sal_segment_offset + delta) */
+
+    DUP,
+    PUSHB_1,
+      sal_stem_width_offset,
+    RS,
+    ADD,
+    PUSHB_1,
+      sal_stem_width_offset,
+    SWAP,
+    WS, /* sal_stem_width_offset += sal_segment_offset + delta */
 
     PUSHB_2,
       bci_create_segment,
@@ -6755,6 +6910,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
                 : sizeof (FPGM(bci_align_x_height_b2)))
             + sizeof (FPGM(bci_align_x_height_c))
             + sizeof (FPGM(bci_round))
+            + sizeof (FPGM(bci_quantize_stem_width))
             + sizeof (FPGM(bci_smooth_stem_width))
             + sizeof (FPGM(bci_get_best_width))
             + sizeof (FPGM(bci_strong_stem_width_a))
@@ -6965,6 +7121,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_align_x_height_c);
 
   COPY_FPGM(bci_round);
+  COPY_FPGM(bci_quantize_stem_width);
   COPY_FPGM(bci_smooth_stem_width);
   COPY_FPGM(bci_get_best_width);
   COPY_FPGM(bci_strong_stem_width_a);
