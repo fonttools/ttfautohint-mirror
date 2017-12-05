@@ -334,6 +334,8 @@ static const unsigned char FPGM(bci_round) [] =
  *        sal_stem_width_offset
  *        sal_k
  *        sal_limit
+ *        sal_have_cached_width
+ *        sal_cached_width_offset
  */
 
 static const unsigned char FPGM(bci_quantize_stem_width) [] =
@@ -346,14 +348,19 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
   DUP,
   ABS, /* s: val |val| */
 
-  PUSHB_2,
+  PUSHB_4,
     sal_limit,
     sal_stem_width_offset,
+    sal_have_cached_width,
+    0,
+  WS, /* sal_have_cached_width = 0 */
   RS,
   PUSHB_1,
     sal_num_stem_widths,
   RS,
-  ADD, /* sal_limit = sal_stem_width_offset + sal_num_stem_widths */
+  DUP,
+  ADD,
+  ADD, /* sal_limit = sal_stem_width_offset + 2 * sal_num_stem_widths */
   WS,
 
   PUSHB_2,
@@ -364,7 +371,7 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
 
 /* start_loop: */
   PUSHB_2,
-    34, /* not_in_array jump offset */
+    37, /* not_in_array jump offset */
     sal_limit,
   RS,
   PUSHB_1,
@@ -390,10 +397,10 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
 
   PUSHB_3,
     sal_k,
-    1,
+    2,
     sal_k,
   RS,
-  ADD, /* sal_k = sal_k + 1 */
+  ADD, /* sal_k = sal_k + 2, skipping associated cache value */
   WS,
 
   PUSHB_1,
@@ -407,8 +414,11 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
     sal_k,
   RS,
   RS, /* val = sal[sal_k] */
-  PUSHB_1,
+  PUSHB_3,
     14, /* exit jump offset */
+    sal_have_cached_width,
+    1,
+  WS, /* sal_have_cached_width = 1 */
   JMPR, /* goto exit */
 
 /* not_in_array: */
@@ -435,6 +445,16 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
   IF,
     NEG, /* new_val = -new_val */
   EIF,
+
+  /* for input width array index `n' we have (or soon will have) */
+  /* a cached output width at array index `n + 1' */
+  PUSHB_3,
+    sal_cached_width_offset,
+    1,
+    sal_k,
+  RS,
+  ADD,
+  WS, /* sal_cached_width_offset = sal_k + 1 */
 
   ENDF,
 
@@ -501,6 +521,11 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
  *   If `cvtl_ignore_std_width' is set, we simply set `std_width'
  *   equal to `dist'.
  *
+ *   If `sal_have_cached_width' is set (by `bci_quantize_stem_width'), the
+ *   cached value given by `sal_cached_width_offset' is directly taken, not
+ *   computing the width again.  Otherwise, the computed width gets stored
+ *   at the given offset.
+ *
  * in: width
  *     stem_is_serif
  *     base_is_round
@@ -509,6 +534,8 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
  *
  * sal: sal_vwidth_data_offset
  *      sal_base_delta
+ *      sal_have_cached_width
+ *      sal_cached_width_offset
  *
  * CVT: std_width
  *      cvtl_ignore_std_width
@@ -528,222 +555,253 @@ static const unsigned char FPGM(bci_smooth_stem_width) [] =
     bci_quantize_stem_width,
   CALL,
 
-  DUP,
-  ABS, /* s: base_is_round stem_is_serif width dist */
-
-  DUP,
   PUSHB_1,
-    3*64,
-  LT, /* dist < 3*64 */
-
-  PUSHB_1,
-    4,
-  MINDEX, /* s: base_is_round width dist (dist<3*64) stem_is_serif */
-  AND, /* stem_is_serif && dist < 3*64 */
-
-  PUSHB_3,
-    40,
-     1,
-    sal_vwidth_data_offset,
+    sal_have_cached_width,
   RS,
-  RCVT, /* first indirection */
-  MUL, /* divide by 64 */
-  RCVT, /* second indirection */
-
-  PUSHB_1,
-    cvtl_ignore_std_width,
-  RCVT,
   IF,
-    POP, /* s: ... dist (stem_is_serif && dist < 3*64) 40 */
-    PUSHB_1,
-      3,
-    CINDEX, /* standard_width = dist */
-  EIF,
-
-  GT, /* standard_width < 40 */
-  OR, /* (stem_is_serif && dist < 3*64) || standard_width < 40 */
-
-  IF, /* s: base_is_round width dist */
+    SWAP,
     POP,
     SWAP,
-    POP, /* s: width */
+    POP,
 
-  ELSE,
-    ROLL, /* s: width dist base_is_round */
-    IF, /* s: width dist */
-      DUP,
-      PUSHB_1,
-        80,
-      LT, /* dist < 80 */
-      IF, /* s: width dist */
-        POP,
-        PUSHB_1,
-          64, /* dist = 64 */
-      EIF,
-
-    ELSE,
-      DUP,
-      PUSHB_1,
-        56,
-      LT, /* dist < 56 */
-      IF, /* s: width dist */
-        POP,
-        PUSHB_1,
-          56, /* dist = 56 */
-      EIF,
+    PUSHB_1,
+      sal_cached_width_offset,
+    RS,
+    RS, /* cached_width = sal[sal_cached_width_offset] */
+    SWAP,
+    PUSHB_1,
+      0,
+    LT, /* width < 0 */
+    IF,
+      NEG, /* cached_width = -cached_width */
     EIF,
 
-    DUP, /* s: width dist dist */
-    PUSHB_2,
-      1,
+  ELSE,
+    DUP,
+    ABS, /* s: base_is_round stem_is_serif width dist */
+
+    DUP,
+    PUSHB_1,
+      3*64,
+    LT, /* dist < 3*64 */
+
+    PUSHB_1,
+      4,
+    MINDEX, /* s: base_is_round width dist (dist<3*64) stem_is_serif */
+    AND, /* stem_is_serif && dist < 3*64 */
+
+    PUSHB_3,
+      40,
+       1,
       sal_vwidth_data_offset,
     RS,
     RCVT, /* first indirection */
     MUL, /* divide by 64 */
     RCVT, /* second indirection */
-    SUB,
-    ABS, /* s: width dist delta */
 
     PUSHB_1,
-      40,
-    LT, /* delta < 40 */
-    IF, /* s: width dist */
+      cvtl_ignore_std_width,
+    RCVT,
+    IF,
+      POP, /* s: ... dist (stem_is_serif && dist < 3*64) 40 */
+      PUSHB_1,
+        3,
+      CINDEX, /* standard_width = dist */
+    EIF,
+
+    GT, /* standard_width < 40 */
+    OR, /* (stem_is_serif && dist < 3*64) || standard_width < 40 */
+
+    IF, /* s: base_is_round width dist */
       POP,
+      SWAP,
+      POP, /* s: width */
+
+    ELSE,
+      ROLL, /* s: width dist base_is_round */
+      IF, /* s: width dist */
+        DUP,
+        PUSHB_1,
+          80,
+        LT, /* dist < 80 */
+        IF, /* s: width dist */
+          POP,
+          PUSHB_1,
+            64, /* dist = 64 */
+        EIF,
+
+      ELSE,
+        DUP,
+        PUSHB_1,
+          56,
+        LT, /* dist < 56 */
+        IF, /* s: width dist */
+          POP,
+          PUSHB_1,
+            56, /* dist = 56 */
+        EIF,
+      EIF,
+
+      DUP, /* s: width dist dist */
       PUSHB_2,
         1,
         sal_vwidth_data_offset,
       RS,
       RCVT, /* first indirection */
       MUL, /* divide by 64 */
-      RCVT, /* second indirection; dist = std_width */
-      DUP,
+      RCVT, /* second indirection */
+      SUB,
+      ABS, /* s: width dist delta */
+
       PUSHB_1,
-        48,
-      LT, /* dist < 48 */
-      IF,
+        40,
+      LT, /* delta < 40 */
+      IF, /* s: width dist */
         POP,
+        PUSHB_2,
+          1,
+          sal_vwidth_data_offset,
+        RS,
+        RCVT, /* first indirection */
+        MUL, /* divide by 64 */
+        RCVT, /* second indirection; dist = std_width */
+        DUP,
         PUSHB_1,
-          48, /* dist = 48 */
-      EIF,
-
-    ELSE,
-      DUP, /* s: width dist dist */
-      PUSHB_1,
-        3*64,
-      LT, /* dist < 3*64 */
-      IF,
-        DUP, /* s: width delta dist */
-        FLOOR, /* dist = FLOOR(dist) */
-        DUP, /* s: width delta dist dist */
-        ROLL,
-        ROLL, /* s: width dist delta dist */
-        SUB, /* delta = delta - dist */
-
-        DUP, /* s: width dist delta delta */
-        PUSHB_1,
-          10,
-        LT, /* delta < 10 */
-        IF, /* s: width dist delta */
-          ADD, /* dist = dist + delta */
-
-        ELSE,
-          DUP,
+          48,
+        LT, /* dist < 48 */
+        IF,
+          POP,
           PUSHB_1,
-            32,
-          LT, /* delta < 32 */
-          IF,
-            POP,
-            PUSHB_1,
-              10,
-            ADD, /* dist = dist + 10 */
+            48, /* dist = 48 */
+        EIF,
+
+      ELSE,
+        DUP, /* s: width dist dist */
+        PUSHB_1,
+          3*64,
+        LT, /* dist < 3*64 */
+        IF,
+          DUP, /* s: width delta dist */
+          FLOOR, /* dist = FLOOR(dist) */
+          DUP, /* s: width delta dist dist */
+          ROLL,
+          ROLL, /* s: width dist delta dist */
+          SUB, /* delta = delta - dist */
+
+          DUP, /* s: width dist delta delta */
+          PUSHB_1,
+            10,
+          LT, /* delta < 10 */
+          IF, /* s: width dist delta */
+            ADD, /* dist = dist + delta */
 
           ELSE,
             DUP,
             PUSHB_1,
-              54,
-            LT, /* delta < 54 */
+              32,
+            LT, /* delta < 32 */
             IF,
               POP,
               PUSHB_1,
-                54,
-              ADD, /* dist = dist + 54 */
+                10,
+              ADD, /* dist = dist + 10 */
 
             ELSE,
-              ADD, /* dist = dist + delta */
+              DUP,
+              PUSHB_1,
+                54,
+              LT, /* delta < 54 */
+              IF,
+                POP,
+                PUSHB_1,
+                  54,
+                ADD, /* dist = dist + 54 */
 
+              ELSE,
+                ADD, /* dist = dist + delta */
+
+              EIF,
             EIF,
           EIF,
-        EIF,
 
-      ELSE,
-        PUSHB_1,
-          2,
-        CINDEX, /* s: width dist width */
-        PUSHB_1,
-          sal_base_delta,
-        RS,
-        MUL, /* s: width dist width*base_delta */
-        PUSHB_1,
-          0,
-        GT, /* width * base_delta > 0 */
-        IF,
+        ELSE,
           PUSHB_1,
-            0, /* s: width dist bdelta */
-
-          MPPEM,
+            2,
+          CINDEX, /* s: width dist width */
           PUSHB_1,
-            10,
-          LT, /* ppem < 10 */
+            sal_base_delta,
+          RS,
+          MUL, /* s: width dist width*base_delta */
+          PUSHB_1,
+            0,
+          GT, /* width * base_delta > 0 */
           IF,
-            POP,
             PUSHB_1,
-              sal_base_delta,
-            RS, /* bdelta = base_delta */
+              0, /* s: width dist bdelta */
 
-          ELSE,
             MPPEM,
             PUSHB_1,
-              30,
-            LT, /* ppem < 30 */
+              10,
+            LT, /* ppem < 10 */
             IF,
               POP,
               PUSHB_1,
-                30,
-              MPPEM,
-              SUB, /* 30 - ppem */
-              PUSHW_1,
-                0x10, /* 64 * 64 */
-                0x00,
-              MUL, /* (30 - ppem) in 26.6 format */
-              PUSHB_1,
                 sal_base_delta,
-              RS,
-              MUL, /* base_delta * (30 - ppem) */
-              PUSHW_1,
-                0x05, /* 20 * 64 */
-                0x00,
-              DIV, /* bdelta = (base_delta * (30 - ppem)) / 20 */
+              RS, /* bdelta = base_delta */
+
+            ELSE,
+              MPPEM,
+              PUSHB_1,
+                30,
+              LT, /* ppem < 30 */
+              IF,
+                POP,
+                PUSHB_1,
+                  30,
+                MPPEM,
+                SUB, /* 30 - ppem */
+                PUSHW_1,
+                  0x10, /* 64 * 64 */
+                  0x00,
+                MUL, /* (30 - ppem) in 26.6 format */
+                PUSHB_1,
+                  sal_base_delta,
+                RS,
+                MUL, /* base_delta * (30 - ppem) */
+                PUSHW_1,
+                  0x05, /* 20 * 64 */
+                  0x00,
+                DIV, /* bdelta = (base_delta * (30 - ppem)) / 20 */
+              EIF,
             EIF,
+
+            ABS, /* bdelta = |bdelta| */
+            SUB, /* dist = dist - bdelta */
           EIF,
 
-          ABS, /* bdelta = |bdelta| */
-          SUB, /* dist = dist - bdelta */
+          PUSHB_1,
+            bci_round,
+          CALL, /* dist = round(dist) */
+
         EIF,
+      EIF,
 
-        PUSHB_1,
-          bci_round,
-        CALL, /* dist = round(dist) */
-
+      SWAP, /* s: dist width */
+      PUSHB_1,
+        0,
+      LT, /* width < 0 */
+      IF,
+        NEG, /* dist = -dist */
       EIF,
     EIF,
 
-    SWAP, /* s: dist width */
+    DUP,
+    ABS,
     PUSHB_1,
-      0,
-    LT, /* width < 0 */
-    IF,
-      NEG, /* dist = -dist */
-    EIF,
+      sal_cached_width_offset,
+    RS,
+    SWAP,
+    WS, /* sal[sal_cached_width_offset] = |dist| */
   EIF,
 
   ENDF,

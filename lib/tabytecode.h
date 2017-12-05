@@ -322,7 +322,9 @@
 #define sal_num_packed_segments sal_base + 1
 #define sal_num_stem_widths sal_num_packed_segments + 1
 #define sal_stem_width_offset sal_num_stem_widths + 1
-#define sal_top_to_bottom_hinting sal_stem_width_offset + 1
+#define sal_have_cached_width sal_stem_width_offset + 1
+#define sal_cached_width_offset sal_have_cached_width + 1
+#define sal_top_to_bottom_hinting sal_cached_width_offset + 1
 #define sal_segment_offset sal_top_to_bottom_hinting + 1 /* must be last */
 
 /*
@@ -333,7 +335,11 @@
  *     `2 * num_segments' registers to hold the start and end points of a
  *     glyph's segments.
  *   sal[sal_segment_offset + 2*num_segments]:
- *     Variable number of registers to store quantized stem widths.
+ *     quantized stem width 1 (before stem width computing)
+ *     quantized stem width 1 (after stem width computing)
+ *     quantized stem width 2 (before stem width computing)
+ *     quantized stem width 2 (after stem width computing)
+ *     ...
  */
 
 
