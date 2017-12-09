@@ -10,6 +10,10 @@
 # The file `COPYING' mentioned in the previous paragraph is distributed
 # with the ttfautohint library.
 
+ABI_CURRENT = 1
+ABI_REVISION = 0
+ABI_AGE = 0
+
 AM_CPPFLAGS = -I$(top_builddir)/gnulib/src \
               -I$(top_srcdir)/gnulib/src \
               $(FREETYPE_CPPFLAGS) \
@@ -17,8 +21,15 @@ AM_CPPFLAGS = -I$(top_builddir)/gnulib/src \
 
 noinst_LTLIBRARIES = \
   libsds.la \
-  libnumberset.la \
-  libttfautohint.la
+  libnumberset.la
+
+lib_LTLIBRARIES = libttfautohint.la
+
+include_HEADERS = ttfautohint.h ttfautohint-errors.h
+
+libttfautohint_la_LDFLAGS = \
+  -no-undefined \
+  -version-info $(ABI_CURRENT):$(ABI_REVISION):$(ABI_AGE)
 
 libsds_la_SOURCES = \
   sds-wrapper.c sds.h
@@ -81,8 +92,8 @@ libttfautohint_la_SOURCES = \
   ttfautohint-scripts.h ttfautohint-coverages.h
 
 libttfautohint_la_LIBADD = \
-  libsds.la \
-  libnumberset.la \
+  ${noinst_LTLIBRARIES} \
+  $(top_builddir)/gnulib/src/libgnu.la \
   $(LIBM) \
   $(FREETYPE_LIBS) \
   $(HARFBUZZ_LIBS)

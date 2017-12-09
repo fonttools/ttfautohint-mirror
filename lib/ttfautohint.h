@@ -19,6 +19,20 @@
 #include <stdarg.h>
 #include <stdint.h>
 
+
+#ifdef _WIN32
+#  ifdef DLL_EXPORT
+#    define LT_LIB_EXPORT __declspec(dllexport)
+#  elif defined(DLL_IMPORT)
+#    define LT_LIB_EXPORT __declspec(dllimport)
+#  endif
+#endif
+
+#ifndef LT_LIB_EXPORT
+#  define LT_LIB_EXPORT
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -593,7 +607,7 @@ typedef int
  * ```C
  */
 
-TA_Error
+LT_LIB_EXPORT TA_Error
 TTF_autohint(const char* options,
              ...);
 
