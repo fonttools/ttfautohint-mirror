@@ -1980,16 +1980,18 @@ higher preference than other discrete stem width choices.  For strong stem
 width positioning, the stem widths are snapped to the provided values (if
 not differing too much) before rounding to an integer pixel value.
 
-A typical example is to reduce the default stem width for extra-bold fonts,
-where some scripts get better hinted if a stem width of, say, 120 is used
-instead of the default 150.  Let's also assume that for the latin script
-even better results are obtained if the stem width gets further decreased
-to, say, 100 font units.  We can achieve this with the following two lines
-in a control instructions file.
+A typical example is to reduce the default stem width of an extra-bold font,
+which gets better hinted if a stem width of, say, 100 is used instead of the
+default value 150.  Let's also assume that the font further contains latin
+subscript and superscript characters that are hinted best with a stem width
+set to 80 font units.  We can achieve this with the following lines in a
+control instructions file.
+
 
 ```
-    * dflt width 120
-    latn dflt width 100
+    * dflt width 100
+    latb dflt width 80
+    latp dflt width 80
 ```
 
 Without the adjustment chances are very high that the 'eyes' in glyphs 'e'
