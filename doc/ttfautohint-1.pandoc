@@ -1966,6 +1966,8 @@ change the glyph shapes; it only influences the hinting process.
 > *\[*\ font-idx\ *\]*\ \ script\ \ feature\ \ *`w[idth]`*\ \ stem-widths
 
 *script* and *feature* are the same as with style adjustments; see above.
+However, *script* can additionally be the wildcard character '`*`', which
+indicates 'any script'.
 
 The elements of *stem-widths* are an unsorted list of comma separated
 integer *stem-width* values (in font units); the first value gives the
@@ -1978,16 +1980,20 @@ higher preference than other discrete stem width choices.  For strong stem
 width positioning, the stem widths are snapped to the provided values (if
 not differing too much) before rounding to an integer pixel value.
 
-A typical example is to reduce the default stem size for extra-bold latin
-fonts, where glyphs like 'e' or 'a' use a reduced stem width of, say, 100
-font units, compared to the default character 'o', which uses 150.
+A typical example is to reduce the default stem width for extra-bold fonts,
+where some scripts get better hinted if a stem width of, say, 120 is used
+instead of the default 150.  Let's also assume that for the latin script
+even better results are obtained if the stem width gets further decreased
+to, say, 100 font units.  We can achieve this with the following two lines
+in a control instructions file.
 
 ```
+    * dflt width 120
     latn dflt width 100
 ```
 
 Without the adjustment chances are very high that the 'eyes' in glyphs 'e'
-or 'a' are filled at smaller ppem values.
+or 'a' of extra-bold fonts are filled at smaller ppem values.
 
 Use the `--debug` command line option to see how ttfautohint assigns stem
 widths to styles by default.

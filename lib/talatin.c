@@ -86,7 +86,32 @@ ta_latin_metrics_init_widths(TA_LatinMetrics metrics,
     /* apply the algorithm only along the horizontal axis */
     TA_control_set_stem_widths(metrics, font);
     if (metrics->axis[TA_DIMENSION_VERT].width_count)
+    {
+      TA_LatinAxis axis = &metrics->axis[TA_DIMENSION_VERT];
+
+
       dim_max = TA_DIMENSION_VERT;
+
+      axis->standard_width = axis->widths[0].org;
+      axis->edge_distance_threshold = axis->standard_width / 5;
+      axis->extra_light = 0;
+
+#ifdef TA_DEBUG
+      {
+        FT_UInt i;
+
+
+        TA_LOG_GLOBAL(("horizontal widths (user provided):\n" ));
+
+        TA_LOG_GLOBAL(("  %d (standard)", axis->standard_width));
+        for (i = 1; i < axis->width_count; i++)
+          TA_LOG_GLOBAL((" %d", axis->widths[i].org));
+
+        TA_LOG_GLOBAL(("\n"));
+      }
+#endif
+
+    }
     else
       dim_max = TA_DIMENSION_MAX;
 

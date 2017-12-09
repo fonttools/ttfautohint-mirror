@@ -178,9 +178,9 @@ TA_control_scanner_fatal_error(const char* msg,
 }
 
 
-(?x: [@,()]
+(?x: [@,()*]
 ) {
-  /* delimiters */
+  /* delimiters, wildcard */
   return yytext[0];
 }
 

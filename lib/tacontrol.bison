@@ -128,6 +128,7 @@ store_error_data(const YYLTYPE *locp,
 %type <range> width_elem
 %type <range> width_elems
 %type <range> width_set
+%type <integer> wildcard_script_feature
 %type <real> x_shift
 %type <real> y_shift
 
@@ -260,11 +261,11 @@ entry:
         YYABORT;
       }
     }
-| font_idx script_feature width_set EOE
+| font_idx wildcard_script_feature width_set EOE
     {
       $entry = TA_control_new(Control_Script_Feature_Widths,
                               $font_idx,
-                              $script_feature,
+                              $wildcard_script_feature,
                               $width_set,
                               0,
                               0,
@@ -469,6 +470,41 @@ no_dir:
       free($NODIR);
     }
 ;
+
+wildcard_script_feature:
+  script_feature
+    { $wildcard_script_feature = $script_feature; }
+| '*' glyph_name[feature]
+    {
+      size_t i;
+      size_t feature_idx = 0;
+      char feature_name[5];
+
+
+      feature_name[4] = '\0';
+
+      for (i = 0; i < feature_tags_size; i++)
+      {
+        hb_tag_to_string(feature_tags[i], feature_name);
+
+        if (!strcmp($feature, feature_name))
+        {
+          feature_idx = i;
+          break;
+        }
+      }
+
+      free($feature);
+
+      if (i == feature_tags_size)
+      {
+        store_error_data(&@2, context, TA_Err_Control_Invalid_Feature);
+        YYABORT;
+      }
+
+      /* simply use negative values for features applied to all scripts */
+      $wildcard_script_feature = -(long)feature_idx;
+    }
 
 script_feature:
   glyph_name[script] glyph_name[feature]

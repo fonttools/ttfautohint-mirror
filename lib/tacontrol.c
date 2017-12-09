@@ -78,7 +78,8 @@ TA_control_new(Control_Type type,
     break;
 
   case Control_Script_Feature_Widths:
-    /* the `glyph_idx' field holds the style; */
+    /* the `glyph_idx' field holds the style */
+    /* (or a feature for all scripts); */
     /* the `points' field holds the width set; */
     break;
   }
@@ -262,16 +263,29 @@ control_show_line(FONT* font,
 
   case Control_Script_Feature_Widths:
     {
-      TA_StyleClass style_class = ta_style_classes[control->glyph_idx];
       char feature_name[5];
+      const char* script_name;
 
 
       feature_name[4] = '\0';
-      hb_tag_to_string(feature_tags[style_class->coverage], feature_name);
+
+      if (control->glyph_idx > 0)
+      {
+        TA_StyleClass  style_class = ta_style_classes[control->glyph_idx];
+
+
+        script_name = script_names[style_class->script];
+        hb_tag_to_string(feature_tags[style_class->coverage], feature_name);
+      }
+      else
+      {
+        script_name = "*";
+        hb_tag_to_string(feature_tags[-control->glyph_idx], feature_name);
+      }
 
       s = sdscatprintf(s, "%ld %s %s width %s",
                        control->font_idx,
-                       script_names[style_class->script],
+                       script_name,
                        feature_name,
                        points_buf);
     }
@@ -518,6 +532,8 @@ TA_control_set_stem_widths(TA_LatinMetrics metrics,
 
   while (control)
   {
+    TA_StyleClass style_class = metrics->root.style_class;
+
     number_set_iter width_iter;
     int width;
     int i;
@@ -527,8 +543,10 @@ TA_control_set_stem_widths(TA_LatinMetrics metrics,
       goto Skip;
     if (control->font_idx != face->face_index)
       goto Skip;
-    /* `control->glyph_idx' holds the style */
-    if (control->glyph_idx != metrics->root.style_class->style)
+    /* `control->glyph_idx' holds either a style */
+    /* or a feature for all scripts */
+    if (!(control->glyph_idx == style_class->style
+          || -control->glyph_idx == style_class->coverage))
       goto Skip;
 
     /* `control->points' holds the width set */
