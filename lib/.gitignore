@@ -7,5 +7,6 @@
 *.o
 *.lo
 *.la
+*.pc
 /.deps/
 /.libs/

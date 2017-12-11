@@ -108,7 +108,26 @@ EXTRA_DIST = \
   sds.c \
   tablue.cin tablue.hin \
   tablue.dat \
-  tacontrol.flex tacontrol.bison tacontrol-flex.c
+  tacontrol.flex tacontrol.bison tacontrol-flex.c \
+  ttfautohint.pc.in
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = ttfautohint.pc
+
+CLEANFILES = $(pkgconfig_DATA)
+
+ttfautohint.pc: ttfautohint.pc.in $(top_builddir)/config.status
+	$(AM_V_GEN)$(SED) \
+	  -e 's@%prefix%@$(prefix)@g' \
+	  -e 's@%exec_prefix%@$(exec_prefix)@g' \
+	  -e 's@%includedir%@$(includedir)@g' \
+	  -e 's@%libdir%@$(libdir)@g' \
+	  -e 's@%libs_private%@$(HBNONPCLIBS)@g' \
+	  -e 's@%requires_private%@$(HBDEPS)@g' \
+	  -e 's@%version%@$(ABI_CURRENT).$(ABI_REVISION).$(ABI_AGE)@g' \
+	  "$<" \
+	  > "$@" \
+	|| (rm "$@"; false)
 
 tablue.c: tablue.dat tablue.cin
 	$(AM_V_GEN)rm -f $@-t $@ \
