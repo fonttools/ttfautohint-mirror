@@ -14,6 +14,7 @@ ABI_CURRENT = 1
 ABI_REVISION = 0
 ABI_AGE = 0
 
+
 AM_CPPFLAGS = -I$(top_builddir)/gnulib/src \
               -I$(top_srcdir)/gnulib/src \
               $(FREETYPE_CPPFLAGS) \
@@ -29,7 +30,8 @@ include_HEADERS = ttfautohint.h ttfautohint-errors.h
 
 libttfautohint_la_LDFLAGS = \
   -no-undefined \
-  -version-info $(ABI_CURRENT):$(ABI_REVISION):$(ABI_AGE)
+  -version-info $(ABI_CURRENT):$(ABI_REVISION):$(ABI_AGE) \
+  -export-symbols-regex "TTF_autohint"
 
 libsds_la_SOURCES = \
   sds-wrapper.c sds.h
@@ -122,8 +124,6 @@ ttfautohint.pc: ttfautohint.pc.in $(top_builddir)/config.status
 	  -e 's@%exec_prefix%@$(exec_prefix)@g' \
 	  -e 's@%includedir%@$(includedir)@g' \
 	  -e 's@%libdir%@$(libdir)@g' \
-	  -e 's@%libs_private%@$(HBNONPCLIBS)@g' \
-	  -e 's@%requires_private%@$(HBDEPS)@g' \
 	  -e 's@%version%@$(ABI_CURRENT).$(ABI_REVISION).$(ABI_AGE)@g' \
 	  "$<" \
 	  > "$@" \

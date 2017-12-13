@@ -71,7 +71,7 @@ LT_LTLIZE_LANG([C])
 
 # We use libtool's convenient check for the math library.
 LT_LIB_M
-AC_SUBST(LIBM)
+AC_SUBST([LIBM])
 
 
 AC_ARG_WITH([doc],
@@ -105,8 +105,8 @@ if test ! -f "$FREETYPE_LIBS"; then
   FREETYPE_LIBS="`$ft_config --libs`"
 fi
 
-AC_SUBST(FREETYPE_CPPFLAGS)
-AC_SUBST(FREETYPE_LIBS)
+AC_SUBST([FREETYPE_CPPFLAGS])
+AC_SUBST([FREETYPE_LIBS])
 
 
 AC_MSG_CHECKING([whether FreeType header files are version 2.4.5 or higher])

@@ -261,7 +261,6 @@ typedef int
  * Function: `TTF_autohint`
  * ------------------------
  *
- *
  * Read a TrueType font, remove existing bytecode (in the SFNT tables
  * `prep`, `fpgm`, `cvt `, and `glyf`), and write a new TrueType font with
  * new bytecode based on the autohinting of the FreeType library, optionally

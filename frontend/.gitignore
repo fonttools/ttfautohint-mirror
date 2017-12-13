@@ -8,3 +8,4 @@
 /ttfautohintGUI.1
 *.moc.cpp
 *.o
+/.libs/
