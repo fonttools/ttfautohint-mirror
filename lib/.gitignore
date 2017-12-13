@@ -2,6 +2,7 @@
 /Makefile.in
 /tablue.c
 /tablue.h
+/ttfautohint.h
 *-flex.[ch]
 *-bison.[ch]
 *.o

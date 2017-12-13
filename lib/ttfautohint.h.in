@@ -613,6 +613,99 @@ TTF_autohint(const char* options,
 /*
  * ```
  *
+ * Macros: `TTFAUTOHINT_MAJOR`, `TTFAUTOHINT_MINOR`, `TTFAUTOHINT_REVISION`
+ * ------------------------------------------------------------------------
+ *
+ * These three macros give the major, minor, and revision number of the
+ * library, respectively.  See function
+ * [`TTF_autohint_version`](#function-ttf_autohint_version) for more
+ * details.
+ *
+ * ```C
+ */
+
+#define TTFAUTOHINT_MAJOR %TTFAUTOHINT_MAJOR%
+#define TTFAUTOHINT_MINOR %TTFAUTOHINT_MINOR%
+#define TTFAUTOHINT_REVISION %TTFAUTOHINT_REVISION%
+
+/*
+ * ```
+ *
+ * Macro: `TTFAUTOHINT_VERSION`
+ * ----------------------------
+ *
+ * This macro holds the ttfautohint version string.
+ *
+ * For tarball releases it has the form *X*.*Y*[.*Z*], with *X*, *Y*,
+ * and\ *Z* the major, minor, and revision numbers, respectively.  If the
+ * revision number is zero, it is omitted.  Examples: `2.7`, `2.7.1`.
+ *
+ * If compiling directly from the git repository, ttfautohint's bootstrap
+ * script derives the version number from the `git describe` output,
+ * appending the number of commits after a tag together with a shortened
+ * commit ID.  Example: `2.7.1.23-379b`.
+ *
+ * See function [`TTF_autohint_version`](#function-ttf_autohint_version) for
+ * more details.
+ *
+ * ```C
+ */
+
+#define TTFAUTOHINT_VERSION "%TTFAUTOHINT_VERSION%"
+
+/*
+ * ```
+ *
+ * Function: `TTF_autohint_version`
+ * --------------------------------
+ *
+ * Return the ttfautohint version triplet.  This function is useful when
+ * dynamically linking to the library, since the macros `TTFAUTOHINT_MAJOR`,
+ * `TTFAUTOHINT_MINOR`, and `TTFAUTOHINT_PATCH` cannot be used in that case.
+ *
+ * The returned integer triplet is _not_ the same as the shared library's
+ * version triplet (which the dynamic linker uses to resolve runtime
+ * dependencies).  For example, hypothetical ttfautohint versions 2.27 and
+ * 2.27.1 might both correspond to shared library version 1.0.38 in case
+ * there are only, say, documentation or packaging differences that don't
+ * affect the library code.
+ *
+ * If the pkg-config configuration file `ttfautohint.pc` is installed in a
+ * place that pkg-config can find, a call to
+ *
+ * ```
+ *     pkg-config ttfautohint --modversion
+ * ```
+ *
+ * returns the shared library version.
+ *
+ * ```C
+ */
+
+LT_LIB_EXPORT void
+TTF_autohint_version(int *major,
+                     int *minor,
+                     int *revision);
+
+/*
+ * ```
+ *
+ * Function: `TTF_autohint_version_string`
+ * ---------------------------------------
+ *
+ * Return the ttfautohint version string.  This function is useful when
+ * dynamically linking to the library, since the macro `TTFAUTOHINT_VERSION`
+ * cannot be used in that case.
+ *
+ * ```C
+ */
+
+LT_LIB_EXPORT const char*
+TTF_autohint_version_string(void);
+
+/*
+ * ```
+ *
  */
 
 /* pandoc-end */

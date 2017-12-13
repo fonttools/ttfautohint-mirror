@@ -26,6 +26,49 @@ AC_CONFIG_MACRO_DIRS([gnulib/m4
 
 AM_SILENT_RULES([yes])
 
+dnl Derive version triplet (major, minor, revision) from package version
+dnl string.
+
+dnl If `AC_PACKAGE_VERSION' contains the suffix `-dirty', we remove it.  If
+dnl it then still contains a dash, we have to remove the last dot and
+dnl everything appended to it (this was added by the `git-version-gen'
+dnl script to reflect git commits after the last tagged commit, which we
+dnl ignore).
+
+dnl No quotes around first argument of `m4_bpatsubst'.
+dnl No quotes around `m4_bpatsubst'.
+m4_define([ttfa_version], m4_bpatsubst(AC_PACKAGE_VERSION, [-dirty$]))
+m4_define([ttfa_version], m4_bpatsubst(ttfa_version, [\.[^.]+-.+$]))
+
+dnl No quotes around first argument of `m4_split'.
+dnl No quotes around `m4_split'.
+m4_define([ttfa_triplet], m4_split(ttfa_version, [\.]))
+
+dnl No quotes around second argument of `m4_argn'.
+dnl No quotes around `m4_argn'.
+m4_define([ttfa_major], m4_argn([1], ttfa_triplet))
+m4_define([ttfa_minor], m4_argn([2], ttfa_triplet))
+m4_define([ttfa_revision], m4_argn([3], ttfa_triplet))
+
+dnl No quotes around first two arguments of `m4_if'.
+m4_if(ttfa_revision,
+      ,
+      [m4_define([ttfa_revision], [0])],
+      [])
+
+m4_if(ttfa_version,
+      AC_PACKAGE_VERSION,
+      [],
+      [AC_MSG_WARN([Revision number of version tuplet set to ttfa_revision.])])
+
+ttfautohint_major=ttfa_major
+ttfautohint_minor=ttfa_minor
+ttfautohint_revision=ttfa_revision
+
+AC_SUBST([ttfautohint_major])
+AC_SUBST([ttfautohint_minor])
+AC_SUBST([ttfautohint_revision])
+
 AC_USE_SYSTEM_EXTENSIONS
 
 AC_PROG_LN_S

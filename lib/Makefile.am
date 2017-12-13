@@ -88,9 +88,9 @@ libttfautohint_la_SOURCES = \
   tattf.c \
   tattfa.c \
   tatypes.h \
+  taversion.c \
   tawrtsys.h \
   ttfautohint.c \
-  ttfautohint.h ttfautohint-errors.h \
   ttfautohint-scripts.h ttfautohint-coverages.h
 
 libttfautohint_la_LIBADD = \
@@ -103,15 +103,18 @@ libttfautohint_la_LIBADD = \
 BUILT_SOURCES = \
   tablue.c tablue.h \
   tacontrol-flex.c tacontrol-flex.h \
-  tacontrol-bison.c tacontrol-bison.h
+  tacontrol-bison.c tacontrol-bison.h \
+  ttfautohint.h
 
 EXTRA_DIST = \
   afblue.pl \
   sds.c \
   tablue.cin tablue.hin \
   tablue.dat \
-  tacontrol.flex tacontrol.bison tacontrol-flex.c \
-  ttfautohint.pc.in
+  tacontrol.flex tacontrol.bison \
+  ttfautohint.pc.in \
+  numberset-test.c \
+  ttfautohint.h.in
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ttfautohint.pc
@@ -142,6 +145,16 @@ tablue.h: tablue.dat tablue.hin
 	                            < $(srcdir)/tablue.hin \
 	                            > $@-t \
 	&& mv $@-t $@
+
+ttfautohint.h: ttfautohint.h.in
+	$(AM_V_GEN)$(SED) \
+	  -e 's@%TTFAUTOHINT_MAJOR%@$(ttfautohint_major)@g' \
+	  -e 's@%TTFAUTOHINT_MINOR%@$(ttfautohint_minor)@g' \
+	  -e 's@%TTFAUTOHINT_REVISION%@$(ttfautohint_revision)@g' \
+	  -e 's@%TTFAUTOHINT_VERSION%@$(VERSION)@g' \
+	  "$<" \
+	  > "$@" \
+	|| (rm "$@"; false)
 
 TA_V_FLEX = $(TA_V_FLEX_@AM_V@)
 TA_V_FLEX_ = $(TA_V_FLEX_@AM_DEFAULT_V@)
