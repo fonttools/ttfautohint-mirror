@@ -281,7 +281,9 @@ TA_font_build_TTF(FONT* font)
   /* get font length from last SFNT table array element */
   font->out_len = tables[num_tables - 1].offset
                   + ((tables[num_tables - 1].len + 3) & ~3U);
-  font->out_buf = (FT_Byte*)malloc(font->out_len);
+  /* if `out-buffer' is set, this buffer gets returned to the user, */
+  /* thus we use the customized allocator function */
+  font->out_buf = (FT_Byte*)font->allocate(font->out_len);
   if (!font->out_buf)
   {
     error = FT_Err_Out_Of_Memory;

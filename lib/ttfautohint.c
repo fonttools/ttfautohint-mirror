@@ -98,6 +98,9 @@ TTF_autohint(const char* options,
   TA_Info_Post_Func info_post = NULL;
   void* info_data = NULL;
 
+  TA_Alloc_Func allocate = NULL;
+  TA_Free_Func deallocate = NULL;
+
   FT_Bool windows_compatibility = 0;
   FT_Bool ignore_restrictions = 0;
   FT_Bool adjust_subglyphs = 0;
@@ -156,6 +159,8 @@ TTF_autohint(const char* options,
     /* handle options -- don't forget to update parameter dump below! */
     if (COMPARE("adjust-subglyphs"))
       adjust_subglyphs = (FT_Bool)va_arg(ap, FT_Int);
+    else if (COMPARE("alloc-func"))
+      allocate = va_arg(ap, TA_Alloc_Func);
     else if (COMPARE("control-buffer"))
     {
       control_file = NULL;
@@ -194,6 +199,8 @@ TTF_autohint(const char* options,
       fallback_script_string = va_arg(ap, const char*);
     else if (COMPARE("fallback-stem-width"))
       fallback_stem_width = (FT_Long)va_arg(ap, FT_UInt);
+    else if (COMPARE("free-func"))
+      deallocate = va_arg(ap, TA_Free_Func);
     else if (COMPARE("gdi-cleartype-strong-stem-width"))
       gdi_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("gray-strong-stem-width"))
@@ -435,6 +442,9 @@ TTF_autohint(const char* options,
   font->symbol = symbol;
 
 No_check:
+  font->allocate = (allocate && out_bufp) ? allocate : malloc;
+  font->deallocate = (deallocate && out_bufp) ? deallocate : free;
+
   font->progress = progress;
   font->progress_data = progress_data;
   font->info = info;

@@ -135,7 +135,7 @@ TA_font_unload(FONT* font,
   if (!in_buf)
     free(font->in_buf);
   if (!out_bufp)
-    free(font->out_buf);
+    font->deallocate(font->out_buf);
   if (!control_buf)
     free(font->control_buf);
   if (!reference_buf)

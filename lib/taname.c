@@ -183,7 +183,10 @@ parse_name_records(FT_Byte** curp,
         continue;
     }
 
-    r->str = (FT_Byte*)malloc(r->len);
+    /* this string gets probably modified */
+    /* by the `info' or `info_post' callbacks, */
+    /* so we have to call the allocation function provided by the user */
+    r->str = (FT_Byte*)font->allocate(r->len);
     if (!r->str)
       return FT_Err_Out_Of_Memory;
     memcpy(r->str, s, r->len);
@@ -515,7 +518,7 @@ TA_sfnt_update_name_table(SFNT* sfnt,
 
 Exit:
   for (i = 0; i < n.name_count; i++)
-    free(n.name_records[i].str);
+    font->deallocate(n.name_records[i].str);
   for (i = 0; i < n.lang_tag_count; i++)
     free(n.lang_tag_records[i].str);
 

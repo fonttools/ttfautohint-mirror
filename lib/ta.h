@@ -271,6 +271,8 @@ struct FONT_
   TA_Info_Func info;
   TA_Info_Post_Func info_post;
   void* info_data;
+  TA_Alloc_Func allocate;
+  TA_Free_Func deallocate;
   FT_UInt hinting_range_min;
   FT_UInt hinting_range_max;
   FT_UInt hinting_limit;

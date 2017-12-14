@@ -17,6 +17,7 @@
 #define TTFAUTOHINT_H_
 
 #include <stdarg.h>
+#include <stdlib.h>
 #include <stdint.h>
 
 
@@ -83,6 +84,56 @@ extern "C" {
  */
 
 typedef int TA_Error;
+
+/*
+ * ```
+ *
+ */
+
+
+/*
+ * Function Pointer: `TA_Alloc_Func`
+ * ---------------------------------
+ *
+ * A pointer to a function provided by the calling application to allocate
+ * memory.  The ttfautohint library uses this for allocating the buffer
+ * given by the `out-buffer` field of
+ * [`TTF_autohint`](#function-ttf_autohint) and for allocating the `str`
+ * buffer in the [`TA_Info_Func`](#callback-ta_info_func) callback.
+ *
+ * The signature is identical to standard\ C's `malloc` function (in header
+ * file `stdlib.h`).
+ *
+ * ```C
+ */
+
+typedef void *
+(*TA_Alloc_Func)(size_t size);
+
+/*
+ * ```
+ *
+ */
+
+
+/*
+ * Function Pointer: `TA_Free_Func`
+ * --------------------------------
+ *
+ * A pointer to a function provided by the calling application to free
+ * memory allocated with [`TA_Alloc_Func`](#function-pointer-ta_alloc_func).
+ * The ttfautohint library calls this for deallocating the `str` buffers in
+ * the [`TA_Info_Func`](#callback-ta_info_func) callback after they have
+ * been used.
+ *
+ * The signature is identical to standard\ C's `free` function (in header
+ * file `stdlib.h`).
+ *
+ * ```C
+ */
+
+typedef void
+(*TA_Free_Func)(void *ptr);
 
 /*
  * ```
@@ -182,9 +233,10 @@ typedef void
  *
  * [OpenType specification of the `name` table]: http://www.microsoft.com/typography/otspec/name.htm
  *
- * The string *str* is allocated with `malloc`; the application should
- * reallocate the data if necessary, ensuring that the string length doesn't
- * exceed 0xFFFF.
+ * The string *str* is allocated with the function specified by the
+ * `alloc-func` field of [`TTF_autohint`](#function-ttf_autohint); the
+ * application should reallocate the data if necessary, ensuring that the
+ * string length doesn't exceed 0xFFFF.
  *
  * *info_data* is a void pointer to user-supplied data.
  *
@@ -224,9 +276,10 @@ typedef int
  * provided to `TA_Info_Func`.  Obviously, calling `TA_Info_Post_Func` with
  * `TA_Info_Func` undefined has no effect.
  *
- * The `name` table strings are allocated with `malloc`; the application
- * should reallocate the data if necessary, ensuring that no string length
- * exceeds 0xFFFF.
+ * The `name` table strings are allocated with the function specified by the
+ * `alloc-func` field of [`TTF_autohint`](#function-ttf_autohint); the
+ * application should reallocate the data if necessary, ensuring that no
+ * string length exceeds 0xFFFF.
  *
  * If an error occurs, return a non-zero value and don't modify the affected
  * string and string length (such errors are handled as non-fatal).
@@ -275,6 +328,32 @@ typedef int
  * Note that fields marked as 'not implemented yet' are subject to change.
  *
  *
+ * ### Memory Management
+ *
+ * The next two fields are necessary on some platforms if ttfautohint is
+ * compiled as a shared library, and the application uses a different
+ * runtime library.  This can happen, for example, on the MS Windows
+ * platform if your program is written in Python and communicates via [the
+ * 'ctypes' interface](https://docs.python.org/3/library/ctypes.html) with
+ * the ttfautohint DLL.
+ *
+ * `alloc-func`
+ * :   A pointer of type [`TA_Alloc_Func`](#function-pointer-ta_alloc_func)
+ *     specifying a memory allocation function.  It gets used to allocate
+ *     the buffer given by the `out-buffer` field and the data exposed by
+ *     the [`TA_Info_Func`](#callback-ta_info_func) callback.  If not set or
+ *     set to NULL, or if `out-buffer` is not set or set to NULL,
+ *     standard\ C's `malloc` function is used.
+ *
+ * `free-func`
+ * :   A pointer of type [`TA_Free_Func`](#function-pointer-ta_free_func)
+ *     specifying a memory deallocation function.  It gets called to free
+ *     the data exposed by the [`TA_Info_Func`](#callback-ta_info_func)
+ *     callback after it has been used.  If not set or set to NULL, or if
+ *     `out_buffer` is not set or set to NULL, standard\ C's `free` function
+ *     is used.
+ *
+ *
  * ### I/O
  *
  * `in-file`
@@ -296,7 +375,8 @@ typedef int
  * `out-buffer`
  * :   A pointer of type `char**` to a buffer that contains the output
  *     font.  Needs `out-buffer-len`.  Mutually exclusive with `out-file`.
- *     Deallocate the memory with `free`.
+ *     The application should deallocate the memory with the function given
+ *     by `free-func`.
  *
  * `out-buffer-len`
  * :   A pointer of type `size_t*` to a value giving the length of the
