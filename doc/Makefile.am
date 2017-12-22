@@ -79,7 +79,7 @@ if WITH_DOC
 endif
 
 
-ttfautohint-2.pandoc: $(top_srcdir)/lib/ttfautohint.h
+ttfautohint-2.pandoc: $(top_builddir)/lib/ttfautohint.h
 	$(SED) -f $(srcdir)/c2pandoc.sed < $< > $@
 
 ttfautohint-4.pandoc: $(top_srcdir)/lib/taranges.c

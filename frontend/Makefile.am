@@ -84,7 +84,7 @@ endif
 # `ttfautohint.h' holds default values for some options,
 # `ttfautohint-scripts.' the list of available scripts
 ttfautohint.1: $(top_srcdir)/frontend/main.cpp \
-               $(top_srcdir)/lib/ttfautohint.h \
+               $(top_builddir)/lib/ttfautohint.h \
                $(top_srcdir)/lib/ttfautohint-scripts.h \
                $(top_builddir)/.version
 	$(MAKE) $(AM_MAKEFLAGS) ttfautohint$(EXEEXT)
@@ -94,7 +94,7 @@ ttfautohint.1: $(top_srcdir)/frontend/main.cpp \
 	            ./ttfautohint$(EXEEXT)
 
 ttfautohintGUI.1: $(top_srcdir)/frontend/main.cpp \
-                  $(top_srcdir)/lib/ttfautohint.h \
+                  $(top_builddir)/lib/ttfautohint.h \
                   $(top_srcdir)/lib/ttfautohint-scripts.h \
                   $(top_builddir)/.version
 	$(MAKE) $(AM_MAKEFLAGS) ttfautohintGUI$(EXEEXT)
