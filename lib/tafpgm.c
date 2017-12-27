@@ -1520,7 +1520,7 @@ static const unsigned char FPGM(bci_blue_round_range) [] =
   PUSHB_3,
     bci_strong_blue_round,
     bci_smooth_blue_round,
-    cvtl_use_strong_functions,
+    cvtl_stem_width_mode,
   RCVT,
   IF,
     POP,
@@ -6811,7 +6811,7 @@ static const unsigned char FPGM(bci_action_serif_link2_down_upper_lower_bound) [
  *     ...
  *
  * CVT: cvtl_is_subglyph
- *      cvtl_use_strong_functions
+ *      cvtl_stem_width_mode
  *      cvtl_do_iup_y
  *
  * sal: sal_stem_width_function
@@ -6888,7 +6888,7 @@ static const unsigned char FPGM(bci_hint_glyph) [] =
     sal_stem_width_function,
     bci_strong_stem_width,
     bci_smooth_stem_width,
-    cvtl_use_strong_functions,
+    cvtl_stem_width_mode,
   RCVT,
   IF,
     POP,

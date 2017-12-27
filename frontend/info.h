@@ -36,9 +36,9 @@ typedef struct Info_Data_
   int hinting_range_max;
   int hinting_limit;
 
-  bool gray_strong_stem_width;
-  bool gdi_cleartype_strong_stem_width;
-  bool dw_cleartype_strong_stem_width;
+  int gray_stem_width_mode;
+  int gdi_cleartype_stem_width_mode;
+  int dw_cleartype_stem_width_mode;
 
   int increase_x_height;
   const char* x_height_snapping_exceptions_string;

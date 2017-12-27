@@ -88,7 +88,7 @@ TA_font_dump_parameters(FONT* font,
   DUMPSTR("default-script",
           script_names[font->default_script]);
   DUMPVAL("dw-cleartype-strong-stem-width",
-          font->dw_cleartype_strong_stem_width);
+          font->dw_cleartype_stem_width_mode);
   DUMPVAL("fallback-scaling",
           font->fallback_scaling);
   DUMPSTR("fallback-script",
@@ -96,9 +96,9 @@ TA_font_dump_parameters(FONT* font,
   DUMPVAL("fallback-stem-width",
           font->fallback_stem_width);
   DUMPVAL("gdi-cleartype-strong-stem-width",
-          font->gdi_cleartype_strong_stem_width);
+          font->gdi_cleartype_stem_width_mode);
   DUMPVAL("gray-strong-stem-width",
-          font->gray_strong_stem_width);
+          font->gray_stem_width_mode);
   DUMPVAL("hinting-limit",
           font->hinting_limit);
   DUMPVAL("hinting-range-max",

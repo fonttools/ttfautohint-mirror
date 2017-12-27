@@ -117,11 +117,11 @@ build_version_string(Info_Data* idata)
   strong[1] = '\0';
   strong[2] = '\0';
   strong[3] = '\0';
-  if (idata->gray_strong_stem_width)
+  if (idata->gray_stem_width_mode)
     strong[count++] = 'g';
-  if (idata->gdi_cleartype_strong_stem_width)
+  if (idata->gdi_cleartype_stem_width_mode)
     strong[count++] = 'G';
-  if (idata->dw_cleartype_strong_stem_width)
+  if (idata->dw_cleartype_stem_width_mode)
     strong[count++] = 'D';
   if (*strong)
     d = sdscatprintf(d, " -w %s", strong);

@@ -279,9 +279,9 @@ struct FONT_
   FT_UInt increase_x_height;
   number_range* x_height_snapping_exceptions;
   FT_UInt fallback_stem_width;
-  FT_Bool gray_strong_stem_width;
-  FT_Bool gdi_cleartype_strong_stem_width;
-  FT_Bool dw_cleartype_strong_stem_width;
+  FT_Int gray_stem_width_mode;
+  FT_Int gdi_cleartype_stem_width_mode;
+  FT_Int dw_cleartype_stem_width_mode;
   FT_Bool windows_compatibility;
   FT_Bool adjust_subglyphs;
   FT_Bool hint_composites;

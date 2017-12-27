@@ -64,8 +64,8 @@ class Main_GUI
 public:
   Main_GUI(bool,
            int, int, int,
-           bool, bool,
-           bool, int,
+           int, int,
+           int, int,
            const char*, int,
            bool, bool, bool,
            bool, bool, bool,
@@ -107,9 +107,9 @@ private:
   int hinting_range_min;
   int hinting_range_max;
   int hinting_limit;
-  int gray_strong_stem_width;
-  int gdi_cleartype_strong_stem_width;
-  int dw_cleartype_strong_stem_width;
+  int gray_stem_width_mode;
+  int gdi_cleartype_stem_width_mode;
+  int dw_cleartype_stem_width_mode;
   int increase_x_height;
   QString x_height_snapping_exceptions_string;
   number_range* x_height_snapping_exceptions;

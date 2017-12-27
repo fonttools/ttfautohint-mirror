@@ -111,9 +111,9 @@ Main_GUI::Main_GUI(bool horizontal_layout,
                    int range_min,
                    int range_max,
                    int limit,
-                   bool gray,
-                   bool gdi,
-                   bool dw,
+                   int gray,
+                   int gdi,
+                   int dw,
                    int increase,
                    const char* exceptions,
                    int stem_width,
@@ -133,9 +133,9 @@ Main_GUI::Main_GUI(bool horizontal_layout,
 : hinting_range_min(range_min),
   hinting_range_max(range_max),
   hinting_limit(limit),
-  gray_strong_stem_width(gray),
-  gdi_cleartype_strong_stem_width(gdi),
-  dw_cleartype_strong_stem_width(dw),
+  gray_stem_width_mode(gray),
+  gdi_cleartype_stem_width_mode(gdi),
+  dw_cleartype_stem_width_mode(dw),
   increase_x_height(increase),
   x_height_snapping_exceptions_string(exceptions),
   fallback_stem_width(stem_width),
@@ -1261,9 +1261,9 @@ again:
                             ? 0
                             : limit_box->value();
 
-  info_data.gray_strong_stem_width = gray_box->isChecked();
-  info_data.gdi_cleartype_strong_stem_width = gdi_box->isChecked();
-  info_data.dw_cleartype_strong_stem_width = dw_box->isChecked();
+  info_data.gray_stem_width_mode = gray_box->isChecked();
+  info_data.gdi_cleartype_stem_width_mode = gdi_box->isChecked();
+  info_data.dw_cleartype_stem_width_mode = dw_box->isChecked();
 
   info_data.increase_x_height = no_x_increase_box->isChecked()
                                 ? 0
@@ -1359,9 +1359,9 @@ again:
                  info_data.reference_index, info_data.reference_name,
                  info_data.hinting_range_min, info_data.hinting_range_max,
                  info_data.hinting_limit,
-                 info_data.gray_strong_stem_width,
-                 info_data.gdi_cleartype_strong_stem_width,
-                 info_data.dw_cleartype_strong_stem_width,
+                 info_data.gray_stem_width_mode,
+                 info_data.gdi_cleartype_stem_width_mode,
+                 info_data.dw_cleartype_stem_width_mode,
                  gui_progress, &gui_progress_data,
                  gui_error, &gui_error_data,
                  info_func, info_post_func, &info_data,
@@ -2335,11 +2335,11 @@ Main_GUI::set_defaults()
   if (TTFA_info)
     TTFA_box->setChecked(true);
 
-  if (gray_strong_stem_width)
+  if (gray_stem_width_mode)
     gray_box->setChecked(true);
-  if (gdi_cleartype_strong_stem_width)
+  if (gdi_cleartype_stem_width_mode)
     gdi_box->setChecked(true);
-  if (dw_cleartype_strong_stem_width)
+  if (dw_cleartype_stem_width_mode)
     dw_box->setChecked(true);
 
   run_button->setEnabled(false);

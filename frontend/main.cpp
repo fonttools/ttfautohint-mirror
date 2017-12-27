@@ -708,9 +708,9 @@ main(int argc,
   bool have_increase_x_height = false;
   bool have_fallback_stem_width = false;
 
-  bool gray_strong_stem_width = false;
-  bool gdi_cleartype_strong_stem_width = true;
-  bool dw_cleartype_strong_stem_width = false;
+  int gray_stem_width_mode = 0;
+  int gdi_cleartype_stem_width_mode = 1;
+  int dw_cleartype_stem_width_mode = 0;
 
   bool ignore_restrictions = false;
   bool windows_compatibility = false;
@@ -969,9 +969,9 @@ main(int argc,
       break;
 
     case 'w':
-      gray_strong_stem_width = strchr(optarg, 'g') ? true : false;
-      gdi_cleartype_strong_stem_width = strchr(optarg, 'G') ? true : false;
-      dw_cleartype_strong_stem_width = strchr(optarg, 'D') ? true : false;
+      gray_stem_width_mode = strchr(optarg, 'g') ? 1 : 0;
+      gdi_cleartype_stem_width_mode = strchr(optarg, 'G') ? 1 : 0;
+      dw_cleartype_stem_width_mode = strchr(optarg, 'D') ? 1 : 0;
       break;
 
     case 'W':
@@ -1355,9 +1355,9 @@ main(int argc,
   info_data.hinting_range_max = hinting_range_max;
   info_data.hinting_limit = hinting_limit;
 
-  info_data.gray_strong_stem_width = gray_strong_stem_width;
-  info_data.gdi_cleartype_strong_stem_width = gdi_cleartype_strong_stem_width;
-  info_data.dw_cleartype_strong_stem_width = dw_cleartype_strong_stem_width;
+  info_data.gray_stem_width_mode = gray_stem_width_mode;
+  info_data.gdi_cleartype_stem_width_mode = gdi_cleartype_stem_width_mode;
+  info_data.dw_cleartype_stem_width_mode = dw_cleartype_stem_width_mode;
 
   info_data.windows_compatibility = windows_compatibility;
   info_data.adjust_subglyphs = adjust_subglyphs;
@@ -1414,8 +1414,8 @@ main(int argc,
                  in, out, control,
                  reference, reference_index, reference_name,
                  hinting_range_min, hinting_range_max, hinting_limit,
-                 gray_strong_stem_width, gdi_cleartype_strong_stem_width,
-                 dw_cleartype_strong_stem_width,
+                 gray_stem_width_mode, gdi_cleartype_stem_width_mode,
+                 dw_cleartype_stem_width_mode,
                  progress_func, &progress_data,
                  err_func, &error_data,
                  info_func, info_post_func, &info_data,
@@ -1485,8 +1485,8 @@ main(int argc,
 
     Main_GUI dummy(alternative_layout,
                    hinting_range_min, hinting_range_max, hinting_limit,
-                   gray_strong_stem_width, gdi_cleartype_strong_stem_width,
-                   dw_cleartype_strong_stem_width, increase_x_height,
+                   gray_stem_width_mode, gdi_cleartype_stem_width_mode,
+                   dw_cleartype_stem_width_mode, increase_x_height,
                    x_height_snapping_exceptions_string, fallback_stem_width,
                    ignore_restrictions, windows_compatibility, adjust_subglyphs,
                    hint_composites, no_info, detailed_info,
@@ -1505,8 +1505,8 @@ main(int argc,
 
   Main_GUI gui(alternative_layout,
                hinting_range_min, hinting_range_max, hinting_limit,
-               gray_strong_stem_width, gdi_cleartype_strong_stem_width,
-               dw_cleartype_strong_stem_width, increase_x_height,
+               gray_stem_width_mode, gdi_cleartype_stem_width_mode,
+               dw_cleartype_stem_width_mode, increase_x_height,
                x_height_snapping_exceptions_string, fallback_stem_width,
                ignore_restrictions, windows_compatibility, adjust_subglyphs,
                hint_composites, no_info, detailed_info,

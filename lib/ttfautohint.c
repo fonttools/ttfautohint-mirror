@@ -86,9 +86,9 @@ TTF_autohint(const char* options,
 
   FT_Long fallback_stem_width = 0;
 
-  FT_Bool gray_strong_stem_width = 0;
-  FT_Bool gdi_cleartype_strong_stem_width = 1;
-  FT_Bool dw_cleartype_strong_stem_width = 0;
+  FT_Int gray_stem_width_mode = 0;
+  FT_Int gdi_cleartype_stem_width_mode = 1;
+  FT_Int dw_cleartype_stem_width_mode = 0;
 
   TA_Progress_Func progress = NULL;
   void* progress_data = NULL;
@@ -184,7 +184,7 @@ TTF_autohint(const char* options,
     else if (COMPARE("dehint"))
       dehint = (FT_Bool)va_arg(ap, FT_Int);
     else if (COMPARE("dw-cleartype-strong-stem-width"))
-      dw_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
+      dw_cleartype_stem_width_mode = va_arg(ap, FT_Int);
     else if (COMPARE("epoch"))
       epoch = (unsigned long long)va_arg(ap, unsigned long long);
     else if (COMPARE("error-callback"))
@@ -202,9 +202,9 @@ TTF_autohint(const char* options,
     else if (COMPARE("free-func"))
       deallocate = va_arg(ap, TA_Free_Func);
     else if (COMPARE("gdi-cleartype-strong-stem-width"))
-      gdi_cleartype_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
+      gdi_cleartype_stem_width_mode = va_arg(ap, FT_Int);
     else if (COMPARE("gray-strong-stem-width"))
-      gray_strong_stem_width = (FT_Bool)va_arg(ap, FT_Int);
+      gray_stem_width_mode = va_arg(ap, FT_Int);
     else if (COMPARE("hinting-limit"))
       hinting_limit = (FT_Long)va_arg(ap, FT_UInt);
     else if (COMPARE("hinting-range-max"))
@@ -428,9 +428,9 @@ TTF_autohint(const char* options,
   font->x_height_snapping_exceptions = x_height_snapping_exceptions;
   font->fallback_stem_width = (FT_UInt)fallback_stem_width;
 
-  font->gray_strong_stem_width = gray_strong_stem_width;
-  font->gdi_cleartype_strong_stem_width = gdi_cleartype_strong_stem_width;
-  font->dw_cleartype_strong_stem_width = dw_cleartype_strong_stem_width;
+  font->gray_stem_width_mode = gray_stem_width_mode;
+  font->gdi_cleartype_stem_width_mode = gdi_cleartype_stem_width_mode;
+  font->dw_cleartype_stem_width_mode = dw_cleartype_stem_width_mode;
 
   font->windows_compatibility = windows_compatibility;
   font->ignore_restrictions = ignore_restrictions;

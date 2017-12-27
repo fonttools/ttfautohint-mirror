@@ -223,7 +223,7 @@ static const unsigned char PREP(store_vwidth_data_e) [] =
 
 };
 
-static const unsigned char PREP(set_smooth_or_strong_a) [] =
+static const unsigned char PREP(set_stem_width_mode_a) [] =
 {
   /*
    * ttfautohint provides two different functions for stem width computation
@@ -270,13 +270,13 @@ static const unsigned char PREP(set_smooth_or_strong_a) [] =
 
   /* set default value */
   PUSHB_2,
-    cvtl_use_strong_functions, /* target: grayscale rendering */
+    cvtl_stem_width_mode, /* target: grayscale rendering */
 
 };
 
 /*  %c, either 0 or 100 */
 
-static const unsigned char PREP(set_smooth_or_strong_b) [] =
+static const unsigned char PREP(set_stem_width_mode_b) [] =
 {
 
   WCVTP,
@@ -296,12 +296,12 @@ static const unsigned char PREP(set_smooth_or_strong_b) [] =
     GETINFO,
     IF,
       PUSHB_2,
-        cvtl_use_strong_functions, /* target: GDI ClearType */
+        cvtl_stem_width_mode, /* target: GDI ClearType */
 };
 
 /*      %c, either 0 or 100 */
 
-static const unsigned char PREP(set_smooth_or_strong_c) [] =
+static const unsigned char PREP(set_stem_width_mode_c) [] =
 {
 
       WCVTP,
@@ -322,13 +322,13 @@ static const unsigned char PREP(set_smooth_or_strong_c) [] =
         GETINFO,
         IF,
           PUSHB_2,
-            cvtl_use_strong_functions, /* target: DirectWrite ClearType */
+            cvtl_stem_width_mode, /* target: DirectWrite ClearType */
 
 };
 
 /*          %c, either 0 or 100 */
 
-static const unsigned char PREP(set_smooth_or_strong_d) [] =
+static const unsigned char PREP(set_stem_width_mode_d) [] =
 {
 
           WCVTP,
@@ -360,13 +360,13 @@ static const unsigned char PREP(set_smooth_or_strong_d) [] =
           EQ,
           IF,
             PUSHB_2,
-              cvtl_use_strong_functions, /* target: DirectWrite ClearType */
+              cvtl_stem_width_mode, /* target: DirectWrite ClearType */
 
 };
 
 /*            %c, either 0 or 100 */
 
-static const unsigned char PREP(set_smooth_or_strong_e) [] =
+static const unsigned char PREP(set_stem_width_mode_e) [] =
 {
 
             WCVTP,
@@ -700,15 +700,15 @@ TA_table_build_prep(FT_Byte** prep,
                  + (num_used_styles > 6 ? 2 * (num_used_styles + 1) + 2
                                         : 2 * (num_used_styles + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_e));
-  buf_new_len += sizeof (PREP(set_smooth_or_strong_a))
+  buf_new_len += sizeof (PREP(set_stem_width_mode_a))
                  + 1
-                 + sizeof (PREP(set_smooth_or_strong_b))
+                 + sizeof (PREP(set_stem_width_mode_b))
                  + 1
-                 + sizeof (PREP(set_smooth_or_strong_c))
+                 + sizeof (PREP(set_stem_width_mode_c))
                  + 1
-                 + sizeof (PREP(set_smooth_or_strong_d))
+                 + sizeof (PREP(set_stem_width_mode_d))
                  + 1
-                 + sizeof (PREP(set_smooth_or_strong_e));
+                 + sizeof (PREP(set_stem_width_mode_e));
   buf_new_len += (num_used_styles > 3 ? 2 * num_used_styles + 3
                                       : 2 * num_used_styles + 2)
                  + sizeof (PREP(round_blues));
@@ -866,15 +866,15 @@ TA_table_build_prep(FT_Byte** prep,
   *(bufp++) = LOW(num_used_styles);
   COPY_PREP(store_vwidth_data_e);
 
-  COPY_PREP(set_smooth_or_strong_a);
-  *(bufp++) = font->gray_strong_stem_width ? 100 : 0;
-  COPY_PREP(set_smooth_or_strong_b);
-  *(bufp++) = font->gdi_cleartype_strong_stem_width ? 100 : 0;
-  COPY_PREP(set_smooth_or_strong_c);
-  *(bufp++) = font->dw_cleartype_strong_stem_width ? 100 : 0;
-  COPY_PREP(set_smooth_or_strong_d);
-  *(bufp++) = font->dw_cleartype_strong_stem_width ? 100 : 0;
-  COPY_PREP(set_smooth_or_strong_e);
+  COPY_PREP(set_stem_width_mode_a);
+  *(bufp++) = font->gray_stem_width_mode * 100;
+  COPY_PREP(set_stem_width_mode_b);
+  *(bufp++) = font->gdi_cleartype_stem_width_mode * 100;
+  COPY_PREP(set_stem_width_mode_c);
+  *(bufp++) = font->dw_cleartype_stem_width_mode * 100;
+  COPY_PREP(set_stem_width_mode_d);
+  *(bufp++) = font->dw_cleartype_stem_width_mode * 100;
+  COPY_PREP(set_stem_width_mode_e);
 
   if (num_used_styles > 3)
   {
