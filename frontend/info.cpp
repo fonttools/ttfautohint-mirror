@@ -67,14 +67,14 @@ check_family_suffix(const char* s)
 int
 build_version_string(Info_Data* idata)
 {
-  // since we use `goto' we have to initialize variables before the jumps
+  // since we use `goto' we have to declare variables before the jumps
   unsigned char* info_string;
   unsigned char* info_string_wide;
   unsigned char* dt;
   unsigned char* dtw;
   char* s = NULL;
-  char strong[4];
-  int count;
+  char mode[4];
+  char mode_letters[] = "nqs";
   int ret = 0;
   sds d;
 
@@ -111,22 +111,12 @@ build_version_string(Info_Data* idata)
 
     d = sdscatprintf(d, " -Z %d", idata->reference_index);
   }
-
-  count = 0;
-  strong[0] = '\0';
-  strong[1] = '\0';
-  strong[2] = '\0';
-  strong[3] = '\0';
-  if (idata->gray_stem_width_mode)
-    strong[count++] = 'g';
-  if (idata->gdi_cleartype_stem_width_mode)
-    strong[count++] = 'G';
-  if (idata->dw_cleartype_stem_width_mode)
-    strong[count++] = 'D';
-  if (*strong)
-    d = sdscatprintf(d, " -w %s", strong);
-  else
-    d = sdscat(d, " -w \"\"");
+  // `*_stem_width_mode' can have values -1, 0, and 1
+  mode[0] = mode_letters[idata->gray_stem_width_mode + 1];
+  mode[1] = mode_letters[idata->gdi_cleartype_stem_width_mode + 1];
+  mode[2] = mode_letters[idata->dw_cleartype_stem_width_mode + 1];
+  mode[3] = '\0';
+  d = sdscatprintf(d, " -a %s", mode);
 
   if (idata->windows_compatibility)
     d = sdscat(d, " -W");

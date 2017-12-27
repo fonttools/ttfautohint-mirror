@@ -203,9 +203,13 @@ private:
   QSpinBox* max_box;
 
   QLabel* stem_label;
-  QCheckBox* gray_box;
-  QCheckBox* gdi_box;
-  QCheckBox* dw_box;
+
+  QLabel* gray_label;
+  QComboBox* gray_box;
+  QLabel* gdi_label;
+  QComboBox* gdi_box;
+  QLabel* dw_label;
+  QComboBox* dw_box;
 
   QLabel* default_label;
   QComboBox* default_box;

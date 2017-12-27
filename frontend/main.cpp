@@ -305,6 +305,11 @@ show_help(bool
 #ifndef BUILD_GUI
 "      --debug                print debugging information\n"
 #endif
+"  -a, --stem-width-mode=S    select stem width mode for grayscale, GDI\n"
+"                             ClearType, and DW ClearType, where S is a\n"
+"                             string of three letters with possible values\n"
+"                             `n' for natural, `q' for quantized, and `s'\n"
+"                             for strong (default: qsq)\n"
 "  -c, --composites           hint glyph composites also\n"
 "  -d, --dehint               remove all hints\n"
 "  -D, --default-script=S     set default OpenType script (default: latn)\n"
@@ -346,11 +351,6 @@ show_help(bool
 #endif
 "  -v, --verbose              show progress information\n"
 "  -V, --version              print version information and exit\n"
-"  -w, --strong-stem-width=S  use strong stem width routine for modes S,\n"
-"                             where S is a string of up to three letters\n"
-"                             with possible values `g' for grayscale,\n"
-"                             `G' for GDI ClearType, and `D' for\n"
-"                             DirectWrite ClearType (default: G)\n"
 "  -W, --windows-compatibility\n"
 "                             add blue zones for `usWinAscent' and\n"
 "                             `usWinDescent' to avoid clipping\n"
@@ -708,9 +708,13 @@ main(int argc,
   bool have_increase_x_height = false;
   bool have_fallback_stem_width = false;
 
-  int gray_stem_width_mode = 0;
-  int gdi_cleartype_stem_width_mode = 1;
-  int dw_cleartype_stem_width_mode = 0;
+  int gray_stem_width_mode = TA_STEM_WIDTH_MODE_QUANTIZED;
+  int gdi_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_STRONG;
+  int dw_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_QUANTIZED;
+
+#ifndef BUILD_GUI
+  bool have_option_w = false;
+#endif
 
   bool ignore_restrictions = false;
   bool windows_compatibility = false;
@@ -806,6 +810,7 @@ main(int argc,
       {"reference", required_argument, NULL, 'R'},
       {"reference-index", required_argument, NULL, 'Z'},
 #endif
+      {"stem-width-mode", required_argument, NULL, 'a'},
       {"strong-stem-width", required_argument, NULL, 'w'},
       {"symbol", no_argument, NULL, 's'},
       {"ttfa-table", no_argument, NULL, 't'},
@@ -849,9 +854,9 @@ main(int argc,
     int option_index;
     int c = getopt_long_only(argc, argv,
 #ifdef BUILD_GUI
-                             "cdD:f:F:G:hH:iIl:npr:sStvVw:Wx:X:",
+                             "a:cdD:f:F:G:hH:iIl:npr:sStvVw:Wx:X:",
 #else
-                             "cdD:f:F:G:hH:iIl:m:npr:R:sStTvVw:Wx:X:Z:",
+                             "a:cdD:f:F:G:hH:iIl:m:npr:R:sStTvVw:Wx:X:Z:",
 #endif
                              long_options, &option_index);
     if (c == -1)
@@ -859,6 +864,67 @@ main(int argc,
 
     switch (c)
     {
+    case 'a':
+      if (strlen(optarg) != 3)
+      {
+        fprintf(stderr, "Stem width mode string must consist of exactly"
+                        " three letters\n");
+        exit(EXIT_FAILURE);
+      }
+
+      switch (optarg[0])
+      {
+      case 'n':
+        gray_stem_width_mode = TA_STEM_WIDTH_MODE_NATURAL;
+        break;
+      case 'q':
+        gray_stem_width_mode = TA_STEM_WIDTH_MODE_QUANTIZED;
+        break;
+      case 's':
+        gray_stem_width_mode = TA_STEM_WIDTH_MODE_STRONG;
+        break;
+      default:
+        fprintf(stderr, "Stem width mode letter for grayscale rendering"
+                        " must be `n', `q', or `s'\n");
+        exit(EXIT_FAILURE);
+      }
+
+      switch (optarg[1])
+      {
+      case 'n':
+        gdi_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_NATURAL;
+        break;
+      case 'q':
+        gdi_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_QUANTIZED;
+        break;
+      case 's':
+        gdi_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_STRONG;
+        break;
+      default:
+        fprintf(stderr, "Stem width mode letter for GDI ClearType rendering"
+                        " must be `n', `q', or `s'\n");
+        exit(EXIT_FAILURE);
+      }
+
+      switch (optarg[2])
+      {
+      case 'n':
+        dw_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_NATURAL;
+        break;
+      case 'q':
+        dw_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_QUANTIZED;
+        break;
+      case 's':
+        dw_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_STRONG;
+        break;
+      default:
+        fprintf(stderr, "Stem width mode letter for DW ClearType rendering"
+                        " must be `n', `q', or `s'\n");
+        exit(EXIT_FAILURE);
+      }
+
+      break;
+
     case 'c':
       hint_composites = true;
       break;
@@ -969,9 +1035,18 @@ main(int argc,
       break;
 
     case 'w':
-      gray_stem_width_mode = strchr(optarg, 'g') ? 1 : 0;
-      gdi_cleartype_stem_width_mode = strchr(optarg, 'G') ? 1 : 0;
-      dw_cleartype_stem_width_mode = strchr(optarg, 'D') ? 1 : 0;
+      gray_stem_width_mode = strchr(optarg, 'g')
+                               ? TA_STEM_WIDTH_MODE_STRONG
+                               : TA_STEM_WIDTH_MODE_QUANTIZED;
+      gdi_cleartype_stem_width_mode = strchr(optarg, 'G')
+                                        ? TA_STEM_WIDTH_MODE_STRONG
+                                        : TA_STEM_WIDTH_MODE_QUANTIZED;
+      dw_cleartype_stem_width_mode = strchr(optarg, 'D')
+                                       ? TA_STEM_WIDTH_MODE_STRONG
+                                       : TA_STEM_WIDTH_MODE_QUANTIZED;
+#ifndef BUILD_GUI
+      have_option_w = true;
+#endif
       break;
 
     case 'W':
@@ -1122,6 +1197,11 @@ main(int argc,
       epoch = ULLONG_MAX;
     }
   }
+
+  if (have_option_w)
+    fprintf(stderr,
+            "Warning: Option `-w' is deprecated!"
+            "  Use option `-a' instead\n");
 
   if (!isatty(fileno(stderr)) && !debug)
     setvbuf(stderr, (char*)NULL, _IONBF, BUFSIZ);
@@ -1400,8 +1480,8 @@ main(int argc,
     TTF_autohint("in-file, out-file, control-file,"
                  "reference-file, reference-index, reference-name,"
                  "hinting-range-min, hinting-range-max, hinting-limit,"
-                 "gray-strong-stem-width, gdi-cleartype-strong-stem-width,"
-                 "dw-cleartype-strong-stem-width,"
+                 "gray-stem-width-mode, gdi-cleartype-stem-width-mode,"
+                 "dw-cleartype-stem-width-mode,"
                  "progress-callback, progress-callback-data,"
                  "error-callback, error-callback-data,"
                  "info-callback, info-post-callback, info-callback-data,"

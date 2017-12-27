@@ -85,7 +85,7 @@ const Tag_Names feature_names[] =
 //   d: &Dehint
 //   e: Control Instructions Fil&e
 //   f: &File (menu)
-//   g: Stron&g Stem Width and Positioning
+//   g: Stem Width and Positionin&g Mode
 //   h: &Help (menu)
 //   i: &Input Font
 //   j: Ad&just Subglyphs
@@ -397,8 +397,12 @@ Main_GUI::check_dehint()
     ref_idx_box->setEnabled(false);
 
     stem_label->setEnabled(false);
+
+    gray_label->setEnabled(false);
     gray_box->setEnabled(false);
+    gdi_label->setEnabled(false);
     gdi_box->setEnabled(false);
+    dw_label->setEnabled(false);
     dw_box->setEnabled(false);
   }
   else
@@ -444,8 +448,12 @@ Main_GUI::check_dehint()
     ref_idx_box->setEnabled(true);
 
     stem_label->setEnabled(true);
+
+    gray_label->setEnabled(true);
     gray_box->setEnabled(true);
+    gdi_label->setEnabled(true);
     gdi_box->setEnabled(true);
+    dw_label->setEnabled(true);
     dw_box->setEnabled(true);
   }
 }
@@ -1261,9 +1269,10 @@ again:
                             ? 0
                             : limit_box->value();
 
-  info_data.gray_stem_width_mode = gray_box->isChecked();
-  info_data.gdi_cleartype_stem_width_mode = gdi_box->isChecked();
-  info_data.dw_cleartype_stem_width_mode = dw_box->isChecked();
+  // indices 0, 1, 2 are mapped to values -1, 0, 1
+  info_data.gray_stem_width_mode = gray_box->currentIndex() - 1;
+  info_data.gdi_cleartype_stem_width_mode = gdi_box->currentIndex() - 1;
+  info_data.dw_cleartype_stem_width_mode = dw_box->currentIndex() - 1;
 
   info_data.increase_x_height = no_x_increase_box->isChecked()
                                 ? 0
@@ -1340,9 +1349,9 @@ again:
                  "reference-index, reference-name,"
                  "hinting-range-min, hinting-range-max,"
                  "hinting-limit,"
-                 "gray-strong-stem-width,"
-                 "gdi-cleartype-strong-stem-width,"
-                 "dw-cleartype-strong-stem-width,"
+                 "gray-stem-width-mode,"
+                 "gdi-cleartype-stem-width-mode,"
+                 "dw-cleartype-stem-width-mode,"
                  "progress-callback, progress-callback-data,"
                  "error-callback, error-callback-data,"
                  "info-callback, info-post-callback, info-callback-data,"
@@ -1832,29 +1841,45 @@ Main_GUI::create_layout(bool horizontal_layout)
   //
   // stem width and positioning
   //
-  stem_label = new QLabel(tr("Stron&g Stem Width&nbsp;<br>"
-                             "and Positioning:"));
+  stem_label = new QLabel(tr("Stem Width and Positionin&g Mode"));
   stem_label->setToolTip(
-    tr("<b>TTFautohint</b> provides two different hinting algorithms"
+    tr("<b>TTFautohint</b> provides three different hinting algorithms"
        " that can be selected for various hinting modes."
        ""
-       "<p><i>strong</i> (checkbox set):"
+       "<p><i>strong</i>:"
        " Position horizontal stems and snap stem widths"
        " to integer pixel values.  While making the output look crisper,"
        " outlines become more distorted.</p>"
        ""
-       "<p><i>smooth</i> (checkbox not set):"
+       "<p><i>quantized</i>:"
        " Use discrete values for horizontal stems and stem widths."
        "  This only slightly increases the contrast"
-       " but avoids larger outline distortion.</p>"));
+       " but avoids larger outline distortion.</p>"
+       ""
+       "<p><i>natural</i>:"
+       " Don't change horizontal stem widths"
+       " but use discrete values for stem positioning."
+       " This is what FreeType's"
+       " &lsquo;light&rsquo; hinting mode does.</p>"));
 
-  gray_box = new QCheckBox(tr("Grayscale"));
-  gray_box->setToolTip(
+  QStringList mode_list = QStringList() << "natural"
+                                        << "quantized"
+                                        << "strong";
+
+  gray_label = new QLabel(tr("Grayscale:"));
+  gray_box = new QComboBox;
+  gray_box->insertItems(0, mode_list);
+  gray_label->setToolTip(
     tr("<b></b>Grayscale rendering, no ClearType activated."));
+
+  // this must come after the creation of `gray_box'
+  // (you get a bus error otherwise)
   stem_label->setBuddy(gray_box);
 
-  gdi_box = new QCheckBox(tr("GDI ClearType"));
-  gdi_box->setToolTip(
+  gdi_label = new QLabel(tr("GDI ClearType:"));
+  gdi_box = new QComboBox;
+  gdi_box->insertItems(0, mode_list);
+  gdi_label->setToolTip(
     tr("GDI ClearType rendering,"
        " introduced in 2000 for Windows XP.<br>"
        "The rasterizer version (as returned by the"
@@ -1862,8 +1887,10 @@ Main_GUI::create_layout(bool horizontal_layout)
        " 36&nbsp;&le; version &lt;&nbsp;38, and ClearType is enabled.<br>"
        "Along the vertical axis, this mode behaves like B/W rendering."));
 
-  dw_box = new QCheckBox(tr("DW ClearType"));
-  dw_box->setToolTip(
+  dw_label = new QLabel(tr("DW ClearType:"));
+  dw_box = new QComboBox;
+  dw_box->insertItems(0, mode_list);
+  dw_label->setToolTip(
     tr("DirectWrite ClearType rendering,"
        " introduced in 2008 for Windows Vista.<br>"
        "The rasterizer version (as returned by the"
@@ -2010,10 +2037,15 @@ Main_GUI::create_vertical_layout()
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
-  gui_layout->addWidget(stem_label, row, 0, Qt::AlignRight | Qt::AlignBottom);
-  gui_layout->addWidget(gray_box, row++, 1, Qt::AlignBottom);
-  gui_layout->addWidget(gdi_box, row++, 1);
-  gui_layout->addWidget(dw_box, row++, 1);
+  // this item spans two columns
+  gui_layout->addWidget(stem_label, row++, 0, 1, 2, Qt::AlignCenter);
+
+  gui_layout->addWidget(gray_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(gray_box, row++, 1, Qt::AlignLeft);
+  gui_layout->addWidget(gdi_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(gdi_box, row++, 1, Qt::AlignLeft);
+  gui_layout->addWidget(dw_label, row, 0, Qt::AlignRight);
+  gui_layout->addWidget(dw_box, row++, 1, Qt::AlignLeft);
 
   gui_layout->setRowMinimumHeight(row, 30); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
@@ -2128,11 +2160,6 @@ Main_GUI::create_horizontal_layout()
   gui_layout->addWidget(stem_width_box, row++, 2, Qt::AlignLeft);
   gui_layout->addWidget(default_stem_width_box, row++, 2);
 
-  gui_layout->setRowMinimumHeight(row, 30); // XXX urgh, pixels...
-  gui_layout->setRowStretch(row++, 1);
-
-  gui_layout->addLayout(run_layout, row, 0, row, -1);
-
   // column separator
   gui_layout->setColumnMinimumWidth(3, 20); // XXX urgh, pixels...
   gui_layout->setColumnStretch(3, 1);
@@ -2156,10 +2183,20 @@ Main_GUI::create_horizontal_layout()
   gui_layout->setRowMinimumHeight(row, 20); // XXX urgh, pixels...
   gui_layout->setRowStretch(row++, 1);
 
-  gui_layout->addWidget(stem_label, row, 3, Qt::AlignRight | Qt::AlignBottom);
-  gui_layout->addWidget(gray_box, row++, 4, Qt::AlignBottom);
-  gui_layout->addWidget(gdi_box, row++, 4);
-  gui_layout->addWidget(dw_box, row++, 4);
+  // this item spans two columns
+  gui_layout->addWidget(stem_label, row++, 3, 1, 2, Qt::AlignCenter);
+
+  gui_layout->addWidget(gray_label, row, 3, Qt::AlignRight);
+  gui_layout->addWidget(gray_box, row++, 4, Qt::AlignLeft);
+  gui_layout->addWidget(gdi_label, row, 3, Qt::AlignRight);
+  gui_layout->addWidget(gdi_box, row++, 4, Qt::AlignLeft);
+  gui_layout->addWidget(dw_label, row, 3, Qt::AlignRight);
+  gui_layout->addWidget(dw_box, row++, 4, Qt::AlignLeft);
+
+  gui_layout->setRowMinimumHeight(row, 30); // XXX urgh, pixels...
+  gui_layout->setRowStretch(row++, 1);
+
+  gui_layout->addLayout(run_layout, row, 0, row, -1);
 
   // margin
   gui_layout->setColumnMinimumWidth(5, 10); // XXX urgh, pixels...
@@ -2335,12 +2372,9 @@ Main_GUI::set_defaults()
   if (TTFA_info)
     TTFA_box->setChecked(true);
 
-  if (gray_stem_width_mode)
-    gray_box->setChecked(true);
-  if (gdi_cleartype_stem_width_mode)
-    gdi_box->setChecked(true);
-  if (dw_cleartype_stem_width_mode)
-    dw_box->setChecked(true);
+  gray_box->setCurrentIndex(gray_stem_width_mode + 1);
+  gdi_box->setCurrentIndex(gdi_cleartype_stem_width_mode + 1);
+  dw_box->setCurrentIndex(dw_cleartype_stem_width_mode + 1);
 
   run_button->setEnabled(false);
 
