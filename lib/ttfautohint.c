@@ -86,9 +86,9 @@ TTF_autohint(const char* options,
 
   FT_Long fallback_stem_width = 0;
 
-  FT_Int gray_stem_width_mode = 0;
-  FT_Int gdi_cleartype_stem_width_mode = 1;
-  FT_Int dw_cleartype_stem_width_mode = 0;
+  FT_Int gray_stem_width_mode = TA_STEM_WIDTH_MODE_QUANTIZED;
+  FT_Int gdi_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_STRONG;
+  FT_Int dw_cleartype_stem_width_mode = TA_STEM_WIDTH_MODE_QUANTIZED;
 
   TA_Progress_Func progress = NULL;
   void* progress_data = NULL;
@@ -183,8 +183,16 @@ TTF_autohint(const char* options,
       default_script_string = va_arg(ap, const char*);
     else if (COMPARE("dehint"))
       dehint = (FT_Bool)va_arg(ap, FT_Int);
-    else if (COMPARE("dw-cleartype-strong-stem-width"))
+    else if (COMPARE("dw-cleartype-stem-width-mode"))
       dw_cleartype_stem_width_mode = va_arg(ap, FT_Int);
+    else if (COMPARE("dw-cleartype-strong-stem-width"))
+    {
+      FT_Bool arg = (FT_Bool)va_arg(ap, FT_Int);
+
+
+      dw_cleartype_stem_width_mode = arg ? TA_STEM_WIDTH_MODE_STRONG
+                                         : TA_STEM_WIDTH_MODE_QUANTIZED;
+    }
     else if (COMPARE("epoch"))
       epoch = (unsigned long long)va_arg(ap, unsigned long long);
     else if (COMPARE("error-callback"))
@@ -201,10 +209,26 @@ TTF_autohint(const char* options,
       fallback_stem_width = (FT_Long)va_arg(ap, FT_UInt);
     else if (COMPARE("free-func"))
       deallocate = va_arg(ap, TA_Free_Func);
-    else if (COMPARE("gdi-cleartype-strong-stem-width"))
+    else if (COMPARE("gdi-cleartype-stem-width-mode"))
       gdi_cleartype_stem_width_mode = va_arg(ap, FT_Int);
-    else if (COMPARE("gray-strong-stem-width"))
+    else if (COMPARE("gdi-cleartype-strong-stem-width"))
+    {
+      FT_Bool arg = (FT_Bool)va_arg(ap, FT_Int);
+
+
+      gdi_cleartype_stem_width_mode = arg ? TA_STEM_WIDTH_MODE_STRONG
+                                          : TA_STEM_WIDTH_MODE_QUANTIZED;
+    }
+    else if (COMPARE("gray-stem-width-mode"))
       gray_stem_width_mode = va_arg(ap, FT_Int);
+    else if (COMPARE("gray-strong-stem-width"))
+    {
+      FT_Bool arg = (FT_Bool)va_arg(ap, FT_Int);
+
+
+      gray_stem_width_mode = arg ? TA_STEM_WIDTH_MODE_STRONG
+                                 : TA_STEM_WIDTH_MODE_QUANTIZED;
+    }
     else if (COMPARE("hinting-limit"))
       hinting_limit = (FT_Long)va_arg(ap, FT_UInt);
     else if (COMPARE("hinting-range-max"))
@@ -328,6 +352,22 @@ TTF_autohint(const char* options,
 
   if (dehint)
     goto No_check;
+
+  if (gray_stem_width_mode < -1 || gray_stem_width_mode > 1)
+  {
+    error = FT_Err_Invalid_Argument;
+    goto Err1;
+  }
+  if (gdi_cleartype_stem_width_mode < -1 || gdi_cleartype_stem_width_mode > 1)
+  {
+    error = FT_Err_Invalid_Argument;
+    goto Err1;
+  }
+  if (dw_cleartype_stem_width_mode < -1 || dw_cleartype_stem_width_mode > 1)
+  {
+    error = FT_Err_Invalid_Argument;
+    goto Err1;
+  }
 
   if (hinting_range_min >= 0 && hinting_range_min < 2)
   {

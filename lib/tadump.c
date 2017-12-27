@@ -87,18 +87,30 @@ TA_font_dump_parameters(FONT* font,
           font->adjust_subglyphs);
   DUMPSTR("default-script",
           script_names[font->default_script]);
-  DUMPVAL("dw-cleartype-strong-stem-width",
-          font->dw_cleartype_stem_width_mode);
+  DUMPSTR("dw-cleartype-stem-width-mode",
+          (font->dw_cleartype_stem_width_mode == TA_STEM_WIDTH_MODE_NATURAL)
+            ? "natural"
+            : (font->dw_cleartype_stem_width_mode == TA_STEM_WIDTH_MODE_QUANTIZED)
+                ? "quantized"
+                : "strong");
   DUMPVAL("fallback-scaling",
           font->fallback_scaling);
   DUMPSTR("fallback-script",
           script_names[ta_style_classes[font->fallback_style]->script]);
   DUMPVAL("fallback-stem-width",
           font->fallback_stem_width);
-  DUMPVAL("gdi-cleartype-strong-stem-width",
-          font->gdi_cleartype_stem_width_mode);
-  DUMPVAL("gray-strong-stem-width",
-          font->gray_stem_width_mode);
+  DUMPSTR("gdi-cleartype-stem-width-mode",
+          (font->gdi_cleartype_stem_width_mode == TA_STEM_WIDTH_MODE_NATURAL)
+            ? "natural"
+            : (font->gdi_cleartype_stem_width_mode == TA_STEM_WIDTH_MODE_QUANTIZED)
+                ? "quantized"
+                : "strong");
+  DUMPSTR("gray-stem-width-mode",
+          (font->gray_stem_width_mode == TA_STEM_WIDTH_MODE_NATURAL)
+            ? "natural"
+            : (font->gray_stem_width_mode == TA_STEM_WIDTH_MODE_QUANTIZED)
+                ? "quantized"
+                : "strong");
   DUMPVAL("hinting-limit",
           font->hinting_limit);
   DUMPVAL("hinting-range-max",

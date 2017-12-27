@@ -62,8 +62,8 @@ extern "C" {
 
 
 /*
- * Preprocessor Macros and Typedefs
- * --------------------------------
+ * Preprocessor Macros, Typedefs, and Enums
+ * ----------------------------------------
  *
  * Some default values.
  *
@@ -84,6 +84,21 @@ extern "C" {
  */
 
 typedef int TA_Error;
+
+/*
+ *```
+ *
+ * An enum type for stem width algorithm selection.
+ *
+ * ```C
+ */
+
+enum
+{
+  TA_STEM_WIDTH_MODE_NATURAL = -1,
+  TA_STEM_WIDTH_MODE_QUANTIZED = 0,
+  TA_STEM_WIDTH_MODE_STRONG = 1
+};
 
 /*
  * ```
@@ -519,25 +534,45 @@ typedef int
  *
  * ### Hinting Algorithms
  *
- * `gray-strong-stem-width`
- * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) that
- *     specifies whether horizontal stems should be snapped and positioned
- *     to integer pixel values for normal grayscale rendering.
+ * ttfautohint provides three different algorithms for computing
+ * horizontal stem widths and the positioning of blue zones.
  *
- * `gdi-cleartype-strong-stem-width`
- * :   An integer (1\ for 'on', which is the default, and 0\ for 'off') that
- *     specifies whether horizontal stems should be snapped and positioned
- *     to integer pixel values for GDI ClearType rendering, this is, the
- *     rasterizer version (as returned by the GETINFO bytecode instruction)
- *     is in the range 36\ <= version <\ 38 and ClearType is enabled.
+ * * `TA_STEM_WIDTH_MODE_NATURAL`: No adjustments to stem
+ *   widths, discrete blue zone positioning.  This is what FreeType uses for
+ *   its 'light' (auto-)hinting mode.
  *
- * `dw-cleartype-strong-stem-width`
- * :   An integer (1\ for 'on' and 0\ for 'off', which is the default) that
- *     specifies whether horizontal stems should be snapped and positioned
- *     to integer pixel values for DW ClearType rendering, this is, the
- *     rasterizer version (as returned by the GETINFO bytecode instruction)
- *     is >=\ 38, ClearType is enabled, and subpixel positioning is enabled
- *     also.
+ * * `TA_STEM_WIDTH_MODE_QUANTIZED`: Both stem widths and blue zone
+ *   positions are slightly quantized to take discrete values.  For
+ *   example, stem values 50, 51, 72, 76, and 100 would become 50, 74, and
+ *   100 (or something similar).
+ *
+ * * `TA_STEM_WIDTH_MODE_STRONG`: If active, stem widths and blue zones are
+ *   snapped and positioned to integer pixel values as much as possible.
+ *
+ * These values are arguments to ttfautohint's three different hinting mode
+ * options.
+ *
+ * `gray-stem-width-mode`
+ * :   Specify the stem width algorithm for grayscale rendering.  Possible
+ *     integer values are `TA_STEM_WIDTH_MODE_NATURAL`,
+ *     `TA_STEM_WIDTH_MODE_QUANTIZED` (the default), and
+ *     `TA_STEM_WIDTH_MODE_STRONG`, as discussed above.
+ *
+ * `gdi-cleartype-stem-width-mode`
+ * :   Specify the stem width algorithm for GDI ClearType rendering, this
+ *     is, the rasterizer version (as returned by the GETINFO bytecode
+ *     instruction) is in the range 36\ <= version <\ 38 and ClearType is
+ *     enabled.  Possible integer values are `TA_STEM_WIDTH_MODE_NATURAL`,
+ *     `TA_STEM_WIDTH_MODE_QUANTIZED`, and `TA_STEM_WIDTH_MODE_STRONG` (the
+ *     default), as discussed above.
+ *
+ * `dw-cleartype-stem-width-mode`
+ * :   Specify the stem width algorithm for DW ClearType rendering, this is,
+ *     the rasterizer version (as returned by the GETINFO bytecode
+ *     instruction) is >=\ 38, ClearType is enabled, and subpixel
+ *     positioning is enabled also.  Possible integer values are
+ *     `TA_STEM_WIDTH_MODE_NATURAL`, `TA_STEM_WIDTH_MODE_QUANTIZED` (the
+ *     default), and `TA_STEM_WIDTH_MODE_STRONG`, as discussed above.
  *
  * `increase-x-height`
  * :   An integer.  For PPEM values in the range 6\ <= PPEM
@@ -569,6 +604,24 @@ typedef int
  *     font's `OS/2` table).  The idea is to help ttfautohint so that the
  *     hinted glyphs stay within this horizontal stripe since Windows clips
  *     everything falling outside.  The default is\ 0.
+ *
+ * `gray-strong-stem-width`
+ * :   Deprecated.  The argument values 0 and 1 of this field correspond to
+ *     the argument values `TA_STEM_WIDTH_MODE_QUANTIZED` and
+ *     `TA_STEM_WIDTH_MODE_STRONG` of the field 'gray-stem-width-mode',
+ *     respectively.
+ *
+ * `gdi-cleartype-strong-stem-width`
+ * :   Deprecated.  The argument values 0 and 1 of this field correspond to
+ *     the argument values `TA_STEM_WIDTH_MODE_QUANTIZED` and
+ *     `TA_STEM_WIDTH_MODE_STRONG` of the field
+ *     'gdi-cleartype-stem-width-mode', respectively.
+ *
+ * `dw-cleartype-strong-stem-width`
+ * :   Deprecated.  The argument values 0 and 1 of this field correspond to
+ *     the argument values `TA_STEM_WIDTH_MODE_QUANTIZED` and
+ *     `TA_STEM_WIDTH_MODE_STRONG` of the field
+ *     'dw-cleartype-stem-width-mode', respectively.
  *
  *
  * ### Scripts

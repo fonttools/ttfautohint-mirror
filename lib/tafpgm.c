@@ -462,6 +462,35 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
 
 
 /*
+ * bci_natural_stem_width
+ *
+ *   This dummy function only pops arguments as necessary.
+ *
+ * in: width
+ *     stem_is_serif
+ *     base_is_round
+ *
+ * out: width
+ */
+
+static const unsigned char FPGM(bci_natural_stem_width) [] =
+{
+
+  PUSHB_1,
+    bci_natural_stem_width,
+  FDEF,
+
+  SWAP,
+  POP,
+  SWAP,
+  POP,
+
+  ENDF,
+
+};
+
+
+/*
  * bci_smooth_stem_width
  *
  *   This is the equivalent to the following code from function
@@ -1516,12 +1545,15 @@ static const unsigned char FPGM(bci_blue_round_range) [] =
   SWAP,
   WS,
 
-  /* select blue rounding function based on flag in CVT */
-  PUSHB_3,
+  /* select blue rounding function based on flag in CVT; */
+  /* for value >0 we use strong mode, else smooth mode */
+  PUSHB_4,
     bci_strong_blue_round,
     bci_smooth_blue_round,
+    0,
     cvtl_stem_width_mode,
   RCVT,
+  LT,
   IF,
     POP,
 
@@ -6883,20 +6915,36 @@ static const unsigned char FPGM(bci_hint_glyph) [] =
     bci_hint_glyph,
   FDEF,
 
-  /* set up stem width function based on flag in CVT */
-  PUSHB_4,
+  /*
+   * set up stem width function based on flag in CVT:
+   *
+   *    < 0: bci_natural_stem_width
+   *   == 0: bci_smooth_stem_width
+   *    > 0: bci_strong_stem_width
+   */
+  PUSHB_3,
     sal_stem_width_function,
-    bci_strong_stem_width,
-    bci_smooth_stem_width,
+    0,
     cvtl_stem_width_mode,
   RCVT,
+  LT,
   IF,
-    POP,
+    PUSHB_1,
+      bci_strong_stem_width,
 
   ELSE,
-    SWAP,
-    POP,
+    PUSHB_3,
+      bci_smooth_stem_width,
+      bci_natural_stem_width,
+      cvtl_stem_width_mode,
+    RCVT,
+    IF,
+      SWAP,
+      POP,
 
+    ELSE,
+      POP,
+    EIF,
   EIF,
   WS,
 
@@ -6968,6 +7016,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
                 : sizeof (FPGM(bci_align_x_height_b2)))
             + sizeof (FPGM(bci_align_x_height_c))
             + sizeof (FPGM(bci_round))
+            + sizeof (FPGM(bci_natural_stem_width))
             + sizeof (FPGM(bci_quantize_stem_width))
             + sizeof (FPGM(bci_smooth_stem_width))
             + sizeof (FPGM(bci_get_best_width))
@@ -7179,6 +7228,7 @@ TA_table_build_fpgm(FT_Byte** fpgm,
   COPY_FPGM(bci_align_x_height_c);
 
   COPY_FPGM(bci_round);
+  COPY_FPGM(bci_natural_stem_width);
   COPY_FPGM(bci_quantize_stem_width);
   COPY_FPGM(bci_smooth_stem_width);
   COPY_FPGM(bci_get_best_width);

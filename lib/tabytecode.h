@@ -348,7 +348,8 @@
 /* 0 */
 #define bci_align_x_height 0
 #define bci_round bci_align_x_height + 1
-#define bci_quantize_stem_width bci_round + 1
+#define bci_natural_stem_width bci_round + 1
+#define bci_quantize_stem_width bci_natural_stem_width + 1
 #define bci_smooth_stem_width bci_quantize_stem_width + 1
 #define bci_get_best_width bci_smooth_stem_width + 1
 #define bci_strong_stem_width bci_get_best_width + 1
@@ -366,11 +367,11 @@
 #define bci_number_set_is_element bci_nibbles + 1
 #define bci_number_set_is_element2 bci_number_set_is_element + 1
 
-/* 19 */
+/* 20 */
 #define bci_create_segment bci_number_set_is_element2 + 1
 #define bci_create_segments bci_create_segment + 1
 
-/* 21 */
+/* 22 */
 /* the next ten entries must stay in this order */
 #define bci_create_segments_0 bci_create_segments + 1
 #define bci_create_segments_1 bci_create_segments_0 + 1
@@ -385,7 +386,7 @@
 
 #define bci_create_segments_composite bci_create_segments_9 + 1
 
-/* 32 */
+/* 33 */
 /* the next ten entries must stay in this order */
 #define bci_create_segments_composite_0 bci_create_segments_composite + 1
 #define bci_create_segments_composite_1 bci_create_segments_composite_0 + 1
@@ -398,31 +399,31 @@
 #define bci_create_segments_composite_8 bci_create_segments_composite_7 + 1
 #define bci_create_segments_composite_9 bci_create_segments_composite_8 + 1
 
-/* 42 */
+/* 43 */
 /* the next three entries must stay in this order */
 #define bci_deltap1 bci_create_segments_composite_9 + 1
 #define bci_deltap2 bci_deltap1 + 1
 #define bci_deltap3 bci_deltap2 + 1
 
-/* 45 */
+/* 46 */
 #define bci_align_point bci_deltap3 + 1
 #define bci_align_segment bci_align_point + 1
 #define bci_align_segments bci_align_segment + 1
 
-/* 48 */
+/* 49 */
 #define bci_scale_contour bci_align_segments + 1
 #define bci_scale_glyph bci_scale_contour + 1
 #define bci_scale_composite_glyph bci_scale_glyph + 1
 #define bci_shift_contour bci_scale_composite_glyph + 1
 #define bci_shift_subglyph bci_shift_contour + 1
 
-/* 53 */
+/* 54 */
 #define bci_ip_outer_align_point bci_shift_subglyph + 1
 #define bci_ip_on_align_points bci_ip_outer_align_point + 1
 #define bci_ip_between_align_point bci_ip_on_align_points + 1
 #define bci_ip_between_align_points bci_ip_between_align_point + 1
 
-/* 57 */
+/* 58 */
 #define bci_adjust_common bci_ip_between_align_points + 1
 #define bci_stem_common bci_adjust_common + 1
 #define bci_serif_common bci_stem_common + 1
@@ -430,12 +431,12 @@
 #define bci_serif_link1_common bci_serif_anchor_common + 1
 #define bci_serif_link2_common bci_serif_link1_common + 1
 
-/* 63 */
+/* 64 */
 #define bci_lower_bound bci_serif_link2_common + 1
 #define bci_upper_bound bci_lower_bound + 1
 #define bci_upper_lower_bound bci_upper_bound + 1
 
-/* 66 */
+/* 67 */
 #define bci_adjust_bound bci_upper_lower_bound + 1
 #define bci_stem_bound bci_adjust_bound + 1
 #define bci_link bci_stem_bound + 1
@@ -446,23 +447,23 @@
 /* the order of the `bci_action_*' entries must correspond */
 /* to the order of the TA_Action enumeration entries (in `tahints.h') */
 
-/* 72 */
+/* 73 */
 #define bci_action_ip_before bci_stem + 1
 #define bci_action_ip_after bci_action_ip_before + 1
 #define bci_action_ip_on bci_action_ip_after + 1
 #define bci_action_ip_between bci_action_ip_on + 1
 
-/* 76 */
+/* 77 */
 #define bci_action_blue bci_action_ip_between + 1
 #define bci_action_blue_anchor bci_action_blue + 1
 
-/* 78 */
+/* 79 */
 #define bci_action_anchor bci_action_blue_anchor + 1
 #define bci_action_anchor_serif bci_action_anchor + 1
 #define bci_action_anchor_round bci_action_anchor_serif + 1
 #define bci_action_anchor_round_serif bci_action_anchor_round + 1
 
-/* 82 */
+/* 83 */
 #define bci_action_adjust bci_action_anchor_round_serif + 1
 #define bci_action_adjust_serif bci_action_adjust + 1
 #define bci_action_adjust_round bci_action_adjust_serif + 1
@@ -476,13 +477,13 @@
 #define bci_action_adjust_down_bound_round bci_action_adjust_down_bound_serif + 1
 #define bci_action_adjust_down_bound_round_serif bci_action_adjust_down_bound_round + 1
 
-/* 94 */
+/* 95 */
 #define bci_action_link bci_action_adjust_down_bound_round_serif + 1
 #define bci_action_link_serif bci_action_link + 1
 #define bci_action_link_round bci_action_link_serif + 1
 #define bci_action_link_round_serif bci_action_link_round + 1
 
-/* 98 */
+/* 99 */
 #define bci_action_stem bci_action_link_round_serif + 1
 #define bci_action_stem_serif bci_action_stem + 1
 #define bci_action_stem_round bci_action_stem_serif + 1
@@ -496,7 +497,7 @@
 #define bci_action_stem_down_bound_round bci_action_stem_down_bound_serif + 1
 #define bci_action_stem_down_bound_round_serif bci_action_stem_down_bound_round + 1
 
-/* 110 */
+/* 111 */
 #define bci_action_serif bci_action_stem_down_bound_round_serif + 1
 #define bci_action_serif_lower_bound bci_action_serif + 1
 #define bci_action_serif_upper_bound bci_action_serif_lower_bound + 1
@@ -505,7 +506,7 @@
 #define bci_action_serif_down_upper_bound bci_action_serif_down_lower_bound + 1
 #define bci_action_serif_down_upper_lower_bound bci_action_serif_down_upper_bound + 1
 
-/* 117 */
+/* 118 */
 #define bci_action_serif_anchor bci_action_serif_down_upper_lower_bound + 1
 #define bci_action_serif_anchor_lower_bound bci_action_serif_anchor + 1
 #define bci_action_serif_anchor_upper_bound bci_action_serif_anchor_lower_bound + 1
@@ -514,7 +515,7 @@
 #define bci_action_serif_anchor_down_upper_bound bci_action_serif_anchor_down_lower_bound + 1
 #define bci_action_serif_anchor_down_upper_lower_bound bci_action_serif_anchor_down_upper_bound + 1
 
-/* 124 */
+/* 125 */
 #define bci_action_serif_link1 bci_action_serif_anchor_down_upper_lower_bound + 1
 #define bci_action_serif_link1_lower_bound bci_action_serif_link1 + 1
 #define bci_action_serif_link1_upper_bound bci_action_serif_link1_lower_bound + 1
@@ -523,7 +524,7 @@
 #define bci_action_serif_link1_down_upper_bound bci_action_serif_link1_down_lower_bound + 1
 #define bci_action_serif_link1_down_upper_lower_bound bci_action_serif_link1_down_upper_bound + 1
 
-/* 131 */
+/* 132 */
 #define bci_action_serif_link2 bci_action_serif_link1_down_upper_lower_bound + 1
 #define bci_action_serif_link2_lower_bound bci_action_serif_link2 + 1
 #define bci_action_serif_link2_upper_bound bci_action_serif_link2_lower_bound + 1
@@ -532,10 +533,10 @@
 #define bci_action_serif_link2_down_upper_bound bci_action_serif_link2_down_lower_bound + 1
 #define bci_action_serif_link2_down_upper_lower_bound bci_action_serif_link2_down_upper_bound + 1
 
-/* 138 */
+/* 139 */
 #define bci_hint_glyph bci_action_serif_link2_down_upper_lower_bound + 1
 
-/* 139 */
+/* 140 */
 #define bci_freetype_enable_deltas bci_hint_glyph + 1
 
 #define NUM_FDEFS bci_freetype_enable_deltas + 1 /* must be last */

@@ -274,7 +274,7 @@ static const unsigned char PREP(set_stem_width_mode_a) [] =
 
 };
 
-/*  %c, either 0 or 100 */
+/*  %c, either -100, 0 or 100 */
 
 static const unsigned char PREP(set_stem_width_mode_b) [] =
 {
@@ -299,7 +299,7 @@ static const unsigned char PREP(set_stem_width_mode_b) [] =
         cvtl_stem_width_mode, /* target: GDI ClearType */
 };
 
-/*      %c, either 0 or 100 */
+/*      %c, either -100, 0 or 100 */
 
 static const unsigned char PREP(set_stem_width_mode_c) [] =
 {
@@ -326,7 +326,7 @@ static const unsigned char PREP(set_stem_width_mode_c) [] =
 
 };
 
-/*          %c, either 0 or 100 */
+/*          %c, either -100, 0 or 100 */
 
 static const unsigned char PREP(set_stem_width_mode_d) [] =
 {
@@ -364,7 +364,7 @@ static const unsigned char PREP(set_stem_width_mode_d) [] =
 
 };
 
-/*            %c, either 0 or 100 */
+/*            %c, either -100, 0 or 100 */
 
 static const unsigned char PREP(set_stem_width_mode_e) [] =
 {
