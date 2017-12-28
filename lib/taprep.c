@@ -269,12 +269,13 @@ static const unsigned char PREP(set_stem_width_mode_a) [] =
    */
 
   /* set default value */
-  PUSHB_2,
+  PUSHW_2,
+    0,
     cvtl_stem_width_mode, /* target: grayscale rendering */
 
 };
 
-/*  %c, either -100, 0 or 100 */
+/*  %d, either -100, 0 or 100 */
 
 static const unsigned char PREP(set_stem_width_mode_b) [] =
 {
@@ -295,11 +296,12 @@ static const unsigned char PREP(set_stem_width_mode_b) [] =
       0x40,
     GETINFO,
     IF,
-      PUSHB_2,
+      PUSHW_2,
+        0,
         cvtl_stem_width_mode, /* target: GDI ClearType */
 };
 
-/*      %c, either -100, 0 or 100 */
+/*      %d, either -100, 0 or 100 */
 
 static const unsigned char PREP(set_stem_width_mode_c) [] =
 {
@@ -321,12 +323,13 @@ static const unsigned char PREP(set_stem_width_mode_c) [] =
           0x00,
         GETINFO,
         IF,
-          PUSHB_2,
+          PUSHW_2,
+            0,
             cvtl_stem_width_mode, /* target: DirectWrite ClearType */
 
 };
 
-/*          %c, either -100, 0 or 100 */
+/*          %d, either -100, 0 or 100 */
 
 static const unsigned char PREP(set_stem_width_mode_d) [] =
 {
@@ -359,12 +362,13 @@ static const unsigned char PREP(set_stem_width_mode_d) [] =
           MUL,
           EQ,
           IF,
-            PUSHB_2,
+            PUSHW_2,
+              0,
               cvtl_stem_width_mode, /* target: DirectWrite ClearType */
 
 };
 
-/*            %c, either -100, 0 or 100 */
+/*            %d, either -100, 0 or 100 */
 
 static const unsigned char PREP(set_stem_width_mode_e) [] =
 {
@@ -701,13 +705,13 @@ TA_table_build_prep(FT_Byte** prep,
                                         : 2 * (num_used_styles + 1) + 1)
                  + sizeof (PREP(store_vwidth_data_e));
   buf_new_len += sizeof (PREP(set_stem_width_mode_a))
-                 + 1
+                 + 2
                  + sizeof (PREP(set_stem_width_mode_b))
-                 + 1
+                 + 2
                  + sizeof (PREP(set_stem_width_mode_c))
-                 + 1
+                 + 2
                  + sizeof (PREP(set_stem_width_mode_d))
-                 + 1
+                 + 2
                  + sizeof (PREP(set_stem_width_mode_e));
   buf_new_len += (num_used_styles > 3 ? 2 * num_used_styles + 3
                                       : 2 * num_used_styles + 2)
@@ -867,13 +871,17 @@ TA_table_build_prep(FT_Byte** prep,
   COPY_PREP(store_vwidth_data_e);
 
   COPY_PREP(set_stem_width_mode_a);
-  *(bufp++) = font->gray_stem_width_mode * 100;
+  *(bufp++) = HIGH(font->gray_stem_width_mode * 100);
+  *(bufp++) = LOW(font->gray_stem_width_mode * 100);
   COPY_PREP(set_stem_width_mode_b);
-  *(bufp++) = font->gdi_cleartype_stem_width_mode * 100;
+  *(bufp++) = HIGH(font->gdi_cleartype_stem_width_mode * 100);
+  *(bufp++) = LOW(font->gdi_cleartype_stem_width_mode * 100);
   COPY_PREP(set_stem_width_mode_c);
-  *(bufp++) = font->dw_cleartype_stem_width_mode * 100;
+  *(bufp++) = HIGH(font->dw_cleartype_stem_width_mode * 100);
+  *(bufp++) = LOW(font->dw_cleartype_stem_width_mode * 100);
   COPY_PREP(set_stem_width_mode_d);
-  *(bufp++) = font->dw_cleartype_stem_width_mode * 100;
+  *(bufp++) = HIGH(font->dw_cleartype_stem_width_mode * 100);
+  *(bufp++) = LOW(font->dw_cleartype_stem_width_mode * 100);
   COPY_PREP(set_stem_width_mode_e);
 
   if (num_used_styles > 3)
