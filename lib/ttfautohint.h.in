@@ -494,21 +494,21 @@ typedef int
  * :   An integer (which must be larger than or equal to\ 2) giving the
  *     lowest PPEM value used for autohinting.  If this field is not set, it
  *     defaults to
- *     [`TA_HINTING_RANGE_MIN`](#preprocessor-macros-and-typedefs).
+ *     [`TA_HINTING_RANGE_MIN`](#preprocessor-macros-typedefs-and-enums).
  *
  * `hinting-range-max`
  * :   An integer (which must be larger than or equal to the value of
  *     `hinting-range-min`) giving the highest PPEM value used for
  *     autohinting.  If this field is not set, it defaults to
- *     [`TA_HINTING_RANGE_MAX`](#preprocessor-macros-and-typedefs).
+ *     [`TA_HINTING_RANGE_MAX`](#preprocessor-macros-typedefs-and-enums).
  *
  * `hinting-limit`
  * :   An integer (which must be larger than or equal to the value of
  *     `hinting-range-max`) that gives the largest PPEM value at which
  *     hinting is applied.  For larger values, hinting is switched off.  If
  *     this field is not set, it defaults to
- *     [`TA_HINTING_LIMIT`](#preprocessor-macros-and-typedefs).  If it is
- *     set to\ 0, no hinting limit is added to the bytecode.
+ *     [`TA_HINTING_LIMIT`](#preprocessor-macros-typedefs-and-enums).  If it
+ *     is set to\ 0, no hinting limit is added to the bytecode.
  *
  * `hint-composites`
  * :   If this integer is set to\ 1, composite glyphs get separate hints.
@@ -581,8 +581,9 @@ typedef int
  *     bytecode instruction, the threshold gets increased from 5/8px to
  *     13/16px).  If it is set to\ 0, this feature is switched off.  If this
  *     field is not set, it defaults to
- *     [`TA_INCREASE_X_HEIGHT`](#preprocessor-macros-and-typedefs).  Use
- *     this flag to improve the legibility of small font sizes if necessary.
+ *     [`TA_INCREASE_X_HEIGHT`](#preprocessor-macros-typedefs-and-enums).
+ *     Use this flag to improve the legibility of small font sizes if
+ *     necessary.
  *
  * `x-height-snapping-exceptions`
  * :   A pointer of type `const char*` to a null-terminated string that

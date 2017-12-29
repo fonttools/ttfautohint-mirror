@@ -30,7 +30,7 @@ font where all glyphs are bytecode hinted using the information given by
 FreeType's auto-hinting module.  The idea is to provide the excellent
 quality of the auto-hinter on platforms that don't use FreeType.
 
-The library has a single API function, `TTF_autohint`, which is described
+The library has a central API function, `TTF_autohint`, which is described
 [below](#the-ttfautohint-api).
 
 Bundled with the library there are two front-end programs, [`ttfautohint`
@@ -69,7 +69,7 @@ In general, there are three possible ways to hint a glyph.
     the rasterizer.  More sophisticated rasterizers are able to produce
     better rendering results.
 
-    This is how Type\ 1 and CFF hints work.
+    This is how PostScript Type\ 1 and CFF hints work.
 
  2. The font contains exact instructions (also called *bytecode*) on how to
     move the points of its outlines, depending on the resolution of the
@@ -141,12 +141,9 @@ with web browsers, for example.
 
 Across Windows rendering environments today, fonts processed with
 ttfautohint look best with ClearType enabled.  This is the default for
-Windows\ 7.  Good visual results are also seen in recent MacOS\ X versions
-and GNU/Linux systems (including Android, ChromeOS, and other mobile
-operating systems) that use FreeType for rendering glyphs.
-
-The goal of the project is to generate a 'first pass' of hinting that font
-developers can refine further for ultimate quality.
+Windows\ 7 and higher.  Good visual results are also seen in recent MacOS\ X
+versions and GNU/Linux systems (including Android, ChromeOS, and other
+mobile operating systems) that use FreeType for rendering glyphs.
 
 
 'Smooth' hinting
@@ -215,7 +212,7 @@ sends its output to standard output if no output file name is specified.
 A typical call looks like the following.
 
 ```
-    ttfautohint -v -f latn foo.ttf foo-autohinted.ttf
+    ttfautohint -v -t -m foo-control.txt foo.ttf foo-autohinted.ttf
 ```
 
 For demonstration purposes, here the same using a pipe and redirection.
@@ -223,7 +220,7 @@ Note that Windows's default command line interpreter, `cmd.exe`, doesn't
 support piping with binary files, unfortunately.
 
 ```
-    cat foo.ttf | ttfautohint -v -f latn > foo-autohinted.ttf
+    cat foo.ttf | ttfautohint -v -t -m foo-control.txt > foo-autohinted.ttf
 ```
 
 
@@ -235,18 +232,19 @@ Calling `ttfautohintGUI`
 ```
 
 `ttfautohintGUI` doesn't send any output to a console; however, it accepts
-(almost) the same command line options as `ttfautohint`, setting default
-values for the GUI.
+(almost) the same command line options as `ttfautohint` to provide
+customized default values of the GUI.
 
-The following command line options are not available in `ttfautohintGUI`;
-however, the corresponding functionality can be selected interactively:
+The following command line options are not available in `ttfautohintGUI`:
 [`--control-file`](#control-instructions-file),
 [`--reference`](#blue-zone-reference-font),
-[`--reference-index`](#reference-face-index).
+[`--reference-index`](#reference-face-index).  Note, however, that the
+corresponding functionality can be selected interactively.
 
 Two options, namely `--ttfa-info` and `--debug`, emit information at
 standard output and standard error, respectively; they are thus not
-available in `ttfautohintGUI` at all.
+available in `ttfautohintGUI`, too, and there is no corresponding GUI
+functionality either.
 
 
 Options
@@ -324,7 +322,7 @@ bytecode larger.
 
 `--fallback-script=`*s*, `-f`\ *s*
 :   Set fallback script to tag *s*, which is a string consisting of four
-    characters like `latn` or `dflt`.  It gets used for for all glyphs that
+    characters like `latn` or `dflt`.  It gets used for all glyphs that
     can't be assigned to a script automatically.  The default value is
     `none`.  See [below](#scripts) for more details.
 
@@ -355,10 +353,10 @@ bytecode larger.
 :   Normally, ttfautohint rounds the x\ height to the pixel grid, with a
     slight preference for rounding up (to use the terminology of TrueType's
     'Super Round' bytecode instruction, the threshold is 5/8px).  If this
-    flag is set, values in the range 6\ PPEM to *n*\ PPEM are much more
-    often rounded up (setting the threshold to 13/16px).  The default value
-    for *n* is 14.  Use this flag to increase the legibility of small sizes
-    if necessary; you might get weird rendering results otherwise for glyphs
+    flag is set, values in the PPEM range 6 to\ *n* are much more often
+    rounded up (setting the threshold to 13/16px).  The default value for
+    *n* is 14.  Use this flag to increase the legibility of small sizes if
+    necessary; you might get weird rendering results otherwise for glyphs
     like 'a' or 'e', depending on the font design.
 
     To switch off this feature, use `--increase-x-height=0` (or check the
@@ -370,17 +368,16 @@ bytecode larger.
     Bold](https://github.com/vernnobile/mertzFont/tree/master/FINAL/Mertz-Bold)'
     from Vernon Adams.
 
-    ![At 17px, without option `-x` and '`-w ""`', the hole in glyph 'e'
-      looks very grey in the FontForge snapshot, and the GDI ClearType
-      rendering (which is the default on older Windows versions) fills it
-      completely with black because it uses B/W rendering along the y\ axis.
-      FreeType's 'light' autohint mode (which corresponds to ttfautohint's
-      'smooth' stem width algorithm) intentionally aligns horizontal lines
-      to non-integer (but still discrete) values to avoid large glyph shape
-      distortions.](img/e-17px-x14.png)
+    ![At 17px, without option `-x` and `-a qqq`, the hole in glyph 'e' looks
+      very grey in the FontForge snapshot, and the GDI ClearType rendering
+      (which is the default on older Windows versions) fills it completely
+      with black because it uses B/W rendering along the y\ axis.
+      ttfautohint's 'smooth' stem width algorithm intentionally aligns
+      horizontal lines to non-integer (but still discrete) values to avoid
+      large glyph shape distortions.](img/e-17px-x14.png)
 
-    ![The same, this time with option `-x 17` (and
-      '`-w ""`').](img/e-17px-x17.png)
+    ![The same, this time with option `-x 17` (and `-a
+      qqq`).](img/e-17px-x17.png)
 
 ### x Height Snapping Exceptions
 
@@ -427,8 +424,8 @@ bytecode larger.
 :   This option makes ttfautohint add two artificial blue zones, positioned
     at the `usWinAscent` and `usWinDescent` values (from the font's `OS/2`
     table).  The idea is to help ttfautohint so that the hinted glyphs stay
-    within this horizontal stripe since Windows clips everything falling
-    outside.
+    within this horizontal stripe since older versions of Windows clip
+    everything that lies outside.
 
     There is a general problem with tight values for `usWinAscent` and
     `usWinDescent`; a good description is given in the [Vertical Metrics
@@ -476,7 +473,8 @@ bytecode larger.
 :   By default, the components of a composite glyph get hinted separately.
     If this flag is set, the composite glyph itself gets hinted (and the
     hints of the components are ignored).  Using this flag increases the
-    bytecode size a lot, however, it might yield better hinting results.
+    bytecode size a lot, however, it *might* yield better hinting results –
+    usually, it doesn't.
 
     If this option is used (and a font actually contains composite glyphs),
     ttfautohint currently cannot reprocess its own output for technical
@@ -493,9 +491,9 @@ bytecode larger.
     it from a script's set of standard characters (for the latin script, one
     of them is character 'o').
 
-    Use this option (usually in combination with the
+    Use this option – usually in combination with the
     [`--fallback-script`](#fallback-script) and/or
-    [`--fallback-stem-width`](#fallback-stem-width) option) to hint symbol
+    [`--fallback-stem-width`](#fallback-stem-width) option – to hint symbol
     or dingbat fonts or math glyphs, for example.
 
 ### Dehint
@@ -568,17 +566,27 @@ to value 'Version' in the 'ttfautohint info' combo box.
 
     `ttfautohintGUI` doesn't have this command line option.
 
-### Strong Stem Width and Positioning
+### Stem Width and Positioning Mode
 
-`--strong-stem-width=`*string*, `-w`\ *string*
-:   ttfautohint offers two different routines to handle (horizontal) stem
-    widths and stem positions: 'smooth' and 'strong'.  The former uses
-    discrete values that slightly increase the stem contrast with almost no
-    distortion of the outlines, while the latter snaps both stem widths and
-    stem positions to integer pixel values as much as possible, yielding a
-    crisper appearance at the cost of much more distortion.
+`--stem-width-mode=`*string*, `-a`\ *string*
+:   ttfautohint provides three different algorithms for computing horizontal
+    stem widths and the positioning of blue zones.
 
-    These two routines are mapped onto three possible rendering targets:
+    - 'natural': No adjustments to stem widths, discrete blue zone
+      positioning.  This is what FreeType uses for its 'light'
+      (auto-)hinting mode.  Essentially no glyph shape distortion, low
+      contrast.
+
+    - 'quantized': Both stem widths and blue zone positions are slightly
+      quantized to take discrete values.  For example, stem values 50, 51,
+      72, 76, and 100 would become 50, 74, and 100 (or something similar).
+      More glyph shape distortion but increased contrast.
+
+    - 'strong: If active, stem widths and blue zones are snapped and
+      positioned to integer pixel values as much as possible.  This gives
+      high contrast, but glyph shape distortion can be significant.
+
+    These three algorithms are mapped onto three possible rendering targets.
 
     - Grayscale rendering, with or without optimization for subpixel
       positioning (e.g., Android).
@@ -603,19 +611,18 @@ to value 'Version' in the 'ttfautohint info' combo box.
      We test this by looking at bit\ 11 of the GETINFO instruction, which
      was introduced in rasterizer version\ 40.]
 
-    The command line option expects *string* to contain up to three letters
-    with possible values '`g`' for grayscale, '`G`' for GDI ClearType, and
-    '`D`' for DW ClearType.  If a letter is found in *string*, the strong
-    stem width routine is used for the corresponding rendering target (and
-    smooth stem width handling otherwise).  The default value is '`G`', which
-    means that strong stem width handling is activated for GDI ClearType
-    only.  To use smooth stem width handling for all three rendering
-    targets, use the empty string as an argument, usually connoted with
-    '`""`'.
+    The command line option expects *string* to contain exactly three
+    letters with possible values '`n`' for natural, '`q`' for quantized, and
+    '`s`' for strong stem width and positioning mode.  The first, second,
+    and third letter correspond to grayscale, GDI ClearType, and DW
+    ClearType rendering, respectively.  The default value is `qsq`, which
+    means that the 'quantized' algorithm gets used for grayscale and DW
+    ClearType, and the 'strong' algorithm for GDI ClearType.  For example,
+    to use the 'natural' algorithm for all three rendering targets, use
+    option `-a nnn`.
 
-    In the GUI, simply set the corresponding check box to select the strong
-    width routine for a given rendering target.  If you unset the check box,
-    the smooth width routine gets used.
+    In the GUI, simply select the desired stem width algorithm in the three
+    combo boxes.
 
     The following images again use the font 'Mertz Bold'.
 
@@ -741,6 +748,9 @@ hinting.
         If, for a given script, there is no glyph for at least one standard
         character in the input font, a fallback stem width gets used.  See
         also option [`--fallback-stem-width`](#fallback-stem-width).
+
+        The stem width(s) found by the algorithm can be overridden with the
+        [`width`](#stem-width-adjustments) control instruction.
 
       + Compute blue zones, see [below](#blue-zones).
 
@@ -869,9 +879,9 @@ Table: standard characters of the 'latin' writing system, special scripts
 
       + Find segments and edges.
 
-      + Link edges together to find stems and serifs.  The abovementioned
-        paper gives more details on what exactly constitutes a stem or a
-        serif and how the algorithm works.
+      + Link edges to set up stems and serifs.  The abovementioned paper
+        gives more details on what exactly constitutes a stem or a serif and
+        how the algorithm works.
 
 
 Blue Zones
@@ -886,9 +896,9 @@ Outlines of certain characters are used to determine *blue zones*.  This
 concept is the same as with Type\ 1 fonts: All glyph points that lie in
 certain small horizontal zones get aligned vertically.
 
-Here a series of tables that show the blue zone characters of the latin
-writing system's available scripts; the values are hard-coded in the source
-code.  Since the auto-hinter takes mean values it is not necessary that all
+The tables below show the blue zone characters of all available scripts of
+the latin writing system; the values are hard-coded in the source code.
+Since the auto-hinter takes mean values it is not necessary that all
 characters of a zone are present.
 
 'Round' characters in blue zones (e.g., the top and bottom of 'O' or the
@@ -1514,9 +1524,9 @@ lower limit at which hinting is switched off.
 An example.  Let's assume that we have a hinting range 10\ <= ppem <=\ 100,
 and the hinting limit is set to 250.  For a given glyph, ttfautohint finds
 out that four hint sets must be computed to exactly cover this hinting
-range: 10-15, 16-40, 41-80, and 81-100.  For ppem values below 10ppem, the
-hint set covering 10-15ppem is used, for ppem values larger than 100 the
-hint set covering 81-100ppem is used.  For ppem values larger than 250, no
+range: 10-15, 16-40, 41-80, and 81-100.  For PPEM values below 10ppem, the
+hint set covering 10-15ppem is used, for PPEM values larger than 100 the
+hint set covering 81-100ppem is used.  For PPEM values larger than 250, no
 hinting gets applied.
 
 
@@ -1748,8 +1758,8 @@ SFNT Tables
 
 ttfautohint touches almost all SFNT tables within a TrueType or OpenType
 font.  Note that only OpenType fonts with TrueType outlines are supported.
-OpenType fonts with a `CFF` table (this is, with PostScript outlines) won't
-work.
+OpenType fonts with a `CFF` or `CFF2` table (this is, with PostScript
+outlines) won't work.
 
   * `glyf`: All hints in the table are replaced with new ones.  If option
     [`--composites`](#hint-composites) is used, one glyph gets added (namely
@@ -1768,7 +1778,9 @@ work.
 
   * `name`: The 'version' entries are modified to add information about the
     parameters that have been used for calling ttfautohint.  This can be
-    controlled with the [`--no-info`](#ttfautohint-info) option.
+    controlled with the [`--no-info`](#ttfautohint-info) option.  Family
+    name entries might also be affected by option
+    [`--family-suffix`](#family-suffix).
 
   * `GPOS`, `hmtx`, `loca`, `head`, `maxp`, `post`: Updated to fit the
     additional '\.ttfautohint' glyph, the additional subglyphs in
@@ -1787,12 +1799,15 @@ Problems
 
 ### Interaction With FreeType
 
-Recent versions of FreeType have an experimental extension for handling
-subpixel hinting; it is off by default and can be activated by defining the
-macro `TT_CONFIG_OPTION_SUBPIXEL_HINTING` at compile time.  This code has
-been contributed mainly by [Infinality], being a subset of his original
-patch.  Many GNU/Linux distributions activate this code, or provide packages
-to activate it.
+Some versions of FreeType have an experimental extension for handling
+subpixel hinting; it is off by default and can be activated by setting the
+macro `TT_CONFIG_OPTION_SUBPIXEL_HINTING` to value\ 2 or\ 3 at compile time.
+This code has been contributed mainly by [Infinality], being a subset of his
+original patch.  Many GNU/Linux distributions activate this code, or provide
+packages to activate it.  [Note that starting with FreeType version 2.7 the
+Infinality extension is still available but superseded by a less aggressive
+subpixel hinting mode, to which the explanations in this section don't
+apply.]
 
 This extension changes the behaviour of many bytecode instructions to get
 better rendering results.  However, not all changes are global; some of them
@@ -1806,7 +1821,8 @@ serious rendering problems might show up.  Since ttfautohint (intentionally)
 doesn't change the font name in the `name` table, the Infinality extension
 has no chance to recognize that the hints are different.  All such problems
 vanish if the font gets renamed in its `name` table (the name of the font
-file itself doesn't matter).
+file itself doesn't matter), for example, by using option
+[`--family-suffix`](#family-suffix).
 
 ### Incorrect Unicode Character Map
 
@@ -1817,12 +1833,12 @@ them work with non-localized versions of Windows\ 98, say.
 
 Since ttfautohint needs to find both standard and blue zone characters, it
 relies on correct Unicode values.  If you want to handle such fonts, please
-fix their `cmap` tables accordingly.
+fix their `cmap` tables accordingly before running ttfautohint.
 
 ### Irregular Glyph Heights
 
-The central concept of ttfautohint's hinting algorithm, as discussed
-[above](#segments-and-edges), is to identify horizontal segments at extremum
+The central concept of ttfautohint's hinting algorithm as discussed
+[above](#segments-and-edges) is to identify horizontal segments at extremum
 positions, especially for blue zones.  If such a segment is missing, it
 cannot be associated with a blue zone, possibly leading to irregular heights
 for the particular glyph.
@@ -1899,8 +1915,8 @@ only value zero is valid.  A font index can be specified in decimal, octal,
 or hexadecimal format, the latter two indicated by the prefixes `0` and
 `0x`, respectively.
 
-*glyph‑id* is either a glyph's name as listed in the `post` SFNT table or a
-glyph index.  A glyph name consists of characters from the set
+*glyph‑id* is either a glyph's name as listed in the font's `post` SFNT
+table or a glyph index.  A glyph name consists of characters from the set
 '`A-Za-z0-9._`' only and does not start with a digit or period, with the
 exceptions of the names '`.notdef`' and '`.null`'.  A glyph index starts
 with value\ 0 can be specified in decimal, octal, or hexadecimal format, the
@@ -1967,18 +1983,19 @@ change the glyph shapes; it only influences the hinting process.
 
 *script* and *feature* are the same as with style adjustments; see above.
 However, *script* can additionally be the wildcard character '`*`', which
-indicates 'any script'.
+indicates 'any script'.  Parameter `width` can be abbreviated as '`w`'.
 
-The elements of *stem-widths* are an unsorted list of comma separated
-integer *stem-width* values (in font units); the first value gives the
-style's default stem width.
+*stem-widths* is an unsorted list of comma separated integer stem width
+values (in font units); the first value gives the style's default stem
+width.
 
 The effect of this adjustment depends [on the selected stem width
-algorithm](#strong-stem-width-and-positioning).  For smooth stem width
+algorithm](#stem-width-and-positioning-mode).  For smooth stem width
 positioning, only the first (i.e., the default) value is used; it gets a
 higher preference than other discrete stem width choices.  For strong stem
 width positioning, the stem widths are snapped to the provided values (if
-not differing too much) before rounding to an integer pixel value.
+not differing too much) before rounding to an integer pixel value.  For
+natural stem width positioning, this adjustment is ignored.
 
 A typical example is to reduce the default stem width of an extra-bold font,
 which gets better hinted if a stem width of, say, 100 is used instead of the
@@ -1995,7 +2012,7 @@ control instructions file.
 ```
 
 Without the adjustment chances are very high that the 'eyes' in glyphs 'e'
-or 'a' of extra-bold fonts are filled at smaller ppem values.
+or 'a' of extra-bold fonts are filled at smaller PPEM values.
 
 Use the `--debug` command line option to see how ttfautohint assigns stem
 widths to styles by default.
@@ -2036,7 +2053,7 @@ how to use direction changes.
   while running the TrueType
   debugger.]](img/Halant-Regular-O-Q-unhinted-12px.png)
 
-![Using only ttfautohint's '`-w gGD`' parameter to force strong stem width
+![Using only ttfautohint's '`-a sss`' parameter to force strong stem width
   and positioning, the hinting of glyph 'Q' is really bad, making the glyph
   vertically two pixels larger!  Reason is that this glyph doesn't contain a
   horizontal segment at the baseline blue zone (*y*\ =\ 1; this corresponds
@@ -2118,7 +2135,7 @@ Note that only character '`.`' is recognized as a decimal point, and a
 thousands separator is not accepted.
 
 As an example for delta instructions, let's assume that you want to shift
-points 2, 3, and\ 4 in glyph 'Aacute' at ppem sizes 12 and\ 13 by a vertical
+points 2, 3, and\ 4 in glyph 'Aacute' at PPEM sizes 12 and\ 13 by a vertical
 amount of 0.25 pixels.  This corresponds to the line
 
 ```
