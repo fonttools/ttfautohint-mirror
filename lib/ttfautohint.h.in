@@ -23,14 +23,14 @@
 
 #ifdef _WIN32
 #  ifdef DLL_EXPORT
-#    define LT_LIB_EXPORT __declspec(dllexport)
+#    define TA_LIB_EXPORT __declspec(dllexport)
 #  elif defined(DLL_IMPORT)
-#    define LT_LIB_EXPORT __declspec(dllimport)
+#    define TA_LIB_EXPORT __declspec(dllimport)
 #  endif
 #endif
 
-#ifndef LT_LIB_EXPORT
-#  define LT_LIB_EXPORT
+#ifndef TA_LIB_EXPORT
+#  define TA_LIB_EXPORT
 #endif
 
 
@@ -741,7 +741,7 @@ typedef int
  * ```C
  */
 
-LT_LIB_EXPORT TA_Error
+TA_LIB_EXPORT TA_Error
 TTF_autohint(const char* options,
              ...);
 
@@ -817,7 +817,7 @@ TTF_autohint(const char* options,
  * ```C
  */
 
-LT_LIB_EXPORT void
+TA_LIB_EXPORT void
 TTF_autohint_version(int *major,
                      int *minor,
                      int *revision);
@@ -835,7 +835,7 @@ TTF_autohint_version(int *major,
  * ```C
  */
 
-LT_LIB_EXPORT const char*
+TA_LIB_EXPORT const char*
 TTF_autohint_version_string(void);
 
 /*

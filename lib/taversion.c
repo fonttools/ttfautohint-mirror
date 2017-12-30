@@ -17,7 +17,7 @@
 
 /* the function declaration is in `ttfautohint.h' */
 
-LT_LIB_EXPORT void
+TA_LIB_EXPORT void
 TTF_autohint_version(int *major,
                      int *minor,
                      int *revision)
@@ -30,7 +30,7 @@ TTF_autohint_version(int *major,
 
 /* the function declaration is in `ttfautohint.h' */
 
-LT_LIB_EXPORT const char*
+TA_LIB_EXPORT const char*
 TTF_autohint_version_string(void)
 {
   return TTFAUTOHINT_VERSION;

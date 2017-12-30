@@ -40,7 +40,7 @@ TA_sfnt_set_properties(SFNT* sfnt,
 }
 
 
-LT_LIB_EXPORT TA_Error
+TA_LIB_EXPORT TA_Error
 TTF_autohint(const char* options,
              ...)
 {
