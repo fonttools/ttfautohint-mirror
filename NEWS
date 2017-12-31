@@ -1,3 +1,43 @@
+Version 1.8 (2017-Dec-31)
+-------------------------
+
+  * A third, 'natural' stem width mode has been added: No adjustments to
+    stem widths, discrete blue zone positioning.  This is what FreeType uses
+    for its 'light' (auto-)hinting mode.
+
+  * A new option `-a` has been implemented to select the stem width mode for
+    the three rendering targets (grayscale, GDI ClearType, DW ClearType). 
+    This supersedes option `-g`, which is now deprecated.
+
+  * Stem widths for the hinting process can now be manually set using the
+    new `width` keyword in a control instructions file.  This is especially
+    useful for extra-bold fonts, where the algorithmically derived values
+    are often too large, causing the filling of 'eyes' in 'e' or 'a' glyphs
+    at small sizes.
+
+  * libttfautohint gets now installed as a DLL or static library (or both,
+    depending on the parameters of the `configure` script), together with
+    its header files.
+
+  * Two functions have been added to the library: `TTF_autohint_version` and
+    `TTF_autohint_version_string`, which do the obvious.
+
+  * Two options to `TTF_autohint` have been added: `alloc-func` and
+    `free-func`.  These are necessary on some platforms if ttfautohint is
+    compiled as a shared library, and the application uses a different
+    runtime library.  This can happen, for example, on the MS Windows
+    platform if your program is written in Python and communicates via the
+    'ctypes' interface with the ttfautohint DLL.
+
+  * `TTF_autohint` options
+    `{gray,gdi-cleartype,dw-cleartype}-strong-stem-width` are now superseded
+    by `{gray,gdi-cleartype,dw-cleartype}`-stem-width-mode` to handle the
+    new natural stem width mode also.
+
+  * Bug fix: Later control instructions now correctly overwrite earlier
+    entries as documented.
+
+
 Version 1.7 (2017-Aug-26)
 -------------------------
 

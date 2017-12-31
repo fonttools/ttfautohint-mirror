@@ -37,12 +37,6 @@ control the width of blue zones
 add control over character ranges that define a script; in particular, add
   support for the PUA
 
-handle normal and bold fonts differently; cf. Infinality patches;
-  this should help avoid filling of bowls (like in `e') for bold shapes.
-
-help font families harmonize well so that e.g. x height and stem width
-  change synchronously
-
 control the minimum stem width
 
 try to `embolden' fonts at small sizes to avoid drop-outs; cf. Infinality
@@ -89,9 +83,6 @@ reduce output size of option -p:
   2. adjust subglyphs only if result of item 1 differs more than given
      threshold (default 0.5%?)
 
-make it possible to hint fonts that aren't alphabetic at all, for example,
-  icons; to do so, provide means to skip the global feature analysis
-
 better control of -i output
 
 allow processing of multiple files by using globs as in the Midnight
@@ -125,8 +116,6 @@ various
 testing with Windows and Apple font checkers
 
 man page for ttfautohint library
-
-install library
 
 add help2man script so that parallel builds always work
 

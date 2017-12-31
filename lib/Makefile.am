@@ -27,10 +27,12 @@ noinst_LTLIBRARIES = \
 lib_LTLIBRARIES = libttfautohint.la
 
 include_HEADERS = \
-  ttfautohint.h \
   ttfautohint-errors.h \
   ttfautohint-scripts.h \
   ttfautohint-coverages.h
+
+nodist_include_HEADERS = \
+  ttfautohint.h
 
 libttfautohint_la_LDFLAGS = \
   -no-undefined \
@@ -97,7 +99,7 @@ libttfautohint_la_SOURCES = \
   ttfautohint.c
 
 libttfautohint_la_LIBADD = \
-  ${noinst_LTLIBRARIES} \
+  $(noinst_LTLIBRARIES) \
   $(top_builddir)/gnulib/src/libgnu.la \
   $(LIBM) \
   $(FREETYPE_LIBS) \
