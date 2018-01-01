@@ -1,3 +1,9 @@
+Version 1.8.1 (2018-Jan-01)
+---------------------------
+
+  * Bug fix: The `configure` script couldn't recognize Qt 5.10.x.
+
+
 Version 1.8 (2017-Dec-31)
 -------------------------
 
