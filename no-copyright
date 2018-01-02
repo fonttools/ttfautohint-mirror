@@ -12,9 +12,9 @@
 .gitmodules
 #
 m4/autotroll.m4
-m4/ax_cxx_compile_stdcxx.m4
 m4/ltlize_lang.m4
 m4/pkg.m4
+#
 FTL.TXT
 GPLv2.TXT
 INSTALL
@@ -35,6 +35,7 @@ update-copyright
 #
 doc/footnote-popup.js
 doc/c2pandoc.sed
+doc/fontspec-xetex.sty
 doc/img
 doc/longtable-patched.sty
 doc/jquery-1.11.2.min.js
@@ -45,10 +46,14 @@ doc/template.tex
 doc/toc-unfold.js
 doc/ttfautohint-css.html
 doc/ttfautohint-js.html
+doc/ucharclasses.sty
 #
 lib/afblue.pl
 lib/llrb.h
 lib/sds.c
 lib/sds.h
+lib/ttfautohint.pc.in
+#
+frontend/static-plugins.cpp.in
 #
 # EOF
