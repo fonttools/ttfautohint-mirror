@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright (C) 2013-2017 by Werner Lemberg.
+# Copyright (C) 2013-2018 by Werner Lemberg.
 #
 # This file is part of the ttfautohint library, and may only be used,
 # modified, and distributed under the terms given in `COPYING'.  By
