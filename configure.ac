@@ -133,19 +133,25 @@ if test "$freetype_config" = "yes"; then
   AC_PATH_TOOL(ft_config,
                freetype-config,
                no)
-  if test "$ft_config" = "no"; then
-    AC_MSG_ERROR([FreeType library is missing; see http://www.freetype.org/])
-  fi
 else
   ft_config="$freetype_config"
 fi
 
-FREETYPE_CPPFLAGS="`$ft_config --cflags`"
-FREETYPE_LIBS="`$ft_config --libtool`"
+if test "$ft_config" = "no"; then
+  # freetype-config tool not found or disabled; try pkg-config
+  PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 2.4.5])
+  if { test -z "$FREETYPE_CFLAGS" || test -z "$FREETYPE_LIBS"; }; then
+    AC_MSG_ERROR([FreeType library is missing; see http://www.freetype.org/])
+  fi
+  FREETYPE_CPPFLAGS="$FREETYPE_CFLAGS"
+else
+  FREETYPE_CPPFLAGS="`$ft_config --cflags`"
+  FREETYPE_LIBS="`$ft_config --libtool`"
 
-# many platforms no longer install .la files for system libraries
-if test ! -f "$FREETYPE_LIBS"; then
-  FREETYPE_LIBS="`$ft_config --libs`"
+  # many platforms no longer install .la files for system libraries
+  if test ! -f "$FREETYPE_LIBS"; then
+    FREETYPE_LIBS="`$ft_config --libs`"
+  fi
 fi
 
 AC_SUBST([FREETYPE_CPPFLAGS])
