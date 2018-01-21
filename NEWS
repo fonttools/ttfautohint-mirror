@@ -25,8 +25,8 @@ Version 1.8 (2017-Dec-31)
     depending on the parameters of the `configure` script), together with
     its header files.
 
-  * Two functions have been added to the library: `TTF_autohint_version` and
-    `TTF_autohint_version_string`, which do the obvious.
+  * Two functions `TTF_autohint_version` and `TTF_autohint_version_string`
+    have been added to the library, which do the obvious.
 
   * Two options to `TTF_autohint` have been added: `alloc-func` and
     `free-func`.  These are necessary on some platforms if ttfautohint is
