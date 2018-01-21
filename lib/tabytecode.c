@@ -772,7 +772,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   FT_Bool allocated_after_IUP = 0;
 
 
-  num_points = (unsigned int)font->loader->gloader->base.outline.n_points;
+  num_points = glyph->num_points;
 
   /* loop over all fitting control instructions */
   for (;;)

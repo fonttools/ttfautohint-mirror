@@ -659,6 +659,17 @@ No_check:
       if (error)
         goto Err;
 
+      /* we need the total number of points */
+      /* for point delta instructions of composite glyphs; */
+      /* we need composite point number sums */
+      /* for adjustments due to the `.ttfautohint' glyph */
+      if (sfnt->max_components)
+      {
+        error = TA_sfnt_compute_composite_pointsums(sfnt, font);
+        if (error)
+          goto Err;
+      }
+
       /* this call creates a `globals' object... */
       error = TA_sfnt_handle_coverage(sfnt, font);
       if (error)

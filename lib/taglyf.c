@@ -522,7 +522,7 @@ TA_iterate_composite_glyph(glyf_Data* data,
 }
 
 
-static FT_Error
+FT_Error
 TA_sfnt_compute_composite_pointsums(SFNT* sfnt,
                                     FONT* font)
 {
@@ -700,13 +700,6 @@ TA_sfnt_split_glyf_table(SFNT* sfnt,
         glyph->num_points = (FT_UShort)((buf[off] << 8) + buf[off + 1] + 1);
       }
     }
-  }
-
-  if (sfnt->max_components && font->hint_composites)
-  {
-    error = TA_sfnt_compute_composite_pointsums(sfnt, font);
-    if (error)
-      return error;
   }
 
   /* second loop over `loca' and `glyf' data */

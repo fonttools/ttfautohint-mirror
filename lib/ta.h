@@ -347,6 +347,10 @@ TA_control_file_read(FONT* font,
                      FILE* control_file);
 
 FT_Error
+TA_sfnt_compute_composite_pointsums(SFNT* sfnt,
+                                    FONT* font);
+
+FT_Error
 TA_sfnt_build_glyph_instructions(SFNT* sfnt,
                                  FONT* font,
                                  FT_Long idx);
