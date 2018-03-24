@@ -11,7 +11,7 @@
 # with the ttfautohint library.
 #
 #
-# make-snapshot.sh <application> <filename>
+# make-snapshot.sh <application> [<application-options>...] > filename
 #
 # Make a snapshot from an application's start window and save it to a file.
 # This needs X11 and ImageMagick's `import' tool.
@@ -32,8 +32,8 @@
 # This script uses ideas from
 # http://blog.chewearn.com/2010/01/18/find-window-id-of-a-process-id-in-bash-script/.
 
-if [ $# -ne 2 ]; then
-  echo "Usage: $0 application imagename"
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 application [options...] > imagename"
   exit 1
 fi
 
@@ -60,7 +60,7 @@ find_WID()
 
 
 # Start program in background and get its process ID.
-$1 &
+$@ &
 PID=$!
 
 sleep 1
@@ -68,7 +68,7 @@ sleep 1
 # Get application name.
 APP=`ps --no-header -o comm -p $PID`
 if [ "$APP" == "" ]; then
-  echo "Couldn't start application \`$1'"
+  echo "Couldn't start application \`$@'"
   exit 1
 fi
 
@@ -80,7 +80,7 @@ while [ "$WID" == "" ]; do
 done
 
 # Make snapshot.
-import -silent -window $WID $2
+import -silent -window $WID png:-
 
 kill $PID
 

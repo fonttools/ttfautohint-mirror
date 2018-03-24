@@ -97,11 +97,14 @@ if WITH_DOC
   # this needs X11 and ImageMagick's `import' tool
   # (in the `make-snaphshot.sh' script)
   img/ttfautohintGUI.png: $(top_srcdir)/frontend/maingui.cpp \
-                          $(top_srcdir)/configure.ac
+                          $(top_srcdir)/configure.ac \
+                          $(srcdir)/ttfautohintGUI.stylesheet
 	  cd $(top_builddir)/frontend \
 	    && $(MAKE) $(AM_MAKEFLAGS) ttfautohintGUI$(EXEEXT)
 	  $(SHELL) $(srcdir)/make-snapshot.sh \
-	             $(top_builddir)/frontend/ttfautohintGUI$(EXEEXT) $@
+	             $(top_builddir)/frontend/ttfautohintGUI$(EXEEXT) \
+	               --stylesheet=$(srcdir)/ttfautohintGUI.stylesheet \
+	               > $@
 
   ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) \
                     ttfautohint-css.html ttfautohint-js.html \
