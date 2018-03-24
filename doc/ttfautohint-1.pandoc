@@ -376,8 +376,8 @@ bytecode larger.
       horizontal lines to non-integer (but still discrete) values to avoid
       large glyph shape distortions.](img/e-17px-x14.png)
 
-    ![The same, this time with option `-x 17` (and `-a
-      qqq`).](img/e-17px-x17.png)
+    ![The same, this time with option `-x 17` (and
+      `-a qqq`).](img/e-17px-x17.png)
 
 ### x Height Snapping Exceptions
 
