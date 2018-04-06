@@ -372,19 +372,25 @@ show_help(bool
   {
     fprintf(handle,
 "Qt Options:\n"
+#if QT_VERSION < 0x050000
 "      --graphicssystem=SYSTEM\n"
 "                             select a different graphics system backend\n"
 "                             instead of the default one\n"
 "                             (possible values: `raster', `opengl')\n"
+#endif
 "      --reverse              set layout direction to right-to-left\n");
     fprintf(handle,
+#if QT_VERSION < 0x050000
 "      --session=ID           restore the application for the given ID\n"
+#endif
 "      --style=STYLE          set application GUI style\n"
-"                             (possible values: motif, windows, platinum)\n"
+"                             (available values like `windows' or `gtk'\n"
+"                             depend on Qt version and installed plug-ins)\n"
 "      --stylesheet=SHEET     apply the given Qt stylesheet\n"
 "                             to the application widgets\n"
 "\n");
 
+#if QT_VERSION < 0x050000
     fprintf(handle,
 "X11 options:\n"
 "      --background=COLOR     set the default background color\n"
@@ -416,6 +422,7 @@ show_help(bool
 "                             to use the given visual on an 8-bit display\n"
 "                             (only possible value: TrueColor)\n"
 "\n");
+#endif
   }
 #endif // BUILD_GUI
 
