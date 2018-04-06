@@ -714,6 +714,7 @@ main(int argc,
 
 #ifndef BUILD_GUI
   bool have_option_w = false;
+  const char* option_w_arg;
 #endif
 
   bool ignore_restrictions = false;
@@ -1046,6 +1047,7 @@ main(int argc,
                                        : TA_STEM_WIDTH_MODE_QUANTIZED;
 #ifndef BUILD_GUI
       have_option_w = true;
+      option_w_arg = optarg;
 #endif
       break;
 
@@ -1199,9 +1201,23 @@ main(int argc,
   }
 
   if (have_option_w)
+  {
+    char option_a_arg[4];
+
+    option_a_arg[0] =
+      gray_stem_width_mode == TA_STEM_WIDTH_MODE_STRONG ? 's' : 'q';
+    option_a_arg[1] =
+      gdi_cleartype_stem_width_mode == TA_STEM_WIDTH_MODE_STRONG ? 's' : 'q';
+    option_a_arg[2] =
+      dw_cleartype_stem_width_mode == TA_STEM_WIDTH_MODE_STRONG ? 's' : 'q';
+    option_a_arg[3] = '\0';
+
     fprintf(stderr,
-            "Warning: Option `-w' is deprecated!"
-            "  Use option `-a' instead\n");
+            "Warning: Option `-w %s' is deprecated!"
+            "  Use option `-a %s' instead\n",
+            option_w_arg,
+            option_a_arg);
+  }
 
   if (!isatty(fileno(stderr)) && !debug)
     setvbuf(stderr, (char*)NULL, _IONBF, BUFSIZ);
