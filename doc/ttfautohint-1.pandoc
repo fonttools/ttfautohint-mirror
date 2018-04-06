@@ -631,6 +631,23 @@ to value 'Version' in the 'ttfautohint info' combo box.
       mode.  Bottom left and right uses the quantized and strong stem width
       modes, respectively.](img/Merriweather-Black-g-21px-comparison.png)
 
+`--strong-stem-width=`*string*, `-w`\ *string*
+
+:   This option is deprecated and has been replaced with the more versatile
+    option [`--stem-width-mode`](#stem-width-and-positioning-mode).  The
+    table below shows the corresponding arguments.
+
+      `-w`    `-a`
+      ------  ------
+      `""`    `qqq`
+      `g`     `sqq`
+      `G`     `qsq`
+      `D`     `qqs`
+      `gG`    `ssq`
+      `gD`    `sqs`
+      `GD`    `qss`
+      `gGD`   `sss`
+
 ### Miscellaneous
 
 Watch input files\ \ \ (`ttfautohintGUI` only)
