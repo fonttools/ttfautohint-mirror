@@ -112,7 +112,7 @@ const TA_Script_UniRangeRec ta_arab_nonbase_uniranges[] =
   TA_UNIRANGE_REC(0x06DF, 0x06E4),
   TA_UNIRANGE_REC(0x06E7, 0x06E8),
   TA_UNIRANGE_REC(0x06EA, 0x06ED),
-  TA_UNIRANGE_REC(0x08E3, 0x08FF),
+  TA_UNIRANGE_REC(0x08D3, 0x08FF),
   TA_UNIRANGE_REC(0xFBB2, 0xFBC1),
   TA_UNIRANGE_REC(0xFE70, 0xFE70),
   TA_UNIRANGE_REC(0xFE72, 0xFE72),
@@ -184,6 +184,7 @@ const TA_Script_UniRangeRec ta_beng_nonbase_uniranges[] =
   TA_UNIRANGE_REC(0x09C1, 0x09C4),
   TA_UNIRANGE_REC(0x09CD, 0x09CD),
   TA_UNIRANGE_REC(0x09E2, 0x09E3),
+  TA_UNIRANGE_REC(0x09FE, 0x09FE),
   TA_UNIRANGE_REC(     0,      0)
 };
 
@@ -211,6 +212,7 @@ const TA_Script_UniRangeRec ta_cakm_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x11100, 0x11102),
   TA_UNIRANGE_REC(0x11127, 0x11134),
+  TA_UNIRANGE_REC(0x11146, 0x11146),
   TA_UNIRANGE_REC(      0,       0)
 };
 
@@ -324,6 +326,7 @@ const TA_Script_UniRangeRec ta_deva_nonbase_uniranges[] =
   TA_UNIRANGE_REC(0x0953, 0x0957),
   TA_UNIRANGE_REC(0x0962, 0x0963),
   TA_UNIRANGE_REC(0xA8E0, 0xA8F1),
+  TA_UNIRANGE_REC(0xA8FF, 0xA8FF),
   TA_UNIRANGE_REC(     0,      0)
 };
 
@@ -359,10 +362,7 @@ const TA_Script_UniRangeRec ta_ethi_nonbase_uniranges[] =
 const TA_Script_UniRangeRec ta_geor_uniranges[] =
 {
   TA_UNIRANGE_REC(0x10D0, 0x10FF), /* Georgian (Mkhedruli) */
-#if 0
-  /* the following range is proposed for inclusion in Unicode */
-  TA_UNIRANGE_REC(0x1C90, 0x1CBF), /* Georgian (Mtavruli) */
-#endif
+  TA_UNIRANGE_REC(0x1C90, 0x1CBF), /* Georgian Extended (Mtavruli) */
   TA_UNIRANGE_REC(     0,      0)
 };
 
@@ -376,7 +376,7 @@ const TA_Script_UniRangeRec ta_geok_uniranges[] =
 {
   /* Khutsuri */
   TA_UNIRANGE_REC(0x10A0, 0x10CD), /* Georgian (Asomtavruli) */
-  TA_UNIRANGE_REC(0x2D00, 0x2D2D), /* Georgian (Nuskhuri) */
+  TA_UNIRANGE_REC(0x2D00, 0x2D2D), /* Georgian Supplement (Nuskhuri) */
   TA_UNIRANGE_REC(     0,      0)
 };
 
@@ -445,6 +445,7 @@ const TA_Script_UniRangeRec ta_gujr_nonbase_uniranges[] =
   TA_UNIRANGE_REC(0x0AC1, 0x0AC8),
   TA_UNIRANGE_REC(0x0ACD, 0x0ACD),
   TA_UNIRANGE_REC(0x0AE2, 0x0AE3),
+  TA_UNIRANGE_REC(0x0AFA, 0x0AFF),
   TA_UNIRANGE_REC(     0,      0)
 };
 
@@ -675,7 +676,8 @@ const TA_Script_UniRangeRec ta_mlym_uniranges[] =
 
 const TA_Script_UniRangeRec ta_mlym_nonbase_uniranges[] =
 {
-  TA_UNIRANGE_REC(0x0D01, 0x0D01),
+  TA_UNIRANGE_REC(0x0D00, 0x0D01),
+  TA_UNIRANGE_REC(0x0D3B, 0x0D3C),
   TA_UNIRANGE_REC(0x0D4D, 0x0D4E),
   TA_UNIRANGE_REC(0x0D62, 0x0D63),
   TA_UNIRANGE_REC(     0,      0)
@@ -717,6 +719,7 @@ const TA_Script_UniRangeRec ta_nkoo_uniranges[] =
 const TA_Script_UniRangeRec ta_nkoo_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x07EB, 0x07F5),
+  TA_UNIRANGE_REC(0x07FD, 0x07FD),
   TA_UNIRANGE_REC(     0,      0)
 };
 
@@ -865,6 +868,7 @@ const TA_Script_UniRangeRec ta_telu_uniranges[] =
 const TA_Script_UniRangeRec ta_telu_nonbase_uniranges[] =
 {
   TA_UNIRANGE_REC(0x0C00, 0x0C00),
+  TA_UNIRANGE_REC(0x0C04, 0x0C04),
   TA_UNIRANGE_REC(0x0C3E, 0x0C40),
   TA_UNIRANGE_REC(0x0C46, 0x0C56),
   TA_UNIRANGE_REC(0x0C62, 0x0C63),
