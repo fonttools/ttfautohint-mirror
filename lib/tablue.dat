@@ -245,6 +245,11 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_GEORGIAN_NUSKHURI_DESCENDER
     "ⴄ ⴅ ⴔ ⴕ ⴁ ⴂ ⴘ ⴝ"
 
+  TA_BLUE_STRING_GEORGIAN_MTAVRULI_TOP
+    "Ნ Ჟ Ჳ Ჸ Გ Ე Ო Ჴ"
+  TA_BLUE_STRING_GEORGIAN_MTAVRULI_BOTTOM
+    "Ი Ჲ Ო Ჩ Მ Შ Ჯ Ჽ"
+
   TA_BLUE_STRING_GLAGOLITIC_CAPITAL_TOP
     "Ⰵ Ⱄ Ⱚ Ⰴ Ⰲ Ⰺ Ⱛ Ⰻ"
   TA_BLUE_STRING_GLAGOLITIC_CAPITAL_BOTTOM
@@ -723,13 +728,14 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_ETHIOPIC_BOTTOM, 0                          }
     { TA_BLUE_STRING_MAX,             0                          }
 
-  // blue zones for Mtavruli are missing (not yet defined in Unicode)
   TA_BLUE_STRINGSET_GEOR
     { TA_BLUE_STRING_GEORGIAN_MKHEDRULI_TOP,       TA_BLUE_PROPERTY_LATIN_TOP      |
                                                    TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
     { TA_BLUE_STRING_GEORGIAN_MKHEDRULI_BOTTOM,    0                                 }
     { TA_BLUE_STRING_GEORGIAN_MKHEDRULI_ASCENDER,  TA_BLUE_PROPERTY_LATIN_TOP        }
     { TA_BLUE_STRING_GEORGIAN_MKHEDRULI_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_GEORGIAN_MTAVRULI_TOP,        TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_GEORGIAN_MTAVRULI_BOTTOM,     0                                 }
     { TA_BLUE_STRING_MAX,                          0                                 }
 
   TA_BLUE_STRINGSET_GEOK
