@@ -817,6 +817,7 @@ Table: script-specific standard characters of the 'latin' writing system
   `geor`      'ი', U+10D8, GEORGIAN LETTER IN
               'ე', U+10D4, GEORGIAN LETTER EN
               'ა', U+10D0, GEORGIAN LETTER AN
+              'Ი', U+1C98, GEORGIAN MTAVRULI CAPITAL LETTER IN
   `geok`      'Ⴖ', U+10B6, GEORGIAN CAPITAL LETTER GHAN
               'Ⴑ', U+10B1, GEORGIAN CAPITAL LETTER SAN
               'ⴙ', U+2D19, GEORGIAN SMALL LETTER CHIN
@@ -1125,10 +1126,8 @@ Table: `geor` (Georgian Mkhedruli) blue zones
   2     bottom of Mkhedruli letters            ა ზ მ ს შ ძ ხ ჰ
   3     top of ascender Mkhedruli letters      ს ხ ქ ზ მ შ ჩ წ
   4     bottom of descender Mkhedruli letters  ე ვ ჟ ტ უ ფ ქ ყ
-
-Georgian Mkhedruli support is incomplete; it doesn't yet contain characters
-for Mtavruli (which are not yet encoded in Unicode), the uppercase glyph
-variants of Mkhedruli.
+  5     top of ascender Mtavruli letters       Ნ Ჟ Ჳ Ჸ Გ Ე Ო Ჴ
+  6     bottom of descender Mtavruli letters   Ი Ჲ Ო Ჩ Მ Შ Ჯ Ჽ
 
 
 Table: `glag` (Glagolitic) blue zones

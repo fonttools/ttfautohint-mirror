@@ -1,3 +1,14 @@
+Version 1.8.2 (2018-Jul-24)
+---------------------------
+
+  * Support for Georgian Mtavruli.
+
+  * Bug fix: Compilation of ttfautohintGUI with homebrew on the Mac works
+    again.
+
+  * Bug fix: Point deltas didn't work for composite glyphs.
+
+
 Version 1.8.1 (2018-Jan-01)
 ---------------------------
 
