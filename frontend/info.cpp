@@ -15,8 +15,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-// the next header file is from gnulib defining function `base_name',
-// which is a replacement for `basename' that works on Windows also
+// the next header file is from gnulib defining function `last_component',
+// which is a replacement for `basename' (but just returning a pointer
+// without allocating a string) that works on Windows also
 #include "dirname.h"
 
 #include "info.h"
@@ -99,15 +100,13 @@ build_version_string(Info_Data* idata)
   d = sdscatprintf(d, " -f %s", idata->fallback_script);
   if (idata->control_name)
   {
-    char* bn = base_name(idata->control_name);
+    char* bn = last_component(idata->control_name);
     d = sdscatprintf(d, " -m \"%s\"", bn ? bn : idata->control_name);
-    free(bn);
   }
   if (idata->reference_name)
   {
-    char* bn = base_name(idata->reference_name);
+    char* bn = last_component(idata->reference_name);
     d = sdscatprintf(d, " -R \"%s\"", bn ? bn : idata->reference_name);
-    free(bn);
 
     d = sdscatprintf(d, " -Z %d", idata->reference_index);
   }

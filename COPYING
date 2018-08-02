@@ -63,7 +63,7 @@ All files of the following directories are distributed with the source
 bundle of the ttfautohint library to configure and build the library with
 GNU tools, but which aren't part of it due to a different license.
 
-  GPL only:
+  LGPL only:
     gnulib
 
 EOF
