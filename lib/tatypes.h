@@ -117,8 +117,8 @@ extern void* _ta_debug_hints;
 typedef struct TA_WidthRec_
 {
   FT_Pos org; /* original position/width in font units */
-  FT_Pos cur; /* current/scaled position/width in device sub-pixels */
-  FT_Pos fit; /* current/fitted position/width in device sub-pixels */
+  FT_Pos cur; /* current/scaled position/width in device subpixels */
+  FT_Pos fit; /* current/fitted position/width in device subpixels */
 } TA_WidthRec, *TA_Width;
 
 
