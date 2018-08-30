@@ -211,28 +211,29 @@ ta_loader_load_g(TA_Loader loader,
     /* width/positioning that occurred during the hinting process */
     if (scaler->render_mode != FT_RENDER_MODE_LIGHT)
     {
-      FT_Pos old_rsb, old_lsb, new_lsb;
-      FT_Pos pp1x_uh, pp2x_uh;
       TA_AxisHints axis = &hints->axis[TA_DIMENSION_HORZ];
-
-      TA_Edge edge1 = axis->edges; /* leftmost edge */
-      TA_Edge edge2 = edge1 + axis->num_edges - 1; /* rightmost edge */
 
 
       if (axis->num_edges > 1 && TA_HINTS_DO_ADVANCE(hints))
       {
-        old_rsb = loader->pp2.x - edge2->opos;
+        TA_Edge edge1 = axis->edges; /* leftmost edge */
+        TA_Edge edge2 = edge1 +
+                        axis->num_edges - 1; /* rightmost edge */
+
+        FT_Pos old_rsb = loader->pp2.x - edge2->opos;
         /* loader->pp1.x is always zero at this point of time */
-        old_lsb = edge1->opos /* - loader->pp1.x */;
-        new_lsb = edge1->pos;
+        FT_Pos old_lsb = edge1->opos /* - loader->pp1.x */;
+        FT_Pos new_lsb = edge1->pos;
 
         /* remember unhinted values to later account */
         /* for rounding errors */
-        pp1x_uh = new_lsb - old_lsb;
-        pp2x_uh = edge2->pos + old_rsb;
+        FT_Pos pp1x_uh = new_lsb - old_lsb;
+        FT_Pos pp2x_uh = edge2->pos + old_rsb;
+
 
         /* prefer too much space over too little space */
         /* for very small sizes */
+
         if (old_lsb < 24)
           pp1x_uh -= 8;
         if (old_rsb < 24)
