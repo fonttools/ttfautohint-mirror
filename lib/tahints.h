@@ -249,6 +249,12 @@ typedef struct TA_PointRec_
 
   TA_Point next; /* next point in contour */
   TA_Point prev; /* previous point in contour */
+
+#ifdef TA_DEBUG
+  /* track `before' and `after' edges for strong points */
+  TA_Edge before[2];
+  TA_Edge after[2];
+#endif
 } TA_PointRec;
 
 

@@ -313,6 +313,19 @@ ta_get_edge_index(TA_GlyphHints hints,
 }
 
 
+static int
+ta_get_strong_edge_index(TA_GlyphHints hints,
+                         TA_Edge* strong_edges,
+                         int dimension)
+{
+  TA_AxisHints axis = &hints->axis[dimension];
+  TA_Edge edges = axis->edges;
+
+
+  return TA_INDEX_NUM(strong_edges[dimension], edges);
+}
+
+
 void
 ta_glyph_hints_dump_points(TA_GlyphHints hints)
 {
@@ -329,8 +342,10 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
   {
     TA_LOG(("  index  hedge  hseg  flags"
          /* "  XXXXX  XXXXX XXXXX   XXXX" */
-            "  xorg  yorg  xscale  yscale   xfit    yfit"));
+            "  xorg  yorg  xscale  yscale   xfit    yfit "
          /* " XXXXX XXXXX XXXX.XX XXXX.XX XXXX.XX XXXX.XX" */
+            "  hbef  haft"));
+         /* " XXXXX XXXXX" */
   }
   else
     TA_LOG(("  (none)\n"));
@@ -341,6 +356,7 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
     int segment_idx_1 = ta_get_segment_index(hints, point_idx, 1);
 
     char buf1[16], buf2[16];
+    char buf5[16], buf6[16];
 
 
     /* insert extra newline at the beginning of a contour */
@@ -352,7 +368,8 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
 
     /* we don't show vertical edges since they are never used */
     TA_LOG(("  %5d  %5s %5s   %4s"
-            " %5d %5d %7.2f %7.2f %7.2f %7.2f\n",
+            " %5d %5d %7.2f %7.2f %7.2f %7.2f"
+            " %5s %5s\n",
             point_idx,
             ta_print_idx(buf1,
                          ta_get_edge_index(hints, segment_idx_1, 1)),
@@ -364,7 +381,14 @@ ta_glyph_hints_dump_points(TA_GlyphHints hints)
             point->ox / 64.0,
             point->oy / 64.0,
             point->x / 64.0,
-            point->y / 64.0));
+            point->y / 64.0,
+
+            ta_print_idx(buf5, ta_get_strong_edge_index(hints,
+                                                        point->before,
+                                                        1)),
+            ta_print_idx(buf6, ta_get_strong_edge_index(hints,
+                                                        point->after,
+                                                        1))));
   }
   TA_LOG(("\n"));
 }
@@ -848,6 +872,13 @@ ta_glyph_hints_reload(TA_GlyphHints hints,
             prev = end;
           }
         }
+
+#ifdef TA_DEBUG
+        point->before[0] = NULL;
+        point->before[1] = NULL;
+        point->after[0] = NULL;
+        point->after[1] = NULL;
+#endif
       }
     }
 
@@ -1301,6 +1332,11 @@ ta_glyph_hints_align_strong_points(TA_GlyphHints hints,
       {
         u = edge->pos - (edge->opos - ou);
 
+#ifdef TA_DEBUG
+        point->before[dim] = edge;
+        point->after[dim] = NULL;
+#endif
+
         if (hints->recorder)
           hints->recorder(ta_ip_before, hints, dim,
                           point, NULL, NULL, NULL, NULL);
@@ -1314,6 +1350,11 @@ ta_glyph_hints_align_strong_points(TA_GlyphHints hints,
       if (delta >= 0)
       {
         u = edge->pos + (ou - edge->opos);
+
+#ifdef TA_DEBUG
+        point->before[dim] = NULL;
+        point->after[dim] = edge;
+#endif
 
         if (hints->recorder)
           hints->recorder(ta_ip_after, hints, dim,
@@ -1369,6 +1410,11 @@ ta_glyph_hints_align_strong_points(TA_GlyphHints hints,
               /* we are on the edge */
               u = edge->pos;
 
+#ifdef TA_DEBUG
+              point->before[dim] = NULL;
+              point->after[dim] = NULL;
+#endif
+
               if (hints->recorder)
                 hints->recorder(ta_ip_on, hints, dim,
                                 point, edge, NULL, NULL, NULL);
@@ -1382,6 +1428,11 @@ ta_glyph_hints_align_strong_points(TA_GlyphHints hints,
           TA_Edge before = edges + min - 1;
           TA_Edge after = edges + min + 0;
 
+
+#ifdef TA_DEBUG
+          point->before[dim] = before;
+          point->after[dim] = after;
+#endif
 
           /* assert(before && after && before != after) */
           if (before->scale == 0)
