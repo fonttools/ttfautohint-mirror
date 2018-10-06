@@ -378,7 +378,7 @@ static const unsigned char FPGM(bci_quantize_stem_width) [] =
     sal_k,
   RS,
   EQ, /* sal_limit == sal_k ? */
-  JROT,/* goto not_in_array */
+  JROT, /* goto not_in_array */
 
   DUP,
   PUSHB_1,
@@ -2068,6 +2068,7 @@ static const unsigned char FPGM(bci_create_segment) [] =
  *      sal_num_packed_segments
  *      sal_base (the base for delta values in nibbles)
  *      sal_vwidth_data_offset
+ *      sal_stem_width_offset
  *      sal_scale
  *
  * CVT: cvtl_is_subglyph
@@ -2129,16 +2130,7 @@ static const unsigned char FPGM(bci_create_segments_b) [] =
     WS, /* sal_vwidth_data_offset = data_offset + num_used_styles */
 
     DUP,
-    PUSHB_1,
-      sal_stem_width_offset,
-    SWAP,
-    WS, /* sal_stem_width_offset = num_segments (more to come) */
-
-    DUP,
-    ADD,
-    PUSHB_1,
-      1,
-    SUB, /* delta = (2*num_segments - 1) */
+    ADD, /* delta = 2*num_segments */
 
     PUSHB_8,
       sal_segment_offset,
@@ -2160,12 +2152,12 @@ static const unsigned char FPGM(bci_create_segments_b) [] =
     DUP,
     PUSHB_1,
       sal_stem_width_offset,
-    RS,
-    ADD,
-    PUSHB_1,
-      sal_stem_width_offset,
     SWAP,
-    WS, /* sal_stem_width_offset += sal_segment_offset + delta */
+    WS, /* sal_stem_width_offset = sal_segment_offset + delta */
+
+    PUSHB_1,
+      1,
+    SUB, /* s: ... sal_segment_offset (sal_segment_offset + delta - 1) */
 
     PUSHB_2,
       bci_create_segment,

@@ -1,3 +1,11 @@
+Version 1.8.3 (2018-Oct-XX)
+---------------------------
+
+  * Bug fix: Glyphs with complicated shapes or a large number of outlines
+    could be distorted if displayed with FreeType (or stay unhinted if
+    viewed on Windows).
+
+
 Version 1.8.2 (2018-Jul-24)
 ---------------------------
 

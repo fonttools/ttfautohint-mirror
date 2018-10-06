@@ -301,6 +301,7 @@
 
 /* symbolic names for storage area locations */
 
+/* 0 */
 #define sal_i 0
 #define sal_j sal_i + 1
 #define sal_k sal_j + 1
@@ -311,6 +312,8 @@
 #define sal_best sal_temp3 + 1
 #define sal_ref sal_best + 1
 #define sal_func sal_ref + 1
+
+/* 10 */
 #define sal_anchor sal_func + 1
 #define sal_stem_width_function sal_anchor + 1
 #define sal_base_delta sal_stem_width_function + 1
@@ -321,6 +324,8 @@
 #define sal_base sal_point_max + 1
 #define sal_num_packed_segments sal_base + 1
 #define sal_num_stem_widths sal_num_packed_segments + 1
+
+/* 20 */
 #define sal_stem_width_offset sal_num_stem_widths + 1
 #define sal_have_cached_width sal_stem_width_offset + 1
 #define sal_cached_width_offset sal_have_cached_width + 1
