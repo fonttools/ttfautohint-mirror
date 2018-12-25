@@ -528,7 +528,7 @@ show_help(bool
 "\n"
 "Report bugs to: freetype-devel@nongnu.org\n"
 "\n"
-"ttfautohint home page: <http://www.freetype.org/ttfautohint>\n");
+"ttfautohint home page: <https://www.freetype.org/ttfautohint>\n");
 
   if (is_error)
     exit(EXIT_FAILURE);

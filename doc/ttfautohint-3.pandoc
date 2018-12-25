@@ -16,9 +16,9 @@ Compilation and Installation
 ============================
 
 Please read the files
-[`INSTALL`](http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;f=doc/INSTALL;hb=HEAD)
+[`INSTALL`](https://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;f=doc/INSTALL;hb=HEAD)
 and
-[`INSTALL.git`](http://repo.or.cz/w/ttfautohint.git/blob_plain/HEAD:/INSTALL.git)
+[`INSTALL.git`](https://repo.or.cz/w/ttfautohint.git/blob_plain/HEAD:/INSTALL.git)
 (both part of the source code bundle) for instructions how to compile the
 ttfautohint library together with its front-ends using a POSIX compatible
 shell and compiler.
@@ -55,12 +55,12 @@ Mac OS X
 
 Right now, only a precompiled binary `ttfautohint` is offered; a
 ready-to-run app bundle for the GUI version is not yet available; however,
-ttfautohint is part of [Homebrew](http://brew.sh), making compilation and
+ttfautohint is part of [Homebrew](https://brew.sh), making compilation and
 installation very simple.
 
 Detailed instructions to compile both `ttfautohint` and `ttfautohintGUI` can
 be found on [ttfautohint's
-homepage](http://freetype.org/ttfautohint/osx.html).
+homepage](https://freetype.org/ttfautohint/osx.html).
 
 
 Authors
@@ -72,7 +72,7 @@ Portions Copyright © 2014 by [Adam Twardoch](mailto:adam@twardoch.com).
 
 This file is part of the ttfautohint library, and may only be used,
 modified, and distributed under the terms given in
-[`COPYING`](http://repo.or.cz/w/ttfautohint.git/blob_plain/HEAD:/COPYING).
+[`COPYING`](https://repo.or.cz/w/ttfautohint.git/blob_plain/HEAD:/COPYING).
 By continuing to use, modify, or distribute this file you indicate that you
 have read `COPYING` and understand and accept it fully.
 
@@ -80,17 +80,17 @@ The file `COPYING` mentioned in the previous paragraph is distributed with
 the ttfautohint library.
 
 
-[ClearType Whitepaper]: http://www.microsoft.com/typography/cleartype/truetypecleartype.aspx
+[ClearType Whitepaper]: https://www.microsoft.com/typography/cleartype/truetypecleartype.aspx
 [Dalton Maag Ltd]: https://daltonmaag.com
-[DejaVu]: http://dejavu-fonts.org
-[FontForge]: http://fontforge.sf.net
-[FontLab Studio]: http://www.fontlab.com/font-editor/fontlab-studio
-[FreeType]: http://freetype.org
+[DejaVu]: https://dejavu-fonts.github.io/
+[FontForge]: https://fontforge.sf.net
+[FontLab Studio]: https://www.fontlab.com/font-editor/fontlab-studio
+[FreeType]: https://freetype.org
 [HarfBuzz]: http://harfbuzz.org
-[Infinality]: http://infinality.net
+[Infinality]: https://web.archive.org/web/20150710073951/http://www.infinality.net:80/blog/
 [MinGW]: http://mingw.org
-[OpenType specification]: http://www.microsoft.com/typography/otspec
-[Qt]: http://qt.io
+[OpenType specification]: https://www.microsoft.com/typography/otspec
+[Qt]: https://qt.io
 
 
 Character Ranges

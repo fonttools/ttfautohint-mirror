@@ -99,7 +99,7 @@ compilation within the MinGW environment (on Windows)
     static version of Qt 4 first.  I've successfully followed these
     instructions with version 4.8.5
 
-      http://www.formortals.com/build-qt-static-small-microsoft-intel-gcc-compiler/
+      https://www.formortals.com/build-qt-static-small-microsoft-intel-gcc-compiler/
 
     together with the following minor patch to MinGW
 
@@ -110,7 +110,7 @@ compilation within the MinGW environment (on Windows)
 
     An alternative is given at
 
-      http://qt-project.org/wiki/How-to-build-a-static-Qt-for-Windows-MinGW
+      https://wiki.qt.io/Building_a_static_Qt_for_Windows_using_MinGW
 
     using a PowerShell script.  However, you still need the small MinGW
     patch.
@@ -137,7 +137,7 @@ compilation within the MinGW environment (on Windows)
 compilation with mxe (on Unix, for Windows)
 -------------------------------------------
 
-[http://mxe.cc]
+[https://mxe.cc]
 
   o Check out the mxe git repository.
 

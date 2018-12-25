@@ -29,7 +29,7 @@
 #   having a different process ID for the visible window.
 
 
-# This script uses ideas from
+# This script uses ideas from the now defunct site
 # http://blog.chewearn.com/2010/01/18/find-window-id-of-a-process-id-in-bash-script/.
 
 if [ $# -eq 0 ]; then

@@ -246,7 +246,7 @@ typedef void
  * detailed description of the various parameters, in particular which
  * encoding is used for a given platform and encoding ID.
  *
- * [OpenType specification of the `name` table]: http://www.microsoft.com/typography/otspec/name.htm
+ * [OpenType specification of the `name` table]: https://www.microsoft.com/typography/otspec/name.htm
  *
  * The string *str* is allocated with the function specified by the
  * `alloc-func` field of [`TTF_autohint`](#function-ttf_autohint); the

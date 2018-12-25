@@ -6,7 +6,7 @@
  * written 2014 by Werner Lemberg
  */
 
-// This code snippet needs `jquery' (http://code.jquery.com/jquery-1.11.2.js)
+// This code snippet needs `jquery' (https://code.jquery.com/jquery-1.11.2.js)
 
 $(document).ready(function() {
   TOC.setup();

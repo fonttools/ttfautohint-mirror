@@ -141,7 +141,7 @@ if test "$ft_config" = "no"; then
   # freetype-config tool not found or disabled; try pkg-config
   PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 2.4.5])
   if { test -z "$FREETYPE_CFLAGS" || test -z "$FREETYPE_LIBS"; }; then
-    AC_MSG_ERROR([FreeType library is missing; see http://www.freetype.org/])
+    AC_MSG_ERROR([FreeType library is missing; see https://www.freetype.org/])
   fi
   FREETYPE_CPPFLAGS="$FREETYPE_CFLAGS"
 else

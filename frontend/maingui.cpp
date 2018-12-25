@@ -240,9 +240,9 @@ Main_GUI::about()
                         " to a TrueType font or TrueType collection.</p>"
                         ""
                         "<p>License:"
-                        " <a href='http://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT'>FreeType"
+                        " <a href='https://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/FTL.TXT'>FreeType"
                         " License (FTL)</a> or"
-                        " <a href='http://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/GPLv2.TXT'>GNU"
+                        " <a href='https://git.savannah.gnu.org/cgit/freetype/freetype2.git/tree/docs/GPLv2.TXT'>GNU"
                         " GPLv2</a></p>")
                         .arg(VERSION)
                         .arg(QChar(0xA9)));

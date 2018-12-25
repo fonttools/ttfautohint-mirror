@@ -42,7 +42,7 @@ respectively.
 What exactly are hints?
 -----------------------
 
-To cite [Wikipedia](http://en.wikipedia.org/wiki/Font_hinting):
+To cite [Wikipedia](https://en.wikipedia.org/wiki/Font_hinting):
 
 > **Font hinting** (also known as **instructing**) is the use of
 > mathematical instructions to adjust the display of an outline font so that
@@ -695,7 +695,7 @@ Background and Technical Details
 ================================
 
 [Real-Time Grid Fitting of Typographic
-Outlines](http://www.tug.org/TUGboat/tb24-3/lemberg.pdf) is a scholarly
+Outlines](https://www.tug.org/TUGboat/tb24-3/lemberg.pdf) is a scholarly
 paper that describes FreeType's auto-hinter in some detail.  Regarding the
 described data structures it is slightly out of date, but the algorithm
 itself hasn't changed in general.
@@ -1473,7 +1473,7 @@ available (latin), providing support for scripts like Latin or Greek.
     instruction.
 
 The following images illustrate the hinting process, using glyph 'a' from
-the freely available font '[Ubuntu Book](http://font.ubuntu.com)'.  The
+the freely available font '[Ubuntu Book](https://design.ubuntu.com/font/)'.  The
 manual hints were added by [Dalton Maag Ltd], the used application to create
 the hinting debug snapshots was [FontForge].
 
@@ -1892,8 +1892,8 @@ The process itself isn't very complicated; it is demonstrated best by
 example.  The following commits in ttfautohint add Ethiopian and Armenian,
 respectively.
 
-| [http://repo.or.cz/ttfautohint.git/commitdiff/d14c7c07](http://repo.or.cz/ttfautohint.git/commitdiff/d14c7c07)
-| [http://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9](http://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9)
+| [https://repo.or.cz/ttfautohint.git/commitdiff/d14c7c07](https://repo.or.cz/ttfautohint.git/commitdiff/d14c7c07)
+| [https://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9](https://repo.or.cz/ttfautohint.git/commitdiff/b5022cd9)
 
 It shows that you have to do the following steps.
 
@@ -2055,7 +2055,7 @@ start and end position relative to the point position.  *left‑offset* and
 *right‑offset* are integers measured in font units.
 
 The following five images, displaying glyphs 'O' and 'Q' from the font
-[Halant-Regular](http://www.google.com/fonts/specimen/Halant), demonstrate
+[Halant-Regular](https://fonts.google.com/specimen/Halant), demonstrate
 how to use direction changes.
 
 ![The outlines of glyphs 'O' and 'Q', as displayed in FontForge.  They are

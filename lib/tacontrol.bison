@@ -25,7 +25,7 @@
 
 /*
  * Edsko de Vries's article `Writing a Reentrant Parser with Flex and Bison'
- * (http://www.phpcompiler.org/articles/reentrantparser.html)
+ * (https://web.archive.org/web/20160130155657/http://www.phpcompiler.org:80/articles/reentrantparser.html)
  * was extremely helpful in writing this code.
  */
 
