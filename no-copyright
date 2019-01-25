@@ -46,6 +46,7 @@ doc/template.tex
 doc/toc-unfold.js
 doc/ttfautohint-css.html
 doc/ttfautohint-js.html
+doc/ttfautohintGUI.stylesheet
 doc/ucharclasses.sty
 #
 lib/afblue.pl
