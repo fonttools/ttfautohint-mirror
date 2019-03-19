@@ -684,6 +684,21 @@ const TA_Script_UniRangeRec ta_mlym_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_mong_uniranges[] =
+{
+  TA_UNIRANGE_REC( 0x1800,  0x18AF), /* Mongolian */
+  TA_UNIRANGE_REC(0x11660, 0x1167F), /* Mongolian Supplement */
+  TA_UNIRANGE_REC(      0,       0)
+};
+
+const TA_Script_UniRangeRec ta_mong_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x1885, 0x1886),
+  TA_UNIRANGE_REC(0x18A9, 0x18A9),
+  TA_UNIRANGE_REC(     0,      0)
+};
+
+
 const TA_Script_UniRangeRec ta_mymr_uniranges[] =
 {
   TA_UNIRANGE_REC(0x1000, 0x109F), /* Myanmar */

@@ -326,6 +326,13 @@ STYLE(mlym_dflt, MLYM_DFLT,
       TA_BLUE_STRINGSET_MLYM,
       TA_COVERAGE_DEFAULT)
 
+STYLE(mong_dflt, MONG_DFLT,
+      "Mongolian default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_MONG,
+      TA_BLUE_STRINGSET_MONG,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(mymr_dflt, MYMR_DFLT,
       "Myanmar default style",
       TA_WRITING_SYSTEM_LATIN,
