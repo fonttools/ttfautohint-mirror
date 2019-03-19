@@ -1,7 +1,7 @@
 % For non-ASCII characters, this template only works with luatex or XeTeX. 
 % Arabic, Armenian, Bengali, Cherokee, Devanagari, Ethiopic, Georgian,
-% Gujarati, Gurmukhi, Kannada, Khmer, Lao, Malayalam, Myanmar, Sinhala,
-% Tamil, Telugu, and Thai support currently works with XeTeX only.
+% Gujarati, Gurmukhi, Kannada, Khmer, Lao, Malayalam, Mongolian, Myanmar,
+% Sinhala, Tamil, Telugu, and Thai support currently works with XeTeX only.
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$%
                $if(lang)$$lang$,$endif$%
@@ -46,6 +46,7 @@
   \newfontfamily{\latinfont}[Script=Latin]{NotoSans-Regular.ttf}
   \newfontfamily{\lisufont}[Script=Lisu]{NotoSansLisu-Regular.ttf}
   \newfontfamily{\malayalamfont}[Script=Malayalam]{NotoSansMalayalam-Regular.ttf}
+  \newfontfamily{\mongolianfont}[Script=Mongolian]{NotoSansMongolian-Regular.ttf}
   \newfontfamily{\myanmarfont}[Script=Myanmar]{NotoSansMyanmar-Regular.ttf}
   \newfontfamily{\nkofont}[Script=N'Ko]{NotoSansNKo-Regular.ttf}
   \newfontfamily{\olchikifont}[Script=Ol Chiki]{NotoSansOlChiki-Regular.ttf}
@@ -126,6 +127,7 @@
   \setTransitionFrom{Lisu}{\endgroup}
   \setTransitionTo{Malayalam}{\begingroup\malayalamfont}
   \setTransitionFrom{Malayalam}{\endgroup}
+  % no transition for Mongolian font; we do that manually
   \setTransitionsForMyanmarFull{\begingroup\myanmarfont}{\endgroup}
   \setTransitionTo{NKo}{\begingroup\nkofont}
   \setTransitionFrom{NKo}{\endgroup}
@@ -164,6 +166,8 @@
   \def\greek{\endgroup}
   \def\Latin{\begingroup\latinfont}
   \def\latin{\endgroup}
+  \def\Mongolian{\begingroup\mongolianfont}
+  \def\mongolian{\endgroup}
 \fi
 
 % Libertine Mono is too ugly; we use lmodern instead

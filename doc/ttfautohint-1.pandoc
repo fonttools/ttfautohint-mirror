@@ -846,6 +846,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `lisu`      'ꓳ', U+A4F3, LISU LETTER
   `mlym`      'ഠ', U+0D20, MALAYALAM LETTER TTHA
               'റ', U+0D31, MALAYALAM LETTER RRA
+  `mong`      '\Mongolian{}ᡂ\mongolian{}', U+1842, MONGOLIAN LETTER CHI
+              '\Mongolian{}ᠪ\mongolian{}', U+182A, MONGOLIAN LETTER BA
   `mymr`      'ဝ', U+101D, MYANMAR LETTER WA
               'င', U+1004, MYANMAR LETTER NGA
               'ဂ', U+1002, MYANMAR LETTER GA
@@ -1296,6 +1298,14 @@ Table: `mlym` (Malayalam) blue zones
   ----  -----------                            ------------
   1     top of letters                         ഒ ട ഠ റ ച പ ച്ച പ്പ
   2     bottom of letters                      ട ഠ ധ ശ ഘ ച ഥ ല
+
+
+Table: `mong` (Mongolian) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of base stem                       \Mongolian{}ᠳ ᠴ ᠶ ᠽ ᡂ ᡊ ‍ᡡ‍ ‍ᡳ‍\mongolian{}
+  2     bottom of base stem                    \Mongolian{}ᡃ\mongolian{}
 
 
 Table: `mymr` (Myanmar) blue zones
