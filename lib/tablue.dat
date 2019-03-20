@@ -396,7 +396,7 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
     "ട ഠ ധ ശ ഘ ച ഥ ല"
 
   TA_BLUE_STRING_MONGOLIAN_TOP_BASE
-    "ᠳ ᠴ ᠶ ᠽ ᡂ ᡊ ᡡ ᡳ"
+    "ᠳ ᠴ ᠶ ᠽ ᡂ ᡊ ‍ᡡ‍ ‍ᡳ‍"
   TA_BLUE_STRING_MONGOLIAN_BOTTOM_BASE
     "ᡃ"
 
