@@ -143,6 +143,7 @@ TA_GlyphLoader_Adjust_Points(TA_GlyphLoader loader)
 }
 
 
+#if 0
 FT_Error
 TA_GlyphLoader_CreateExtra(TA_GlyphLoader loader)
 {
@@ -159,6 +160,7 @@ TA_GlyphLoader_CreateExtra(TA_GlyphLoader loader)
 
   return FT_Err_Ok;
 }
+#endif
 
 
 /* re-adjust the `current' subglyphs field */
@@ -360,6 +362,7 @@ TA_GlyphLoader_Add(TA_GlyphLoader loader)
 }
 
 
+#if 0
 FT_Error
 TA_GlyphLoader_CopyPoints(TA_GlyphLoader target,
                           TA_GlyphLoader source)
@@ -397,5 +400,6 @@ TA_GlyphLoader_CopyPoints(TA_GlyphLoader target,
 
   return error;
 }
+#endif
 
 /* end of tagloadr.c */

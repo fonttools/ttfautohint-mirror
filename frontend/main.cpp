@@ -232,7 +232,7 @@ err(TA_Error error,
     {
       fprintf(stderr, "%s:", data->control_name);
       if (errlinenum)
-        fprintf(stderr, "%d:", errlinenum);
+        fprintf(stderr, "%u:", errlinenum);
       if (errpos && errline)
         fprintf(stderr, "%d:", int(errpos - errline + 1));
       if (error_string)

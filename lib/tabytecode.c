@@ -901,8 +901,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
   }
 
   /* merge `before IUP' delta stacks into a single one */
-  if (need_before_IUP_words
-      || (!need_before_IUP_words && !need_before_IUP_word_counts))
+  if (need_before_IUP_words || !need_before_IUP_word_counts)
   {
     FT_UInt num_args = 0;
 
@@ -1002,8 +1001,7 @@ TA_sfnt_build_delta_exceptions(SFNT* sfnt,
     BCI(IUP_y);
 
   /* merge `after IUP' delta stacks into a single one */
-  if (need_after_IUP_words
-      || (!need_after_IUP_words && !need_after_IUP_word_counts))
+  if (need_after_IUP_words || !need_after_IUP_word_counts)
   {
     FT_UInt num_args = 0;
 

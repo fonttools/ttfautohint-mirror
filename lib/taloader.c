@@ -28,6 +28,7 @@
 
 
 /* from file `ftobjs.h' (2011-Mar-28) from FreeType */
+#if 0
 typedef struct FT_Slot_InternalRec_
 {
   TA_GlyphLoader loader;
@@ -37,6 +38,7 @@ typedef struct FT_Slot_InternalRec_
   FT_Vector glyph_delta;
   void* glyph_hints;
 } FT_GlyphSlot_InternalRec;
+#endif
 
 
 /* initialize glyph loader */

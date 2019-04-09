@@ -394,7 +394,7 @@ Fail:
     }
     else
     {
-      int i, ret;
+      int ret;
       char auxbuf[128];
 
       char* buf_end;
@@ -408,7 +408,7 @@ Fail:
       p_start = font->control_buf;
       if (context.errline_num > 1)
       {
-        i = 1;
+        int i = 1;
         while (p_start < buf_end)
         {
           if (*p_start++ == '\n')
@@ -460,7 +460,7 @@ Fail:
       if (ret == -1)
         *error_string_p = NULL;
 
-      if (errline_p)
+      if (*errline_p)
         *errpos_p = *errline_p + context.errline_pos_left - 1;
       else
         *errpos_p = NULL;
@@ -937,7 +937,7 @@ TA_control_segment_dir_get_next(FONT* font,
 
   font->control_segment_dirs_cur = control_segment_dirs_cur->next;
 
-  return control_segment_dirs_cur != NULL;
+  return 1;
 }
 
 /* end of tacontrol.c */

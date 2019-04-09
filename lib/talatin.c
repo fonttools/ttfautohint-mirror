@@ -1501,13 +1501,13 @@ ta_latin_metrics_scale_dim(TA_LatinMetrics metrics,
                      nn,
                      blue->ref.org,
                      blue->ref.fit / 64.0,
-                     blue->flags & TA_LATIN_BLUE_ACTIVE ? ""
-                                                        : " (inactive)",
+                     (blue->flags & TA_LATIN_BLUE_ACTIVE) ? ""
+                                                          : " (inactive)",
                      nn,
                      blue->shoot.org,
                      blue->shoot.fit / 64.0,
-                     blue->flags & TA_LATIN_BLUE_ACTIVE ? ""
-                                                        : " (inactive)"));
+                     (blue->flags & TA_LATIN_BLUE_ACTIVE) ? ""
+                                                          : " (inactive)"));
     }
 #endif
 
