@@ -3,7 +3,7 @@ Version 1.8.3 (2019-Apr-09)
 
   * Support for Mongolian.  The de-facto standard is to render the glyphs
     horizontally (left-to-right) line by line, then rotating each line
-    clockwise by 90 degrees.  This allows the usage of ttfautohint.
+    clockwise by 90\ degrees.  This allows the usage of ttfautohint.
 
   * Bug fix: Glyphs with complicated shapes or a large number of outlines
     could be distorted if displayed with FreeType (or stay unhinted if
