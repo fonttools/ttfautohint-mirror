@@ -22,6 +22,6 @@ BUILT_SOURCES = .version
 	echo $(VERSION) > $@-t && mv $@-t $@
 
 dist-hook:
-	echo $(VERSION) > $(distdir)/VERSION
+	echo $(VERSION) > $(distdir)/VERSION.TXT
 
 ## end of Makefile.am
