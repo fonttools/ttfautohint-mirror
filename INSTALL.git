@@ -21,22 +21,23 @@ distributed with the release package), the following is necessary:
   inkscape (0.48.2)
   X11 (in particular the `xwininfo' program)
   ImageMagick (6.7.4)
-  xelatex (TeXLive 2016)
+  xelatex (TeXLive 2018)
 
 The version numbers in parentheses are known to work.  Newer versions should
 work also.
 
 The main font for the PDF file is Libertine; in addition, we use various
 sans-serif TrueType fonts from the Noto family which are not part of
-TeXLive.  To access them it is recommended to use SVN to clone the following
-two (huge) git repositories and adjust the `TTFONTS' environment variable
-accordingly to make xelatex find the fonts in the proper directories.
+TeXLive.  To access them it is recommended to use SVN to clone parts of the
+huge `noto-fonts' git repository and adjust the `TTFONTS' environment
+variable accordingly to make xelatex find the fonts in the proper
+directories.
 
-[Yes, we access github's git repositories with SVN to quickly download just
-a part of the repository!]
+[Yes, we access a github repository with SVN to quickly download just a part
+ of it!]
 
   svn checkout \
-    https://github.com/googlei18n/noto-fonts-alpha/trunk/from-pipeline/unhinted/ttf/sans \
+    https://github.com/googlei18n/noto-fonts/trunk/phaseIII_only/unhinted/ttf \
     noto-fonts-alpha
   svn checkout \
     https://github.com/googlei18n/noto-fonts/trunk/unhinted \

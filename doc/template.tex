@@ -93,8 +93,7 @@
   % no transition for Cyrillic font; we do that manually
   \setTransitionTo{Deseret}{\begingroup\deseretfont}
   \setTransitionFrom{Deseret}{\endgroup}
-  \setTransitionTo{Devanagari}{\begingroup\devanagarifont}
-  \setTransitionFrom{Devanagari}{\endgroup}
+  \setTransitionsForDevanagari{\begingroup\devanagarifont}{\endgroup}
   \setTransitionsForEthiopicFull{\begingroup\ethiopicfont}{\endgroup}
   \setTransitionsForGeorgianFull{\begingroup\georgianfont}{\endgroup}
   % in Noto, Glagolitic is not part of a Cyrillic font;
