@@ -107,7 +107,7 @@ if WITH_DOC
   ttfautohint.html: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGSVG) \
                     ttfautohint-css.html ttfautohint-js.html \
                     template.html $(top_builddir)/.version
-	  $(PANDOC) --smart \
+	  $(PANDOC) --from=markdown+smart \
 	            --template=$(srcdir)/template.html \
 	            --default-image-extension=".svg" \
 	            --variable="version:$(VERSION)" \
@@ -120,14 +120,14 @@ if WITH_DOC
   ttfautohint.pdf: ttfautohint.txt $(DOCIMGPNG) $(DOCIMGPDF) \
                    template.tex $(top_builddir)/.version
 	  TEXINPUTS="$(srcdir);" \
-	  $(PANDOC) --smart \
-	            --latex-engine=$(LATEX) \
+	  $(PANDOC) --from=markdown+smart \
+	            --pdf-engine=$(LATEX) \
 	            --template=$(srcdir)/template.tex \
 	            --default-image-extension=".pdf" \
 	            --variable="version:$(VERSION)" \
 	            --number-sections \
 	            --toc \
-	            --chapters \
+	            --top-level-division=chapter \
 	            --standalone \
 	            --output=$@ $<
 else

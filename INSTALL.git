@@ -17,7 +17,7 @@ If you configure to build the documentation files also (which are normally
 distributed with the release package), the following is necessary:
 
   help2man (1.40.1)
-  pandoc (1.12.2.1)
+  pandoc (2.6)
   inkscape (0.48.2)
   X11 (in particular the `xwininfo' program)
   ImageMagick (6.7.4)
