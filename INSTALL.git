@@ -47,7 +47,7 @@ Here is an example how to set `TTFONTS'.
 
   TTFONTS="/home/wl/noto-fonts-alpha//:/home/wl/noto-fonts//:"
 
-Note the double slash ending the first path; this makes TeX and its tools
+Note the double slash ending the path elements; this makes TeX and its tools
 search all subdirectories.  Also note the trailing `:' character, which
 ensures that the directories are prepended to the built-in value of
 `TTFONTS' (instead of replacing it).
