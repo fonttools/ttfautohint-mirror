@@ -2767,14 +2767,21 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
 
   if (font->fallback_scaling)
   {
-    if (font->loader->metrics->style_class == &ta_none_dflt_style_class)
+    TA_StyleClass style_class = font->loader->metrics->style_class;
+
+
+    if (style_class == &ta_none_dflt_style_class)
     {
       /* the scaling value of `none_dflt' */
       /* (this is, hinting without script-specific blue zones) */
       /* is always 1, which corresponds to a no-op */
       bufp = ins_buf;
+
+      use_gstyle_data = 0;
+
+      goto Done1;
     }
-    else
+    else if (style_class == ta_style_classes[font->fallback_style])
     {
       /* since `TA_init_recorder' hasn't been called yet, */
       /* we manually initialize the `sfnt', `font', and `glyph' fields */
@@ -2788,11 +2795,11 @@ TA_sfnt_build_glyph_instructions(SFNT* sfnt,
         error = FT_Err_Out_Of_Memory;
         goto Err;
       }
+
+      use_gstyle_data = 0;
+
+      goto Done1;
     }
-
-    use_gstyle_data = 0;
-
-    goto Done1;
   }
 
   error = TA_init_recorder(&recorder, sfnt, font, glyph, hints);

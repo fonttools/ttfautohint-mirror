@@ -1,3 +1,10 @@
+Version 1.8.4 (2019-XXX-XX)
+---------------------------
+
+  * Bug fix: Option combination `-f none -S` to suppress hinting of
+    unassigned glyphs was broken.
+
+
 Version 1.8.3 (2019-Apr-09)
 ---------------------------
 
