@@ -2,6 +2,15 @@
 important improvements
 ----------------------
 
+add instruction to adjust blue zones for a given script & feature
+  combination, at a given size, for example
+
+    latn dflt   blue   1 0 0 0 -1 0   @ 12, 13
+
+  to vertically increase the first blue zone by 1 pixel and vertically
+  decrease the fifth blue zone by one pixel, at both sizes 12 and 13ppem
+  (this would use the CDELTA bytecode instruction)
+
 add features to the GUI
   -> direct control over `actions'
   -> preview similar to ftgrid
