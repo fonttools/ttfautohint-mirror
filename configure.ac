@@ -91,7 +91,7 @@ AC_PATH_PROG([FLEX], [flex])
 
 gl_INIT
 
-PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 1.3.0])
+PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 1.8.0])
 
 AT_WITH_QT([], [], [QTPLUGIN.imageformats = -])
 AT_REQUIRE_QT_VERSION([4.6])
