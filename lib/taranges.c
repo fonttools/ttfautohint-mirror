@@ -787,6 +787,18 @@ const TA_Script_UniRangeRec ta_osma_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_rohg_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x10D00, 0x10D3F), /* Hanifi Rohingya */
+  TA_UNIRANGE_REC(      0,       0)
+};
+
+const TA_Script_UniRangeRec ta_rohg_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0, 0)
+};
+
+
 const TA_Script_UniRangeRec ta_saur_uniranges[] =
 {
   TA_UNIRANGE_REC(0xA880, 0xA8DF), /* Saurashtra */
