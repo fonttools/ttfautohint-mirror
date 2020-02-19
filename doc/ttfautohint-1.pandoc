@@ -859,6 +859,7 @@ Table: script-specific standard characters of the 'latin' writing system
               '𐓪', U+104EA, OSAGE SMALL LETTER O
   `osma`      '𐒆', U+10486, OSMANYA LETTER DEEL
               '𐒠', U+104A0, OSMANYA DIGIT ZERO
+  `rohg`      '𐴰', HANIFI ROHINGYA DIGIT ZERO
   `saur`      'ꢝ', U+A89D, SAURASHTRA LETTER TTHA
               '꣐', U+A8D0, SAURASHTRA DIGIT ZERO
   `shaw`      '𐑴', U+10474, SHAVIAN LETTER OAK
@@ -1182,6 +1183,15 @@ Table: `guru` (Gurmukhi) blue zones
   3*    top of baseline (flat glyphs only)     ਕ ਗ ਙ ਚ ਜ ਤ ਧ ਸ
   4     bottom of characters                   ਅ ਏ ਓ ਗ ਜ ਠ ਰ ਸ
   5     top of Gurmukhi digits                 ੦ ੧ ੨ ੩ ੭
+
+
+Table: `rohg` (Hanifi Rohingya) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters with vertical stroke    𐴃 𐴀 𐴆 𐴖 𐴕
+  2     bottom of letters                      𐴔 𐴖 𐴕 𐴑 𐴐
+  3     glyph joining                          ـ
 
 
 Table: `hebr` (Hebrew) blue zones

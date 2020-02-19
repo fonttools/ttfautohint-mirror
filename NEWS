@@ -1,5 +1,7 @@
-Version 1.8.4 (2019-XXX-XX)
+Version 1.8.4 (2020-XXX-XX)
 ---------------------------
+
+  * Support for Hanifi Rohingya.
 
   * Bug fix: Option combination `-f none -S` to suppress hinting of
     unassigned glyphs was broken.
