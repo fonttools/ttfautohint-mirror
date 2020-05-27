@@ -183,6 +183,12 @@ SCRIPT(hebr, HEBR,
        HINTING_BOTTOM_TO_TOP,
        "\xD7\x9D") /* ם */
 
+SCRIPT(hmnp, HMNP,
+       "Nyiakeng Puachue Hmong",
+       HB_SCRIPT_NYIAKENG_PUACHUE_HMONG,
+       HINTING_BOTTOM_TO_TOP,
+       "\xef\xbf\xbd") /* 𞄨 */
+
 SCRIPT(kali, KALI,
        "Kayah Li",
        HB_SCRIPT_KAYAH_LI,

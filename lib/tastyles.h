@@ -252,6 +252,13 @@ STYLE(hebr_dflt, HEBR_DFLT,
       TA_BLUE_STRINGSET_HEBR,
       TA_COVERAGE_DEFAULT)
 
+STYLE(hmnp_dflt, HMNP_DFLT,
+      "Nyiakeng Puachue Hmong default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_HMNP,
+      TA_BLUE_STRINGSET_HMNP,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(kali_dflt, KALI_DFLT,
       "Kayah Li default style",
       TA_WRITING_SYSTEM_LATIN,

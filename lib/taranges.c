@@ -485,6 +485,19 @@ const TA_Script_UniRangeRec ta_hebr_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_hmnp_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x1E100, 0x1E14F), /* Nyiakeng Puachue Hmong */
+  TA_UNIRANGE_REC(      0,       0)
+};
+
+const TA_Script_UniRangeRec ta_hmnp_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x1E130, 0x1E13B),
+  TA_UNIRANGE_REC(      0,       0)
+};
+
+
 const TA_Script_UniRangeRec ta_kali_uniranges[] =
 {
   TA_UNIRANGE_REC(0xA900, 0xA92F), /* Kayah Li */

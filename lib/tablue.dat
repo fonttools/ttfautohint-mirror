@@ -304,6 +304,11 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_HEBREW_DESCENDER
     "ק ך ן ף ץ"
 
+  TA_BLUE_STRING_HMNP_TOP
+    "𞄀 𞄁 𞄈 𞄑 𞄧 𞄬"
+  TA_BLUE_STRING_HMNP_BOTTOM
+    "𞄁 𞄜 𞄠 𞄡 𞄤 𞅂"
+
   TA_BLUE_STRING_KANNADA_TOP
     "ಇ ಊ ಐ ಣ ಸಾ ನಾ ದಾ ರಾ"
   TA_BLUE_STRING_KANNADA_BOTTOM
@@ -808,6 +813,11 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_HEBREW_BOTTOM,    0                             }
     { TA_BLUE_STRING_HEBREW_DESCENDER, 0                             }
     { TA_BLUE_STRING_MAX,              0                             }
+
+  TA_BLUE_STRINGSET_HMNP
+    { TA_BLUE_STRING_HMNP_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
+    { TA_BLUE_STRING_HMNP_BOTTOM, 0                          }
+    { TA_BLUE_STRING_MAX,         0                          }
 
   TA_BLUE_STRINGSET_KALI
     { TA_BLUE_STRING_KAYAH_LI_TOP,             TA_BLUE_PROPERTY_LATIN_TOP      |
