@@ -37,6 +37,8 @@
   \newfontfamily{\gurmukhifont}[Script=Gurmukhi]{NotoSansGurmukhi-Regular.ttf}
   \newfontfamily{\hanififont}[Script=Hanifi Rohingya]{NotoSansHanifiRohingya-Regular.ttf}
   \newfontfamily{\hebrewfont}[Script=Hebrew]{NotoSansHebrew-Regular.ttf}
+% XXX neither Noto font nor fontspec support available yet
+% \newfontfamily{\hmongpfont}[Script=Nyiakeng Puachue Hmong]{NotoSansNyiakengPuachueHmong-Regular.ttf}
   \newfontfamily{\kannadafont}[Script=Kannada]{NotoSansKannada-Regular.ttf}
   \newfontfamily{\kayahlifont}[Script=Kayah Li]{NotoSansKayahLi-Regular.ttf}
   \newfontfamily{\khmerfont}[Script=Khmer]{NotoSansKhmer-Regular.ttf}
@@ -130,6 +132,8 @@
   \setTransitionsForMyanmarFull{\begingroup\myanmarfont}{\endgroup}
   \setTransitionTo{NKo}{\begingroup\nkofont}
   \setTransitionFrom{NKo}{\endgroup}
+% \setTransitionTo{NyiakengPuachueHmong}{\begingroup\hmongpfont}
+% \setTransitionFrom{NyiakengPuachueHmong}{\endgroup}
   \setTransitionTo{OlChiki}{\begingroup\olchikifont}
   \setTransitionFrom{OlChiki}{\endgroup}
   \setTransitionTo{OldTurkic}{\begingroup\oldturkicfont}

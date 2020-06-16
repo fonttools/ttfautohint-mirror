@@ -834,6 +834,7 @@ Table: script-specific standard characters of the 'latin' writing system
               'ਰ', U+0A30, GURMUKHI LETTER RA
               '੦', U+0A66, GURMUKHI DIGIT ZERO
   `hebr`      'ם', U+05DD, HEBREW LETTER FINAL MEM
+  `hmnp`      '𞄨', U+1E128, NYIAKENG PUACHUE HMONG LETTER O
   `kali`      'ꤍ', U+A90D, KAYAH LI LETTER NGA
               '꤀', U+A900, KAYAH LI DIGIT ZERO
   `knda`      '೦', U+0CE6, KANNADA DIGIT ZERO
@@ -1185,15 +1186,6 @@ Table: `guru` (Gurmukhi) blue zones
   5     top of Gurmukhi digits                 ੦ ੧ ੨ ੩ ੭
 
 
-Table: `rohg` (Hanifi Rohingya) blue zones
-
-  ID    Blue zone                              Characters
-  ----  -----------                            ------------
-  1     top of letters with vertical stroke    𐴃 𐴀 𐴆 𐴖 𐴕
-  2     bottom of letters                      𐴔 𐴖 𐴕 𐴑 𐴐
-  3     glyph joining                          ـ
-
-
 Table: `hebr` (Hebrew) blue zones
 
   ID    Blue zone                              Characters
@@ -1201,6 +1193,14 @@ Table: `hebr` (Hebrew) blue zones
   1     top of letters                         ב ד ה ח ך כ ם ס
   2     bottom of letters                      ב ט כ ם ס צ
   3     bottom of descenders of letters        ק ך ן ף ץ
+
+
+Table: `hmnp` (Nyiakeng Puachue Hmong) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters                         𞄀 𞄁 𞄈 𞄑 𞄧 𞄬
+  2     bottom of letters                      𞄁 𞄜 𞄠 𞄡 𞄤 𞅂
 
 
 Table: `kali` (Kayah Li) blue zones
@@ -1373,6 +1373,15 @@ Table: `osma` (Osmanya) blue zones
   ----  -----------                            ------------
   1     top of letters                         𐒆 𐒉 𐒐 𐒒 𐒘 𐒛 𐒠 𐒣
   2     bottom of letters                      𐒀 𐒂 𐒆 𐒈 𐒊 𐒒 𐒠 𐒩
+
+
+Table: `rohg` (Hanifi Rohingya) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of letters with vertical stroke    𐴃 𐴀 𐴆 𐴖 𐴕
+  2     bottom of letters                      𐴔 𐴖 𐴕 𐴑 𐴐
+  3     glyph joining                          ـ
 
 
 Table: `saur` (Saurashtra) blue zones
