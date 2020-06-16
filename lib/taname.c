@@ -440,10 +440,13 @@ build_name_table(Naming_Table* n,
   {
   case 1:
     *(p++) = 0x00;
+    /* fall through */
   case 2:
     *(p++) = 0x00;
+    /* fall through */
   case 3:
     *(p++) = 0x00;
+    /* fall through */
   default:
     break;
   }

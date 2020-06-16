@@ -915,10 +915,13 @@ TA_sfnt_build_glyf_table(SFNT* sfnt,
       {
       case 1:
         *(p++) = 0;
+        /* fall through */
       case 2:
         *(p++) = 0;
+        /* fall through */
       case 3:
         *(p++) = 0;
+        /* fall through */
       default:
         break;
       }
