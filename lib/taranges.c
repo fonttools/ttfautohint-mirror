@@ -697,6 +697,18 @@ const TA_Script_UniRangeRec ta_mlym_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_medf_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x16E40, 0x16E9F), /* Medefaidrin */
+  TA_UNIRANGE_REC(      0,       0)
+};
+
+const TA_Script_UniRangeRec ta_medf_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0, 0)
+};
+
+
 const TA_Script_UniRangeRec ta_mong_uniranges[] =
 {
   TA_UNIRANGE_REC( 0x1800,  0x18AF), /* Mongolian */

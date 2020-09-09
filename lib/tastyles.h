@@ -333,6 +333,13 @@ STYLE(mlym_dflt, MLYM_DFLT,
       TA_BLUE_STRINGSET_MLYM,
       TA_COVERAGE_DEFAULT)
 
+STYLE(medf_dflt, MEDF_DFLT,
+      "Medefaidrin default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_MEDF,
+      TA_BLUE_STRINGSET_MEDF,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(mong_dflt, MONG_DFLT,
       "Mongolian default style",
       TA_WRITING_SYSTEM_LATIN,
