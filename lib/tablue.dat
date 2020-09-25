@@ -68,8 +68,8 @@
 // values; this essentially means that the maximum values can easily be too
 // large.  Given that the purpose of those values is to create local
 // fixed-size arrays at compile time for further processing of the blue zone
-// data, this isn't a problem.  Note the the final zero byte of a string is
-// not counted.  Note also that the count holds the number of UTF-8 encoded
+// data, this isn't a problem.  Note the final zero byte of a string is not
+// counted.  Note also that the count holds the number of UTF-8 encoded
 // characters, not bytes.
 
 
@@ -666,13 +666,13 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_MAX,          0                          }
 
   TA_BLUE_STRINGSET_BENG
-    { TA_BLUE_STRING_BENGALI_TOP,    TA_BLUE_PROPERTY_LATIN_TOP        }
-    { TA_BLUE_STRING_BENGALI_HEAD,   TA_BLUE_PROPERTY_LATIN_TOP        }
-    { TA_BLUE_STRING_BENGALI_BASE,   TA_BLUE_PROPERTY_LATIN_TOP      |
-                                     TA_BLUE_PROPERTY_LATIN_NEUTRAL  |
-                                     TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
-    { TA_BLUE_STRING_BENGALI_BASE,   0                                 }
-    { TA_BLUE_STRING_MAX,            0                                 }
+    { TA_BLUE_STRING_BENGALI_TOP,  TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_BENGALI_HEAD, TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_BENGALI_BASE, TA_BLUE_PROPERTY_LATIN_TOP      |
+                                   TA_BLUE_PROPERTY_LATIN_NEUTRAL  |
+                                   TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_BENGALI_BASE, 0                                 }
+    { TA_BLUE_STRING_MAX,          0                                 }
 
   TA_BLUE_STRINGSET_BUHD
     { TA_BLUE_STRING_BUHID_TOP,    TA_BLUE_PROPERTY_LATIN_TOP        }
@@ -689,14 +689,14 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_MAX,              0                          }
 
   TA_BLUE_STRINGSET_CANS
-    { TA_BLUE_STRING_CANADIAN_SYLLABICS_TOP,             TA_BLUE_PROPERTY_LATIN_TOP        }
-    { TA_BLUE_STRING_CANADIAN_SYLLABICS_BOTTOM,          0                                 }
-    { TA_BLUE_STRING_CANADIAN_SYLLABICS_SMALL_TOP,       TA_BLUE_PROPERTY_LATIN_TOP      |
-                                                         TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
-    { TA_BLUE_STRING_CANADIAN_SYLLABICS_SMALL_BOTTOM,    0                                 }
-    { TA_BLUE_STRING_CANADIAN_SYLLABICS_SUPS_TOP,        TA_BLUE_PROPERTY_LATIN_TOP        }
-    { TA_BLUE_STRING_CANADIAN_SYLLABICS_SUPS_BOTTOM,     0                                 }
-    { TA_BLUE_STRING_MAX,                                0                                 }
+    { TA_BLUE_STRING_CANADIAN_SYLLABICS_TOP,          TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_CANADIAN_SYLLABICS_BOTTOM,       0                                 }
+    { TA_BLUE_STRING_CANADIAN_SYLLABICS_SMALL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP      |
+                                                      TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_CANADIAN_SYLLABICS_SMALL_BOTTOM, 0                                 }
+    { TA_BLUE_STRING_CANADIAN_SYLLABICS_SUPS_TOP,     TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_CANADIAN_SYLLABICS_SUPS_BOTTOM,  0                                 }
+    { TA_BLUE_STRING_MAX,                             0                                 }
 
   TA_BLUE_STRINGSET_CARI
     { TA_BLUE_STRING_CARIAN_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
@@ -771,14 +771,14 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_MAX,                          0                                 }
 
   TA_BLUE_STRINGSET_GEOK
-    { TA_BLUE_STRING_GEORGIAN_ASOMTAVRULI_TOP,       TA_BLUE_PROPERTY_LATIN_TOP        }
-    { TA_BLUE_STRING_GEORGIAN_ASOMTAVRULI_BOTTOM,    0                                 }
-    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_TOP,          TA_BLUE_PROPERTY_LATIN_TOP      |
-                                                     TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
-    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_BOTTOM,       0                                 }
-    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_ASCENDER,     TA_BLUE_PROPERTY_LATIN_TOP        }
-    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_DESCENDER,    0                                 }
-    { TA_BLUE_STRING_MAX,                            0                                 }
+    { TA_BLUE_STRING_GEORGIAN_ASOMTAVRULI_TOP,    TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_GEORGIAN_ASOMTAVRULI_BOTTOM, 0                                 }
+    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_TOP,       TA_BLUE_PROPERTY_LATIN_TOP      |
+                                                  TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_BOTTOM,    0                                 }
+    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_ASCENDER,  TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_GEORGIAN_NUSKHURI_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_MAX,                         0                                 }
 
   TA_BLUE_STRINGSET_GLAG
     { TA_BLUE_STRING_GLAGOLITIC_CAPITAL_TOP,    TA_BLUE_PROPERTY_LATIN_TOP        }
@@ -834,6 +834,11 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_HMNP_BOTTOM, 0                          }
     { TA_BLUE_STRING_MAX,         0                          }
 
+  TA_BLUE_STRINGSET_KNDA
+    { TA_BLUE_STRING_KANNADA_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
+    { TA_BLUE_STRING_KANNADA_BOTTOM, 0                          }
+    { TA_BLUE_STRING_MAX,            0                          }
+
   TA_BLUE_STRINGSET_KALI
     { TA_BLUE_STRING_KAYAH_LI_TOP,             TA_BLUE_PROPERTY_LATIN_TOP      |
                                                TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
@@ -842,11 +847,6 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_KAYAH_LI_DESCENDER,       0                                 }
     { TA_BLUE_STRING_KAYAH_LI_LARGE_DESCENDER, 0                                 }
     { TA_BLUE_STRING_MAX,                      0                                 }
-
-  TA_BLUE_STRINGSET_KNDA
-    { TA_BLUE_STRING_KANNADA_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
-    { TA_BLUE_STRING_KANNADA_BOTTOM, 0                          }
-    { TA_BLUE_STRING_MAX,            0                          }
 
   TA_BLUE_STRINGSET_KHMR
     { TA_BLUE_STRING_KHMER_TOP,             TA_BLUE_PROPERTY_LATIN_TOP      |
@@ -977,7 +977,7 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_ROHINGYA_TOP,    TA_BLUE_PROPERTY_LATIN_TOP     }
     { TA_BLUE_STRING_ROHINGYA_BOTTOM, 0                              }
     { TA_BLUE_STRING_ROHINGYA_JOIN,   TA_BLUE_PROPERTY_LATIN_NEUTRAL }
-    { TA_BLUE_STRING_MAX,           0                              }
+    { TA_BLUE_STRING_MAX,             0                              }
 
   TA_BLUE_STRINGSET_SAUR
     { TA_BLUE_STRING_SAURASHTRA_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
