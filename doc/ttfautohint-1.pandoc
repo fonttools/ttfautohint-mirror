@@ -845,6 +845,9 @@ Table: script-specific standard characters of the 'latin' writing system
               '\Latin{}O\latin{}', U+004F, LATIN CAPITAL LETTER O
               '\Latin{}0\latin{}', U+0030, DIGIT ZERO
   `lisu`      'ꓳ', U+A4F3, LISU LETTER
+  `medf`      '𖹡', U+16E61, MEDEFAIDRIN SMALL LETTER S
+              '𖹛', U+16E5B, MEDEFAIDRIN CAPITAL LETTER N
+              '𖹯', U+16E6F, MEDEFAIDRIN SMALL LETTER E
   `mlym`      'ഠ', U+0D20, MALAYALAM LETTER TTHA
               'റ', U+0D31, MALAYALAM LETTER RRA
   `mong`      '\Mongolian{}ᡂ\mongolian{}', U+1842, MONGOLIAN LETTER CHI
@@ -1300,6 +1303,19 @@ Table: `lisu` (Lisu) blue zones
   ----  -----------                            ------------
   1     top of letters                         ꓡ ꓧ ꓱ ꓶ ꓩ ꓚ ꓵ ꓳ
   2     bottom of letters                      ꓕ ꓜ ꓞ ꓡ ꓛ ꓢ ꓳ ꓴ
+
+
+Table: `medf` (Medefaidrin) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1     top of capital letters                 𖹀 𖹁 𖹂 𖹃 𖹏 𖹚 𖹟
+  2     bottom of capital letters              𖹀 𖹁 𖹂 𖹃 𖹏 𖹚 𖹒 𖹓
+  3     top of ascenders of small letters      𖹤 𖹬 𖹧 𖹴 𖹶 𖹾
+  4*    top of small letters                   𖹠 𖹡 𖹢 𖹹 𖹳 𖹮
+  5     bottom of small letters                𖹠 𖹡 𖹢 𖹳 𖹭 𖹽
+  6     bottom of descenders of small letters  𖹥 𖹨 𖹩
+  7     top of Medefaidrin digits              𖺀 𖺅 𖺈 𖺄 𖺍
 
 
 Table: `mlym` (Malayalam) blue zones
