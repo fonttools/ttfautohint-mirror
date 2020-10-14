@@ -967,6 +967,19 @@ const TA_Script_UniRangeRec ta_vaii_nonbase_uniranges[] =
 };
 
 
+const TA_Script_UniRangeRec ta_yezi_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x10E80, 0x10EBF), /* Yezidi */
+  TA_UNIRANGE_REC(      0,       0)
+};
+
+const TA_Script_UniRangeRec ta_yezi_nonbase_uniranges[] =
+{
+  TA_UNIRANGE_REC(0x10EAB, 0x10EAC),
+  TA_UNIRANGE_REC(      0,       0)
+};
+
+
 const TA_Script_UniRangeRec ta_none_uniranges[] =
 {
   TA_UNIRANGE_REC(0, 0)

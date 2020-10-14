@@ -368,6 +368,12 @@ SCRIPT(vaii, VAII,
        HINTING_BOTTOM_TO_TOP,
        "\xEA\x98\x93 \xEA\x96\x9C \xEA\x96\xB4") /* ꘓ ꖜ ꖴ */
 
+SCRIPT(yezi, YEZI,
+       "Yezidi",
+       HB_SCRIPT_YEZIDI,
+       HINTING_BOTTOM_TO_TOP,
+       "\xf0\x90\xba\x8b \xf0\x90\xba\xa6") /* 𐺋 𐺦 */
+
 SCRIPT(none, NONE,
        "no script",
        HB_SCRIPT_INVALID,

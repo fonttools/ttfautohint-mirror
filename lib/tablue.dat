@@ -541,6 +541,14 @@ TA_BLUE_STRING_ENUM TA_BLUE_STRINGS_ARRAY TA_BLUE_STRING_MAX_LEN:
   TA_BLUE_STRING_VAI_BOTTOM
     "ꗍ ꘖ ꘙ ꗞ ꔅ ꕢ ꖜ ꔆ"
 
+  TA_BLUE_STRING_YEZIDI_TOP
+    "𐺁 𐺂 𐺃 𐺄 𐺆 𐺉 𐺋"
+  TA_BLUE_STRING_YEZIDI_BOTTOM
+    "𐺁 𐺄 𐺆 𐺋 𐺍 𐺐"
+  TA_BLUE_STRING_YEZIDI_ASCENDER
+    "𐺀 𐺠 𐺡"
+  TA_BLUE_STRING_YEZIDI_DESCENDER
+    "𐺂 𐺃 𐺕 𐺛 𐺜 𐺝 𐺨"
 
 // The blue zone stringsets, as used in the script styles, cf. `tastyles.h'.
 //
@@ -1040,5 +1048,13 @@ TA_BLUE_STRINGSET_ENUM TA_BLUE_STRINGSETS_ARRAY TA_BLUE_STRINGSET_MAX_LEN:
     { TA_BLUE_STRING_VAI_TOP,    TA_BLUE_PROPERTY_LATIN_TOP }
     { TA_BLUE_STRING_VAI_BOTTOM, 0                          }
     { TA_BLUE_STRING_MAX,        0                          }
+
+  TA_BLUE_STRINGSET_YEZI
+    { TA_BLUE_STRING_YEZIDI_TOP,       TA_BLUE_PROPERTY_LATIN_TOP      |
+                                       TA_BLUE_PROPERTY_LATIN_X_HEIGHT   }
+    { TA_BLUE_STRING_YEZIDI_BOTTOM,    0                                 }
+    { TA_BLUE_STRING_YEZIDI_ASCENDER,  TA_BLUE_PROPERTY_LATIN_TOP        }
+    { TA_BLUE_STRING_YEZIDI_DESCENDER, 0                                 }
+    { TA_BLUE_STRING_MAX,              0                                 }
 
 // END

@@ -466,6 +466,13 @@ STYLE(vaii_dflt, VAII_DFLT,
       TA_BLUE_STRINGSET_VAII,
       TA_COVERAGE_DEFAULT)
 
+STYLE(yezi_dflt, YEZI_DFLT,
+      "Yezidi default style",
+      TA_WRITING_SYSTEM_LATIN,
+      TA_SCRIPT_YEZI,
+      TA_BLUE_STRINGSET_YEZI,
+      TA_COVERAGE_DEFAULT)
+
 STYLE(none_dflt, NONE_DFLT,
       "no style",
       TA_WRITING_SYSTEM_LATIN,
