@@ -37,10 +37,7 @@ directories.
  of it!]
 
   svn checkout \
-    https://github.com/googlei18n/noto-fonts/trunk/phaseIII_only/unhinted/ttf \
-    noto-fonts-alpha
-  svn checkout \
-    https://github.com/googlei18n/noto-fonts/trunk/unhinted \
+    https://github.com/googlei18n/noto-fonts/trunk/unhinted/ttf \
     noto-fonts
 
 Here is an example how to set `TTFONTS'.
