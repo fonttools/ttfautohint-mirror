@@ -46,8 +46,7 @@
   \newfontfamily{\latinfont}[Script=Latin]{NotoSans-Regular.ttf}
   \newfontfamily{\lisufont}[Script=Lisu]{NotoSansLisu-Regular.ttf}
   \newfontfamily{\malayalamfont}[Script=Malayalam]{NotoSansMalayalam-Regular.ttf}
-% XXX no Noto font available yet
-% \newfontfamily{\medefaidrinfont}[Script=Medefaidrin]{NotoSansMedefaidrin-Regular.ttf}
+  \newfontfamily{\medefaidrinfont}[Script=Medefaidrin]{NotoSansMedefaidrin-Regular.ttf}
   \newfontfamily{\mongolianfont}[Script=Mongolian]{NotoSansMongolian-Regular.ttf}
   \newfontfamily{\myanmarfont}[Script=Myanmar]{NotoSansMyanmar-Regular.ttf}
   \newfontfamily{\nkofont}[Script=N'Ko]{NotoSansNKo-Regular.ttf}
@@ -130,8 +129,8 @@
   \setTransitionFrom{Lisu}{\endgroup}
   \setTransitionTo{Malayalam}{\begingroup\malayalamfont}
   \setTransitionFrom{Malayalam}{\endgroup}
-% \setTransitionTo{Medefaidrin}{\begingroup\medefaidrinfont}
-% \setTransitionFrom{Medefaidrin}{\endgroup}
+  \setTransitionTo{Medefaidrin}{\begingroup\medefaidrinfont}
+  \setTransitionFrom{Medefaidrin}{\endgroup}
   % no transition for Mongolian font; we do that manually
   \setTransitionsForMyanmarFull{\begingroup\myanmarfont}{\endgroup}
   \setTransitionTo{NKo}{\begingroup\nkofont}
