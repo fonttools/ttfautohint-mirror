@@ -64,6 +64,8 @@
   \newfontfamily{\thaifont}[Script=Thai]{NotoSansThai-Regular.ttf}
   \newfontfamily{\tifinaghfont}[Script=Tifinagh]{NotoSansTifinagh-Regular.ttf}
   \newfontfamily{\vaifont}[Script=Vai]{NotoSansVai-Regular.ttf}
+% XXX no Noto font available yet
+% \newfontfamily{\yezidifont}[Script=Yezidi]{NotoSansYezidi-Regular.ttf}
 
   \usepackage{ucharclasses}
 
@@ -164,6 +166,8 @@
   \setTransitionFrom{Tifinagh}{\endgroup}
   \setTransitionTo{Vai}{\begingroup\vaifont}
   \setTransitionFrom{Vai}{\endgroup}
+% \setTransitionTo{Yezidi}{\begingroup\yezidifont}
+% \setTransitionFrom{Yezidi}{\endgroup}
 
   % the next commands are needed for manually switching fonts
   \def\Cyrillic{\begingroup\cyrillicfont}

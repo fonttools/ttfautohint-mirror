@@ -881,6 +881,8 @@ Table: script-specific standard characters of the 'latin' writing system
   `vaii`      'ꘓ', U+A613, VAI SYMBOL FEENG
               'ꖜ', U+A59C, VAI SYLLABLE BHU
               'ꖴ', U+A5B4, VAI SYLLABLE KU
+  `yezi`      '𐺋', U+10E8B, YEZIDI LETTER DAL
+              '𐺦', U+10EA6, YEZIDI LETTER EW
 
 
 Table: standard characters of the 'latin' writing system, special scripts
@@ -1486,8 +1488,18 @@ Table: `vaii` (Vai) blue zones
 
   ID    Blue zone                              Characters
   ----  -----------                            ------------
-  1     top of vai letters                     ꗍ ꘖ ꘙ ꘜ ꖜ ꖝ ꔅ ꕢ
-  2     bottom of vai letters                  ꗍ ꘖ ꘙ ꗞ ꔅ ꕢ ꖜ ꔆ
+  1     top of letters                         ꗍ ꘖ ꘙ ꘜ ꖜ ꖝ ꔅ ꕢ
+  2     bottom of letters                      ꗍ ꘖ ꘙ ꗞ ꔅ ꕢ ꖜ ꔆ
+
+
+Table: `yezi` (Yezidi) blue zones
+
+  ID    Blue zone                              Characters
+  ----  -----------                            ------------
+  1*    top of letters                         𐺁 𐺂 𐺃 𐺄 𐺆 𐺉 𐺋
+  2     bottom of letters                      𐺁 𐺄 𐺆 𐺋 𐺍 𐺐
+  3     top of ascenders of letters            𐺀 𐺠 𐺡
+  4     bottom of descenders of letters        𐺂 𐺃 𐺕 𐺛 𐺜 𐺝 𐺨
 
 
 ![This image shows the relevant glyph terms for vertical blue zone

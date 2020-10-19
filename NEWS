@@ -1,7 +1,8 @@
 Version 1.8.4 (2020-XXX-XX)
 ---------------------------
 
-  * Support for Hanifi Rohingya, Nyiakeng Puachue Hmong, and Medefaidrin.
+  * Support for Hanifi Rohingya, Nyiakeng Puachue Hmong, Medefaidrin, and
+    Yezidi.
 
   * Bug fix: Option combination `-f none -S` to suppress hinting of
     unassigned glyphs was broken.
