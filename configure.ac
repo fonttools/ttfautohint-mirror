@@ -242,29 +242,24 @@ html_file=$srcdir/doc/ttfautohint.html
 pdf_file=$srcdir/doc/ttfautohint.pdf
 
 # We use the Noto font family within the PDF documentation file, since it
-# has the best Unicode coverage of all freely available fonts.  However, due
-# to some bugs in the currently released version and lacking support for
-# some scripts, it is necessary to access fonts from the `noto-fonts-alpha'
-# git repository, which can be found at
-#
-#   https://github.com/googlei18n/noto-fonts-alpha/
-#
-# Interestingly, at least one font we need (`NotoSansGujarati-Regular.ttf')
-# is not yet present in the `noto-fonts-alpha' repository, so we have to
-# access the older
+# has the best Unicode coverage of all freely available fonts.
 #
 #   https://github.com/googlei18n/noto-fonts/
 #
-# also.
+# To be more precise, we don't directly access the git repository; instead,
+# we simply test the presence of a typical font file (using the `kpsewhich'
+# program as provided by TeXLive and other TeX distributions); the user
+# should set the TTFONTS environment variable to add the corresponding
+# directory to the TrueType font search path.
 #
-# To be more precise, we don't directly access the git repositories;
-# instead, we simply test the presence of two typical font files (using the
-# `kpsewhich' program as provided by TeXLive and other TeX distributions);
-# the user should set the TTFONTS environment variable to add the
-# corresponding directories to the TrueType font search path.
+# Example:
+#
+#   TTFONTS="/path/to/git/noto-fonts/unhinted/ttf//;"
+#
+# (note the trailing `;').
 
-noto_font_file=NotoSansGujarati-Regular.ttf
-noto_font_alpha_file=NotoSansArabic-Regular.ttf
+noto_font_file=NotoSerifYezidi-Regular.ttf
+
 
 if test x"$with_doc" != x"no"; then
   # snapshot image creation
@@ -312,13 +307,6 @@ if test x"$with_doc" != x"no"; then
         AC_MSG_WARN([Can't find `$noto_font_file'.])
         TA_DOC([$pdf_file],
                [Adjust the `TTFONTS' environment variable so that the Noto fonts are found.])
-      fi
-
-      $KPSEWHICH $noto_font_alpha_file &> /dev/null
-      if test $? -ne 0; then
-        AC_MSG_WARN([Can't find `$noto_font_alpha_file'.])
-        TA_DOC([$pdf_file],
-               [Adjust the `TTFONTS' environment variable so that the Noto alpha fonts are found.])
       fi
     fi
   fi
