@@ -11,7 +11,7 @@
 # with the ttfautohint library.
 
 AC_INIT([ttfautohint],
-        m4_esyscmd([gnulib/git-version-gen VERSION]),
+        [m4_esyscmd(gnulib/git-version-gen VERSION)],
         [freetype-devel@nongnu.org])
 AC_CONFIG_AUX_DIR([gnulib])
 AC_CONFIG_SRCDIR([lib/ttfautohint.pc.in])
@@ -303,22 +303,22 @@ if test x"$with_doc" != x"no"; then
   else
     AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [no])
     if test x"$KPSEWHICH" == x"no"; then
-      AC_MSG_WARN([Can't find \`kpsewhich' to check presence of Noto font files automatically.])
+      AC_MSG_WARN([Can't find `kpsewhich' to check presence of Noto font files automatically.])
       TA_DOC([$pdf_file],
-             [Adjust the \`TTFONTS' environment variable so that the fonts are found.])
+             [Adjust the `TTFONTS' environment variable so that the fonts are found.])
     else
       $KPSEWHICH $noto_font_file &> /dev/null
       if test $? -ne 0; then
-        AC_MSG_WARN([Can't find \`$noto_font_file'.])
+        AC_MSG_WARN([Can't find `$noto_font_file'.])
         TA_DOC([$pdf_file],
-               [Adjust the \`TTFONTS' environment variable so that the Noto fonts are found.])
+               [Adjust the `TTFONTS' environment variable so that the Noto fonts are found.])
       fi
 
       $KPSEWHICH $noto_font_alpha_file &> /dev/null
       if test $? -ne 0; then
-        AC_MSG_WARN([Can't find \`$noto_font_alpha_file'.])
+        AC_MSG_WARN([Can't find `$noto_font_alpha_file'.])
         TA_DOC([$pdf_file],
-               [Adjust the \`TTFONTS' environment variable so that the Noto alpha fonts are found.])
+               [Adjust the `TTFONTS' environment variable so that the Noto alpha fonts are found.])
       fi
     fi
   fi
