@@ -49,6 +49,9 @@ search all subdirectories.  Also note the trailing `:' character, which
 ensures that the directories are prepended to the built-in value of
 `TTFONTS' (instead of replacing it).
 
+For correct conversion of the SVG images to PDF, the `Linux Libertine O'
+font family must be provided by the OS to inkscape.
+
 Say
 
   ./bootstrap
