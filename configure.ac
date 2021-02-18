@@ -300,10 +300,14 @@ if test x"$with_doc" != x"no"; then
     if test x"$KPSEWHICH" == x"no"; then
       AC_MSG_WARN([Can't find `kpsewhich' to check presence of Noto font files automatically.])
       TA_DOC([$pdf_file],
-             [Adjust the `TTFONTS' environment variable so that the fonts are found.])
+             [Need kpsewhich to find fonts for documentation in PDF format.])
     else
+      AC_MSG_CHECKING([for font $noto_font_file])
       $KPSEWHICH $noto_font_file &> /dev/null
-      if test $? -ne 0; then
+      if test $? -eq 0; then
+        AC_MSG_RESULT([yes])
+      else
+        AC_MSG_RESULT([no])
         AC_MSG_WARN([Can't find `$noto_font_file'.])
         TA_DOC([$pdf_file],
                [Adjust the `TTFONTS' environment variable so that the Noto fonts are found.])
