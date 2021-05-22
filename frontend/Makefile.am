@@ -18,12 +18,18 @@ moc_verbose_ = $(moc_verbose_@AM_DEFAULT_V@)
 moc_verbose_0 = @echo "  MOC     " $@;
 
 # moc from Qt5 aborts if unknown command line options are supplied;
-# in particular, it doesn't recognize `-isystem'
+# in particular, it doesn't recognize `-isystem'.
+#
+# We must also ensure that `config.h' gets included first.
 .h.moc.cpp:
-	$(moc_verbose)$(MOC) \
-	  `echo $(QT_CPPFLAGS) | sed 's/-isystem/-I/g'` \
-	  $(EXTRA_CPPFLAGS) \
-	  $< -o $@
+	$(moc_verbose){ \
+	  echo '#include <config.h>'; \
+	  $(MOC) \
+	    `echo $(QT_CPPFLAGS) | sed 's/-isystem/-I/g'` \
+	    $(EXTRA_CPPFLAGS) \
+	    $< ; \
+	} > $@.tmp
+	@mv $@.tmp $@
 
 DISTCLEANFILES = $(BUILT_SOURCES)
 
