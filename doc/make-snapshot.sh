@@ -48,7 +48,9 @@ find_WID()
       WID=`echo $DATA | awk '{print $1}'`
 
       # Check whether the window's PID is matching the application's PID.
-      if [ `xprop -id $WID _NET_WM_PID | awk '{print $3}'` -eq $PID ]; then
+      # We use `=' for the comparison instead of `-eq' because `xprop'
+      # can return non-numerical values.
+      if [ `xprop -id $WID _NET_WM_PID | awk '{print $3}'` = $PID ]; then
         # Check whether window is displayed actually.
         if [ "`xwininfo -id $WID | grep 'IsViewable'`" != '' ]; then
           echo $WID
