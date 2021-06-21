@@ -161,6 +161,8 @@ ttfautohint.h: ttfautohint.h.in
 	  > "$@" \
 	|| (rm "$@"; false)
 
+DISTCLEANFILES = ttfautohint.h
+
 TA_V_FLEX = $(TA_V_FLEX_@AM_V@)
 TA_V_FLEX_ = $(TA_V_FLEX_@AM_DEFAULT_V@)
 TA_V_FLEX_0 = @echo "  FLEX    " $@;
