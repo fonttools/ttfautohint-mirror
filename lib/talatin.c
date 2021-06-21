@@ -1883,6 +1883,31 @@ ta_latin_hints_compute_segments(TA_GlyphHints hints,
           && (TA_ABS(point->out_dir) == major_dir
               || point == point->prev))
       {
+        /*
+         * For efficiency, we restrict the number of segments to 1000,
+         * which is a heuristic value: it is very unlikely that a glyph
+         * with so many segments can be hinted in a sensible way.
+         * Reasons:
+         *
+         * - The glyph has really 1000 segments; this implies that it has
+         *   at least 2000 outline points.  Assuming 'normal' fonts that
+         *   have superfluous points optimized away, viewing such a glyph
+         *   only makes sense at large magnifications where hinting
+         *   isn't applied anyway.
+         *
+         * - We have a broken glyph.  Hinting doesn't make sense in this
+         *   case either.
+         */
+        if (axis->num_segments > 1000)
+        {
+          TA_LOG_GLOBAL(("ta_latin_hints_compute_segments:"
+                         " more than 1000 segments in this glyph;\n"
+                         "                                "
+                         " hinting is suppressed\n"));
+          axis->num_segments = 0;
+          return FT_Err_Ok;
+        }
+
         /* this is the start of a new segment! */
         segment_dir = (TA_Direction)point->out_dir;
 
