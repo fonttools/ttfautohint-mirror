@@ -33,7 +33,8 @@ moc_verbose_0 = @echo "  MOC     " $@;
 
 DISTCLEANFILES = $(BUILT_SOURCES)
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib \
+AM_CPPFLAGS = -I$(top_builddir)/lib \
+              -I$(top_srcdir)/lib \
               -I$(top_builddir)/gnulib/src \
               -I$(top_srcdir)/gnulib/src \
               $(FREETYPE_CPPFLAGS)
