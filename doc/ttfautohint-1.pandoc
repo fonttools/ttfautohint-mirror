@@ -186,7 +186,7 @@ On all supported platforms (GNU/Linux, Windows, and Mac OS\ X), the GUI
 looks quite similar; the used toolkit is [Qt], which in turn uses the
 platform's native widgets.
 
-![`ttfautohintGUI` on GNU/Linux running KDE](img/ttfautohintGUI.png)
+![`ttfautohintGUI` on GNU/Linux running KDE](ttfautohintGUI.png)
 
 Both the GUI and console version share the same features, to be discussed in
 the next subsection.
@@ -285,7 +285,7 @@ given [afterwards](#background-and-technical-details).
     ![Fira Regular and Bold (version 4.106), auto-hinted with ttfautohint
       and displayed at 16px using Internet Explorer\ 11 under Windows\ 8.1.
       The bold series shown on the right side uses the regular variant as
-      the reference font.](img/fira-16px-ie11-win81.png)
+      the reference font.](fira-16px-ie11-win81.png)
 
     To make this work the reference font must obviously be similar enough to
     the font to be hinted; in particular, it must have proper blue zone
@@ -374,10 +374,10 @@ bytecode larger.
       with black because it uses B/W rendering along the y\ axis.
       ttfautohint's 'smooth' stem width algorithm intentionally aligns
       horizontal lines to non-integer (but still discrete) values to avoid
-      large glyph shape distortions.](img/e-17px-x14.png)
+      large glyph shape distortions.](e-17px-x14.png)
 
     ![The same, this time with option `-x 17` (and
-      `-a qqq`).](img/e-17px-x17.png)
+      `-a qqq`).](e-17px-x17.png)
 
 ### x Height Snapping Exceptions
 
@@ -629,7 +629,7 @@ to value 'Version' in the 'ttfautohint info' combo box.
       as displayed with the 'ftgrid' demo program of FreeType.  Top left is
       unhinted, top right is hinted using ttfautohint natural stem width
       mode.  Bottom left and right uses the quantized and strong stem width
-      modes, respectively.](img/Merriweather-Black-g-21px-comparison.png)
+      modes, respectively.](Merriweather-Black-g-21px-comparison.png)
 
 `--strong-stem-width=`*string*, `-w`\ *string*
 
@@ -712,7 +712,7 @@ A glyph consists of one or more *contours* (this is, closed curves).  For
 example, glyph 'O' consists of two contours, while glyph 'I' has only one.
 
 ![The letter 'O' has two contours, an inner and an outer one, while letter
-  'I' has only an outer contour.](img/o-and-i)
+  'I' has only an outer contour.](o-and-i)
 
 A *segment* is a series of consecutive points of a contour (including its
 Bézier control points) that are approximately aligned along a coordinate
@@ -726,7 +726,7 @@ one-point segments, which are useful for fine-tuning the hinting process.
   circles, respectively.  The bottom 'line' DE is approximately aligned
   along the horizontal axis, thus it forms a segment of 7\ points.  Together
   with the two other horizontal segments, BC and FG, they form two edges
-  (BC+FG, DE).](img/segment-edge)
+  (BC+FG, DE).](segment-edge)
 
 An *edge* corresponds to a single coordinate value (allowing for a small
 threshold) on the main dimension that collects one or more segments, all
@@ -915,7 +915,7 @@ Blue Zones
 ![Two blue zones relevant to the glyph 'a'.  Vertical point coordinates of
   *all* glyphs within these zones are aligned, provided the blue zone is
   active (this is, its vertical size is smaller than
-  3/4\ pixels).](img/blue-zones)
+  3/4\ pixels).](blue-zones)
 
 Outlines of certain characters are used to determine *blue zones*.  This
 concept is the same as with Type\ 1 fonts: All glyph points that lie in
@@ -1503,7 +1503,7 @@ Table: `yezi` (Yezidi) blue zones
 
 
 ![This image shows the relevant glyph terms for vertical blue zone
-  positions.](img/glyph-terms)
+  positions.](glyph-terms)
 
 
 Grid Fitting
@@ -1534,12 +1534,12 @@ the freely available font '[Ubuntu Book](https://design.ubuntu.com/font/)'.  The
 manual hints were added by [Dalton Maag Ltd], the used application to create
 the hinting debug snapshots was [FontForge].
 
-![Before hinting.](img/a-before-hinting.png)
+![Before hinting.](a-before-hinting.png)
 
-![After hinting, using manual hints.](img/a-after-hinting.png)
+![After hinting, using manual hints.](a-after-hinting.png)
 
 ![After hinting, using ttfautohint.  Note that the hinting process
-  doesn't change horizontal positions.](img/a-after-autohinting.png)
+  doesn't change horizontal positions.](a-after-autohinting.png)
 
 
 Hint Sets
@@ -1566,18 +1566,18 @@ change makes ttfautohint emit a new hint set to accomodate this situation.
 The next images illustrate this, using a Cyrillic letter (glyph 'afii10108')
 from the 'Ubuntu book' font, processed with ttfautohint.
 
-![Before hinting, size 11px.](img/afii10108-11px-before-hinting.png)
+![Before hinting, size 11px.](afii10108-11px-before-hinting.png)
 
 ![After hinting, size 11px.  Segments 43-27-28 and 14-15 are aligned on a
   single edge, as are segments 26-0-1 and
-  20-21.](img/afii10108-11px-after-hinting.png)
+  20-21.](afii10108-11px-after-hinting.png)
 
-![Before hinting, size 12px.](img/afii10108-12px-before-hinting.png)
+![Before hinting, size 12px.](afii10108-12px-before-hinting.png)
 
 ![After hinting, size 12px.  The segments are not aligned.  While
   segments 43-27-28 and 20-21 now have almost the same horizontal position,
   they don't form an edge because the outlines passing through the segments
-  point into different directions.](img/afii10108-12px-after-hinting.png)
+  point into different directions.](afii10108-12px-after-hinting.png)
 
 Obviously, the more hint sets get emitted, the larger the bytecode
 ttfautohint adds to the output font.  To find a good value\ *n* for
@@ -1631,18 +1631,18 @@ demonstrate.
   hinted before they are glued together (possibly applying scaling and
   shifting).  Because the `ROUND_XY_TO_GRID` flag isn't set, the vertical
   translation doesn't align the subglyph to the pixel grid, causing severe
-  distortions.](img/composite-no-round-xy-to-grid.png)
+  distortions.](composite-no-round-xy-to-grid.png)
 
 ![The same as before, but with `ROUND_XY_TO_GRID` set.  Now the subscript
   glyphs look identical to the
-  superscripts.](img/composite-round-xy-to-grid.png)
+  superscripts.](composite-round-xy-to-grid.png)
 
 ![For comparison purposes, here the result *with* option `--composites` (and
   no `ROUND_XY_TO_GRID`).  The composite glyphs as a whole get hinted;
   consequently, the subscript glyphs get separate blue zones.  At the
   displayed size of 16ppem the vertical positions of the subscript blue
   zones are rounded differently if compared to the superscript zones, thus
-  the smaller glyph height.](img/composite-no-round-xy-to-grid-option-c.png)
+  the smaller glyph height.](composite-no-round-xy-to-grid-option-c.png)
 
 
 The '\.ttfautohint' Glyph
@@ -2117,12 +2117,12 @@ how to use direction changes.
 
 ![The outlines of glyphs 'O' and 'Q', as displayed in FontForge.  They are
   sufficiently similar to expect that ttfautohint hints them equally.
-  However, this is not the case.](img/Halant-Regular-O-Q.png)
+  However, this is not the case.](Halant-Regular-O-Q.png)
 
 ![The same glyphs, shown at 12px before hinting.  [Please ignore the outline
   distortion in the upper right of glyph 'O'; this is a bug in FontForge
   while running the TrueType
-  debugger.]](img/Halant-Regular-O-Q-unhinted-12px.png)
+  debugger.]](Halant-Regular-O-Q-unhinted-12px.png)
 
 ![Using only ttfautohint's '`-a sss`' parameter to force strong stem width
   and positioning, the hinting of glyph 'Q' is really bad, making the glyph
@@ -2132,7 +2132,7 @@ how to use direction changes.
   a 'stem' with the baseline segment (as segment 7-8 does in glyph 'O').
   Instead, it forms a stem with segment 19-20, which gets moved down
   (*y*\ =\ −1) because the whole glyph appears to be
-  stretched.](img/Halant-Regular-O-good-Q-badly-hinted-12px.png)
+  stretched.](Halant-Regular-O-good-Q-badly-hinted-12px.png)
 
 ![To fix the problem, we change the direction of point\ 38 to 'left' by
   writing a line '`Q left 38`' (without the quotes) to a control description
@@ -2142,7 +2142,7 @@ how to use direction changes.
   segment\ 38, and the 'O'-like shape is properly positioned.  However,
   there is still room for improvement: Segment 19-20 is also positioned at
   the baseline, making the connection between the 'O' shape and the tail too
-  thin.](img/Halant-Regular-O-good-Q-better-hinted-12px.png)
+  thin.](Halant-Regular-O-good-Q-better-hinted-12px.png)
 
 ![By giving the one-point segment\ 38 a horizontal width, we can prevent
   that segment 19-20 gets positioned at the baseline: Replace the line in
@@ -2154,7 +2154,7 @@ how to use direction changes.
   the control instructions file; for our 'Q' glyph, this produces almost
   exactly the same hinting results.  Note that such direction changes only
   influence the hinting process; an outline's direction won't be changed at
-  all.](img/Halant-Regular-O-good-Q-well-hinted-12px.png)
+  all.](Halant-Regular-O-good-Q-well-hinted-12px.png)
 
 ### Unset Direction of Points
 

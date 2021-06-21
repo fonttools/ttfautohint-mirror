@@ -108,6 +108,8 @@ if WITH_DOC
                     ttfautohint-css.html ttfautohint-js.html \
                     template.html $(top_builddir)/.version
 	  $(PANDOC) --from=markdown+smart \
+	            --resource-path=$(srcdir)/img \
+	            --resource-path=$(builddir)/img \
 	            --template=$(srcdir)/template.html \
 	            --default-image-extension=".svg" \
 	            --variable="version:$(VERSION)" \
@@ -121,6 +123,8 @@ if WITH_DOC
                    template.tex $(top_builddir)/.version
 	  TEXINPUTS="$(srcdir);" \
 	  $(PANDOC) --from=markdown+smart \
+	            --resource-path=$(srcdir)/img \
+	            --resource-path=$(builddir)/img \
 	            --pdf-engine=$(LATEX) \
 	            --template=$(srcdir)/template.tex \
 	            --default-image-extension=".pdf" \

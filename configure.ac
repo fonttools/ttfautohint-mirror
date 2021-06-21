@@ -318,16 +318,9 @@ fi
 
 AM_CONDITIONAL([WITH_DOC], [test x"$with_doc" != x"no"])
 
-# pandoc (currently version 1.15.2.1) doesn't have the equivalent to
-# a compiler's `-I' command line option to make it search image files
-# in specified directories; for this reason, we create symlinks.
-AC_CONFIG_COMMANDS([doc/img/create-links],
-                   [abs_top_srcdir=`(cd "$srcdir"; pwd)`
-                    abs_top_builddir=`pwd`
-                    if test "$abs_top_srcdir" != "$abs_top_builddir"; then
-                      cd doc \
-                      && $LN_S "$abs_top_srcdir"/doc/img/* img
-                    fi])
+# Let autoconf create the `img' subdirectory, if necessary.
+# `mkdir' is just a tag.
+AC_CONFIG_COMMANDS([doc/img/mkdir], [true])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile
