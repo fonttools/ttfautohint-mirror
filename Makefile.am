@@ -4,7 +4,7 @@
 # all -I directives currently must be set on a single line
 ACLOCAL_AMFLAGS = -I gnulib/m4 -I m4
 
-SUBDIRS = gnulib/src \
+SUBDIRS = . \
           lib \
           frontend \
           doc
@@ -23,5 +23,17 @@ BUILT_SOURCES = .version
 
 dist-hook:
 	echo $(VERSION) > $(distdir)/VERSION.TXT
+
+noinst_LTLIBRARIES =
+MOSTLYCLEANFILES =
+CLEANFILES =
+MOSTLYCLEANDIRS =
+
+AM_CPPFLAGS = -I$(top_builddir)/lib \
+              -I$(top_srcdir)/lib \
+              -I$(top_builddir)/gnulib/src \
+              -I$(top_srcdir)/gnulib/src
+
+include $(top_srcdir)/gnulib/src/gnulib.mk
 
 ## end of Makefile.am

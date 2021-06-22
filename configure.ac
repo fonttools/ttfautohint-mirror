@@ -16,7 +16,7 @@ AC_INIT([ttfautohint],
 AC_CONFIG_AUX_DIR([gnulib])
 AC_CONFIG_SRCDIR([lib/ttfautohint.pc.in])
 
-AM_INIT_AUTOMAKE([-Wall -Werror tar-ustar]
+AM_INIT_AUTOMAKE([-Wall -Werror tar-ustar subdir-objects]
                  m4_bmatch(m4_defn([AC_PACKAGE_VERSION]),
                            [-], [gnu],
                            [gnits]))
@@ -324,7 +324,6 @@ AC_CONFIG_COMMANDS([doc/img/mkdir], [true])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile
-                 gnulib/src/Makefile
                  lib/Makefile
                  frontend/Makefile
                  frontend/static-plugins.cpp
