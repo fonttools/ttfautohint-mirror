@@ -4,8 +4,6 @@
 # all -I directives currently must be set on a single line
 ACLOCAL_AMFLAGS = -I gnulib/m4 -I m4
 
-SUBDIRS = . \
-          doc
 EXTRA_DIST = bootstrap \
              bootstrap.conf \
              FTL.TXT \
@@ -36,5 +34,6 @@ AM_CPPFLAGS = -I$(top_builddir)/lib \
 include $(top_srcdir)/gnulib/src/gnulib.mk
 include $(top_srcdir)/lib/local.mk
 include $(top_srcdir)/frontend/local.mk
+include $(top_srcdir)/doc/local.mk
 
 ## end of Makefile.am

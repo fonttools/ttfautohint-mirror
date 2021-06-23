@@ -324,8 +324,7 @@ AC_CONFIG_COMMANDS([doc/img/mkdir], [true])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile
-                 frontend/static-plugins.cpp
-                 doc/Makefile])
+                 frontend/static-plugins.cpp])
 AC_OUTPUT
 
 # end of configure.ac
