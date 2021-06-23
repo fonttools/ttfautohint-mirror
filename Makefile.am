@@ -5,7 +5,6 @@
 ACLOCAL_AMFLAGS = -I gnulib/m4 -I m4
 
 SUBDIRS = . \
-          frontend \
           doc
 EXTRA_DIST = bootstrap \
              bootstrap.conf \
@@ -36,5 +35,6 @@ AM_CPPFLAGS = -I$(top_builddir)/lib \
 
 include $(top_srcdir)/gnulib/src/gnulib.mk
 include $(top_srcdir)/lib/local.mk
+include $(top_srcdir)/frontend/local.mk
 
 ## end of Makefile.am
