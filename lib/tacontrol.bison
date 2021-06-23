@@ -31,9 +31,6 @@
 
 %require "2.5" /* we use named references */
 
-%output "tacontrol-bison.c"
-%defines "tacontrol-bison.h"
-
 %define api.pure
 %error-verbose
 %expect 7

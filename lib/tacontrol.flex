@@ -22,9 +22,6 @@
 /* you should use flex version >= 2.5.39 to avoid various buglets */
 /* that don't have work-arounds */
 
-%option outfile="tacontrol-flex.c"
-%option header-file="tacontrol-flex.h"
-
 %option batch
 %option bison-bridge
 %option bison-locations

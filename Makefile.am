@@ -5,7 +5,6 @@
 ACLOCAL_AMFLAGS = -I gnulib/m4 -I m4
 
 SUBDIRS = . \
-          lib \
           frontend \
           doc
 EXTRA_DIST = bootstrap \
@@ -27,6 +26,7 @@ dist-hook:
 noinst_LTLIBRARIES =
 MOSTLYCLEANFILES =
 CLEANFILES =
+DISTCLEANFILES =
 MOSTLYCLEANDIRS =
 
 AM_CPPFLAGS = -I$(top_builddir)/lib \
@@ -35,5 +35,6 @@ AM_CPPFLAGS = -I$(top_builddir)/lib \
               -I$(top_srcdir)/gnulib/src
 
 include $(top_srcdir)/gnulib/src/gnulib.mk
+include $(top_srcdir)/lib/local.mk
 
 ## end of Makefile.am
