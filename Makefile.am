@@ -8,6 +8,7 @@ EXTRA_DIST = bootstrap \
              bootstrap.conf \
              FTL.TXT \
              gnulib/m4/gnulib-cache.m4 \
+             gnulib/prefix-gnulib-mk.diff \
              GPLv2.TXT \
              README \
              TODO \
