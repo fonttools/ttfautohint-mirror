@@ -72,7 +72,9 @@ if USE_QT
     frontend/static-plugins.cpp \
     frontend/ttlineedit.moc.cpp
 
-  frontend_ttfautohintGUI_CXXFLAGS = $(QT_CXXFLAGS)
+  # We want compatibility with Qt < 5.11
+  frontend_ttfautohintGUI_CXXFLAGS = $(QT_CXXFLAGS) \
+                                     -Wno-deprecated-declarations
   frontend_ttfautohintGUI_LDFLAGS = $(QT_LDFLAGS)
   frontend_ttfautohintGUI_CPPFLAGS = $(AM_CPPFLAGS) \
                                      $(FREETYPE_CPPFLAGS) \
