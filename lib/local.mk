@@ -1,4 +1,4 @@
-## lib/local.mk
+# lib/local.mk
 
 # Copyright (C) 2011-2021 by Werner Lemberg.
 #
