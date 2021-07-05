@@ -248,7 +248,7 @@ pdf_file=$srcdir/doc/ttfautohint.pdf
 #
 # To be more precise, we don't directly access the git repository; instead,
 # we simply test the presence of a typical font file (using the `kpsewhich'
-# program as provided by TeXLive and other TeX distributions); the user
+# program as provided by TeX Live and other TeX distributions); the user
 # should set the TTFONTS environment variable to add the corresponding
 # directory to the TrueType font search path.
 #

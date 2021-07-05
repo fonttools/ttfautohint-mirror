@@ -21,15 +21,15 @@ distributed with the release package), the following is necessary:
   inkscape (0.48.2)
   X11 (in particular the `xwininfo' program)
   ImageMagick (6.7.4)
-  xelatex (TeXLive 2018)
+  xelatex (TeX Live 2018)
 
 The version numbers in parentheses are known to work.  Newer versions should
 work also.
 
-The main font for the PDF file is Libertine; in addition, we use various
-sans-serif TrueType fonts from the Noto family which are not part of
-TeXLive.  To access them it is recommended to use SVN to clone parts of the
-huge `noto-fonts' git repository and adjust the `TTFONTS' environment
+The main font for the PDF file is `Linux Libertine O'; in addition, we use
+various sans-serif TrueType fonts from the `Noto' family that are not part
+of TeX Live.  To access them it is recommended to use SVN to clone parts of
+the huge `noto-fonts' git repository and adjust the `TTFONTS' environment
 variable accordingly to make xelatex find the fonts in the proper
 directories.
 
@@ -42,12 +42,12 @@ directories.
 
 Here is an example how to set `TTFONTS'.
 
-  TTFONTS="/home/wl/noto-fonts-alpha//:/home/wl/noto-fonts//:"
+  TTFONTS="/your/path/to/noto-fonts/unhinted/ttf//;"
 
 Note the double slash ending the path elements; this makes TeX and its tools
-search all subdirectories.  Also note the trailing `:' character, which
-ensures that the directories are prepended to the built-in value of
-`TTFONTS' (instead of replacing it).
+search all subdirectories.  Also note the trailing `;' character to ensure
+that the directories are prepended to the built-in value of `TTFONTS'
+(instead of replacing it).
 
 For correct conversion of the SVG images to PDF, the `Linux Libertine O'
 font family must be provided by the OS to inkscape.
@@ -58,16 +58,15 @@ Say
 
 to clone the `gnulib' repository (which gets installed as a git submodule),
 to build the `configure' script, and to set up necessary auxiliary files.
-Then you can proceed with the instructions given in the `INSTALL' file with
-the exception that parellel builds with `make -j' are not supported yet.
+Then you can proceed with the instructions given in the `INSTALL' file.
 
 
 compilation within the MinGW environment (on Windows)
 -----------------------------------------------------
 
-[http://mingw.org]
+[https://osdn.net/projects/mingw/]
 
-  o Since MSYS, the shell of MinGW, uses LF as line endings, `git checkout'
+  - Since MSYS, the shell of MinGW, uses LF as line endings, `git checkout'
     should not convert files to CRLF.  Before checking out the FreeType and
     ttfautohint repositories, you should issue the command
 
@@ -75,14 +74,14 @@ compilation within the MinGW environment (on Windows)
 
     to avoid any line ending conversion.
 
-  o At the time of this writing (February 2014), the current MinGW bundle
+  - At the time of this writing (February 2014), the current MinGW bundle
     (in particular mingwrt-4.0.3; the gcc version is 4.8.1) contains a
     number of bugs that need work-arounds.  For this reason, you should use
     FreeType version 2.5.3 (or the git repository) and HarfBuzz version
     0.9.27 or newer.  The configuration scripts work just fine in an MSYS
     shell.
 
-  o Only a very special functionality of HarfBuzz is needed; you might thus
+  - Only a very special functionality of HarfBuzz is needed; you might thus
     reduce dependencies by adding the following options to its `configure'
     script:
 
@@ -91,12 +90,12 @@ compilation within the MinGW environment (on Windows)
       --with-cairo=no
       --with-icu=no
 
-  o You need bison 2.5 or newer.  MinGW doesn't offer this, but you can
+  - You need bison 2.5 or newer.  MinGW doesn't offer this, but you can
     download a MinGW port of version 3.0.2 from
 
       https://sourceforge.net/projects/ezwinports/files/
 
-  o To compile a stand-alone version of ttfautohintGUI we must compile a
+  - To compile a stand-alone version of ttfautohintGUI we must compile a
     static version of Qt 4 first.  I've successfully followed these
     instructions with version 4.8.5
 
@@ -122,7 +121,7 @@ compilation within the MinGW environment (on Windows)
 
       --with-qt=/path/to/qt-4.8.5/bin
 
-  o Now configure and compile ttfautohint (within an MSYS shell) using
+  - Now configure and compile ttfautohint (within an MSYS shell) using
 
       configure \
         CXX='g++ -static-libgcc' \
@@ -140,9 +139,12 @@ compilation with mxe (on Unix, for Windows)
 
 [https://mxe.cc]
 
-  o Check out the mxe git repository.
+The following describes installation with Qt version 5.15.2 (as used by mxe
+in July 2021).
 
-  o Apply the following two patches to get smaller ttfautohint binaries.
+  - Check out the mxe git repository.
+
+  - Apply the following two patches to get smaller ttfautohint binaries.
 
 diff --git a/src/harfbuzz.mk b/src/harfbuzz.mk
 index 6b299da..bb56456 100644
@@ -160,10 +162,10 @@ index 6b299da..bb56456 100644
      $(MAKE) -C '$(1)' -j '$(JOBS)' install
  endef
 diff --git a/src/qt.mk b/src/qt.mk
-index 889394e..aaf59f7 100644
+index a8268ac4..17e8ead7 100644
 --- a/src/qt.mk
 +++ b/src/qt.mk
-@@ -32,13 +32,16 @@ define $(PKG)_BUILD
+@@ -41,13 +41,16 @@ define $(PKG)_BUILD
          -device-option PKG_CONFIG='$(TARGET)-pkg-config' \
          -force-pkg-config \
          -release \
@@ -182,10 +184,11 @@ index 889394e..aaf59f7 100644
          -no-webkit \
          -no-glib \
          -no-gstreamer \
-@@ -51,11 +54,7 @@ define $(PKG)_BUILD
+@@ -61,12 +64,7 @@ define $(PKG)_BUILD
          -nomake demos \
          -nomake docs \
          -nomake examples \
+-        -xmlpatterns \
 -        -qt-sql-sqlite \
 -        -qt-sql-odbc \
 -        -qt-sql-psql \
@@ -196,24 +199,10 @@ index 889394e..aaf59f7 100644
          -system-libpng \
          -system-libjpeg \
 
-  o Put the following patch into a file called `qt-2.patch' and add it to
-    mxe's `src' directory.  This also helps reduce the size of the `qt'
-    libraries.
+  - Copy the file `aux/qtlocation-2.patch' into the mxe directory `src'.
 
---- a/mkspecs/win32-g++/qmake.conf
-+++ b/mkspecs/win32-g++/qmake.conf
-@@ -31,7 +31,7 @@
- QMAKE_CFLAGS_DEPS	= -M
- QMAKE_CFLAGS_WARN_ON	= -Wall -Wextra
- QMAKE_CFLAGS_WARN_OFF	= -w
--QMAKE_CFLAGS_RELEASE	= -O2
-+QMAKE_CFLAGS_RELEASE	= -Os -momit-leaf-frame-pointer
- QMAKE_CFLAGS_DEBUG	= -g
- QMAKE_CFLAGS_YACC	= -Wno-unused -Wno-parentheses
-
-  o At the time of this writing (January 2016), mxe's default target is
-    `i686-w64-mingw32.static', which builds a 32bit static executable.  We
-    want exactly that for the distributed binaries.
+  - mxe's default target is `i686-w64-mingw32.static', which builds a 32bit
+    static executable.  We want exactly that for the distributed binaries.
 
     [For private builds, however, this can be changed by setting the
      `MXE_TARGETS' variable in the `settings.mk' file.  A template for this
@@ -222,26 +211,24 @@ index 889394e..aaf59f7 100644
      adjust `settings.mk' to your needs, then continue with the instructions
      below.  More details can be found on mxe's homepage.]
 
-  o Now build the necessary mxe infrastructure with
+  - Now build the necessary mxe infrastructure with
 
-      make check-requirements
-      make qt
-      make freetype
+      make qt5
 
-    These calls download packages with a total size of approx. 550MBytes. 
+    This downloads packages with a total size of approx. 720MBytes.
     Compilation easily takes some hours on a slower computer; all together
-    it finally occupies slightly more than 2GBytes on the harddisk.
+    it finally occupies slightly more than 3GBytes on the harddisk.
 
-  o You are now ready to build ttfautohint from the git repository with
+  - You are now ready to build ttfautohint from the git repository with
 
-      export PATH=/your/path/to/git/mxe/usr/bin:$PATH
+      export PATH=/your/path/to/mxe/usr/bin:$PATH
 
       mkdir out
 
       ./bootstrap
       ./configure \
         --host=i686-w64-mingw32.static \
-        --with-qt=/your/path/to/git/mxe/usr/i686-w64-mingw32.static/qt/bin \
+        --with-qt=/your/path/to/mxe/usr/i686-w64-mingw32.static/qt5/bin \
         --disable-shared \
         --without-doc \
         --prefix=`pwd`/out
