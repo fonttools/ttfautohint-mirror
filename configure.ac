@@ -92,6 +92,8 @@ AC_PATH_PROG([FLEX], [flex])
 gl_INIT
 
 PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 2.4.0])
+HARFBUZZ_CPPFLAGS="$HARFBUZZ_CFLAGS"
+AC_SUBST([HARFBUZZ_CPPFLAGS])
 
 AT_WITH_QT([], [], [QTPLUGIN.imageformats = -])
 AT_REQUIRE_QT_VERSION([4.6])
@@ -111,11 +113,9 @@ AM_CONDITIONAL([USE_QT], [test x"$with_qt" != x"no"])
 LT_INIT
 LT_LTLIZE_LANG([C])
 
-
 # We use libtool's convenient check for the math library.
 LT_LIB_M
 AC_SUBST([LIBM])
-
 
 AC_ARG_WITH([doc],
             [AS_HELP_STRING([--with-doc],
@@ -123,40 +123,9 @@ AC_ARG_WITH([doc],
             [],
             [with_doc=yes])
 
-AC_ARG_WITH([freetype-config],
-            [AS_HELP_STRING([--with-freetype-config=PROG],
-                            [use FreeType configuration program PROG])],
-            [freetype_config=$withval],
-            [freetype_config=yes])
-
-if test "$freetype_config" = "yes"; then
-  AC_PATH_TOOL(ft_config,
-               freetype-config,
-               no)
-else
-  ft_config="$freetype_config"
-fi
-
-if test "$ft_config" = "no"; then
-  # freetype-config tool not found or disabled; try pkg-config
-  PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 2.4.5])
-  if { test -z "$FREETYPE_CFLAGS" || test -z "$FREETYPE_LIBS"; }; then
-    AC_MSG_ERROR([FreeType library is missing; see https://www.freetype.org/])
-  fi
-  FREETYPE_CPPFLAGS="$FREETYPE_CFLAGS"
-else
-  FREETYPE_CPPFLAGS="`$ft_config --cflags`"
-  FREETYPE_LIBS="`$ft_config --libtool`"
-
-  # many platforms no longer install .la files for system libraries
-  if test ! -f "$FREETYPE_LIBS"; then
-    FREETYPE_LIBS="`$ft_config --libs`"
-  fi
-fi
-
+PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 2.4.5])
+FREETYPE_CPPFLAGS="$FREETYPE_CFLAGS"
 AC_SUBST([FREETYPE_CPPFLAGS])
-AC_SUBST([FREETYPE_LIBS])
-
 
 AC_MSG_CHECKING([whether FreeType header files are version 2.4.5 or higher])
 old_CPPFLAGS="$CPPFLAGS"
@@ -173,7 +142,6 @@ AC_PREPROC_IFELSE([AC_LANG_SOURCE([[
 [AC_MSG_RESULT(yes)
  CPPFLAGS="$old_CPPFLAGS"],
 [AC_MSG_ERROR([Need FreeType version 2.4.5 or higher])])
-
 
 AC_MSG_CHECKING([whether FreeType library is version 2.4.5 or higher])
 old_CPPFLAGS="$CPPFLAGS"
