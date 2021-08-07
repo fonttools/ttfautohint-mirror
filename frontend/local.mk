@@ -97,17 +97,25 @@ endif
 
 # `ttfautohint.h' holds default values for some options,
 # `ttfautohint-scripts.' the list of available scripts
-frontend/ttfautohint.1: frontend/ttfautohint$(EXEEXT)
+frontend/ttfautohint.1: frontend/main.cpp \
+                        lib/ttfautohint.h.in \
+                        lib/ttfautohint-scripts.h \
+                        .version \
+                        | frontend/ttfautohint$(EXEEXT)
 	$(HELP2MAN) --output=$@ \
 	            --no-info \
 	            --name="add new, auto-generated hints to a TrueType font" \
-	            $<
+	            frontend/ttfautohint$(EXEEXT)
 
-frontend/ttfautohintGUI.1: frontend/ttfautohintGUI$(EXEEXT)
+frontend/ttfautohintGUI.1: frontend/main.cpp \
+                           lib/ttfautohint.h.in \
+                           lib/ttfautohint-scripts.h \
+                           .version \
+                           | frontend/ttfautohintGUI$(EXEEXT)
 	$(HELP2MAN) --output=$@ \
 	            --no-info \
 	            --name="add new, auto-generated hints to a TrueType font" \
 	            --help-option=--help-all \
-	            $<
+	            frontend/ttfautohintGUI$(EXEEXT)
 
 # end of Makefile.am
