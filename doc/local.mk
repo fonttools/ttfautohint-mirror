@@ -85,7 +85,7 @@ if WITH_DOC
 endif
 
 
-doc/ttfautohint-2.pandoc: lib/ttfautohint.h
+doc/ttfautohint-2.pandoc: lib/ttfautohint.h.in
 	$(SED) -f $(srcdir)/doc/c2pandoc.sed < $< > $@
 
 doc/ttfautohint-4.pandoc: lib/taranges.c
