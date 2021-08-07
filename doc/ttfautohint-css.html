@@ -121,17 +121,20 @@
   /* pandoc uses superscripts for footnote numbers, */
   /* however, we want a number in brackets */
   /* (which is easier to select with the mouse) */
-  a.footnoteRef > sup:before {
+  a.footnote-ref > sup:before {
     content: "["; }
-  a.footnoteRef > sup:after {
+  a.footnote-ref > sup:after {
     content: "]"; }
 
   h1 {
-    margin-top: 3.5ex; }
+    margin-top: 3.5ex;
+    line-height: 130%; }
   h2 {
-    margin-top: 3ex; }
+    margin-top: 3ex;
+    line-height: 130%; }
   h3 {
-    margin-top: 2.5ex; }
+    margin-top: 2.5ex;
+    line-height: 130%; }
   h4 { }
   h5 { }
   h6 { }
@@ -152,11 +155,11 @@
     color: black; }
 
   /* figures */
-  div.figure {
+  figure {
     text-align: center;
     margin-top: 5ex;
     margin-bottom: 5ex; }
-  p.caption {
+  figcaption {
     font-size: smaller; }
 
   /* tables */
@@ -217,6 +220,8 @@
   code.sourceCode span.kw {
     color: #007020;
     font-weight: bold; }
+  code.sourceCode span.pp {
+    color: blue; }
   code.sourceCode span.dt {
     color: #902000; }
   code.sourceCode span.dv {
