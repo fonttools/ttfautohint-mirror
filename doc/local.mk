@@ -116,8 +116,8 @@ if WITH_DOC
     doc/template.html \
     .version
 	  $(PANDOC) --from=markdown+smart \
-	            --resource-path=$(srcdir)/doc/img \
-	            --resource-path=doc/img \
+	            --resource-path=$(srcdir)/doc \
+	            --resource-path=doc \
 	            --template=$(srcdir)/doc/template.html \
 	            --default-image-extension=".svg" \
 	            --variable="version:$(VERSION)" \
@@ -135,8 +135,8 @@ if WITH_DOC
     .version
 	  TEXINPUTS="$(srcdir)/doc;" \
 	  $(PANDOC) --from=markdown+smart \
-	            --resource-path=$(srcdir)/doc/img \
-	            --resource-path=doc/img \
+	            --resource-path=$(srcdir)/doc \
+	            --resource-path=doc \
 	            --pdf-engine=$(LATEX) \
 	            --template=$(srcdir)/doc/template.tex \
 	            --default-image-extension=".pdf" \
