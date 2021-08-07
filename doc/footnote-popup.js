@@ -7,7 +7,7 @@
  * based on code from http://ignorethecode.net/blog/2010/04/20/footnotes
  */
 
-// This code snippet needs `jquery' (https://code.jquery.com/jquery-1.11.2.js)
+// This code snippet needs `jquery' (https://code.jquery.com)
 
 // Add a #footnotediv rule to the CSS code to style the pop-up window.
 

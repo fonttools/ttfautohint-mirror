@@ -59,7 +59,7 @@ DOC = \
   $(DOCIMGSVG) \
   $(DOCIMGPDF) \
   doc/footnote-popup.js \
-  doc/jquery-1.11.2.min.js \
+  doc/jquery-3.6.0.min.js \
   doc/toc-unfold.js
 
 EXTRA_DIST += \
