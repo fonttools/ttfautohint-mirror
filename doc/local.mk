@@ -74,8 +74,11 @@ EXTRA_DIST += \
   doc/template.html \
   doc/template.tex \
   doc/longtable-patched.sty \
+  doc/fontspec.sty \
+  doc/fontspec-xetex.sty \
   doc/ttfautohint-css.html \
-  doc/ttfautohint-js.html
+  doc/ttfautohint-js.html \
+  doc/ttfautohintGUI.stylesheet
 
 if WITH_DOC
   nobase_dist_doc_DATA = $(DOC)
