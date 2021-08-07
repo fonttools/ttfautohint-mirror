@@ -200,7 +200,6 @@ fi
 AC_DEFUN([TA_DOC],
   [if test -f "$1"; then
      AC_MSG_WARN([$2])
-     with_doc=no
    else
      AC_MSG_ERROR([$2])
    fi])
