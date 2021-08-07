@@ -66,6 +66,18 @@ GNU tools, but which aren't part of it due to a different license.
   LGPL only:
     gnulib
 
+The following files are distributed with the source bundle of the
+ttfautohint library to build the documentation, but which aren't part of it
+due to different licenses.
+
+  MIT license:
+    doc/jquery-3.6.0.min.js
+
+  LPPL:
+    fontspec.sty
+    fontspec-xetex.sty
+    longtable-patched.sty
+
 The following file is distributed for information only; it is not directly
 used to configure or build ttfautohint.
 
