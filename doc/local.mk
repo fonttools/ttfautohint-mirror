@@ -103,8 +103,10 @@ if WITH_DOC
   # build snapshot image of ttfautohintGUI:
   # this needs X11 and ImageMagick's `import' tool
   # (in the `make-snaphshot.sh' script)
-  doc/img/ttfautohintGUI.png: frontend/ttfautohintGUI$(EXEEXT) \
-                              doc/ttfautohintGUI.stylesheet
+  doc/img/ttfautohintGUI.png: frontend/maingui.cpp \
+                              configure.ac \
+                              doc/ttfautohintGUI.stylesheet \
+                              | frontend/ttfautohintGUI$(EXEEXT)
 	  $(SHELL) $(srcdir)/doc/make-snapshot.sh \
 	             frontend/ttfautohintGUI$(EXEEXT) \
 	               --stylesheet=$(srcdir)/doc/ttfautohintGUI.stylesheet \
@@ -154,7 +156,10 @@ else
 	  @echo 1>&2 "warning: can't generate \`$@'"
 	  @echo 1>&2 "         please install inkscape and reconfigure"
 
-  doc/img/ttfautohintGUI.png: frontend/ttfautohintGUI$(EXEEXT)
+  doc/img/ttfautohintGUI.png: frontend/maingui.cpp \
+                              configure.ac \
+                              doc/ttfautohintGUI.stylesheet \
+                              | frontend/ttfautohintGUI$(EXEEXT)
 	  @echo 1>&2 "warning: can't generate \`$@'"
 	  @echo 1>&2 "         please install ImageMagick's \`import' tool and reconfigure"
 
