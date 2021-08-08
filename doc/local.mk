@@ -96,13 +96,13 @@ doc/ttfautohint.txt: $(DOCSRC)
 
 if WITH_DOC
 
-  # suffix rules must always start in column 0
+  # Suffix rules must always start in column 0.
 .svg.pdf:
 	  $(INKSCAPE) --export-pdf=$@ $<
 
-  # build snapshot image of ttfautohintGUI:
+  # Build snapshot image of ttfautohintGUI:
   # this needs X11 and ImageMagick's `import' tool
-  # (in the `make-snaphshot.sh' script)
+  # (in the `make-snaphshot.sh' script).
   doc/img/ttfautohintGUI.png: frontend/maingui.cpp \
                               configure.ac \
                               doc/ttfautohintGUI.stylesheet \
@@ -183,4 +183,4 @@ else
 	  @echo 1>&2 "         please install pdftex and pandoc, then reconfigure"
 endif
 
-# end of Makefile.am
+# end of doc/local.mk

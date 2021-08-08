@@ -17,7 +17,7 @@ moc_verbose = $(moc_verbose_@AM_V@)
 moc_verbose_ = $(moc_verbose_@AM_DEFAULT_V@)
 moc_verbose_0 = @echo "  MOC     " $@;
 
-# moc from Qt5 aborts if unknown command line options are supplied;
+# `moc' from Qt5 aborts if unknown command line options are supplied;
 # in particular, it doesn't recognize `-isystem'.
 #
 # We must also ensure that `config.h' gets included first.
@@ -72,7 +72,7 @@ if USE_QT
     frontend/static-plugins.cpp \
     frontend/ttlineedit.moc.cpp
 
-  # We want compatibility with Qt < 5.11
+  # We want compatibility with Qt < 5.11.
   frontend_ttfautohintGUI_CXXFLAGS = $(QT_CXXFLAGS) \
                                      -Wno-deprecated-declarations
   frontend_ttfautohintGUI_LDFLAGS = $(QT_LDFLAGS)
@@ -96,7 +96,7 @@ if WITH_DOC
 endif
 
 # `ttfautohint.h' holds default values for some options,
-# `ttfautohint-scripts.' the list of available scripts
+# `ttfautohint-scripts.h' the list of available scripts.
 frontend/ttfautohint.1: frontend/main.cpp \
                         lib/ttfautohint.h.in \
                         lib/ttfautohint-scripts.h \
@@ -118,4 +118,4 @@ frontend/ttfautohintGUI.1: frontend/main.cpp \
 	            --help-option=--help-all \
 	            frontend/ttfautohintGUI$(EXEEXT)
 
-# end of Makefile.am
+# end of frontend/local.mk

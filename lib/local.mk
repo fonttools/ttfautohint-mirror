@@ -165,7 +165,7 @@ TA_V_FLEX = $(TA_V_FLEX_@AM_V@)
 TA_V_FLEX_ = $(TA_V_FLEX_@AM_DEFAULT_V@)
 TA_V_FLEX_0 = @echo "  FLEX    " $@;
 
-# we use `touch' to make the created .h file newer than the created .c file
+# We use `touch' to make the created .h file newer than the created .c file.
 
 lib/tacontrol-flex.c lib/tacontrol-flex.h: lib/tacontrol.flex
 	$(TA_V_FLEX)$(FLEX) --outfile=lib/tacontrol-flex.c \
@@ -185,4 +185,4 @@ lib/tacontrol-bison.c lib/tacontrol-bison.h: lib/tacontrol.bison
 	&& touch lib/tacontrol-bison.h
 lib/tacontrol-bison.h: lib/tacontrol-bison.c
 
-## end of Makefile.am
+# end of lib/local.mk

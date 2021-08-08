@@ -1,4 +1,4 @@
-## Makefile.am
+# Makefile.am
 
 # due to a limitation of `autoreconf',
 # all -I directives currently must be set on a single line
@@ -37,4 +37,4 @@ include $(top_srcdir)/lib/local.mk
 include $(top_srcdir)/frontend/local.mk
 include $(top_srcdir)/doc/local.mk
 
-## end of Makefile.am
+# end of Makefile.am
