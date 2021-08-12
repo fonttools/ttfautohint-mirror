@@ -55,12 +55,14 @@ DOC = \
   doc/ttfautohint.html \
   doc/ttfautohint.pdf \
   doc/ttfautohint.txt \
-  $(DOCIMGPNG) \
-  $(DOCIMGSVG) \
-  $(DOCIMGPDF) \
   doc/footnote-popup.js \
   doc/jquery-3.6.0.min.js \
   doc/toc-unfold.js
+
+DOCIMG = \
+  $(DOCIMGPNG) \
+  $(DOCIMGSVG) \
+  $(DOCIMGPDF)
 
 EXTRA_DIST += \
   doc/c2pandoc.sed \
@@ -81,7 +83,9 @@ EXTRA_DIST += \
   doc/ttfautohintGUI.stylesheet
 
 if WITH_DOC
-  nobase_dist_doc_DATA = $(DOC)
+  dist_doc_DATA = $(DOC)
+  doc_imgdir = $(docdir)/img
+  dist_doc_img_DATA = $(DOCIMG)
 endif
 
 
