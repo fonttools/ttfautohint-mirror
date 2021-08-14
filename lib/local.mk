@@ -11,7 +11,7 @@
 # with the ttfautohint library.
 
 ABI_CURRENT = 1
-ABI_REVISION = 2
+ABI_REVISION = 3
 ABI_AGE = 0
 
 
