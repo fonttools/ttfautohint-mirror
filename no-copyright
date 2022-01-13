@@ -40,7 +40,7 @@ doc/c2pandoc.sed
 doc/fontspec.sty
 doc/fontspec-xetex.sty
 doc/img
-doc/longtable-patched.sty
+doc/longtable.sty
 doc/jquery-3.6.0.min.js
 doc/strip-comments.sh
 doc/taranges.sed

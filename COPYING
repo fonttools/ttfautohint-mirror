@@ -76,7 +76,7 @@ due to different licenses.
   LPPL:
     fontspec.sty
     fontspec-xetex.sty
-    longtable-patched.sty
+    longtable.sty
 
 The following file is distributed for information only; it is not directly
 used to configure or build ttfautohint.

@@ -75,7 +75,7 @@ EXTRA_DIST += \
   doc/ttfautohint-4.pandoc \
   doc/template.html \
   doc/template.tex \
-  doc/longtable-patched.sty \
+  doc/longtable.sty \
   doc/fontspec.sty \
   doc/fontspec-xetex.sty \
   doc/ttfautohint-css.html \
