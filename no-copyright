@@ -33,12 +33,15 @@ pledgies
 no-copyright
 update-copyright
 #
+aux/qtlocation-2.patch
+#
 doc/footnote-popup.js
 doc/c2pandoc.sed
+doc/fontspec.sty
 doc/fontspec-xetex.sty
 doc/img
 doc/longtable-patched.sty
-doc/jquery-1.11.2.min.js
+doc/jquery-3.6.0.min.js
 doc/strip-comments.sh
 doc/taranges.sed
 doc/template.html
@@ -56,5 +59,7 @@ lib/sds.h
 lib/ttfautohint.pc.in
 #
 frontend/static-plugins.cpp.in
+#
+gnulib/prefix-gnulib-mk.diff
 #
 # EOF
