@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2011-2021 by Werner Lemberg.
+  Copyright (C) 2011-2022 by Werner Lemberg.
 
   This file is part of the ttfautohint library, and may only be used,
   modified, and distributed under the terms given in `COPYING'.  By
@@ -66,7 +66,7 @@ homepage](https://freetype.org/ttfautohint/osx.html).
 Authors
 =======
 
-Copyright © 2011-2021 by [Werner Lemberg](mailto:wl@gnu.org).\
+Copyright © 2011-2022 by [Werner Lemberg](mailto:wl@gnu.org).\
 Portions Copyright © 2011-2017 by [Dave Crossland](mailto:dave@understandingfonts.com).\
 Portions Copyright © 2014 by [Adam Twardoch](mailto:adam@twardoch.com).
 

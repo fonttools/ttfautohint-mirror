@@ -1,6 +1,6 @@
 // maingui.h
 
-// Copyright (C) 2012-2021 by Werner Lemberg.
+// Copyright (C) 2012-2022 by Werner Lemberg.
 //
 // This file is part of the ttfautohint library, and may only be used,
 // modified, and distributed under the terms given in `COPYING'.  By
