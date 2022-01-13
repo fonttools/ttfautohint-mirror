@@ -60,6 +60,4 @@ lib/ttfautohint.pc.in
 #
 frontend/static-plugins.cpp.in
 #
-gnulib/prefix-gnulib-mk.diff
-#
 # EOF
