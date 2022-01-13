@@ -89,13 +89,16 @@ if WITH_DOC
 endif
 
 
-doc/ttfautohint-2.pandoc: lib/ttfautohint.h.in
+doc/ttfautohint-2.pandoc: lib/ttfautohint.h.in \
+                          doc/c2pandoc.sed
 	$(SED) -f $(srcdir)/doc/c2pandoc.sed < $< > $@
 
-doc/ttfautohint-4.pandoc: lib/taranges.c
+doc/ttfautohint-4.pandoc: lib/taranges.c \
+                          doc/taranges.sed
 	$(SED) -f $(srcdir)/doc/taranges.sed < $< > $@
 
-doc/ttfautohint.txt: $(DOCSRC)
+doc/ttfautohint.txt: $(DOCSRC) \
+                     doc/strip-comments.sh
 	$(SHELL) $(srcdir)/doc/strip-comments.sh $^ > $@
 
 if WITH_DOC
