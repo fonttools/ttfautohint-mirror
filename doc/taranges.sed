@@ -20,10 +20,12 @@ History\
 /lat[bp]_nonbase_uniranges/ d
 /khms_nonbase_uniranges/ d
 /lisu_nonbase_uniranges/ d
+/medf_nonbase_uniranges/ d
 /olck_nonbase_uniranges/ d
 /orkh_nonbase_uniranges/ d
 /osge_nonbase_uniranges/ d
 /osma_nonbase_uniranges/ d
+/rohg_nonbase_uniranges/ d
 /shaw_nonbase_uniranges/ d
 /tfng_nonbase_uniranges/ d
 /vaii_nonbase_uniranges/ d
